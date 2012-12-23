@@ -499,7 +499,11 @@
 	
 	// How many reports you can create in the same request.
 	$config['report_limit'] = 3;
-	
+
+	// Attention Whoring Bar
+	// REMEMBER TO CHMOD attentionbar.txt PROPERLY
+	// Oh, and add jQuery in additional_javascript.
+	$config['attention_bar'] = false;
 /*
  * ====================
  *  Display settings
