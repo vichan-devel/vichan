@@ -453,3 +453,6 @@ table.mod.config-editor input[type="text"] {
   background-color: #fff;
   opacity: 0.8;
 }
+.thread-hidden {
+  opacity: 0.5;
+}
