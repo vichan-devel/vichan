@@ -8,6 +8,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
 	{% if config.meta_keywords %}<meta name="keywords" content="{{ config.meta_keywords }}">{% endif %}
 	{% if config.default_stylesheet.1 != '' %}<link rel="stylesheet" type="text/css" id="stylesheet" href="{{ config.uri_stylesheets }}{{ config.default_stylesheet.1 }}">{% endif %}
+	<script type="text/javascript">var configRoot="{{ config.root }}";</script>
 	{% if not nojavascript %}
 		<script type="text/javascript" src="{{ config.url_javascript }}"></script>
 		{% if not config.additional_javascript_compile %}
