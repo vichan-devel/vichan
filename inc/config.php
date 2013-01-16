@@ -337,6 +337,11 @@
 	$config['auto_unicode'] = true;
 	// Whether to turn URLs into functional links
 	$config['markup_urls'] = true;
+	$config['url_ads'] = ''; 
+	// Use it if you want to add something before URL 
+	//for example hide referrer 'http://www.nullrefer.com/?'  'http://anonym.to/?' 
+	//or add some sort of ads
+	
 	
 	// Wordfilters are used to automatically replace certain words/phrases with something else.
 	// For a normal string replacement:
