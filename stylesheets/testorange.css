@@ -12,6 +12,19 @@ body {
 	background-position: right bottom, 0% 0%, 0% 0%;
 }
 
+.desktop-style .bl-menu{
+background-image: url('img/testorange_bg.gif');
+	background-repeat: repeat;
+} 
+
+.boardlist .board a {
+background-image: url('img/testorange_bg.gif');
+	background-repeat: repeat;
+}
+
+
+
+
 a:link, a:visited, div.post.reply div.body a {
 	color:#ff9100;
 	text-decoration: none;
@@ -22,7 +35,10 @@ a:link:hover, a:visited:hover, div.post.reply div.body a:hover {
 
 a.email span.name {
 	color:#ff9100 !important;
+}
 
+div.post.reply.highlighted {
+background: black;
 }
 
 input {
@@ -150,11 +166,10 @@ span.trip, .postertrip {
 .omittedposts {
 	color:#707070;
 }
-.reply {
+div.post.reply {
 	padding: 5px;
 	border: 1px #707070 solid !important;
-	background: #282828 !important;
-	
+	background: #282828;
 	-webkit-border-radius: 10px;
 	-khtml-border-radius: 10px;
 	-moz-border-radius: 10px;
@@ -164,46 +179,12 @@ span.trip, .postertrip {
 	background-color: #1e1e1e;
 	color: #bebebe;
 }
-.doubledash {
-	vertical-align:top;
-	clear:both;
-	float:left;
-}
-.replytitle {
-	font-size: 1.2em;
-	color:#fff;
-	font-weight:800;
-}
-.commentpostername {
-	color: #fff;
-	font-weight:800;
-}
-.thumbnailmsg {
-	font-size: small;
-	color: #bebebe;
-}
 form table th, div.banner, div.pages, .replymode, .postblock, .passvalid, .catalogmode {
 	background: #ff9100 url('img/testorange_f_bg.gif') repeat-x !important;
 }
 div.pages, div.pages a {
 	color: black;
 	border: 0;
-}
-
-.abbrev {
-	color:#707070;
-}
-.highlight {
-	background:#000;
-	border: 1px dashed #ff9100;
-}
-
-#watchedthreads {
-	background-color: #282828 !important;
-}
-
-.reflinkpreview {
-	background-color: #282828 !important;
 }
 div.boardlist {
     background-color: rgba(5%,5%,5%,0.2);
