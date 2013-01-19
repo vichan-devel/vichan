@@ -109,7 +109,14 @@
 		<img class="icon" title="Bumplocked" src="{{ config.image_bumplocked }}" alt="Bumplocked" />
 	{% endif %}
 	{% if index %}
-		<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ config.file_page|sprintf(post.id) }}">[{% trans %}Reply{% endtrans %}]</a>
+		<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ config.file_page|sprintf(post.id) }}">[{% trans %}View{% endtrans %}]</a>
+	{% endif %}
+	{% if isnoko50 %}
+		<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ config.file_page|sprintf(post.id) }}">[{% trans %}View All{% endtrans %}]</a>
+	{% endif %}
+	{% if hasnoko50 and not isnoko50 %}
+		{% set lastcount = config.noko50_count %}
+		<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ config.file_page50|sprintf(post.id) }}">[{% trans %}Last {{ lastcount }} Posts{% endtrans %}]</a>
 	{% endif %}
 	{{ post.postControls }}
 	</p>
@@ -134,7 +141,7 @@
 				{% plural post.omitted_images %}
 					{{ count }} image replies
 				{% endtrans %}
-			{% endif %} {% trans %}omitted. Click reply to view.{% endtrans %}
+			{% endif %} {% trans %}omitted. Click View to see all.{% endtrans %}
 		</span>
 	{% endif %}
 {% if not index %}

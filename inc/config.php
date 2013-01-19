@@ -483,6 +483,10 @@
 	// WARNING: Currently strips animated GIFs too
 	$config['redraw_image'] = false;
 	
+	// Number of posts in a "View Last X Posts" page
+	$config['noko50_count'] = 50;
+	// Number of posts a thread needs before it gets a "View Last X Posts" page
+	$config['noko50_min'] = 100;
 /*
  * ====================
  *  Board settings
@@ -572,6 +576,30 @@
 	//	array('h', 'i', 'j'),
 	//	array('k', array('l', 'm')),
 	//	array('status' => 'http://status.example.org/')
+	//);
+
+	// Boardlist Menu
+	// You can put there everything you want to put in a boardlist menu (js/boardlist.js)
+        //$config['boardlist_menu'] = array(
+        //        "Cat1" => array(
+        //                "a/" => "Chinese Fairytales"
+        //                "b/" => "Random",
+        //                "c/" => "Code",
+        //        ),         
+        //        "Cat2" => array(
+        //                "d/" => "D",
+        //                "e/" => "E",
+        //                "f/" => "F"
+        //        ),
+	//);
+
+	// Boardlist Menu Additional
+	// You can put there external links (js/boardlist.js)
+        //$config['boardlist_menu_additional'] = array(
+        //        "Links" => array(
+        //                "Tinyboard" => "http://tinyboard.org"
+        //                "Donate" => "donate.html",
+        //        ),         
 	//);
 	
 	// Categories
@@ -749,6 +777,7 @@
 	
 	$config['file_index'] = 'index.html';
 	$config['file_page'] = '%d.html';
+	$config['file_page50'] = '%d+50.html';
 	$config['file_mod'] = 'mod.php';
 	$config['file_post'] = 'post.php';
 	$config['file_script'] = 'main.js';

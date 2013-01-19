@@ -57,3 +57,12 @@ div.boardlist a {
 table.modlog tr th {
 	background: #EA8;
 }
+.boardlist .board a {
+        background-color: #f0e0d6;
+}
+.boardlist .board {
+        border-top: 1px solid #ffffee;
+        border-left: 1px solid #ffffee;
+        border-right: 1px solid #d9bfb7;
+        border-bottom: 1px solid #d9bfb7;
+}

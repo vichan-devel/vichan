@@ -106,7 +106,10 @@ function loadConfig() {
 					'|' .
 						str_replace('%s', '\w+', preg_quote($config['board_path'], '/')) .
 						preg_quote($config['dir']['res'], '/') .
-						str_replace('%d', '\d+', preg_quote($config['file_page'], '/')) .
+						'(' .
+							str_replace('%d', '\d+', preg_quote($config['file_page'], '/')) . '|' .
+							str_replace('%d', '\d+', preg_quote($config['file_page50'], '/')) .
+						')' .
 					'|' .
 						preg_quote($config['file_mod'], '/') . '\?\/.+' .
 				')([#?](.+)?)?$/i';
@@ -887,6 +890,7 @@ function deletePost($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
 		if (!$post['thread']) {
 			// Delete thread HTML page
 			file_unlink($board['dir'] . $config['dir']['res'] . sprintf($config['file_page'], $post['id']));
+			file_unlink($board['dir'] . $config['dir']['res'] . sprintf($config['file_page50'], $post['id']));
 			
 			$antispam_query = prepare('DELETE FROM `antispam` WHERE `board` = :board AND `thread` = :thread');
 			$antispam_query->bindValue(':board', $board['uri']);
@@ -1530,12 +1534,16 @@ function buildThread($id, $return=false, $mod=false) {
 	if (!isset($thread))
 		error($config['error']['nonexistant']);
 	
+	$hasnoko50 = $thread->postCount() >= $config['noko50_min'];
+
 	$body = Element('thread.html', array(
 		'board'=>$board, 
 		'body'=>$thread->build(),
 		'config' => $config,
 		'id' => $id,
 		'mod' => $mod,
+		'hasnoko50' => $hasnoko50,
+		'isnoko50' => false,
 		'antibot' => $mod ? false : create_antibot($board['uri'], $id),
 		'boardlist' => createBoardlist($mod),
 		'return' => ($mod ? '?' . $board['url'] . $config['file_index'] : $config['root'] . $board['uri'] . '/' . $config['file_index'])
@@ -1544,7 +1552,98 @@ function buildThread($id, $return=false, $mod=false) {
 	if ($return)
 		return $body;
 
+	$noko50fn = $board['dir'] . $config['dir']['res'] . sprintf($config['file_page50'], $id);
+	if ($hasnoko50 || file_exists($noko50fn)) {
+		buildThread50($id, $return, $mod, $thread);
+	}
+
 	file_write($board['dir'] . $config['dir']['res'] . sprintf($config['file_page'], $id), $body);
+}
+
+function buildThread50($id, $return=false, $mod=false, $thread=null) {
+	global $board, $config;
+	$id = round($id);
+	
+	if (event('build-thread', $id))
+		return;
+
+	if (!$thread) {
+		$query = prepare(sprintf("SELECT * FROM `posts_%s` WHERE (`thread` IS NULL AND `id` = :id) OR `thread` = :id ORDER BY `thread`,`id` DESC LIMIT :limit", $board['uri']));
+		$query->bindValue(':id', $id, PDO::PARAM_INT);
+		$query->bindValue(':limit', $config['noko50_count']+1, PDO::PARAM_INT);
+		$query->execute() or error(db_error($query));
+		
+		$num_images = 0;
+		while ($post = $query->fetch()) {
+			if (!isset($thread)) {
+				$thread = new Thread(
+					$post['id'], $post['subject'], $post['email'], $post['name'], $post['trip'], $post['capcode'], $post['body'], $post['time'],
+					$post['thumb'], $post['thumbwidth'], $post['thumbheight'], $post['file'], $post['filewidth'], $post['fileheight'], $post['filesize'],
+					$post['filename'], $post['ip'], $post['sticky'], $post['locked'], $post['sage'], $post['embed'], $mod ? '?/' : $config['root'], $mod
+				);
+			} else {
+				if ($post['file'])
+					$num_images++;
+				
+				$thread->add(new Post(
+					$post['id'], $thread->id, $post['subject'], $post['email'], $post['name'], $post['trip'], $post['capcode'], $post['body'],
+					$post['time'], $post['thumb'], $post['thumbwidth'], $post['thumbheight'], $post['file'], $post['filewidth'], $post['fileheight'],
+					$post['filesize'], $post['filename'], $post['ip'], $post['embed'], $mod ? '?/' : $config['root'], $mod)
+				);
+			}
+		}
+
+		// Check if any posts were found
+		if (!isset($thread))
+			error($config['error']['nonexistant']);
+
+
+		if ($query->rowCount() == $config['noko50_count']+1) {
+			$count = prepare(sprintf("SELECT COUNT(`id`) as `num` FROM `posts_%s` WHERE `thread` = :thread UNION ALL SELECT COUNT(`id`) FROM `posts_%s` WHERE `file` IS NOT NULL AND `thread` = :thread", $board['uri'], $board['uri']));
+			$count->bindValue(':thread', $id, PDO::PARAM_INT);
+			$count->execute() or error(db_error($count));
+			
+			$c = $count->fetch();
+			$thread->omitted = $c['num'] - $config['noko50_count'];
+			
+			$c = $count->fetch();
+			$thread->omitted_images = $c['num'] - $num_images;
+		}
+
+		$thread->posts = array_reverse($thread->posts);
+	} else {
+		$allPosts = $thread->posts;
+
+		$thread->posts = array_slice($allPosts, -$config['noko50_count']);
+		$thread->omitted += count($allPosts) - count($thread->posts);
+		foreach ($allPosts as $index => $post) {
+			if ($index == count($allPosts)-count($thread->posts))
+				break;  
+			if ($post->file)
+				$thread->omitted_images++;
+		}
+	}
+		
+	$hasnoko50 = $thread->postCount() >= $config['noko50_min'];
+
+	$body = Element('thread.html', array(
+		'board'=>$board, 
+		'body'=>$thread->build(false, true),
+		'config' => $config,
+		'id' => $id,
+		'mod' => $mod,
+		'hasnoko50' => $hasnoko50,
+		'isnoko50' => true,
+		'antibot' => $mod ? false : create_antibot($board['uri'], $id),
+		'boardlist' => createBoardlist($mod),
+		'return' => ($mod ? '?' . $board['url'] . $config['file_index'] : $config['root'] . $board['uri'] . '/' . $config['file_index'])
+	));
+	
+	if ($return) {
+		return $body;
+	} else {
+		file_write($board['dir'] . $config['dir']['res'] . sprintf($config['file_page50'], $id), $body);
+	}
 }
 
  function rrmdir($dir) {

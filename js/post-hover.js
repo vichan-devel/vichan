@@ -35,7 +35,7 @@ onready(function(){
 						$post.offset().top <= $(window).scrollTop() + $(window).height()
 						) {
 					// post is in view
-					$post.attr('style', 'border-style: none dashed dashed none; background: ' + $post.css('border-right-color'));
+					$post.addClass('post-hover');
 				} else {
 					var $newPost = $post.clone();
 					$newPost.find('span.mentioned').remove();
@@ -84,7 +84,7 @@ onready(function(){
 			if(!$post)
 				return;
 			
-			$post.attr('style', '');
+			$post.removeClass('post-hover');
 			if($post.hasClass('hidden'))
 				$post.css('display', 'none');
 			$('.post-hover').remove();

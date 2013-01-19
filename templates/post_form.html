@@ -2,10 +2,19 @@
 {{ antibot.html() }}
 {% if id %}<input type="hidden" name="thread" value="{{ id }}">{% endif %}
 {{ antibot.html() }}
-<input type="hidden" name="board" value="{{ board.uri }}">
-{{ antibot.html() }}
-{% if mod %}<input type="hidden" name="mod" value="1">{% endif %}
 	<table>
+		{% if post_form_boardlist %}
+			<th>
+			  {% trans %}Board{% endtrans %}
+			</th>
+			<td>
+			  {{ post_form_boardlist }}
+			</td>
+		{% else %}
+			<input type="hidden" name="board" value="{{ board.uri }}">
+		{% endif %}
+	{{ antibot.html() }}
+	{% if mod %}<input type="hidden" name="mod" value="1">{% endif %}
 		{% if not config.field_disable_name or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri)) %}<tr>
 			<th>
 				{% trans %}Name{% endtrans %}

@@ -25,16 +25,15 @@ function doBoardListPart($list, $root) {
 	$body = '';
 	foreach ($list as $board) {
 		if (is_array($board))
-			$body .= ' <span class="sub">[' . doBoardListPart($board, $root) . ']</span> ';
+			$body .= '<div class="sub">' . doBoardListPart($board, $root) . '</div>';
 		else {
 			if (($key = array_search($board, $list)) && gettype($key) == 'string') {
-				$body .= ' <a href="' . $board . '">' . $key . '</a> /';
+				$body .= '<div class="board"><a href="' . $board . '">' . $key . '</a></div>';
 			} else {			
-				$body .= ' <a href="' . $root . $board . '/' . $config['file_index'] . '">' . $board . '</a> /';
+				$body .= '<div class="board"><a href="' . $root . $board . '/' . $config['file_index'] . '">' . $board . '</a></div>';
 			}
 		}
 	}
-	$body = preg_replace('/\/$/', '', $body);
 	
 	return $body;
 }
@@ -45,8 +44,6 @@ function createBoardlist($mod=false) {
 	if (!isset($config['boards'])) return array('top'=>'','bottom'=>'');
 	
 	$body = doBoardListPart($config['boards'], $mod?'?/':$config['root']);
-	if (!preg_match('/\] $/', $body))
-		$body = '[' . $body . ']';
 	
 	$body = trim($body);
 	
@@ -355,6 +352,9 @@ class Thread {
 	public function add(Post $post) {
 		$this->posts[] = $post;
 	}
+	public function postCount() {
+	       return count($this->posts) + $this->omitted;
+	}
 	public function postControls() {
 		global $board, $config;
 		
@@ -422,10 +422,12 @@ class Thread {
 		return fraction($this->filex, $this->filey, ':');
 	}
 	
-	public function build($index=false) {
+	public function build($index=false, $isnoko50=false) {
 		global $board, $config, $debug;
 		
-		$built = Element('post_thread.html', array('config' => $config, 'board' => $board, 'post' => &$this, 'index' => $index));
+		$hasnoko50 = $this->postCount() >= $config['noko50_min'];
+
+		$built = Element('post_thread.html', array('config' => $config, 'board' => $board, 'post' => &$this, 'index' => $index, 'hasnoko50' => $hasnoko50, 'isnoko50' => $isnoko50));
 		
 		if (!$this->mod && $index && $config['cache']['enabled']) {
 			cache::set($this->cache_key($index), $built);

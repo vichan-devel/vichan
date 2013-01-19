@@ -1,0 +1,29 @@
+<div class='bl-show'>»</div>
+<div class='bl-menu'>
+	<a href='javascript:void(0)' id='bl-stick'>[Stick/Unstick]</a>
+        {% for category, links in config.boardlist_menu %}
+                <fieldset>
+                        <legend>
+                                {{ category }}
+                        </legend>
+                        {% for uri, title in links %}
+                                <li>
+                                        <a href="{{ config.root }}{{ uri }}">{{ title }}</a>
+                                </li>
+                        {% endfor %}
+                </fieldset>
+	{% endfor %}
+
+        {% for category, links in config.boardlist_menu_additional %}
+                <fieldset>
+                        <legend>
+                                {{ category }}
+                        </legend>
+                        {% for title, uri in links %}
+                                <li>
+                                        <a href="{{ uri }}">{{ title }}</a>
+                                </li>
+                        {% endfor %}
+                </fieldset>
+	{% endfor %}
+</div>

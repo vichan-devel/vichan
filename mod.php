@@ -85,6 +85,9 @@ $pages = array(
 	'/([\w+.]+)/' . str_replace('%d', '(\d+)', preg_quote($config['file_page'], '!'))		=> 'view_board',
 	'/([\w+.]+)/' . preg_quote($config['dir']['res'], '!') .
 			str_replace('%d', '(\d+)', preg_quote($config['file_page'], '!'))	=> 'view_thread',
+	'/(\w+)/' . preg_quote($config['dir']['res'], '!') . 
+                        str_replace('%d', '(\d+)', preg_quote($config['file_page50'], '!'))	=> 'view_thread',
+
 );
 
 

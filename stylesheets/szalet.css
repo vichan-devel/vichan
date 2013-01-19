@@ -1,14 +1,27 @@
-/* nowy styl */
+/* szalet 1.2 */
 
 body {
 	font-family: sans-serif;
 	font-size: 12px;
-	color: #C4C4C4;
+	color: #99938D;
 	
 	background-color: #1e1e1e;
 	background-image: url('img/szalet_bg.png');
 	background-repeat:  repeat;
-	
+}
+
+.desktop-style .bl-menu{
+background-image: url('img/szalet_bg.png');
+background-repeat:  repeat;
+/*background-color: #200000;*/
+} 
+
+.boardlist .board a {
+background-color: #200000;
+}
+
+p.intro span.capcode, p.intro a.capcode, p.intro a.nametag {
+color: #26899C;
 }
 
  div.pages a.selected {
@@ -16,15 +29,15 @@ color: #FFFCFC !important;}
 
  
 a:link, a:visited, div.post.reply p.body a {
-        color: #86472F;
+        color: #7A422C!important;
         text-decoration: none;
 }
 a:link:hover, a:visited:hover, div.post.reply p.body a:hover {
-        color: rgb(138, 138, 35);
+        color: #8A8A23!important;
 }
  
 a.email span.name {
-        color: #ECDDCA !important;
+        color: #4B4B4B  !important;
  
 }
  
@@ -36,6 +49,8 @@ textarea {
         background: #dedede url('img/testorange_textarea_bg.gif') repeat-x;
 }
 input, textarea {
+background:  #200000;
+color: #99938D;
 }
  
 hr {
@@ -58,7 +73,7 @@ h1 {
         clear:both;
         text-align:center;
         font-size: 2.5em;
-        color: sandybrown;
+        color: #583E28;
         width:100%;
 }
 div.title {
@@ -68,12 +83,12 @@ div.banner, .replymode, .catalogmode {
         text-align:center;
         margin: 5px 0 5px 0;
         padding: 5px 2px 5px 2px;
-        color: sandybrown;
+        color: #583E28;
         font-weight: bold;
         width:100%;
 }
 .postblock, form table th {
-        color: sandybrown;
+        color: #583E28;
         font-size: 11px;
         font-weight: bold;
         text-align: center !important;
@@ -140,13 +155,13 @@ div.banner, .replymode, .catalogmode {
 }
  
 p.intro span.subject {
-color: #D11C2A;
+color: #771018;
 font-weight: bold;
 }
  
  
 span.name, .postername {
-        color: #DAAD66 !important;
+        color: #8A775B !important;
         font-weight:bold;
 }
 span.trip, .postertrip {
@@ -159,52 +174,30 @@ span.trip, .postertrip {
 span.omitted, .omittedposts {
         color: #A39E96;
 }
-.reply {
+div.post.reply {
         padding: 5px;
-        border: 1px sandyBrown solid !important;
-        background: #200000 !important;
+        border: 1px #583E28 solid !important;
+        background: #200000;
        
         -webkit-border-radius: 10px;
         -khtml-border-radius: 10px;
         -moz-border-radius: 10px;
         border-radius: 10px;
 }
+div.post.reply.highlighted {
+background: #583E28;
+}
+
 .replyhl {
         background-color: #1e1e1e;
         color: #bebebe;
 }
-.doubledash {
-        vertical-align:top;
-        clear:both;
-        float:left;
-}
-.replytitle {
-        font-size: 1.2em;
-        color:#fff;
-        font-weight:800;
-}
-.commentpostername {
-        color: #fff;
-        font-weight:800;
-}
-.thumbnailmsg {
-        font-size: small;
-        color: #bebebe;
-}
 form table th, div.banner, div.pages, .replymode, .postblock, .passvalid, .catalogmode {
         background: #200000!important;
-        border: 1px solid sandyBrown;
+        border: 1px solid #583E28;
 }
 div.pages {
         color: rgb(143, 139, 139);
         border: 0;
         background: none !important;
-}
- 
-.abbrev {
-        color:#707070;
-}
-.highlight {
-        background:#000;
-        border: 1px dashed #ff9100;
 }
