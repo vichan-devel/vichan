@@ -1,0 +1,206 @@
+/* piwnichan */
+
+
+
+body {
+	font-family: sans-serif;
+	font-size: 12px;
+	color:#47506F;
+	background:#000006 url('img/rect820.png') fixed top right no-repeat;
+}
+
+.desktop-style .bl-menu{
+background-color: #030511;
+} 
+
+.boardlist .board a {
+background-color: #030511;
+}
+
+
+span.quote {
+color: #296353;
+}
+
+ div.pages a.selected {
+color: #FFFCFC !important;}
+
+div.post.reply div.body a {
+color: #6F0A0A;
+}
+ 
+a:link, a:visited, div.post.reply p.body a {
+        color: #355097;
+        text-decoration: none;
+}
+a:link:hover, a:visited:hover, div.post.reply p.body a:hover {
+        color: #5A8C99;
+}
+ 
+a.email span.name {
+        color: #5A8C99 !important; 
+}
+
+p.intro span.capcode, p.intro a.capcode, p.intro a.nametag {
+color: #6E0877;
+}
+
+div.post.reply.highlighted {
+background: #000E3A;
+}
+ 
+
+input, textarea {
+     background: url("img/rect821.png") no-repeat fixed right top #030511;
+    color: #47506F;
+    
+}
+ 
+hr {
+	height:3px;
+	border-width: 0px;
+	background:url(img/img/hr_d_blue2.png) center no-repeat;
+	background-size:100% 100%;
+	-moz-background-size:100% 100%;
+}
+ 
+.reflink a:hover{
+        font-weight: bold;
+}
+.adminbar {
+        text-align:right;
+        clear:both;
+        float:right;
+}
+h1 {
+        clear:both;
+        text-align:center;
+        font-size: 2.5em;
+        color: #47506F;
+        width:100%;
+}
+div.title {
+        color: #AF8C5D;
+}
+div.banner, .replymode, .catalogmode {
+        text-align:center;
+        margin: 5px 0 5px 0;
+        padding: 5px 2px 5px 2px;
+        color: #47506F;
+        font-weight: bold;
+        width:100%;
+}
+.postblock, form table th {
+        color: sandybrown;
+        font-size: 11px;
+        font-weight: bold;
+        text-align: center !important;
+}
+ 
+.postarea {
+}
+.rules {
+        width: 468px;
+        font-size: 10px;
+}
+.rules li {
+        margin-left: 1em;
+}
+.footer {
+        text-align:center;
+        font-size:12px;
+}
+.passvalid {
+        text-align:center;
+        width:100%;
+        color:#ffffff;
+}
+.dellist {
+        font-weight: bold;
+        text-align:center;
+}
+.delbuttons {
+        text-align:center;
+        padding-bottom:4px;
+ 
+}
+.managehead {
+        background-color: #1e1e1e;
+        color: #bebebe;
+        padding:0px;
+}
+.postlists {
+        background: #000;
+        width:100%;
+        padding:0px;
+        color: #bebebe;
+}
+.row1 {
+        background-color: #1e1e1e;
+        color: #bebebe;
+}
+.row2 {
+        background: #1e1e1e;
+        color: #bebebe;
+}
+.unkfunc {
+        background:inherit;
+        color:#789922;
+}
+.filesize {
+        text-decoration:none;
+}
+.filetitle {
+        background:inherit;
+        font-size:1.2em;
+        color: #bebebe;
+        font-weight:800;
+}
+ 
+p.intro span.subject {
+color: #4D2C80;
+font-weight: bold;
+}
+ 
+ 
+span.name, .postername {
+        color: #06546D !important;
+        font-weight:bold;
+}
+span.trip, .postertrip {
+        color: #B88146;
+}
+.oldpost {
+        color:#CC1105;
+        font-weight:800;
+}
+span.omitted, .omittedposts {
+        color: #7C776F;
+}
+div.post.reply {
+        padding: 5px;
+              
+       background:#030511 url('img/rect821.png') fixed top right no-repeat;
+	color:#47506F;
+	border: 1px solid #000E3A!important;
+       
+       
+        -webkit-border-radius: 10px;
+        -khtml-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+}
+.replyhl {
+        background-color: #1e1e1e;
+        color: #bebebe;
+}
+form table th, div.banner, div.pages, .replymode, .postblock, .passvalid, .catalogmode {
+        background: #030511!important;
+       color:#47506F;
+	border: 1px solid #0A1E55
+}
+div.pages {
+        color: rgb(143, 139, 139);
+        border: 0;
+        background: none !important;
+}
