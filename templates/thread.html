@@ -18,7 +18,11 @@
 		<h1>{{ board.url }} - {{ board.title|e }}</h1>
 		<div class="subtitle">
 			{% if board.subtitle %}
-				{{ board.subtitle|e }}
+				{% if config.allow_subtitle_html %}
+					{{ board.subtitle }}
+				{% else %}
+					{{ board.subtitle|e }}
+				{% endif %}
 			{% endif %}
 			{% if mod %}<p><a href="?/">{% trans %}Return to dashboard{% endtrans %}</a></p>{% endif %}
 		</div>
@@ -29,6 +33,8 @@
 	{% include 'attention_bar.html' %}	
 
 	{% include 'post_form.html' %}
+
+	{{ config.ad.top }}
 
 	{% if config.global_message %}<hr /><div class="blotter">{{ config.global_message }}</div>{% endif %}
 	<hr />
@@ -41,6 +47,9 @@
 	<a href="{{ return }}">[{% trans %}Return{% endtrans %}]</a>
 
 	{{ boardlist.bottom }}
+
+	{{ config.ad.bottom }}
+
 	<footer>
 		<p class="unimportant" style="margin-top:20px;text-align:center;">Powered by <a href="http://tinyboard.org/">Tinyboard</a> {{ config.version }} | <a href="http://tinyboard.org/">Tinyboard</a> Copyright &copy; 2010-2013 Tinyboard Development Group</p>
 		{% for footer in config.footer %}<p class="unimportant" style="text-align:center;">{{ footer }}</p>{% endfor %}

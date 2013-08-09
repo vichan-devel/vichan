@@ -117,7 +117,12 @@ if (isset($_POST['delete'])) {
 		$query->execute() or error(db_error($query));
 		
 		$thread = $query->fetchColumn();
-		
+
+		// If they are not reporting a reply, report the OP.
+		if (!$thread) { 
+			$thread = $id;
+		}		
+
 		if ($thread) {
 			if ($config['syslog'])
 				_syslog(LOG_INFO, 'Reported post: ' .

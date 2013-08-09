@@ -8,7 +8,13 @@
 					 - 
 				{{ board.title|e }}
 				{% if board.subtitle %}
-					 <small>&mdash; {{ board.subtitle|e }}</small>
+					<small>&mdash; 
+						{% if config.allow_subtitle_html %}
+							{{ board.subtitle }}
+						{% else %}
+							{{ board.subtitle|e }}
+						{% endif %}
+					</small>
 				{% endif %}
 				{% if mod|hasPermission(config.mod.manageboards) %}
 					 <a href="?/edit/{{ board.uri }}"><small>[{% trans 'edit' %}]</small></a>

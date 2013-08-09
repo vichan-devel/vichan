@@ -46,7 +46,7 @@ function createBoardlist($mod=false) {
 	if (!isset($config['boards'])) return array('top'=>'','bottom'=>'');
 	
 	$body = doBoardListPart($config['boards'], $mod?'?/':$config['root']);
-	if (!preg_match('/\] $/', $body))
+	if (!preg_match('/\] $/', $body) && $config['boardlist_wrap_bracket'])
 		$body = '[' . $body . ']';
 	
 	$body = trim($body);
@@ -345,9 +345,18 @@ class Post {
 			if (!empty($this->file) && hasPermission($config['mod']['deletefile'], $board['uri'], $this->mod))
 				$built .= ' ' . secure_link_confirm($config['mod']['link_deletefile'], _('Delete file'), _('Are you sure you want to delete this file?'), $board['dir'] . 'deletefile/' . $this->id);
 			
+			// Spoiler file (keep post)
+			if (!empty($this->file)  && $this->file != "deleted" && $this->file != null && $this->thumb != 'spoiler' && hasPermission($config['mod']['spoilerimage'], $board['uri'], $this->mod) && $config['spoiler_images'])
+				$built .= ' ' . secure_link_confirm($config['mod']['link_spoilerimage'], 'Spoiler File', 'Are you sure you want to spoiler this file?', $board['uri'] . '/spoiler/' . $this->id);
+
+			// Move post
+			if (hasPermission($config['mod']['move'], $board['uri'], $this->mod) && $config['move_replies'])
+				$built .= ' <a title="Move reply to another board" href="?/' . $board['uri'] . '/move_reply/' . $this->id . '">' . $config['mod']['link_move'] . '</a>';
+
 			// Edit post
 			if (hasPermission($config['mod']['editpost'], $board['uri'], $this->mod))
 				$built .= ' <a title="'._('Edit post').'" href="?/' . $board['dir'] . 'edit' . ($config['mod']['raw_html_default'] ? '_raw' : '') . '/' . $this->id . '">' . $config['mod']['link_editpost'] . '</a>';
+
 			
 			if (!empty($built))
 				$built = '<span class="controls">' . $built . '</span>';
@@ -445,6 +454,10 @@ class Thread {
 			// Delete file (keep post)
 			if (!empty($this->file) && $this->file != 'deleted' && hasPermission($config['mod']['deletefile'], $board['uri'], $this->mod))
 				$built .= ' ' . secure_link_confirm($config['mod']['link_deletefile'], _('Delete file'), _('Are you sure you want to delete this file?'), $board['dir'] . 'deletefile/' . $this->id);
+
+			// Spoiler file (keep post)
+			if (!empty($this->file)  && $this->file != "deleted" && $this->file != null && $this->thumb != 'spoiler' && hasPermission($config['mod']['spoilerimage'], $board['uri'], $this->mod) && $config['spoiler_images'])
+				$built .= ' ' . secure_link_confirm($config['mod']['link_spoilerimage'], 'Spoiler File', 'Are you sure you want to spoiler this file?', $board['uri'] . '/spoiler/' . $this->id);
 			
 			// Sticky
 			if (hasPermission($config['mod']['sticky'], $board['uri'], $this->mod))

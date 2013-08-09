@@ -25,11 +25,16 @@
 				{{ antibot.html() }}
 			</th>
 			<td>
+				{% if config.field_email_selectbox %}
+				<select name="email" id="email_selectbox" autocomplete="off">
+					<option value=""></option>
+					<option value="sage">sage</option>
+					<option value="noko">noko</option>
+				</select>
+				{% else %}
 				<input type="text" name="email" size="25" maxlength="40" autocomplete="off">
-				{{ antibot.html() }}
-				{% if not (not (config.field_disable_subject or (id and config.field_disable_reply_subject)) or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri))) %}
-				<input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />{% if config.spoiler_images %} <input id="spoiler" name="spoiler" type="checkbox"> <label for="spoiler">{% trans %}Spoiler Image{% endtrans %}</label>{% endif %}
 				{% endif %}
+				{{ antibot.html() }}
 			</td>
 		</tr>{% endif %}
 		{% if not (config.field_disable_subject or (id and config.field_disable_reply_subject)) or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri)) %}<tr>
@@ -79,6 +84,20 @@
 				{{ antibot.html() }}
 			</td>
 		</tr>
+		{% if config.oekaki %}
+		<tr id="oekaki">
+			<th>
+				{% trans %}Oekaki{% endtrans %}
+			</th>
+			<td>
+				<canvas width="500" height="250" id="cvs" style="border:1px solid black;-webkit-user-select: none;-moz-user-select: none;">lol what you looking at the source for nerd</canvas>
+				<p><button type="button" id="brushsize">Brush size</button><input class="color" id="color" value="000000" placeholder="Color"/><button type="button" id="text">Set text</button><button type="button" id="clear">Clear</button><button type="button" id="save">Save</button><button type="button" id="load">Load</button><br/>
+				<button type="button" id="eraser">Toggle eraser</button><button type="button" id="getcolor">Get color</button><button type="button" id="fill">Fill</button>
+				</p><p><textarea id="savebox"></textarea><label><input id="confirm_oekaki" type="checkbox"/> Use oekaki instead of file?</label></p>
+				<img id="saved" style="display:none">
+			</td>
+		</tr>
+		{% endif %}
 		{% if config.enable_embedding %}
 		<tr>
 			<th>

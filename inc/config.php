@@ -383,6 +383,9 @@
 	// When true, a blank password will be used for files (not usable for deletion).
 	$config['field_disable_password'] = false;
 
+	// When true, users are instead presented a selectbox for email. Contains, blank, noko and sage.
+	$config['field_email_selectbox'] = false;
+
 	// Require users to see the ban page at least once for a ban even if it has since expired.
 	$config['require_ban_view'] = true;
 
@@ -620,6 +623,20 @@
 	// REMEMBER TO CHMOD attentionbar.txt PROPERLY
 	// Oh, and add jQuery in additional_javascript.
 	$config['attention_bar'] = false;
+
+	// Allow html in board subtitle. This is useful for placing icons and links.
+	$config['allow_subtitle_html'] = false;
+
+	/* 
+	 * Enable oekaki (お絵描き). This puts a drawing field on your board. You can either
+	 * enable it globally or enable it on a per-board basis. Oekaki's color field
+	 * can be greatly enhanced by installing jscolor from http://jscolor.com/ and installing it in js/
+	 * If you enable oekaki, please remember to also enable its script with:
+	 * $config['additional_javascript'][] = 'js/oekaki.js';
+	 */
+
+	$config['oekaki'] = false;
+
 /*
  * ====================
  *  Display settings
@@ -715,8 +732,23 @@
 	// 	)
 	// );
 
+	// Whether or not to put brackets around the whole board list
+	$config['boardlist_wrap_bracket'] = false;
+
 	// Automatically remove unnecessary whitespace when compiling HTML files from templates.
 	$config['minify_html'] = true;
+
+	/*
+	 * Advertisement HTML to appear at the top and bottom of board pages.
+	 */
+
+	// $config['ad'] = array(
+	//	'top' => '',
+	//	'bottom' => '',
+	// );
+
+	// Optional message to display on ban pages. For example, you could include a link to email an admin or join an IRC channel to be unbanned.
+	$config['ban_page_message'] = '';
 
 /*
  * ====================
@@ -949,6 +981,7 @@
 	$config['mod']['link_ban'] = '[B]';
 	$config['mod']['link_bandelete'] = '[B&amp;D]';
 	$config['mod']['link_deletefile'] = '[F]';
+	$config['mod']['link_spoilerimage'] = '[S]';
 	$config['mod']['link_deletebyip'] = '[D+]';
 	$config['mod']['link_deletebyip_global'] = '[D++]';
 	$config['mod']['link_sticky'] = '[Sticky]';
@@ -987,6 +1020,9 @@
 	// Enable CDIR netmask bans (eg. "10.0.0.0/8" for 10.0.0.0.0 - 10.255.255.255). Useful for stopping
 	// persistent spammers and ban evaders. Again, a little more database load.
 	$config['ban_cidr'] = true;
+
+	// Enable the moving of single replies
+	$config['move_replies'] = false;
 
 	// How often (minimum) to purge the ban list of expired bans (which have been seen). Only works when
 	//  $config['cache'] is enabled and working.
