@@ -3,8 +3,13 @@
 function catalog() {
 var board = $("input[name='board']");
 
-if (board) { 
+if (board.length>0) { 
+if (window.location.href.indexOf("/res/")==-1){ //if we are inside a thread
 var catalog_url = 'catalog.html';
+}
+else {
+var catalog_url = '../catalog.html';
+}
 var pages = document.getElementsByClassName('pages')[0];
 var bottom = document.getElementsByClassName('boardlist bottom')[0]
 var subtitle = document.getElementsByClassName('subtitle')[0];
