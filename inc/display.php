@@ -74,6 +74,9 @@ function error($message, $priority = true, $debug_stuff = false) {
 	if ($config['debug'] && isset($db_error)) {
 		$debug_stuff = array_combine(array('SQLSTATE', 'Error code', 'Error message'), $db_error);
 	}
+
+	// Return the bad request header, necessary for AJAX posts
+	http_response_code(400);
 	
 	die(Element('page.html', array(
 		'config' => $config,

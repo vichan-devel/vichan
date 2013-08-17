@@ -642,15 +642,14 @@
 	// Allow unfiltered HTML in board subtitle. This is useful for placing icons and links.
 	$config['allow_subtitle_html'] = false;
 
-	/* 
-	 * Enable oekaki (お絵描き). This puts a drawing field on your board. You can either
-	 * enable it globally or enable it on a per-board basis. Oekaki's color field
-	 * can be greatly enhanced by installing jscolor from http://jscolor.com/ and installing it in js/
-	 * If you enable oekaki, please remember to also enable its script with:
-	 * $config['additional_javascript'][] = 'js/oekaki.js';
-	 */
+	// Oekaki - To enable oekaki, just enable its script with:
+	// $config['additional_javascript'][] = 'js/oekaki.js';
+	// Color selection in oekaki can be greatly improved by including the bundled jscolor script.
+	// $config['additional_javascript'][] = 'js/jscolor/jscolor.js';
+	// $config['oekaki'] holds Oekaki options, which are currently just default canvas size.
 
-	$config['oekaki'] = false;
+	$config['oekaki']['height'] = 250;
+	$config['oekaki']['width'] = 500;
 
 /*
  * ====================

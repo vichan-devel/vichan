@@ -95,20 +95,6 @@
 				{{ antibot.html() }}
 			</td>
 		</tr>
-		{% if config.oekaki %}
-		<tr id="oekaki">
-			<th>
-				{% trans %}Oekaki{% endtrans %}
-			</th>
-			<td>
-				<canvas width="500" height="250" id="cvs" style="border:1px solid black;-webkit-user-select: none;-moz-user-select: none;">lol what you looking at the source for nerd</canvas>
-				<p><button type="button" id="brushsize">Brush size</button><input class="color" id="color" value="000000" placeholder="Color"/><button type="button" id="text">Set text</button><button type="button" id="clear">Clear</button><button type="button" id="save">Save</button><button type="button" id="load">Load</button><br/>
-				<button type="button" id="eraser">Toggle eraser</button><button type="button" id="getcolor">Get color</button><button type="button" id="fill">Fill</button>
-				</p><p><textarea id="savebox"></textarea><label><input id="confirm_oekaki" type="checkbox"/> Use oekaki instead of file?</label></p>
-				<img id="saved" style="display:none">
-			</td>
-		</tr>
-		{% endif %}
 		{% if config.enable_embedding %}
 		<tr>
 			<th>

@@ -1,10 +1,60 @@
 $(function() {
-var canvas = $("#cvs");
-var context = canvas[0].getContext("2d");
-var is_drawing = false;
-var text = "";
-var eraser = getcolor = fill = false;
-context.strokeStyle = context.fillStyle = "black";
+// Init
+var oekaki_form = '\
+		<tr id="oekaki">\
+			<th>\
+				Oekaki\
+			</th>\
+			<td>\
+				<canvas width="'+oekaki_options.width+'" height="'+oekaki_options.height+'" id="oekaki_canvas" style="border:1px solid black;-webkit-user-select: none;-moz-user-select: none;">lol what you looking at the source for nerd</canvas>\
+				<p><button type="button" id="brushsize">Brush size</button><input class="color" id="color" value="000000" placeholder="Color"/><button type="button" id="text">Set text</button><button type="button" id="clear">Clear</button><button type="button" id="save">Save</button><button type="button" id="load">Load</button><br/>\
+				<button type="button" id="eraser">Toggle eraser</button><button type="button" id="getcolor">Get color</button><button type="button" id="fill">Fill</button>\
+				</p><p><textarea id="savebox"></textarea><label><input id="confirm_oekaki" type="checkbox"/> Use oekaki instead of file?</label></p>\
+				<img id="saved" style="display:none">\
+			</td>\
+		</tr>'
+
+function enable_oekaki() {
+	// Add oekaki after the file input
+	$('input[type="file"]').parent().parent().after(oekaki_form);
+	// Add "edit in oekaki" links
+	$(".fileinfo").append(' <a href="javascript:void(0)" class="edit_in_oekaki">'+_('Edit in oekaki')+'</a>');
+	// Init oekaki vars
+	canvas = $("#oekaki_canvas");
+	context = canvas[0].getContext("2d");
+	is_drawing = false;
+	text = "";
+	eraser = getcolor = fill = false;
+	context.strokeStyle = context.fillStyle = "black";
+	// Attach canvas events
+	attach_events();
+	localStorage['oekaki'] = true;
+}
+
+function disable_oekaki(){
+	$("#oekaki").detach();
+	$(".edit_in_oekaki").detach();
+	localStorage['oekaki'] = false;
+}
+
+if (localStorage['oekaki'] === undefined) { localStorage['oekaki'] = true }
+
+$('hr:first').before('<div id="oekaki-status" style="text-align:right"><a class="unimportant" href="javascript:void(0)">-</a></div>');
+$('div#oekaki-status a').text(_('Oekaki')+' (' + (localStorage['oekaki'] === 'true' ? _('enabled') : _('disabled')) + ')');
+
+$('div#oekaki-status a').on('click', function(){
+	var enabled = !JSON.parse(localStorage['oekaki']);
+
+	if(enabled){
+		enable_oekaki();
+	} else {
+		disable_oekaki();
+	}
+
+	$('div#oekaki-status a').text(_('Oekaki')+' (' + (enabled ? _('enabled') : _('disabled')) + ')');
+});
+
+if (localStorage['oekaki'] === "true") { enable_oekaki(); }
 
 //http://stackoverflow.com/a/5624139/1901658
 function hexToRgb(hex) {
@@ -51,7 +101,7 @@ function flood_fill(x, y, target){
 		var data = context.getImageData(n[0], n[1], 1, 1).data;
 		var d = [data[0], data[1], data[2], data[3]];
 		var t = [target[0], target[1], target[2], target[3]];
-		if (arraysEqual(d, t) && n[0] < 500 && n[1] < 250 && n[0] > -1 && n[1] > -1){
+		if (arraysEqual(d, t) && n[0] < canvas.width() && n[1] < canvas.height() && n[0] > -1 && n[1] > -1){
 			context.putImageData(pixel, n[0], n[1]);
 			queue.push([n[0], n[1]-1]);
 			queue.push([n[0], n[1]+1]);
@@ -68,6 +118,8 @@ function flood_fill(x, y, target){
 function color_under_pixel(x, y){
 	return context.getImageData(x, y, 1, 1).data;
 }
+
+function attach_events(){
 
 canvas.on("mousedown", function(e){
 	getmousepos(e);
@@ -127,6 +179,7 @@ function clear(){
 	context.beginPath();
 	context.clearRect(0,0,canvas.width(),canvas.height());
 	$("#confirm_oekaki").attr("checked",false)
+	canvas[0].height = oekaki_options.height; canvas[0].width = oekaki_options.width;
 };
 
 $("#clear").on("click", clear);
@@ -165,6 +218,17 @@ $("#fill").on("click", function(){
 	fill = true;
 });
 
+$(".edit_in_oekaki").on("click", function(){ 
+	var img_link = $(this).parent().parent().find("a>img.post-image").parent()[0]
+	var img = new Image();
+	img.onload = function() {
+		canvas[0].width = img.width; canvas[0].height = img.height;
+		context.drawImage(img, 0, 0);
+	}
+	img.src = $(img_link).attr("href");
+});
+}
+
 function dataURItoBlob(dataURI) {
     var binary = atob(dataURI.split(',')[1]);
     var array = new Array(binary.length);
@@ -185,14 +249,14 @@ $("form[name='post']").on("submit", function(e){
 		fd.append("post", $("input[name='post']").val());
 		$.ajax({
 			type: "POST",
-			url: "/post.php",
+			url: oekaki_options.root+"post.php",
 			data: fd,
 			processData: false,
 			contentType: false,
 			success: function(data) {
 				location.reload();
 			},
-			error: function(data) {alert("Something went wrong!"); console.log(data)}
+			error: function(jq, data) {alert($('h2',jq.responseText).text());}
 		});
 	}
 
