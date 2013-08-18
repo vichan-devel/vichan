@@ -38,5 +38,13 @@
 		'comment' => '(eg. "catalog.css")'
 	);
 	
+	$theme['config'][] = Array(
+		'title' => 'Update on new posts',
+		'name' => 'update_on_posts',
+		'type' => 'checkbox',
+		'default' => false,
+		'comment' => 'Without this checked, the catalog only updates on new threads.'
+	);
+
 	// Unique function name for building everything
 	$theme['build_function'] = 'catalog_build';
