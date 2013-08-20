@@ -1059,10 +1059,13 @@ function mod_move_reply($originBoard, $postID) {
 			}
 		}
 
+		// build index
 		buildIndex();
+		// build new thread
+		buildThread($newID);
 		
 		// trigger themes
-		rebuildThemes($post['op'] ? 'post-thread' : 'post');
+		rebuildThemes('post');
 		// mod log
 		modLog("Moved post #${postID} to " . sprintf($config['board_abbreviation'], $targetBoard) . " (#${newID})", $originBoard);
 		

@@ -1,0 +1,41 @@
+<form action="?/{{ board }}/move_reply/{{ post }}" method="post">
+	<input type="hidden" name="token" value="{{ token }}">
+	<table>
+		<tr>
+			<th>
+				{% trans 'Post ID' %}
+			</th>
+			<td>
+				&gt;&gt;&gt;{{ config.board_abbreviation|sprintf(board) }}{{ post }}
+			</td>
+		</tr>
+		<tr>
+			<th>{% trans 'Target board' %}</th>
+			<td>
+				<ul style="list-style:none;padding:0">
+					{% for targetboard in boards %}
+						<li>
+							<input type="radio" name="board" value="{{ targetboard.uri }}" id="ban-board-{{ targetboard.uri }}" {% if boards|count == 2 %}checked{% endif %}> 
+							<label style="display:inline" for="ban-board-{{ targetboard.uri }}">
+								{{ config.board_abbreviation|sprintf(targetboard.uri) }} - {{ targetboard.title|e }}
+							</label>
+						</li>
+					{% endfor %}
+				</ul>
+			</td>
+			<td>
+		</tr>
+		<tr>
+			<th>{% trans 'Target thread' %}</th>
+			<td>
+				<p>If you do not want to make the post into a new thread, please specify the thread you want to move the reply to:</p>
+				<input type="text" name="target_thread"/>
+			</td>
+		</tr>
+	</table>
+	
+	<ul style="padding:0;text-align:center;list-style:none">
+		<li><input type="submit" value="{% trans 'Move reply' %}"></li>
+	</ul>
+</form>
+

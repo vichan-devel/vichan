@@ -1343,6 +1343,21 @@
 	// });
 
 /*
+ * =============
+ *  API settings
+ * =============
+ */
+
+	// Whether or not to use the API, disabled by default.
+	$config['api']['enabled'] = false;
+
+	// Extra fields in to be shown in the array that are not 4chan API compatible.
+	// You canget these by taking a look at the schema for posts_ tables. The array should be formatted as $db_name => $translated_name.
+	// For example:
+	
+	// $config['api']['extra_fields'] = array('body_nomarkup'=>'com_nomarkup');
+
+/*
  * ====================
  *  Other/uncategorized
  * ====================

@@ -1,49 +1,48 @@
 <?php
-
 /*
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  */
+
 
 /**
  * Class for generating json API compatible with 4chan API
  */
 class Api {
+	function __construct(){
+		global $config;
+		/**
+		 * Translation from local fields to fields in 4chan-style API
+		 */
+		$this->config = $config;
 
-	/**
-	 * Translation from local fields to fields in 4chan-style API
-	 */
-	public static $postFields = array(
-		'id' => 'no',
-		'thread' => 'resto',
-		'subject' => 'sub',
-		'email' => 'email',
-		'name' => 'name',
-		'trip' => 'trip',
-		'capcode' => 'capcode',
-		'body' => 'com',
-		'time' => 'time',
-		'thumb' => 'thumb', // non-compatible field
-		'thumbx' => 'tn_w',
-		'thumby' => 'tn_h',
-		'file' => 'file', // non-compatible field
-		'filex' => 'w',
-		'filey' => 'h',
-		'filesize' => 'fsize',
-		//'filename' => 'filename',
-		'omitted' => 'omitted_posts',
-		'omitted_images' => 'omitted_images',
-		//'posts' => 'replies',
-		//'ip' => '',
-		'sticky' => 'sticky',
-		'locked' => 'locked',
-		//'bumplocked' => '',
-		//'embed' => '',
-		//'root' => '',
-		//'mod' => '',
-		//'hr' => '',
-	);
+		$this->postFields = array(
+			'id' => 'no',
+			'thread' => 'resto',
+			'subject' => 'sub',
+			'body' => 'com',
+			'email' => 'email',
+			'name' => 'name',
+			'trip' => 'trip',
+			'capcode' => 'capcode',
+			'time' => 'time',
+			'thumbheight' => 'tn_w',
+			'thumbwidth' => 'tn_h',
+			'fileheight' => 'w',
+			'filewidth' => 'h',
+			'filesize' => 'fsize',
+			'filename' => 'filename',
+			'omitted' => 'omitted_posts',
+			'omitted_images' => 'omitted_images',
+			'sticky' => 'sticky',
+			'locked' => 'locked',
+		);
 
-	static $ints = array(
+		if (isset($config['api']['extra_fields']) && gettype($config['api']['extra_fields']) == 'array'){
+			$this->postFields = array_merge($this->postFields, $config['api']['extra_fields']);
+		}
+	}
+
+	private static $ints = array(
 		'no' => 1,
 		'resto' => 1,
 		'time' => 1,
@@ -60,7 +59,7 @@ class Api {
 
 	private function translatePost($post) {
 		$apiPost = array();
-		foreach (self::$postFields as $local => $translated) {
+		foreach ($this->postFields as $local => $translated) {
 			if (!isset($post->$local))
 				continue;
 
@@ -69,12 +68,25 @@ class Api {
 			if ($val !== null && $val !== '') {
 				$apiPost[$translated] = $toInt ? (int) $val : $val;
 			}
+
 		}
 
 		if (isset($post->filename)) {
 			$dotPos = strrpos($post->filename, '.');
 			$apiPost['filename'] = substr($post->filename, 0, $dotPos);
 			$apiPost['ext'] = substr($post->filename, $dotPos);
+		}
+
+		// Handle country field
+		if (isset($post->body_nomarkup) && $this->config['country_flags']) {
+			$modifiers = extract_modifiers($post->body_nomarkup);
+			if (isset($modifiers['flag']) && isset($modifiers['flag alt']) && preg_match('/^[a-z]{2}$/', $modifiers['flag'])) {
+				$country = strtoupper($modifiers['flag']);
+				if ($country) {
+					$apiPost['country'] = $country;
+					$apiPost['country_name'] = $modifiers['flag alt'];
+				}
+			}
 		}
 
 		return $apiPost;
