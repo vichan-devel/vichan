@@ -98,21 +98,21 @@
         </a>
 	{% if post.sticky %}
 		{% if config.font_awesome %}
-			<i class="icon-pushpin icon"></i>
+			<i class="fa fa-thumb-tack"></i>
 		{% else %}
 			<img class="icon" title="Sticky" src="{{ config.image_sticky }}" alt="Sticky" />
 		{% endif %}
 	{% endif %}
 	{% if post.locked %}
 		{% if config.font_awesome %}
-			<i class="icon-lock icon"></i>
+			<i class="fa fa-lock"></i>
 		{% else %}
 			<img class="icon" title="Locked" src="{{ config.image_locked }}" alt="Locked" />
 		{% endif %}
 	{% endif %}
 	{% if post.bumplocked and (config.mod.view_bumplock < 0 or (post.mod and post.mod|hasPermission(config.mod.view_bumplock, board.uri))) %}
 		{% if config.font_awesome %}
-			<i class="icon-anchor icon"></i>
+			<i class="fa fa-anchor"></i>
 		{% else %}
 			<img class="icon" title="Bumplocked" src="{{ config.image_bumplocked }}" alt="Bumplocked" />
 		{% endif %}
