@@ -36,7 +36,7 @@ $(document).ready(function(){
 		}
 	}
 
-	var fields_to_hide = 'div.post,div.video-container,video,img,p.fileinfo,a.hide-thread-link,div.new-posts,br';
+	var fields_to_hide = 'div.post,div.video-container,video,img:not(.unanimated),canvas,p.fileinfo,a.hide-thread-link,div.new-posts,br';
 	
 	var do_hide_threads = function() {
 		var id = $(this).children('p.intro').children('a.post_no:eq(1)').text();

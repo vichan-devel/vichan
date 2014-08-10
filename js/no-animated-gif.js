@@ -24,7 +24,7 @@ function unanimate_gif(e) {
 		draw_image();
 	}
 
-	$(e).hide();
+	$(e).addClass("unanimated").hide();
 }
 
 function no_animated_gif() {
@@ -37,7 +37,7 @@ function no_animated_gif() {
 
 function animated_gif() {
 	$('canvas.post-image').remove();
-	$('img.post-image').show();
+	$('img.post-image').removeClass("unanimated").show();
 	localStorage.no_animated_gif = false;
 	$('#no-animated-gif>a').text(_('Unanimate GIFs'));
 	
