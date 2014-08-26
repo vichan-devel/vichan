@@ -860,8 +860,6 @@ function mod_ban() {
 		return;
 	}
 	
-	require_once 'inc/mod/ban.php';
-	
 	Bans::new_ban($_POST['ip'], $_POST['reason'], $_POST['length'], $_POST['board'] == '*' ? false : $_POST['board']);
 	
 	if (isset($_POST['redirect']))
@@ -953,6 +951,7 @@ function mod_ban_appeals() {
 	
 	$query = query("SELECT *, ``ban_appeals``.`id` AS `id` FROM ``ban_appeals``
 		LEFT JOIN ``bans`` ON `ban_id` = ``bans``.`id`
+		LEFT JOIN ``mods`` ON ``bans``.`creator` = ``mods``.`id`
 		WHERE `denied` != 1 ORDER BY `time`") or error(db_error());
 	$ban_appeals = $query->fetchAll(PDO::FETCH_ASSOC);
 	foreach ($ban_appeals as &$ban) {
@@ -1394,7 +1393,6 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 	$ip = $_post['ip'];
 
 	if (isset($_POST['new_ban'], $_POST['reason'], $_POST['length'], $_POST['board'])) {
-		require_once 'inc/mod/ban.php';
 		
 		if (isset($_POST['ip']))
 			$ip = $_POST['ip'];
