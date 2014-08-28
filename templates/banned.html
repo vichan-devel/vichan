@@ -30,7 +30,13 @@
 	{% endif %}
 	<p>
 		{% trans %}Your ban was filed on{% endtrans %} 
-			<strong>{{ ban.created|date(config.ban_date) }}</strong> {% trans %}and{% endtrans %} <span id="expires">
+			<strong>{{ ban.created|date(config.ban_date) }} </strong>
+			{% if ban.username %}
+				{% trans %}by{% endtrans %} <strong> {{ ban.username }} </strong>
+			{% else %}
+				{% trans %}by{% endtrans %} <em> 'system' </em>
+			{% endif %}
+			{% trans %}and{% endtrans %} <span id="expires">
 		{% if ban.expires and time() >= ban.expires %}
 			{% trans %} has since expired. Refresh the page to continue.{%  endtrans %}
 		{% elseif ban.expires %}

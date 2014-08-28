@@ -734,6 +734,11 @@ function displayBan($ban) {
 			$post = new Thread($ban['post'], null, false, false);
 		}
 	}
+
+	$query = query("SELECT ``mods``.`username` FROM ``bans``
+		LEFT JOIN ``mods`` ON  ``mods``.`id` = `creator`
+		WHERE ``bans``.`id` = " . (int)$ban['id']) or error(db_error());
+	$ban['username'] = implode("", $query->fetch(PDO::FETCH_ASSOC));
 	
 	$denied_appeals = array();
 	$pending_appeal = false;
