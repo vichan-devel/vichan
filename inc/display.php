@@ -353,7 +353,7 @@ class Post {
 			$this->{$key} = $value;
 		}
 
-		if (isset($this->files))
+		if (isset($this->files) && $this->files)
 			$this->files = json_decode($this->files);
 		
 		$this->subject = utf8tohtml($this->subject);
