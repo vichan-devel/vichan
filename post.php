@@ -665,6 +665,12 @@ if (isset($_POST['delete'])) {
 				$size = @getimagesize($config['spoiler_image']);
 				$file['thumbwidth'] = $size[0];
 				$file['thumbheight'] = $size[1];
+			} elseif ($config['spoiler_nsfw'] && isset($_POST['spoiler_nsfw'])) {
+				$file['thumb'] = 'spoiler_nsfw';
+
+                                $size = @getimagesize($config['spoiler_image_nsfw']);
+                                $file['thumbwidth'] = $size[0];
+                                $file['thumbheight'] = $size[1];
 			} elseif ($config['minimum_copy_resize'] &&
 				$image->size->width <= $config['thumb_width'] &&
 				$image->size->height <= $config['thumb_height'] &&
@@ -767,7 +773,7 @@ if (isset($_POST['delete'])) {
 			$file['file_path'] = $file['file'];
 			$file['thumb_path'] = $file['thumb'];
 			$file['file'] = mb_substr($file['file'], mb_strlen($board['dir'] . $config['dir']['img']));
-			if ($file['is_an_image'] && $file['thumb'] != 'spoiler')
+			if ($file['is_an_image'] && $file['thumb'] != 'spoiler' && $file['thumb'] != 'spoiler_nsfw')
 				$file['thumb'] = mb_substr($file['thumb'], mb_strlen($board['dir'] . $config['dir']['thumb']));
 		}
 	}
