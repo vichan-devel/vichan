@@ -35,7 +35,7 @@ function doBoardListPart($list, $root, &$boards) {
 					$title = ' title="'.$boards[$board].'"';
 				}
 				
-				$body .= ' <a href="' . $root . $board . '/' . $config['file_index'] . '"'.$title.'>' . $board . '</a> /';
+				$body .= ' <a href="' . $root . $board . '/' . $config['link_index'] . '"'.$title.'>' . $board . '</a> /';
 			}
 		}
 	}
@@ -383,7 +383,7 @@ class Post {
 	public function link($pre = '', $page = false) {
 		global $config, $board;
 		
-		return $this->root . $board['dir'] . $config['dir']['res'] . sprintf(($page ? $page : $config['file_page']), $this->thread) . '#' . $pre . $this->id;
+		return $this->root . $board['dir'] . $config['dir']['res'] . sprintf(($page ? $page : $config['link_page']), $this->thread) . '#' . $pre . $this->id;
 	}
 	
 	public function build($index=false) {
@@ -438,7 +438,7 @@ class Thread {
 	public function link($pre = '', $page = false) {
 		global $config, $board;
 		
-		return $this->root . $board['dir'] . $config['dir']['res'] . sprintf(($page ? $page : $config['file_page']), $this->id) . '#' . $pre . $this->id;
+		return $this->root . $board['dir'] . $config['dir']['res'] . sprintf(($page ? $page : $config['link_page']), $this->id) . '#' . $pre . $this->id;
 	}
 	public function add(Post $post) {
 		$this->posts[] = $post;

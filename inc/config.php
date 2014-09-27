@@ -1111,6 +1111,14 @@
 	$config['file_post'] = 'post.php';
 	$config['file_script'] = 'main.js';
 
+	// Location of files.
+        $config['link_index'] = $config['file_index'];
+        $config['link_page'] = $config['file_page'];
+        $config['link_page50'] = $config['file_page50'];
+        $config['link_mod'] = $config['file_mod'];
+        $config['link_post'] = $config['file_post'];
+        $config['link_script'] = $config['file_script'];
+
 	// Board directory, followed by a forward-slash (/).
 	$config['board_path'] = '%s/';
 	// Misc directories.
