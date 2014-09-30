@@ -146,14 +146,18 @@ function loadConfig() {
 						str_replace('%s', $config['board_regex'], preg_quote($config['board_path'], '/')) .
 						'(' .
 							preg_quote($config['file_index'], '/') . '|' .
-							str_replace('%d', '\d+', preg_quote($config['file_page'])) .
+							preg_quote($config['link_index'], '/') . '|' .
+							str_replace('%d', '\d+', preg_quote($config['file_page'])) . '|' .
+							str_replace('%d', '\d+', preg_quote($config['link_page'])) .
 						')?' .
 					'|' .
 						str_replace('%s', $config['board_regex'], preg_quote($config['board_path'], '/')) .
 						preg_quote($config['dir']['res'], '/') .
 						'(' .
 							str_replace('%d', '\d+', preg_quote($config['file_page'], '/')) . '|' .
-							str_replace('%d', '\d+', preg_quote($config['file_page50'], '/')) .
+                                                        str_replace('%d', '\d+', preg_quote($config['link_page'], '/')) . '|' .
+							str_replace('%d', '\d+', preg_quote($config['file_page50'], '/')) . '|' .
+                                                        str_replace('%d', '\d+', preg_quote($config['link_page50'], '/')) .
 						')' .
 					'|' .
 						preg_quote($config['file_mod'], '/') . '\?\/.+' .
