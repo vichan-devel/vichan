@@ -270,6 +270,7 @@
 		'recaptcha_challenge_field',
 		'recaptcha_response_field',
 		'spoiler',
+		'spoiler_nsfw',
 		'page',
 		'file_url',
 		'json_response',
