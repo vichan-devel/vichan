@@ -71,6 +71,12 @@
 						$post['thumbwidth'] = $tn_size[0];
 						$post['thumbheight'] = $tn_size[1];
 					}
+					else if ($files[0]->thumb == 'spoiler_nsfw') {
+                                                $tn_size = @getimagesize($config['spoiler_nsfw_image']);
+                                                $post['src'] = $config['spoiler_nsfw_image'];
+                                                $post['thumbwidth'] = $tn_size[0];
+                                                $post['thumbheight'] = $tn_size[1];
+                                        }
 					else {
 						$post['src'] = $config['uri_thumb'] . $files[0]->thumb;
 					}
