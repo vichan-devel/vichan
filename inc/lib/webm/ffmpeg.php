@@ -8,10 +8,11 @@ function get_webm_info($filename) {
   global $board, $config;
 
   $filename = escapeshellarg($filename);
-  $ffprobe = $config['webm']['ffprobe_path'];
+  $ffprobe = escapeshellcmd($config['webm']['ffprobe_path']);
+  $ffprobe_exec = $config['webm']['ffprobe_exec'];
   $ffprobe_out = array();
   $webminfo = array();
-  exec(sprintf ($config['webm']['ffprobe_exec'],$ffprobe,$filename), $ffprobe_out);
+  exec(sprintf ($ffprobe_exec,$ffprobe,$filename), $ffprobe_out);
   $ffprobe_out = json_decode(implode("\n", $ffprobe_out), 1);
   $webminfo['error'] = is_valid_webm($ffprobe_out);
 
@@ -50,12 +51,14 @@ function make_webm_thumbnail($filename, $thumbnail, $width, $height) {
 
   $filename = escapeshellarg($filename);
   $thumbnail = escapeshellarg($thumbnail); // Should be safe by default but you
-                                           // can never be too safe.
+  $width =  escapeshellarg($width);        // can never be too safe.
+  $height =  escapeshellarg($height);
 
-  $ffmpeg = $config['webm']['ffmpeg_path'];
+  $ffmpeg = escapeshellcmd($config['webm']['ffmpeg_path']);
+  $ffmpeg_exec = $config['webm']['ffmpeg_exec'];
   $ffmpeg_out = array();
 
-  exec(sprintf ($config['webm']['ffmpeg_exec'],$ffmpeg,$filename,$width,$height,$thumbnail));
+  exec(sprintf ($ffmpeg_exec,$ffmpeg,$filename,$width,$height,$thumbnail));
 
   return count($ffmpeg_out);
 }
