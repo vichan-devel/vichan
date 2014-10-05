@@ -11,8 +11,7 @@ function get_webm_info($filename) {
   $ffprobe = $config['webm']['ffprobe_path'];
   $ffprobe_out = array();
   $webminfo = array();
-
-  exec("$ffprobe -v quiet -print_format json -show_format -show_streams $filename", $ffprobe_out);
+  exec(sprintf ($config['webm']['ffprobe_exec'],$ffprobe,$filename), $ffprobe_out);
   $ffprobe_out = json_decode(implode("\n", $ffprobe_out), 1);
   $webminfo['error'] = is_valid_webm($ffprobe_out);
 
@@ -56,7 +55,7 @@ function make_webm_thumbnail($filename, $thumbnail, $width, $height) {
   $ffmpeg = $config['webm']['ffmpeg_path'];
   $ffmpeg_out = array();
 
-  exec("$ffmpeg -i $filename -v quiet -ss 00:00:00 -an -vframes 1 -f mjpeg -vf scale=$width:$height $thumbnail 2>&1");
+  exec(sprintf ($config['webm']['ffmpeg_exec'],$ffmpeg,$filename,$width,$height,$thumbnail));
 
   return count($ffmpeg_out);
 }
