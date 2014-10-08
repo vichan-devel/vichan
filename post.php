@@ -95,7 +95,7 @@ if (isset($_POST['delete'])) {
 	$root = $is_mod ? $config['root'] . $config['file_mod'] . '?/' : $config['root'];
 	
 	if (!isset($_POST['json_response'])) {
-		header('Location: ' . $root . $board['dir'] . $config['file_index'], true, $config['redirect_http']);
+		header('Location: ' . $root . $board['dir'] . $config['link_index'], true, $config['redirect_http']);
 	} else {
 		header('Content-Type: text/json');
 		echo json_encode(array('success' => true));
@@ -154,7 +154,7 @@ if (isset($_POST['delete'])) {
 	$root = $is_mod ? $config['root'] . $config['file_mod'] . '?/' : $config['root'];
 	
 	if (!isset($_POST['json_response'])) {
-		header('Location: ' . $root . $board['dir'] . $config['file_index'], true, $config['redirect_http']);
+		header('Location: ' . $root . $board['dir'] . $config['link_index'], true, $config['redirect_http']);
 	} else {
 		header('Content-Type: text/json');
 		echo json_encode(array('success' => true));
@@ -837,7 +837,7 @@ if (isset($_POST['delete'])) {
 	
 	if ($noko) {
 		$redirect = $root . $board['dir'] . $config['dir']['res'] .
-			sprintf($config['file_page'], $post['op'] ? $id:$post['thread']) . (!$post['op'] ? '#' . $id : '');
+			sprintf($config['link_page'], $post['op'] ? $id:$post['thread']) . (!$post['op'] ? '#' . $id : '');
 	   	
 		if (!$post['op'] && isset($_SERVER['HTTP_REFERER'])) {
 			$regex = array(
@@ -853,7 +853,7 @@ if (isset($_POST['delete'])) {
 			}
 		}
 	} else {
-		$redirect = $root . $board['dir'] . $config['file_index'];
+		$redirect = $root . $board['dir'] . $config['link_index'];
 		
 	}
 	

@@ -146,14 +146,18 @@ function loadConfig() {
 						str_replace('%s', $config['board_regex'], preg_quote($config['board_path'], '/')) .
 						'(' .
 							preg_quote($config['file_index'], '/') . '|' .
-							str_replace('%d', '\d+', preg_quote($config['file_page'])) .
+							preg_quote($config['link_index'], '/') . '|' .
+							str_replace('%d', '\d+', preg_quote($config['file_page'])) . '|' .
+							str_replace('%d', '\d+', preg_quote($config['link_page'])) .
 						')?' .
 					'|' .
 						str_replace('%s', $config['board_regex'], preg_quote($config['board_path'], '/')) .
 						preg_quote($config['dir']['res'], '/') .
 						'(' .
 							str_replace('%d', '\d+', preg_quote($config['file_page'], '/')) . '|' .
-							str_replace('%d', '\d+', preg_quote($config['file_page50'], '/')) .
+                                                        str_replace('%d', '\d+', preg_quote($config['link_page'], '/')) . '|' .
+							str_replace('%d', '\d+', preg_quote($config['file_page50'], '/')) . '|' .
+                                                        str_replace('%d', '\d+', preg_quote($config['link_page50'], '/')) .
 						')' .
 					'|' .
 						preg_quote($config['file_mod'], '/') . '\?\/.+' .
@@ -1245,9 +1249,9 @@ function getPageButtons($pages, $mod=false) {
 			} else {
 				$loc = ($mod ? '?/' . $board['uri'] . '/' : '') .
 					($num == 1 ?
-						$config['file_index']
+						$config['link_index']
 					:
-						sprintf($config['file_page'], $num)
+						sprintf($config['link_page'], $num)
 					);
 
 				$btn['prev'] = '<form action="' . ($mod ? '' : $root . $loc) . '" method="get">' .
@@ -1262,7 +1266,7 @@ function getPageButtons($pages, $mod=false) {
 				// There is no next page.
 				$btn['next'] = _('Next');
 			} else {
-				$loc = ($mod ? '?/' . $board['uri'] . '/' : '') . sprintf($config['file_page'], $num + 2);
+				$loc = ($mod ? '?/' . $board['uri'] . '/' : '') . sprintf($config['link_page'], $num + 2);
 
 				$btn['next'] = '<form action="' . ($mod ? '' : $root . $loc) . '" method="get">' .
 					($mod ?
@@ -1295,7 +1299,7 @@ function getPages($mod=false) {
 	for ($x=0;$x<$count && $x<$config['max_pages'];$x++) {
 		$pages[] = array(
 			'num' => $x+1,
-			'link' => $x==0 ? ($mod ? '?/' : $config['root']) . $board['dir'] . $config['file_index'] : ($mod ? '?/' : $config['root']) . $board['dir'] . sprintf($config['file_page'], $x+1)
+			'link' => $x==0 ? ($mod ? '?/' : $config['root']) . $board['dir'] . $config['link_index'] : ($mod ? '?/' : $config['root']) . $board['dir'] . sprintf($config['link_page'], $x+1)
 		);
 	}
 
@@ -1773,7 +1777,7 @@ function markup(&$body, $track_cites = false) {
 			if (isset($cited_posts[$cite])) {
 				$replacement = '<a onclick="highlightReply(\''.$cite.'\');" href="' .
 					$config['root'] . $board['dir'] . $config['dir']['res'] .
-					($cited_posts[$cite] ? $cited_posts[$cite] : $cite) . '.html#' . $cite . '">' .
+					sprintf($config['link_page'], $cited_posts[$cite] ? $cited_posts[$cite] : $cite) . '#' . $cite . '">' .
 					'&gt;&gt;' . $cite .
 					'</a>';
 
@@ -1799,7 +1803,7 @@ function markup(&$body, $track_cites = false) {
 			// Carry found posts from local board >>X links
 			foreach ($cited_posts as $cite => $thread) {
 				$cited_posts[$cite] = $config['root'] . $board['dir'] . $config['dir']['res'] .
-					($thread ? $thread : $cite) . '.html#' . $cite;
+					sprintf($config['link_page'], $thread ? $thread : $cite) . '#' . $cite;
 			}
 			
 			$cited_posts = array(
@@ -1844,11 +1848,11 @@ function markup(&$body, $track_cites = false) {
 				
 				while ($cite = $query->fetch(PDO::FETCH_ASSOC)) {
 					$cited_posts[$_board][$cite['id']] = $config['root'] . $board['dir'] . $config['dir']['res'] .
-						($cite['thread'] ? $cite['thread'] : $cite['id']) . '.html#' . $cite['id'];
+						sprintf($config['link_page'],$cite['thread'] ? $cite['thread'] : $cite['id']) . '#' . $cite['id'];
 				}
 			}
 			
-			$crossboard_indexes[$_board] = $config['root'] . $board['dir'] . $config['file_index'];
+			$crossboard_indexes[$_board] = $config['root'] . $board['dir'] . $config['link_index'];
 		}
 		
 		// Restore old board
@@ -2022,7 +2026,7 @@ function buildThread($id, $return = false, $mod = false) {
 		'isnoko50' => false,
 		'antibot' => $antibot,
 		'boardlist' => createBoardlist($mod),
-		'return' => ($mod ? '?' . $board['url'] . $config['file_index'] : $config['root'] . $board['dir'] . $config['file_index'])
+		'return' => ($mod ? '?' . $board['url'] . $config['link_index'] : $config['root'] . $board['dir'] . $config['link_index'])
 	));
 
 	if ($config['try_smarter'] && !$mod)
