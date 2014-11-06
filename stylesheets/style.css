@@ -212,15 +212,6 @@ a download {
   display:none;
 }
 
-p.fileinfo > a {
-  display:none;
-}
-
-div.file.multifile {
-  max-width:128px!important;
-  min-height:128px;
-}
-
 .post-image {
   border: none;
   display: block;
@@ -294,8 +285,7 @@ p.intro a {
 
 div.delete {
   float: right;
-  margin:4px;
-  padding:2px;
+  margin:8px auto;
 }
 
 div.post.reply p {
@@ -326,13 +316,13 @@ div.post div.body {
 
 div.post.reply {
   background: #D6DAF0;
-  margin: 1px;
-  padding: 4px;
+  margin: 1px auto;
+  padding: 4px auto;
   border-width: 1px;
   border-style: none solid solid none;
   border-color: #B7C5D9;
   display: inline-block;
-  width: 98%!important;
+  width: 100%!important;
 }
 
 div.post_modified {
@@ -342,7 +332,7 @@ div.post_modified {
 div.post_modified div.content-status {
   margin-top: 0.5em;
   padding-bottom: 0em;
-  font-size: 72%;
+  font-size: 75%;
 }
 
 div.post_modified div.content-status:first-child {
@@ -474,6 +464,7 @@ div.pages {
   color: #89A;
   background: #D6DAF0;
   display: inline;
+  margin:4px auto;
   padding: 2px;
   border-right: 1px solid #B7C5D9;
   border-bottom: 1px solid #B7C5D9;
