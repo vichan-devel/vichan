@@ -676,6 +676,10 @@ pre {
   display: inline!important;
 }
 
+.theme-catalog {
+  margin: auto;
+}
+
 .theme-catalog div.thread img {
   float: none!important;
   margin:auto;
