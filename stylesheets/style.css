@@ -56,6 +56,13 @@ p.intro time,p.intro a.ip-link,p.intro a.capcode {
 
 /* Header
 ***********************************************************/
+h1 {
+  font: 20pt/30px sans-serif;
+  font-weight: bold;
+  letter-spacing: -3px;
+  margin: 0;
+}
+
 h2 {
   color: #AF0A0F;
   font-size: 11pt;
@@ -67,13 +74,6 @@ header {
   margin: 16px 0;
 }
 
-h1 {
-  font: 20pt/30px sans-serif;
-  font-weight: bold;
-  letter-spacing: -3px;
-  margin: 0;
-}
-
 header div.subtitle,h1 {
   color:#AF0A0F;
   text-align:center;
@@ -83,31 +83,39 @@ header div.subtitle {
   font-size:8pt;
 }
 
-/* Ad Banner  */
+div#bg > div {
+  max-width:100%!important;
+}
+
+/* Ad Banner */
 div#bg > div {
   max-width:100%!important;
 }
 
 /* Post Form */
 form {
-  margin-bottom: 4em;
+  margin-bottom:16px;
 }
 
 form table {
-  margin: auto;
+  margin:auto;
+  height:auto;
+  width:50px%;
 }
 
 form table input {
-  height: auto;
+  height:auto;
+  width:auto;
+  margin:auto;
 }
 
 input[type="text"],input[type="password"],textarea {
-  border: 1px solid #a9a9a9;
-  text-indent: 0;
-  text-shadow: none;
-  text-transform: none;
-  word-spacing: normal;
-  max-width: 75%;
+  border:1px solid #a9a9a9;
+  max-width:100%;
+  text-indent:0;
+  text-shadow:none;
+  text-transform:none;
+  word-spacing:normal;
 }
 
 #quick-reply input[type="text"], input[type="password"], #quick-reply textarea {
@@ -115,9 +123,10 @@ input[type="text"],input[type="password"],textarea {
 }
 
 form table tr td {
-  text-align: left;
-  margin: 0;
-  padding: 0;
+  text-align:left;
+  margin:0;
+  padding:0;
+  max-width:200px;
 }
 
 form table.mod tr td {
@@ -125,12 +134,9 @@ form table.mod tr td {
 }
 
 form table tr th {
-  text-align: left;
-  padding: 4px;
-}
-
-form table tr th {
-  background: #98E;
+  background:#98E;
+  text-align:left;
+  padding:3px;
 }
 
 form table tr td div.center {
@@ -145,11 +151,11 @@ form table tr td div input {
 }
 
 form table tr td div label {
-  font-size: 10px;
+  font-size: 10pt;
 }
 
 .unimportant,.unimportant * {
-  font-size: 10px;
+  font-size: 10pt;
 }
 
 .file {
@@ -496,6 +502,9 @@ hr {
   clear: left;
 }
 
+
+/* UI
+***********************************************************/
 div.boardlist {
   color: #89A;
   font-size: 9pt;
@@ -733,22 +742,6 @@ pre {
   max-width: 100%;
 }
 
-@media (max-width: 420px) {
-  .theme-catalog ul#Grid {
-    padding-left: 18px;
-  }
-
-  .theme-catalog div.thread {
-    width: auto;
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  .theme-catalog div.threads {
-    overflow: hidden;
-  }
-}
-
 .compact-boardlist {
   padding: 3px;
   padding-bottom: 0;
@@ -946,6 +939,54 @@ pre {
   cursor: pointer;
 }
 
+
+/* MISC
+***********************************************************/
+
+/* Code Tags */
+pre {
+  display: block!important;
+  font: 9pt/13px monospace;
+  max-width:99%;
+  overflow:auto;
+  word-wrap:normal;
+}
+
+span.pln {
+  color:grey;
+}
+
+.MathJax_Display {
+  display: inline!important;
+}
+
+
+/* Threadwatcher */
+#watchlist {
+  border: 1px solid;
+  border-style: none solid solid none;
+  display: none;
+  margin: 0 auto 10px auto;
+  max-height: 250px;
+  overflow: auto;
+  width: 50%;
+}
+
+.watchlist-inner, .watchlist-controls {
+  margin: 10px auto;
+  text-align: center;
+}
+
+#watchlist-toggle, .watchThread, .watchlist-remove, #clearList, #clearGhosts {
+  cursor: pointer;
+}
+
+.own_post {
+	font-style: italic;
+	font-weight: normal;
+	opacity: .666;
+}
+
 pre {
 /* Better code tags */
   max-width:inherit;
@@ -958,57 +999,6 @@ pre {
 
 span.pln {
   color:grey;
-}
-
-
-@media screen and (min-width: 768px) {
-  p.intro {
-    clear: none;
-  }
-
-  div.post div.body {
-    clear: none;
-  }
-}
-
-/* threadwatcher */
-
-#watchlist {
-	display: none;
-	max-height: 250px;
-	overflow: auto;
-	border: 1px solid;
-	border-style: none solid solid none;
-	width: 50%;
-	margin: 0 auto;
-	margin-bottom: 10px;
-}
-
-#watchlist {
-	font-size: 8pt;
-	width: 15%;
-	position: fixed;
-	right: 0pt;
-	bottom: 0pt;
-	margin: 0pt;
-	padding: 0pt;
-}
-
-.watchlist-inner, .watchlist-controls {
-	margin: 0pt;
-	text-align: center;
-}
-
-#watchlist-toggle, .watchThread, .watchlist-remove, #clearList, #clearGhosts {
-	cursor: pointer;
-}
-.own_post {
-	font-style: italic;
-	font-weight: normal;
-	opacity: .666;
-}
-div.mix {
-	display: inline-block;
 }
 
 
