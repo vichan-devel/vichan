@@ -163,15 +163,11 @@ form table tr td div label {
   float: none;
 }
 
-
-.file .multifile {
-  width:25%;
-}
-
 p.fileinfo {
-  display: block;
-  margin: 0 0 0 20px;
+  margin: 0 0 0 5px;
+  padding:0;
   overflow: hidden;
+  max-width:30%;
 }
 
 div.post p.fileinfo {
@@ -472,19 +468,13 @@ div.pages {
 }
 
 div.pages.top {
-  display: block;
+  display: none;
   padding: 5px 8px;
   margin-bottom: 5px;
   position: fixed;
   top: 0;
   right: 0;
   opacity: 0.9;
-}
-
-@media screen and (max-width: 800px) {
-  div.pages.top {
-    display: none!important;
-  }
 }
 
 div.pages a.selected {
@@ -1011,6 +1001,14 @@ span.pln {
   color:grey;
 }
 
+div.file.multifile {
+  display: -webkit-inline-box;
+  margin: 0;
+  padding:0;
+  width:auto !important;
+  max-width: 45%!important;
+}
+
 
 /* Large Screens
 ***********************************************************/
@@ -1085,7 +1083,10 @@ span.pln {
   div.post.reply {
     width: auto!important;
   }
-
+  
+  div.pages.top {
+    display: block!important;
+  }
 }
 
 /* Tablets/Laptops */
