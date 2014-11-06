@@ -2,7 +2,8 @@ html,
 body {
   margin:auto;
   max-width: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 body {
@@ -317,7 +318,7 @@ div.post div.body {
 div.post.reply {
   background: #D6DAF0;
   margin: 1px auto;
-  padding: 4px auto;
+  padding: 8px;
   border-width: 1px;
   border-style: none solid solid none;
   border-color: #B7C5D9;
@@ -1018,7 +1019,8 @@ span.pln {
 @media screen and (min-width: 768px) {
   html,
   body {
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: auto;
   }
 
   form table {
