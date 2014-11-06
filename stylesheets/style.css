@@ -28,6 +28,8 @@ a.post_no {
   padding: 0;
 }
 
+
+
 p.intro a.post_no {
   color: inherit;
 }
@@ -171,9 +173,15 @@ form table tr td div label {
   float: none;
 }
 
+
+.file .multifile {
+  width:25%;
+}
+
 p.fileinfo {
   display: block;
   margin: 0 0 0 20px;
+  overflow: hidden;
 }
 
 div.post p.fileinfo {
@@ -203,11 +211,25 @@ img.banner,img.board_image {
   margin: 12px auto 0 auto;
 }
 
+
+/* Posts
+***********************************************************/
+/* Image */
+span.unimportant {
+  display:none;
+}
+
+a download {
+  display:none;
+}
+
 .post-image {
+  border: none;
   display: block;
   float: left;
-  margin: 5px 20px 10px 20px;
-  border: none;
+  margin: 4px 8px 4px 0;
+  height:25%!important;
+  width:25%!important;
 }
 
 .full-image {
@@ -1050,6 +1072,15 @@ span.pln {
     min-width:272px;
     max-width:272px;
     max-height:512px;
+  }
+
+  /* Image info*/
+  span.unimportant {
+    display:inline-block!important;
+  }
+
+  a download {
+    display:inline-block!important;
   }
 
   .post-image {
