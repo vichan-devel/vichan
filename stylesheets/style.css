@@ -428,7 +428,8 @@ div.styles {
 }
 
 div.styles a {
-  margin: 0 10px;
+  margin:auto;
+  padding:0 2px;
 }
 
 div.styles a.selected {
