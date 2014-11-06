@@ -212,6 +212,15 @@ a download {
   display:none;
 }
 
+p.fileinfo > a {
+  display:none;
+}
+
+div.file.multifile {
+  max-width:128px!important;
+  min-height:128px;
+}
+
 .post-image {
   border: none;
   display: block;
@@ -285,6 +294,8 @@ p.intro a {
 
 div.delete {
   float: right;
+  margin:4px;
+  padding:2px;
 }
 
 div.post.reply p {
@@ -463,7 +474,7 @@ div.pages {
   color: #89A;
   background: #D6DAF0;
   display: inline;
-  padding: 8px;
+  padding: 2px;
   border-right: 1px solid #B7C5D9;
   border-bottom: 1px solid #B7C5D9;
 }
