@@ -53,6 +53,9 @@ p.intro time,p.intro a.ip-link,p.intro a.capcode {
   unicode-bidi: embed;
 }
 
+
+/* Header
+***********************************************************/
 h2 {
   color: #AF0A0F;
   font-size: 11pt;
@@ -61,25 +64,31 @@ h2 {
 }
 
 header {
-  margin: 1em 0;
+  margin: 16px 0;
 }
 
 h1 {
-  font-family: tahoma;
-  letter-spacing: -2px;
-  font-size: 20pt;
+  font: 20pt/30px sans-serif;
+  font-weight: bold;
+  letter-spacing: -3px;
   margin: 0;
 }
 
 header div.subtitle,h1 {
-  color: #AF0A0F;
-  text-align: center;
+  color:#AF0A0F;
+  text-align:center;
 }
 
 header div.subtitle {
-  font-size: 8pt;
+  font-size:8pt;
 }
 
+/* Ad Banner  */
+div#bg > div {
+  max-width:100%!important;
+}
+
+/* Post Form */
 form {
   margin-bottom: 4em;
 }
