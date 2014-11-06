@@ -702,11 +702,6 @@ pre {
   margin-left: auto;
 }
 
-.theme-catalog div.thread:hover {
-  background: #D6DAF0;
-  border-color: #B7C5D9;
-}
-
 .theme-catalog div.grid-size-vsmall img {
   max-height: 33%;
   max-width: 95%
