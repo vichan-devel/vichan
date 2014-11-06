@@ -8,9 +8,9 @@ body {
 body {
   background: #EEF2FF url('img/fade-blue.png') repeat-x 50% 0%;
   color: black;
-  font: 9pt/13px arial, helvetica, sans-serif;
-  margin: 1px 4px;
-  padding: 1px 4px;
+  font: 10pt/13px arial, helvetica, sans-serif;
+  margin: 1px 2px;
+  padding: 1px 2px;
 }
 
 a,a:visited {
@@ -27,8 +27,6 @@ a.post_no {
   margin: 0;
   padding: 0;
 }
-
-
 
 p.intro a.post_no {
   color: inherit;
@@ -83,15 +81,6 @@ header div.subtitle,h1 {
 
 header div.subtitle {
   font-size:8pt;
-}
-
-div#bg > div {
-  max-width:100%!important;
-}
-
-/* Ad Banner */
-div#bg > div {
-  max-width:100%!important;
 }
 
 /* Post Form */
@@ -185,7 +174,7 @@ p.fileinfo {
 }
 
 div.post p.fileinfo {
-  padding-left: 5px;
+  padding-left: 4px;
 }
 
 div.banner {
@@ -193,7 +182,7 @@ div.banner {
   font-size: 12pt;
   font-weight: bold;
   text-align: center;
-  margin: 1em 0;
+  margin: 16px 0;
 }
 
 div.banner,div.banner a {
@@ -265,9 +254,9 @@ div.post.op hr {
 }
 
 p.intro {
-  margin: 0.5em 0;
+  margin: 4px 0;
   padding: 0;
-  padding-bottom: 0.2em;
+  padding-bottom: 2px;
 }
 
 input.delete {
@@ -291,7 +280,7 @@ p.intro span.capcode,p.intro a.capcode,p.intro a.nametag {
 }
 
 p.intro a {
-  margin-left: 8px;
+  margin-left: 4px;
 }
 
 div.delete {
@@ -299,14 +288,12 @@ div.delete {
 }
 
 div.post.reply p {
-  margin: 0.3em 0 0 0;
+  margin: 1px 0 0 0;
 }
 
 div.post.reply div.body {
-  margin-left: 1.8em;
-  margin-top: 0.8em;
-  padding-right: 3em;
-  padding-bottom: 0.3em;
+  margin: 4px auto auto 8px;
+  padding: auto 12px 4px auto;
 }
 
 div.post.reply.highlighted {
@@ -318,7 +305,7 @@ div.post.reply div.body a {
 }
 
 div.post {
-  padding-left: 20px;
+  padding-left: 10px;
 }
 
 div.post div.body {
@@ -328,13 +315,13 @@ div.post div.body {
 
 div.post.reply {
   background: #D6DAF0;
-  margin: 0.2em 4px;
-  padding: 0.2em 0.3em 0.5em 0.6em;
+  margin: 1px;
+  padding: 4px;
   border-width: 1px;
   border-style: none solid solid none;
   border-color: #B7C5D9;
   display: inline-block;
-  max-width: 94%!important;
+  width: 98%!important;
 }
 
 div.post_modified {
@@ -643,8 +630,8 @@ table.mod.config-editor input[type="text"] {
 }
 
 #attention_bar {
-  height: 1.5em;
-  max-height: 1.5em;
+  height: 24px;
+  max-height: 24px;
   width: 100%;
   max-width: 100%;
   text-align: center;
@@ -694,18 +681,18 @@ pre {
   margin:auto;
   max-height: 150px;
   max-width: 200px;
-  box-shadow: 0 0 4px rgba(0,0,0,0.55);
-  border: 2px solid rgba(153,153,153,0);
+  box-shadow: 0 0 2px rgba(0,0,0,0.55);
+  border: 1px solid rgba(153,153,153,0);
 }
 
 .theme-catalog div.thread {
   background: rgba(182,182,182,0.12);
   border: 2px solid rgba(111,111,111,0.34);
   display: inline-block;
-  font-size: 10pt;
+  font-size: 9pt;
   font-weight: normal;
   text-align: center;
-  margin: 1px auto;
+  margin: 2px 0;
   padding: 1px;
   height: 300px; max-height: 300px;
   width: 205px;
@@ -730,7 +717,7 @@ pre {
 }
 
 .theme-catalog div.grid-size-vsmall {
-  min-width:90px; max-width: 90px;
+  min-width:94px; max-width: 94px;
   max-height: 160px;
 }
 
@@ -740,8 +727,8 @@ pre {
 }
 
 .theme-catalog div.grid-size-small {
-  min-width:140px; max-width: 140px;
-  max-height: 256px;
+  min-width:142px; max-width: 142px;
+  max-height: 200px;
 }
 
 .theme-catalog div.grid-size-large img {
@@ -750,7 +737,7 @@ pre {
 }
 
 .theme-catalog div.grid-size-large {
-  min-width: 256px; max-width: 256px;
+  min-width: 300px; max-width: 300px;
   max-height: 384px;
 }
 
@@ -774,7 +761,7 @@ pre {
 }
 
 .compact-boardlist .cb-fa {
-  font-size: 21px;
+  font-size: 14pt;
   padding: 2px;
   padding-top: 0;
 }
@@ -893,7 +880,7 @@ pre {
   right: 0px;
   position: absolute;
   margin-right: 3px;
-  font-size: 20px;
+  font-size: 14pt;
   z-index: 100;
 }
 
@@ -933,7 +920,6 @@ pre {
   left: 81px;
   right: 0px;
   text-align: left;
-  font-size: 12px;
 }
 
 .options_tab h2 {
@@ -1059,19 +1045,19 @@ span.pln {
   .theme-catalog div.grid-size-vsmall {
     min-width:128px;
     max-width:128px;
-    max-height:192px;
+    max-height:160px;
   }
 
   .theme-catalog div.grid-size-small {
-    min-width:200px;
-    max-width:200px;
-    max-height:384px;
+    min-width:192px;
+    max-width:192px;
+    max-height:200px;
   }
 
   .theme-catalog div.grid-size-large {
-    min-width:272px;
-    max-width:272px;
-    max-height:512px;
+    min-width:300px;
+    max-width:300px;
+    max-height:300px;
   }
 
   /* Image info*/
@@ -1087,6 +1073,11 @@ span.pln {
     height:auto!important;
     width:200px!important;
   }
+
+  div.post.reply {
+    width: auto!important;
+  }
+
 }
 
 /* Tablets/Laptops */
