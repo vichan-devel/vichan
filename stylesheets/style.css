@@ -167,7 +167,6 @@ p.fileinfo {
   margin: 0 0 0 5px;
   padding:0;
   overflow: hidden;
-  max-width:30%;
 }
 
 div.post p.fileinfo {
@@ -1002,11 +1001,18 @@ span.pln {
 }
 
 div.file.multifile {
-  display: -webkit-inline-box;
-  margin: 0;
+  margin:0;
   padding:0;
-  width:auto !important;
-  max-width: 45%!important;
+  width:auto!important;
+  max-width:49%!important;
+}
+
+div.thread > div.files {
+  clear:both;
+}
+
+div.files > p.fileinfo > a {
+  display: none !important;
 }
 
 
