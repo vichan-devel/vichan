@@ -1,11 +1,17 @@
+html,
+body {
+  margin:auto;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 body {
   background: #EEF2FF url('img/fade-blue.png') repeat-x 50% 0%;
   color: black;
-  font-family: arial,helvetica,sans-serif;
-  font-size: 10pt;
-  margin: 0 4px;
-  padding-left: 4px;
-  padding-right: 4px;
+  font: 10pt/13px arial, helvetica, sans-serif;
+  margin: 1px 2px;
+  padding: 1px 2px;
 }
 
 a,a:visited {
@@ -48,6 +54,16 @@ p.intro time,p.intro a.ip-link,p.intro a.capcode {
   unicode-bidi: embed;
 }
 
+
+/* Header
+***********************************************************/
+h1 {
+  font: 20pt/30px sans-serif;
+  font-weight: bold;
+  letter-spacing: -3px;
+  margin: 0;
+}
+
 h2 {
   color: #AF0A0F;
   font-size: 11pt;
@@ -56,44 +72,42 @@ h2 {
 }
 
 header {
-  margin: 1em 0;
-}
-
-h1 {
-  font-family: tahoma;
-  letter-spacing: -2px;
-  font-size: 20pt;
-  margin: 0;
+  margin: 16px 0;
 }
 
 header div.subtitle,h1 {
-  color: #AF0A0F;
-  text-align: center;
+  color:#AF0A0F;
+  text-align:center;
 }
 
 header div.subtitle {
-  font-size: 8pt;
+  font-size:8pt;
 }
 
+/* Post Form */
 form {
-  margin-bottom: 4em;
+  margin-bottom:16px;
 }
 
 form table {
-  margin: auto;
+  margin:auto;
+  height:auto;
+  width:50px%;
 }
 
 form table input {
-  height: auto;
+  height:auto;
+  width:auto;
+  margin:auto;
 }
 
 input[type="text"],input[type="password"],textarea {
-  border: 1px solid #a9a9a9;
-  text-indent: 0;
-  text-shadow: none;
-  text-transform: none;
-  word-spacing: normal;
-  max-width: 75%;
+  border:1px solid #a9a9a9;
+  max-width:100%;
+  text-indent:0;
+  text-shadow:none;
+  text-transform:none;
+  word-spacing:normal;
 }
 
 #quick-reply input[type="text"], input[type="password"], #quick-reply textarea {
@@ -101,9 +115,10 @@ input[type="text"],input[type="password"],textarea {
 }
 
 form table tr td {
-  text-align: left;
-  margin: 0;
-  padding: 0;
+  text-align:left;
+  margin:0;
+  padding:0;
+  max-width:200px;
 }
 
 form table.mod tr td {
@@ -111,12 +126,9 @@ form table.mod tr td {
 }
 
 form table tr th {
-  text-align: left;
-  padding: 4px;
-}
-
-form table tr th {
-  background: #98E;
+  background:#98E;
+  text-align:left;
+  padding:3px;
 }
 
 form table tr td div.center {
@@ -131,11 +143,11 @@ form table tr td div input {
 }
 
 form table tr td div label {
-  font-size: 10px;
+  font-size: 10pt;
 }
 
 .unimportant,.unimportant * {
-  font-size: 10px;
+  font-size: 10pt;
 }
 
 .file {
@@ -152,12 +164,13 @@ form table tr td div label {
 }
 
 p.fileinfo {
-  display: block;
-  margin: 0 0 0 20px;
+  margin: 0 0 0 5px;
+  padding:0;
+  overflow: hidden;
 }
 
 div.post p.fileinfo {
-  padding-left: 5px;
+  padding-left: 4px;
 }
 
 div.banner {
@@ -165,7 +178,7 @@ div.banner {
   font-size: 12pt;
   font-weight: bold;
   text-align: center;
-  margin: 1em 0;
+  margin: 16px 0;
 }
 
 div.banner,div.banner a {
@@ -183,11 +196,32 @@ img.banner,img.board_image {
   margin: 12px auto 0 auto;
 }
 
+
+/* Posts
+***********************************************************/
+/* Image */
+span.unimportant {
+  display:none;
+}
+
+a download {
+  display:none;
+}
+
 .post-image {
+  border: none;
   display: block;
   float: left;
-  margin: 5px 20px 10px 20px;
-  border: none;
+  margin: 4px 8px 4px 0;
+  height:25%!important;
+  width:25%!important;
+}
+
+.full-image {
+  float: left;
+  padding: 5px;
+  margin: 0 20px 0 0;
+  max-width: 98%;
 }
 
 div.post .post-image {
@@ -216,9 +250,9 @@ div.post.op hr {
 }
 
 p.intro {
-  margin: 0.5em 0;
+  margin: 4px 0;
   padding: 0;
-  padding-bottom: 0.2em;
+  padding-bottom: 2px;
 }
 
 input.delete {
@@ -242,22 +276,21 @@ p.intro span.capcode,p.intro a.capcode,p.intro a.nametag {
 }
 
 p.intro a {
-  margin-left: 8px;
+  margin-left: 4px;
 }
 
 div.delete {
   float: right;
+  margin:8px auto;
 }
 
 div.post.reply p {
-  margin: 0.3em 0 0 0;
+  margin: 1px 0 0 0;
 }
 
 div.post.reply div.body {
-  margin-left: 1.8em;
-  margin-top: 0.8em;
-  padding-right: 3em;
-  padding-bottom: 0.3em;
+  margin: 4px auto auto 8px;
+  padding: auto 12px 4px auto;
 }
 
 div.post.reply.highlighted {
@@ -269,7 +302,7 @@ div.post.reply div.body a {
 }
 
 div.post {
-  padding-left: 20px;
+  padding-left: 10px;
 }
 
 div.post div.body {
@@ -279,13 +312,27 @@ div.post div.body {
 
 div.post.reply {
   background: #D6DAF0;
-  margin: 0.2em 4px;
-  padding: 0.2em 0.3em 0.5em 0.6em;
+  margin: 1px auto;
+  padding: 8px;
   border-width: 1px;
   border-style: none solid solid none;
   border-color: #B7C5D9;
   display: inline-block;
-  max-width: 94%!important;
+  width: 100%!important;
+}
+
+div.post_modified {
+  margin-left: 1.8em;
+}
+
+div.post_modified div.content-status {
+  margin-top: 0.5em;
+  padding-bottom: 0em;
+  font-size: 75%;
+}
+
+div.post_modified div.content-status:first-child {
+  margin-top: 1.3em;
 }
 
 span.trip {
@@ -327,6 +374,7 @@ div#wrap {
   margin: 0 auto;
 }
 
+div.module,
 div.ban {
   background: white;
   border: 1px solid #98E;
@@ -334,7 +382,8 @@ div.ban {
   margin: 30px auto;
 }
 
-div.ban p,div.ban h2 {
+div.ban p,
+div.ban h2 {
   padding: 3px 7px;
 }
 
@@ -379,7 +428,8 @@ div.styles {
 }
 
 div.styles a {
-  margin: 0 10px;
+  margin:auto;
+  padding:0 2px;
 }
 
 div.styles a.selected {
@@ -411,25 +461,20 @@ div.pages {
   color: #89A;
   background: #D6DAF0;
   display: inline;
-  padding: 8px;
+  margin:4px auto;
+  padding: 2px;
   border-right: 1px solid #B7C5D9;
   border-bottom: 1px solid #B7C5D9;
 }
 
 div.pages.top {
-  display: block;
+  display: none;
   padding: 5px 8px;
   margin-bottom: 5px;
   position: fixed;
   top: 0;
   right: 0;
   opacity: 0.9;
-}
-
-@media screen and (max-width: 800px) {
-  div.pages.top {
-    display: none!important;
-  }
 }
 
 div.pages a.selected {
@@ -459,6 +504,9 @@ hr {
   clear: left;
 }
 
+
+/* UI
+***********************************************************/
 div.boardlist {
   color: #89A;
   font-size: 9pt;
@@ -575,8 +623,8 @@ table.mod.config-editor input[type="text"] {
 }
 
 #attention_bar {
-  height: 1.5em;
-  max-height: 1.5em;
+  height: 24px;
+  max-height: 24px;
   width: 100%;
   max-width: 100%;
   text-align: center;
@@ -614,38 +662,41 @@ form.ban-appeal textarea {
 }
 
 .MathJax_Display {
+  display:inline!important;
+}
+pre {
+  margin:0
   display: inline!important;
 }
 
-pre {
-  margin: 0;
+.theme-catalog {
+  margin: auto;
 }
 
 .theme-catalog div.thread img {
   float: none!important;
-  margin: auto;
+  margin:auto;
   max-height: 150px;
   max-width: 200px;
-  box-shadow: 0 0 4px rgba(0,0,0,0.55);
-  border: 2px solid rgba(153,153,153,0);
+  box-shadow: 0 0 2px rgba(0,0,0,0.55);
+  border: 1px solid rgba(153,153,153,0);
 }
 
 .theme-catalog div.thread {
-  display: inline-block;
-  vertical-align: top;
-  text-align: center;
-  font-weight: normal;
-  margin-top: 2px;
-  margin-bottom: 2px;
-  padding: 2px;
-  height: 300px;
-  width: 205px;
-  overflow: hidden;
-  position: relative;
-  font-size: 11px;
-  max-height: 300px;
   background: rgba(182,182,182,0.12);
   border: 2px solid rgba(111,111,111,0.34);
+  display: inline-block;
+  font-size: 9pt;
+  font-weight: normal;
+  text-align: center;
+  margin: 2px 0;
+  padding: 1px;
+  height: 300px; max-height: 300px;
+  width: 205px;
+  max-height: 300px;
+  overflow: hidden;
+  position: relative;
+  vertical-align: top;
 }
 
 .theme-catalog div.thread strong {
@@ -654,12 +705,7 @@ pre {
 
 .theme-catalog div.threads {
   text-align: center;
-  margin-left: -20px;
-}
-
-div.thread:hover {
-  background: #D6DAF0;
-  border-color: #B7C5D9;
+  margin-left: auto;
 }
 
 .theme-catalog div.grid-size-vsmall img {
@@ -668,8 +714,8 @@ div.thread:hover {
 }
 
 .theme-catalog div.grid-size-vsmall {
-  min-width:90px; max-width: 90px;
-  max-height: 148px;
+  min-width:94px; max-width: 94px;
+  max-height: 160px;
 }
 
 .theme-catalog div.grid-size-small img {
@@ -678,8 +724,8 @@ div.thread:hover {
 }
 
 .theme-catalog div.grid-size-small {
-  min-width:140px; max-width: 140px;
-  max-height: 192px;
+  min-width:142px; max-width: 142px;
+  max-height: 200px;
 }
 
 .theme-catalog div.grid-size-large img {
@@ -688,29 +734,13 @@ div.thread:hover {
 }
 
 .theme-catalog div.grid-size-large {
-  min-width: 256px; max-width: 256px;
+  min-width: 300px; max-width: 300px;
   max-height: 384px;
 }
 
 .theme-catalog img.thread-image {
   height: auto;
   max-width: 100%;
-}
-
-@media (max-width: 420px) {
-  .theme-catalog ul#Grid {
-    padding-left: 18px;
-  }
-
-  .theme-catalog div.thread {
-    width: auto;
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  .theme-catalog div.threads {
-    overflow: hidden;
-  }
 }
 
 .compact-boardlist {
@@ -728,7 +758,7 @@ div.thread:hover {
 }
 
 .compact-boardlist .cb-fa {
-  font-size: 21px;
+  font-size: 14pt;
   padding: 2px;
   padding-top: 0;
 }
@@ -847,7 +877,7 @@ div.thread:hover {
   right: 0px;
   position: absolute;
   margin-right: 3px;
-  font-size: 20px;
+  font-size: 14pt;
   z-index: 100;
 }
 
@@ -887,7 +917,6 @@ div.thread:hover {
   left: 81px;
   right: 0px;
   text-align: left;
-  font-size: 12px;
 }
 
 .options_tab h2 {
@@ -910,6 +939,54 @@ div.thread:hover {
   cursor: pointer;
 }
 
+
+/* MISC
+***********************************************************/
+
+/* Code Tags */
+pre {
+  display: block!important;
+  font: 9pt/13px monospace;
+  max-width:99%;
+  overflow:auto;
+  word-wrap:normal;
+}
+
+span.pln {
+  color:grey;
+}
+
+.MathJax_Display {
+  display: inline!important;
+}
+
+
+/* Threadwatcher */
+#watchlist {
+  border: 1px solid;
+  border-style: none solid solid none;
+  display: none;
+  margin: 0 auto 10px auto;
+  max-height: 250px;
+  overflow: auto;
+  width: 50%;
+}
+
+.watchlist-inner, .watchlist-controls {
+  margin: 10px auto;
+  text-align: center;
+}
+
+#watchlist-toggle, .watchThread, .watchlist-remove, #clearList, #clearGhosts {
+  cursor: pointer;
+}
+
+.own_post {
+	font-style: italic;
+	font-weight: normal;
+	opacity: .666;
+}
+
 pre {
 /* Better code tags */
   max-width:inherit;
@@ -924,38 +1001,106 @@ span.pln {
   color:grey;
 }
 
+div.file.multifile {
+  margin:0;
+  padding:0;
+  max-width:49%!important;
+}
 
+div.thread > div.files {
+  clear:both;
+}
+
+div.files > p.fileinfo > a {
+  display: none !important;
+}
+
+
+/* Large Screens
+***********************************************************/
+
+/* Large Phones */
 @media screen and (min-width: 768px) {
-  p.intro {
-    clear: none;
+  html,
+  body {
+    overflow-x: auto;
+    overflow-y: auto;
   }
 
-  div.post div.body {
-    clear: none;
+  form table {
+    margin:auto;
+    height:auto;
+    width:auto;
+  }
+
+  form table input {
+    height:auto;
+    width:auto;
+    margin:auto;
+  }
+
+  input[type="text"],input[type="password"],textarea {
+    max-width:auto;
+  }
+
+  #quick-reply input[type="text"], input[type="password"], #quick-reply textarea {
+    max-width:auto;
+  }
+
+  form table tr td {
+    text-align:left;
+    margin:0;
+    padding:0;
+    max-width:100%;
+  }
+
+  .theme-catalog div.grid-size-vsmall {
+    min-width:128px;
+    max-width:128px;
+    max-height:160px;
+  }
+
+  .theme-catalog div.grid-size-small {
+    min-width:192px;
+    max-width:192px;
+    max-height:200px;
+  }
+
+  .theme-catalog div.grid-size-large {
+    min-width:300px;
+    max-width:300px;
+    max-height:300px;
+  }
+
+  /* Image info*/
+  span.unimportant {
+    display:inline-block!important;
+  }
+
+  a download {
+    display:inline-block!important;
+  }
+
+  .post-image {
+    height:auto!important;
+    width:200px!important;
+  }
+
+  div.post.reply {
+    width: auto!important;
+  }
+  
+  div.pages.top {
+    display: block!important;
   }
 }
 
-/* threadwatcher */
+/* Tablets/Laptops */
+@media screen and (min-width: 1024px) {
 
-#watchlist {
-	display: none;
-	max-height: 250px;
-	overflow: auto;
-	border: 1px solid;
-	border-style: none solid solid none;
-	width: 50%;
-	margin: 0 auto;
-	margin-bottom: 10px;
 }
 
-.watchlist-inner, .watchlist-controls {
-	margin: 0 auto;
-	margin-top: 10px;
-	margin-bottom: 10px;
-	text-align: center;
-}
+/* Desktop/High DPI*/
+@media screen and (min-width: 1280px) {
 
-#watchlist-toggle, .watchThread, .watchlist-remove, #clearList, #clearGhosts {
-	cursor: pointer;
 }
-

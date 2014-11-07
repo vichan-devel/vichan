@@ -42,6 +42,7 @@ a.post_no:hover {
 	color: #32DD72 !important;
 	text-decoration: underline overline;
 }
+
 div.post.reply {
 	background: #333333;
 	border: #555555 1px solid;
@@ -189,4 +190,9 @@ div.report {
 }
 .options_tab_icon.active {
 	color: #FFFFFF;
+}
+
+.theme-catalog div.thread:hover {
+  background: black;
+  border-color: #eee;
 }
