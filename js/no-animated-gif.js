@@ -57,7 +57,7 @@ if (active_page == 'thread' || active_page == 'index' || active_page == 'ukko' |
 		if (window.Options && Options.get_tab('general')) {
 			selector = '#no-animated-gif>input';
 			event = 'change';
-			Options.extend_tab("general", "<label id='no-animated-gif'><input type='checkbox' /> "+_('Unanimate GIFs')+"</label>");
+			Options.extend_tab("general", "<label id='no-animated-gif'><input type='checkbox' />"+_('Unanimate GIFs')+"</label>");
 		}
 		else {
 			selector = '#no-animated-gif';
