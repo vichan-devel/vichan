@@ -60,7 +60,7 @@ $(document).ready(function(){
         if (window.Options && Options.get_tab('general')) {  
                 selector = '#toggle-images>input';
                 event = 'change';
-                Options.extend_tab("general", "<label id='toggle-images'><input type='checkbox' /> "+_('Hide images')+"</label>");
+                Options.extend_tab("general", "<label id='toggle-images'><input type='checkbox' />"+_('Hide images')+"</label>");
         }
         else {
                 selector = '#toggle-images a';

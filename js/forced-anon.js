@@ -64,7 +64,7 @@ $(document).ready(function() {
         if (window.Options && Options.get_tab('general')) {
                 selector = '#forced-anon';
                 event = 'change';
-                Options.extend_tab("general", "<label id='forced-anon'><input type='checkbox' /> "+_('Forced anonymity')+"</label>");
+                Options.extend_tab("general", "<label id='forced-anon'><input type='checkbox' />"+_('Forced anonymity')+"</label>");
         }
         else {
                 selector = '#forced-anon';
