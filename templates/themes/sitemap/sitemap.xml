@@ -9,7 +9,7 @@
 	{% for board, thread_list in threads %}
 		{% for thread in thread_list %}
 			<url>
-				<loc>{{ settings.url ~ (config.board_path | format(board)) ~ config.dir.res ~ (config.file_page | format(thread.thread_id)) }}</loc>
+				<loc>{{ settings.url ~ (config.board_path | format(board)) ~ config.dir.res ~ link_for(thread) }}</loc>
 				<lastmod>{{ thread.lastmod | date('%Y-%m-%dT%H:%M:%S') }}{{ timezone() }}</lastmod>
 				<changefreq>{{ settings.changefreq }}</changefreq>
 			</url>

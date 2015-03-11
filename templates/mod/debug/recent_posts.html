@@ -63,7 +63,7 @@
 				{% else %}
 					{% set thread = post.id %}
 				{% endif %}
-				<a href="?/{{ post.board ~ '/' ~ config.dir.res}}{{ config.file_page|sprintf(thread) }}#{{ post.id }}">
+				<a href="?/{{ post.board ~ '/' ~ config.dir.res}}{{ link_for(post) }}#{{ post.id }}">
 					{{ post.id }}
 				</a>
 			</td>

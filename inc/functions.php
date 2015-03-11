@@ -150,7 +150,9 @@ function loadConfig() {
 						preg_quote($config['dir']['res'], '/') .
 						'(' .
 							str_replace('%d', '\d+', preg_quote($config['file_page'], '/')) . '|' .
-							str_replace('%d', '\d+', preg_quote($config['file_page50'], '/')) .
+							str_replace('%d', '\d+', preg_quote($config['file_page50'], '/')) . '|' .
+                                                        str_replace(array('%d', '%s'), array('\d+', '[a-z0-9-]+'), preg_quote($config['file_page_slug'], '/')) . '|' .
+                                                        str_replace(array('%d', '%s'), array('\d+', '[a-z0-9-]+'), preg_quote($config['file_page50_slug'], '/')) .
 						')' .
 					'|' .
 						preg_quote($config['file_mod'], '/') . '\?\/.+' .
@@ -356,7 +358,7 @@ function rebuildThemes($action, $boardname = false) {
 		// Reload the locale	
 	        if ($config['locale'] != $current_locale) {
 	                $current_locale = $config['locale'];
-	                init_locale($config['locale'], $error);
+	                init_locale($config['locale']);
 	        }
 
 		if (PHP_SAPI === 'cli') {
@@ -377,7 +379,7 @@ function rebuildThemes($action, $boardname = false) {
 	// Reload the locale	
 	if ($config['locale'] != $current_locale) {
 	        $current_locale = $config['locale'];
-	        init_locale($config['locale'], $error);
+	        init_locale($config['locale']);
 	}
 }
 
@@ -912,7 +914,7 @@ function insertFloodPost(array $post) {
 
 function post(array $post) {
 	global $pdo, $board;
-	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :sticky, :locked, 0, :embed)", $board['uri']));
+	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :sticky, :locked, 0, :embed, :slug)", $board['uri']));
 
 	// Basic stuff
 	if (!empty($post['subject'])) {
@@ -979,6 +981,13 @@ function post(array $post) {
 		$query->bindValue(':files', null, PDO::PARAM_NULL);
 		$query->bindValue(':num_files', 0);
 		$query->bindValue(':filehash', null, PDO::PARAM_NULL);
+	}
+
+	if ($post['op']) {
+		$query->bindValue(':slug', slugify($post));
+	}
+	else {
+		$query->bindValue(':slug', NULL);
 	}
 
 	if (!$query->execute()) {
@@ -1076,7 +1085,7 @@ function deletePost($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
 	global $board, $config;
 
 	// Select post and replies (if thread) in one query
-	$query = prepare(sprintf("SELECT `id`,`thread`,`files` FROM ``posts_%s`` WHERE `id` = :id OR `thread` = :id", $board['uri']));
+	$query = prepare(sprintf("SELECT `id`,`thread`,`files`,`slug` FROM ``posts_%s`` WHERE `id` = :id OR `thread` = :id", $board['uri']));
 	$query->bindValue(':id', $id, PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
 
@@ -1094,8 +1103,8 @@ function deletePost($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
 		
 		if (!$post['thread']) {
 			// Delete thread HTML page
-			file_unlink($board['dir'] . $config['dir']['res'] . sprintf($config['file_page'], $post['id']));
-			file_unlink($board['dir'] . $config['dir']['res'] . sprintf($config['file_page50'], $post['id']));
+			file_unlink($board['dir'] . $config['dir']['res'] . link_for($post) );
+			file_unlink($board['dir'] . $config['dir']['res'] . link_for($post, true) ); // noko50
 			file_unlink($board['dir'] . $config['dir']['res'] . sprintf('%d.json', $post['id']));
 
 			$antispam_query = prepare('DELETE FROM ``antispam`` WHERE `board` = :board AND `thread` = :thread');
@@ -1801,7 +1810,7 @@ function markup(&$body, $track_cites = false) {
 			if (isset($cited_posts[$cite])) {
 				$replacement = '<a onclick="highlightReply(\''.$cite.'\');" href="' .
 					$config['root'] . $board['dir'] . $config['dir']['res'] .
-					($cited_posts[$cite] ? $cited_posts[$cite] : $cite) . '.html#' . $cite . '">' .
+					link_for(array('id' => $cite, 'thread' => $cited_posts[$cite])) . '#' . $cite . '">' .
 					'&gt;&gt;' . $cite .
 					'</a>';
 
@@ -1867,12 +1876,12 @@ function markup(&$body, $track_cites = false) {
 			if (!empty($clauses)) {
 				$cited_posts[$_board] = array();
 				
-				$query = query(sprintf('SELECT `thread`, `id` FROM ``posts_%s`` WHERE ' .
+				$query = query(sprintf('SELECT `thread`, `id`, `slug` FROM ``posts_%s`` WHERE ' .
 					implode(' OR ', $clauses), $board['uri'])) or error(db_error());
 				
 				while ($cite = $query->fetch(PDO::FETCH_ASSOC)) {
 					$cited_posts[$_board][$cite['id']] = $config['root'] . $board['dir'] . $config['dir']['res'] .
-						($cite['thread'] ? $cite['thread'] : $cite['id']) . '.html#' . $cite['id'];
+						link_for($cite) . '#' . $cite['id'];
 				}
 			}
 			
@@ -2067,12 +2076,12 @@ function buildThread($id, $return = false, $mod = false) {
 	if ($return) {
 		return $body;
 	} else {
-		$noko50fn = $board['dir'] . $config['dir']['res'] . sprintf($config['file_page50'], $id);
+		$noko50fn = $board['dir'] . $config['dir']['res'] . link_for($thread, true);
 		if ($hasnoko50 || file_exists($noko50fn)) {
 			buildThread50($id, $return, $mod, $thread, $antibot);
 		}
 
-		file_write($board['dir'] . $config['dir']['res'] . sprintf($config['file_page'], $id), $body);
+		file_write($board['dir'] . $config['dir']['res'] . link_for($thread), $body);
 	}
 }
 
@@ -2152,7 +2161,7 @@ function buildThread50($id, $return = false, $mod = false, $thread = null, $anti
 	if ($return) {
 		return $body;
 	} else {
-		file_write($board['dir'] . $config['dir']['res'] . sprintf($config['file_page50'], $id), $body);
+		file_write($board['dir'] . $config['dir']['res'] . link_for($thread, true), $body);
 	}
 }
 
@@ -2420,4 +2429,85 @@ function diceRoller($post) {
 			$post->body = '<table class="diceroll"><tr><td><img src="'.$config['dir']['static'].'d10.svg" alt="Dice roll" width="24"></td><td>Rolled ' . implode(', ', $dicerolls) . $modifier . $dicesum . '</td></tr></table><br/>' . $post->body;
 		}
 	}
+}
+
+function slugify($post) {
+	$slug = "";
+
+	if (isset($post['subject']) && $post['subject'])
+		$slug = $post['subject'];
+	elseif (isset ($post['body_nomarkup']) && $post['body_nomarkup'])
+		$slug = $post['body_nomarkup'];
+	elseif (isset ($post['body']) && $post['body'])
+		$slug = strip_html($post['body']);
+
+	// Fix UTF-8 first
+	$slug = mb_convert_encoding($slug, "UTF-8", "UTF-8");
+
+	// Transliterate local characters like ü, I wonder how would it work for weird alphabets :^)
+	$slug = iconv("UTF-8", "ASCII//TRANSLIT//IGNORE", $slug);
+
+	// Downcase everything
+	$slug = strtolower($slug);
+
+	// Strip bad characters, alphanumerics should suffice
+	$slug = preg_replace('/[^a-zA-Z0-9]/', '-', $slug);
+
+	// Replace multiple dashes with single ones
+	$slug = preg_replace('/-+/', '-', $slug);
+
+	// Strip dashes at the beginning and at the end
+	$slug = preg_replace('/^-|-$/', '', $slug);
+
+	// Slug should be 200 characters long, at max
+	$slug = substr($slug, 0, 200);
+
+	// Slug is now ready
+	return $slug;
+}
+
+function link_for($post, $page50 = false, $foreignlink = false, $thread = false) {
+	global $config, $board;
+
+	$post = (array)$post;
+
+	// Where do we need to look for OP?
+	$b = $foreignlink ? $foreignlink : (isset($post['board']) ? array('uri' => $post['board']) : $board);
+
+	$id = (isset($post['thread']) && $post['thread']) ? $post['thread'] : $post['id'];
+
+	$slug = false;
+
+	if ($config['slugify'] && ( (isset($post['thread']) && $post['thread']) || !isset ($post['slug']) ) ) {
+		$cvar = "slug_".$b['uri']."_".$id;
+		if (!$thread) {
+			$slug = Cache::get($cvar);
+
+			if ($slug === false) {
+				$query = prepare(sprintf("SELECT `slug` FROM ``posts_%s`` WHERE `id` = :id", $b['uri']));
+		                $query->bindValue(':id', $id, PDO::PARAM_INT);
+        		        $query->execute() or error(db_error($query));
+
+		                $thread = $query->fetch(PDO::FETCH_ASSOC);
+
+				$slug = $thread['slug'];
+
+				Cache::set($cvar, $slug);
+			}
+		}
+		else {
+			$slug = $thread['slug'];
+		}
+	}
+	elseif ($config['slugify']) {
+		$slug = $post['slug'];
+	}
+
+
+	     if ( $page50 &&  $slug)  $tpl = $config['file_page50_slug'];
+	else if (!$page50 &&  $slug)  $tpl = $config['file_page_slug'];
+	else if ( $page50 && !$slug)  $tpl = $config['file_page50'];
+	else if (!$page50 && !$slug)  $tpl = $config['file_page'];
+
+	return sprintf($tpl, $id, $slug);
 }

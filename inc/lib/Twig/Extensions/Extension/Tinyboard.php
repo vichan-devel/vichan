@@ -45,7 +45,8 @@ class Twig_Extensions_Extension_Tinyboard extends Twig_Extension
 			new Twig_SimpleFunction('hiddenInputsHash', 'hiddenInputsHash'),
 			new Twig_SimpleFunction('ratio', 'twig_ratio_function'),
 			new Twig_SimpleFunction('secure_link_confirm', 'twig_secure_link_confirm'),
-			new Twig_SimpleFunction('secure_link', 'twig_secure_link')
+			new Twig_SimpleFunction('secure_link', 'twig_secure_link'),
+			new Twig_SimpleFunction('link_for', 'link_for')
 		);
 	}
 	

@@ -33,6 +33,7 @@ class Api {
 			'sticky' => 'sticky',
 			'locked' => 'locked',
 			'bump' => 'last_modified',
+			'slug' => 'semantic_url',
 		);
 
 		$this->threadsPageFields = array(
@@ -109,7 +110,7 @@ class Api {
 		if (isset($post->files) && $post->files && !$threadsPage) {
 			$file = $post->files[0];
 			$this->translateFields($this->fileFields, $file, $apiPost);
-			$apiPost['filename'] = substr($file->name, 0, strrpos($file->name, '.'));
+			$apiPost['filename'] = isset($file->name) ? substr($file->name, 0, strrpos($file->name, '.')) : "";
 			$dotPos = strrpos($file->file, '.');
 			$apiPost['ext'] = substr($file->file, $dotPos);
 			$apiPost['tim'] = substr($file->file, 0, $dotPos);

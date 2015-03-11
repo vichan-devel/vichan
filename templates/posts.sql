@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS ``posts_{{ board }}`` (
    `locked` int(1) NOT NULL,
    `sage` int(1) NOT NULL,
    `embed` text,
+   `slug` varchar(256) DEFAULT NULL,
    UNIQUE KEY `id` (`id`),
    KEY `thread_id` (`thread`,`id`),
    KEY `filehash` (`filehash`(40)),

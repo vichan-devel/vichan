@@ -98,6 +98,9 @@ $(function(){
     else {
       bc.threads = bc.threads || {};
       bc.threads[thread] = Date.now();
+
+      bc.slugs = bc.slugs || {};
+      bc.slugs[thread] = document.location.pathname + document.location.search;
     }
     st[board] = bc;
     storage_save(st);
@@ -121,7 +124,7 @@ $(function(){
 
       var tag;
       if (variant == 'desktop') {
-        tag = $("<a href='"+modRoot+board+"/res/"+tid+".html'><span>#"+tid+"</span><span class='cb-uri watch-remove'>"+newposts+"</span>");
+        tag = $("<a href='"+((storage()[board].slugs && storage()[board].slugs[tid]) || (modRoot+board+"/res/"+tid+".html"))+"'><span>#"+tid+"</span><span class='cb-uri watch-remove'>"+newposts+"</span>");
 	tag.find(".watch-remove").mouseenter(function() {
           this.oldval = $(this).html();
           $(this).css("min-width", $(this).width());
@@ -132,7 +135,7 @@ $(function(){
         })
       }
       else if (variant == 'mobile') {
-        tag = $("<a href='"+modRoot+board+"/res/"+tid+".html'><span>#"+tid+"</span><span class='cb-uri'>"+newposts+"</span>"
+        tag = $("<a href='"+((storage()[board].slugs && storage()[board].slugs[tid]) || (modRoot+board+"/res/"+tid+".html"))+"'><span>#"+tid+"</span><span class='cb-uri'>"+newposts+"</span>"
                +"<span class='cb-uri watch-remove'><i class='fa fa-minus'></i></span>");	
       }
 

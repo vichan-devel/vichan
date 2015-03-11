@@ -62,7 +62,7 @@
 				
 				// board settings won't be available in the template file, so generate links now
 				$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res']
-				  . sprintf($config['file_page'], ($post['thread'] ? $post['thread'] : $post['id'])) . '#' . $post['id'];
+				  . link_for($post) . '#' . $post['id'];
 
 				if ($files) {
 					if ($files[0]->thumb == 'spoiler') {
@@ -92,7 +92,7 @@
 			while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
 				openBoard($post['board']);
 				
-				$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res'] . sprintf($config['file_page'], ($post['thread'] ? $post['thread'] : $post['id'])) . '#' . $post['id'];
+				$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res'] . link_for($post) . '#' . $post['id'];
 				if ($post['body'] != "")
 					$post['snippet'] = pm_snippet($post['body'], 30);
 				else

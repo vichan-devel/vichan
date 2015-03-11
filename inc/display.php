@@ -383,7 +383,7 @@ class Post {
 	public function link($pre = '', $page = false) {
 		global $config, $board;
 		
-		return $this->root . $board['dir'] . $config['dir']['res'] . sprintf(($page ? $page : $config['file_page']), $this->thread) . '#' . $pre . $this->id;
+		return $this->root . $board['dir'] . $config['dir']['res'] . link_for((array)$this, $page == '50') . '#' . $pre . $this->id;
 	}
 	
 	public function build($index=false) {
@@ -438,7 +438,7 @@ class Thread {
 	public function link($pre = '', $page = false) {
 		global $config, $board;
 		
-		return $this->root . $board['dir'] . $config['dir']['res'] . sprintf(($page ? $page : $config['file_page']), $this->id) . '#' . $pre . $this->id;
+		return $this->root . $board['dir'] . $config['dir']['res'] . link_for((array)$this, $page == '50') . '#' . $pre . $this->id;
 	}
 	public function add(Post $post) {
 		$this->posts[] = $post;

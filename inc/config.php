@@ -566,6 +566,9 @@
 	// Allow dice rolling: an email field of the form "dice XdY+/-Z" will result in X Y-sided dice rolled and summed,
 	// with the modifier Z added, with the result displayed at the top of the post body.
 	$config['allow_roll'] = false;
+
+	// Use semantic URLs for threads, like /b/res/12345/daily-programming-thread.html
+	$config['slugify'] = false;
 	
 /*
 * ====================
@@ -1118,8 +1121,10 @@
 
 	// Location of files.
 	$config['file_index'] = 'index.html';
-	$config['file_page'] = '%d.html';
+	$config['file_page'] = '%d.html'; // NB: page is both an index page and a thread
 	$config['file_page50'] = '%d+50.html';
+	$config['file_page_slug'] = '%d-%s.html';
+	$config['file_page50_slug'] = '%d-%s+50.html';
 	$config['file_mod'] = 'mod.php';
 	$config['file_post'] = 'post.php';
 	$config['file_script'] = 'main.js';

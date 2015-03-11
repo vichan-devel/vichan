@@ -42,7 +42,7 @@
 			$board_name, $board_name, $board_name, $board_name, $board_name)) or error(db_error());
 			
 			while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
-				$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res'] . sprintf($config['file_page'], ($post['thread'] ? $post['thread'] : $post['id']));
+				$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res'] . link_for($post);
 				$post['board_name'] = $board['name'];
 
 				if ($post['embed'] && preg_match('/^https?:\/\/(\w+\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9\-_]{10,11})(&.+)?$/i', $post['embed'], $matches)) {

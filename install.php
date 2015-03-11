@@ -1,7 +1,7 @@
 <?php
 
 // Installation/upgrade file	
-define('VERSION', '4.9.92');
+define('VERSION', '4.9.93');
 
 require 'inc/functions.php';
 
@@ -547,6 +547,10 @@ if (file_exists($config['has_installed'])) {
 			}
 		case '4.9.90':
 		case '4.9.91':
+		case '4.9.92':
+                        foreach ($boards as &$board) {
+                                query(sprintf('ALTER TABLE ``posts_%s`` ADD `slug` VARCHAR(255) DEFAULT NULL AFTER `embed`;', $board['uri'])) or error(db_error());
+			}
 		case false:
 			// TODO: enhance Tinyboard -> vichan upgrade path.
 			query("CREATE TABLE IF NOT EXISTS ``search_queries`` (  `ip` varchar(39) NOT NULL,  `time` int(11) NOT NULL,  `query` text NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;") or error(db_error());
