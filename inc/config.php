@@ -733,6 +733,7 @@
 	$config['allowed_ext'][] = 'bmp';
 	$config['allowed_ext'][] = 'gif';
 	$config['allowed_ext'][] = 'png';
+	$config['allowed_ext'][] = 'webm';
 	// $config['allowed_ext'][] = 'svg';
 
 	// Allowed additional file extensions (not images; downloadable files).
