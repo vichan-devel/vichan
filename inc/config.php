@@ -788,8 +788,20 @@
 	$config['webm']['use_ffmpeg'] = false;
 	$config['webm']['allow_audio'] = false;
 	$config['webm']['max_length'] = 120;
+	//Do not change the following configs if you don't know what you're doing.
 	$config['webm']['ffmpeg_path'] = 'ffmpeg';
 	$config['webm']['ffprobe_path'] = 'ffprobe';
+	$config['webm']['ffprobe_exec'] = "%s -v quiet -print_format json -show_format -show_streams %s";
+	$config['webm']['ffmpeg_exec'] = "%s -i %s -v quiet -ss 00:00:00 -an -vframes 1 -f mjpeg -vf scale=%d:%d %s 2>&1";
+
+	// If you're using Debian, you'll have to install a more recent version of libav-tools from backports
+	// and choose this following config:
+	/*
+	$config['webm']['ffmpeg_path'] = 'avconv';
+        $config['webm']['ffprobe_path'] = 'avprobe';
+        $config['webm']['ffprobe_exec'] = "%s -v quiet -of json -show_format -show_streams %s";
+        $config['webm']['ffmpeg_exec'] = "%s -i %s -v quiet -ss 00:00:00 -an -vframes 1 -f mjpeg -vf scale=%d:%d %s 2>&1";
+	*/
 
 	// Display image identification links for ImgOps, regex.info/exif, Google Images and iqdb.
 	$config['image_identification'] = false;
