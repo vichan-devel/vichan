@@ -24,7 +24,7 @@
                 <option value="reply:desc">{% trans 'Reply count' %}</option>
                 <option value="random:desc">{% trans 'Random' %}</option>
         </select>
- 
+
         <span>{% trans 'Image size' %}: </span>
         <select id="image_size" style="display: inline-block">
                 <option value="vsmall">{% trans 'Very small' %}</option>
@@ -42,12 +42,12 @@
 				 data-sticky="{% if post.sticky %}true{% else %}false{% endif %}"
 				 data-locked="{% if post.locked %}true{% else %}false{% endif %}"
 			>
-                                <div class="thread grid-li grid-size-small">  
-                                        <a href="{{post.link}}">  
+                                <div class="thread grid-li grid-size-small">
+                                        <a href="{{post.link}}">
 						{% if post.youtube %}
-							<img src="//img.youtube.com/vi/{{ post.youtube }}/0.jpg" 
+							<img src="//img.youtube.com/vi/{{ post.youtube }}/0.jpg"
 						{% else %}
-							<img src="{{post.file}}" 
+							<img src="{{post.file}}"
 						{% endif %}
                                                  id="img-{{ post.id }}" data-subject="{% if post.subject %}{{ post.subject|e }}{% endif %}" data-name="{{ post.name|e }}" data-muhdifference="{{ post.muhdifference }}" class="{{post.board}} thread-image" title="{{post.bump|date('%b %d %H:%M')}}">
                                         </a>
@@ -70,13 +70,15 @@
                 {% endfor %}
                 </div>
         </div>
-	
+
 	<hr/>
 	<footer>
-		<p class="unimportant" style="margin-top:20px;text-align:center;">- <a href="http://tinyboard.org/">Tinyboard</a> + 
-			<a href='https://int.vichan.net/devel/'>vichan</a> {{ config.version }} -
-		<br><a href="http://tinyboard.org/">Tinyboard</a> Copyright &copy; 2010-2014 Tinyboard Development Group    
-		<br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2015 vichan-devel</p>
+	  <p class="unimportant" style="margin-top:20px;text-align:center;">- <a href="http://tinyboard.org/">Tinyboard</a> +
+	    <a href="https://engine.vichan.net/">vichan</a> {{ config.version }} -
+	  <br><a href="http://tinyboard.org/">Tinyboard</a> Copyright &copy; 2010-2014 Tinyboard Development Group
+	  <br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2016 vichan-devel
+	  <br><a href="https://8ch.net/8code/">infinity</a> Copyright &copy; 2013-2015 Fredrick Brennan &amp; Infinity Development Group</p>
+	  {% for footer in config.footer %}<p class="unimportant" style="text-align:center;">{{ footer }}</p>{% endfor %}
 	</footer>
 	<script type="text/javascript">{% raw %}
 		var styles = {

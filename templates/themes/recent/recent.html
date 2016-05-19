@@ -16,7 +16,7 @@
 		<h1>{{ settings.title }}</h1>
 		<div class="subtitle">{{ settings.subtitle }}</div>
 	</header>
-	
+
 	<div class="box-wrap">
 		<div class="box left">
 			<h2>Recent Images</h2>
@@ -35,7 +35,7 @@
 			<ul>
 				{% for post in recent_posts %}
 					<li>
-						<strong>{{ post.board_name }}</strong>: 
+						<strong>{{ post.board_name }}</strong>:
 						<a href="{{ post.link }}">
 							{{ post.snippet }}
 						</a>
@@ -52,13 +52,14 @@
 			</ul>
 		</div>
 	</div>
-	
+
 	<hr/>
 	<footer>
-		<p class="unimportant" style="margin-top:20px;text-align:center;">- <a href="http://tinyboard.org/">Tinyboard</a> + 
-			<a href='https://int.vichan.net/devel/'>vichan</a> {{ config.version }} -
-		<br><a href="http://tinyboard.org/">Tinyboard</a> Copyright &copy; 2010-2014 Tinyboard Development Group    
-		<br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2015 vichan-devel</p>
+		<p class="unimportant" style="margin-top:20px;text-align:center;">- <a href="http://tinyboard.org/">Tinyboard</a> +
+			<a href="https://engine.vichan.net/">vichan</a> {{ config.version }} -
+		<br><a href="http://tinyboard.org/">Tinyboard</a> Copyright &copy; 2010-2014 Tinyboard Development Group
+		<br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2016 vichan-devel</p>
+		<br><a href="https://8ch.net/8code/">infinity</a> Copyright &copy; 2013-2015 Fredrick Brennan &amp; Infinity Development Group</p>
 	</footer>
 </body>
 </html>

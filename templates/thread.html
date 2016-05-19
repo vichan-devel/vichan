@@ -55,9 +55,9 @@
 	<form name="postcontrols" action="{{ config.post_url }}" method="post">
 		<input type="hidden" name="board" value="{{ board.uri }}" />
 		{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
-		
+
 		{{ body }}
-		
+
 		<div id="thread-interactions">
 			<span id="thread-links">
 				<a id="thread-return" href="{{ return }}">[{% trans %}Return{% endtrans %}]</a>
@@ -66,27 +66,28 @@
 					<a id="thread-catalog" href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>
 		                {% endif %}
 			</span>
-			
+
 			<span id="thread-quick-reply">
 				<a id="link-quick-reply" href="#">[{% trans %}Post a Reply{% endtrans %}]</a>
 			</span>
-			
+
 			{% include 'report_delete.html' %}
 		</div>
-		
+
 		<div class="clearfix"></div>
 	</form>
-	
+
 	{{ boardlist.bottom }}
 
 	{{ config.ad.bottom }}
 
 	<footer>
-		<p class="unimportant" style="margin-top:20px;text-align:center;">- <a href="http://tinyboard.org/">Tinyboard</a> + 
-			<a href='https://int.vichan.net/devel/'>vichan</a> {{ config.version }} -
-		<br><a href="http://tinyboard.org/">Tinyboard</a> Copyright &copy; 2010-2014 Tinyboard Development Group    
-		<br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2015 vichan-devel</p>
-		{% for footer in config.footer %}<p class="unimportant" style="text-align:center;">{{ footer }}</p>{% endfor %}
+	  <p class="unimportant" style="margin-top:20px;text-align:center;">- <a href="http://tinyboard.org/">Tinyboard</a> +
+	    <a href="https://engine.vichan.net/">vichan</a> {{ config.version }} -
+	  <br><a href="http://tinyboard.org/">Tinyboard</a> Copyright &copy; 2010-2014 Tinyboard Development Group
+	  <br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2016 vichan-devel
+	  <br><a href="https://8ch.net/8code/">infinity</a> Copyright &copy; 2013-2015 Fredrick Brennan &amp; Infinity Development Group</p>
+	  {% for footer in config.footer %}<p class="unimportant" style="text-align:center;">{{ footer }}</p>{% endfor %}
 	</footer>
 	<script type="text/javascript">{% raw %}
 		ready();
