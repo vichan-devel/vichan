@@ -291,20 +291,20 @@ if (isset($_POST['delete'])) {
 	if (count($report) > $config['report_limit'])
 		error($config['error']['toomanyreports']);
 
-	if ($config['report_captcha'] && !isset($_POST['captcha_text'], $_POST['captcha_cookie'])) {
-		error($config['error']['bot']);
-	}
-
 	if ($config['report_captcha']) {
-		$resp = file_get_contents($config['captcha']['provider_check'] . "?" . http_build_query([
-			'mode' => 'check',
-			'text' => $_POST['captcha_text'],
-			'extra' => $config['captcha']['extra'],
-			'cookie' => $_POST['captcha_cookie']
-		]));
+		if (!isset($_POST['recaptcha_challenge_field']) || !isset($_POST['recaptcha_response_field']))
+			error($config['error']['bot']);	
 
-		if ($resp !== '1') {
-                        error($config['error']['captcha']);
+		// Check what reCAPTCHA has to say...
+		$resp = recaptcha_check_answer(
+			$config['recaptcha_private'],
+			$_SERVER['REMOTE_ADDR'],
+			$_POST['recaptcha_challenge_field'],
+			$_POST['recaptcha_response_field']
+		);
+
+		if (!$resp->is_valid) {
+			error($config['error']['captcha']);
 		}
 	}
 	
