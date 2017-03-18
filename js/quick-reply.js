@@ -280,7 +280,8 @@
 		});
 		
 		$postForm.find('textarea[name="body"]').removeAttr('id').removeAttr('cols').attr('placeholder', _('Comment'));
-	
+		
+		
 		$postForm.find('textarea:not([name="body"]),input[type="hidden"]:not(.captcha_cookie)').removeAttr('id').appendTo($dummyStuff);
 	
 		$postForm.find('br').remove();
@@ -385,7 +386,7 @@
 	};
 	
 	$(window).on('cite', function(e, id, with_link) {
-		if ($(this).width() <= 600)
+		if ($(this).width() <= 400)
 			return;
 		show_quick_reply();
 		if (with_link) {
@@ -440,7 +441,7 @@
 				$('.quick-reply-btn').hide();
 				
 				$(window).scroll(function() {
-					if ($(this).width() <= 600)
+					if ($(this).width() <= 400)
 						return;
 					if ($(this).scrollTop() < $('form[name="post"]:first').offset().top + $('form[name="post"]:first').height() - 100)
 						$('.quick-reply-btn').fadeOut(100);
