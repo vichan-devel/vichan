@@ -304,17 +304,17 @@
 	
 	// Enable Custom Captcha you need to import a database table and change a couple of settings 
 	//Read more at: /captcha/instructions.md
-	$config['captcha'] = array();
+	// $config['captcha'] = array();
 
 	// Enable custom captcha provider
-	$config['captcha']['enabled'] = false;
+	// $config['captcha']['enabled'] = false;
 
 	// Custom captcha provider path
 	// $config['captcha']['provider_get']   = 'https://yourwebsite.com/captcha/entrypoint.php';
 	// $config['captcha']['provider_check'] = 'https://yourwebsite.com/captcha/entrypoint.php';
 
 	// Custom captcha extra field (eg. charset)
-	$config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
+	// $config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
 	
 	// Ability to lock a board for normal users and still allow mods to post.  Could also be useful for making an archive board
 	$config['board_locked'] = false;
@@ -462,7 +462,7 @@
 	//New thread captcha
  	//Require solving a captcha to post a thread. 
  	//Default off.
- 	//$config['new_thread_capt'] = false;
+ 	// $config['new_thread_capt'] = false;
 	
 	// Do you need a body for your reply posts?
 	$config['force_body'] = false;
