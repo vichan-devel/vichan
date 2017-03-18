@@ -302,7 +302,7 @@
 	$config['recaptcha_public'] = '6LcXTcUSAAAAAKBxyFWIt2SO8jwx4W7wcSMRoN3f';
 	$config['recaptcha_private'] = '6LcXTcUSAAAAAOGVbVdhmEM1_SyRF4xTKe8jbzf_';
 	
-	// Enable Custom Captcha Read more at: /captcha/instructions.md
+	// Enable Custom Captcha you need to import a database table and change a couple of settings Read more at: /captcha/instructions.md
 	$config['captcha'] = array();
 
 	// Enable custom captcha provider
