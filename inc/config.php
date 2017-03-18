@@ -302,14 +302,15 @@
 	$config['recaptcha_public'] = '6LcXTcUSAAAAAKBxyFWIt2SO8jwx4W7wcSMRoN3f';
 	$config['recaptcha_private'] = '6LcXTcUSAAAAAOGVbVdhmEM1_SyRF4xTKe8jbzf_';
 	
+	// Enable Custom Captcha Read more at: /captcha/instructions.md
 	$config['captcha'] = array();
 
 	// Enable custom captcha provider
 	$config['captcha']['enabled'] = false;
 
 	// Custom captcha provider path
-	$config['captcha']['provider_get']   = 'https://hokachan.com/captcha/entrypoint.php';
-	$config['captcha']['provider_check'] = 'https://hokachan.com/captcha/entrypoint.php';
+	$config['captcha']['provider_get']   = 'https://yourwebsite.com/captcha/entrypoint.php';
+	$config['captcha']['provider_check'] = 'https://yourwebsite.com/captcha/entrypoint.php';
 
 	// Custom captcha extra field (eg. charset)
 	$config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
