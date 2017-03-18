@@ -79,6 +79,29 @@
 			</td>
 		</tr>
 		{% endif %}
+		
+		{% if config.captcha.enabled %}
+		<tr class='captcha'>
+			<th>
+				{% trans %}Verification{% endtrans %}
+			</th>
+			<td>
+				<script>load_captcha("{{ config.captcha.provider_get }}", "{{ config.captcha.extra }}");</script>
+			</td>
+		</tr>
+			{% elseif config.new_thread_capt %}
+ 			{% if not id %} 
+ 			<tr class='captcha'>
+                        <th>
+                                {% trans %}Verification{% endtrans %}
+                        </th>
+                        <td>
+                                <script>load_captcha("{{ config.captcha.provider_get }}", "{{ config.captcha.extra }}");</script>
+                        </td>
+                	</tr>
+			{% endif %}
+		{% endif %}
+		
 		{% if config.user_flag %}
 			<tr>
 				<th>{% trans %}Flag{% endtrans %}</th>
