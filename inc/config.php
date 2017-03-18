@@ -196,7 +196,7 @@
 
 	// Prevents most Tor exit nodes from making posts. Recommended, as a lot of abuse comes from Tor because
 	// of the strong anonymity associated with it.
-	 $config['dnsbl'][] = array('tor.dnsbl.sectoor.de', 1);
+	$config['dnsbl'][] = array('tor.dnsbl.sectoor.de', 1);
 
 	// http://www.sorbs.net/using.shtml
 	// $config['dnsbl'][] = array('dnsbl.sorbs.net', array(2, 3, 4, 5, 6, 7, 8, 9));
@@ -302,15 +302,16 @@
 	$config['recaptcha_public'] = '6LcXTcUSAAAAAKBxyFWIt2SO8jwx4W7wcSMRoN3f';
 	$config['recaptcha_private'] = '6LcXTcUSAAAAAOGVbVdhmEM1_SyRF4xTKe8jbzf_';
 	
-	// Enable Custom Captcha you need to import a database table and change a couple of settings Read more at: /captcha/instructions.md
+	// Enable Custom Captcha you need to import a database table and change a couple of settings 
+	//Read more at: /captcha/instructions.md
 	$config['captcha'] = array();
 
 	// Enable custom captcha provider
 	$config['captcha']['enabled'] = false;
 
 	// Custom captcha provider path
-	$config['captcha']['provider_get']   = 'https://yourwebsite.com/captcha/entrypoint.php';
-	$config['captcha']['provider_check'] = 'https://yourwebsite.com/captcha/entrypoint.php';
+	// $config['captcha']['provider_get']   = 'https://yourwebsite.com/captcha/entrypoint.php';
+	// $config['captcha']['provider_check'] = 'https://yourwebsite.com/captcha/entrypoint.php';
 
 	// Custom captcha extra field (eg. charset)
 	$config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
