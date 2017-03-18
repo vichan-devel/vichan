@@ -196,7 +196,7 @@
 
 	// Prevents most Tor exit nodes from making posts. Recommended, as a lot of abuse comes from Tor because
 	// of the strong anonymity associated with it.
-	// $config['dnsbl'][] = array('tor.dnsbl.sectoor.de', 1);
+	 $config['dnsbl'][] = array('tor.dnsbl.sectoor.de', 1);
 
 	// http://www.sorbs.net/using.shtml
 	// $config['dnsbl'][] = array('dnsbl.sorbs.net', array(2, 3, 4, 5, 6, 7, 8, 9));
@@ -316,13 +316,13 @@
 	$config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
 	
 	// Ability to lock a board for normal users and still allow mods to post.  Could also be useful for making an archive board
-	//$config['board_locked'] = false;
+	$config['board_locked'] = false;
 
 	// If poster's proxy supplies X-Forwarded-For header, check if poster's real IP is banned.
-	//$config['proxy_check'] = false;
+	$config['proxy_check'] = false;
 
 	// If poster's proxy supplies X-Forwarded-For header, save it for further inspection and/or filtering.
-	//$config['proxy_save'] = false;
+	$config['proxy_save'] = false;
 
 	/*
 	 * Custom filters detect certain posts and reject/ban accordingly. They are made up of a condition and an
