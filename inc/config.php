@@ -1764,8 +1764,8 @@
 
 	// Link imageboard to your Statcounter.com account to track users and provide traffic insights without the Google botnet.
 	// Extract these values from Statcounter's JS tracking code:
-	// $config['statcounter_project'] = '11240726';
-	// $config['statcounter_security'] = '180c825a';
+	// $config['statcounter_project'] = '1234567';
+	// $config['statcounter_security'] = 'acbd1234';
 
 	// If you use Varnish, Squid, or any similar caching reverse-proxy in front of Tinyboard, you can
 	// configure Tinyboard to PURGE files when they're written to.
