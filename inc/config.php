@@ -196,7 +196,7 @@
 
 	// Prevents most Tor exit nodes from making posts. Recommended, as a lot of abuse comes from Tor because
 	// of the strong anonymity associated with it.
-	$config['dnsbl'][] = array('tor.dnsbl.sectoor.de', 1);
+	// $config['dnsbl'][] = array('tor.dnsbl.sectoor.de', 1);
 
 	// http://www.sorbs.net/using.shtml
 	// $config['dnsbl'][] = array('dnsbl.sorbs.net', array(2, 3, 4, 5, 6, 7, 8, 9));
@@ -284,6 +284,8 @@
 		'embed',
 		'recaptcha_challenge_field',
 		'recaptcha_response_field',
+		'captcha_cookie',
+		'captcha_text',
 		'spoiler',
 		'page',
 		'file_url',
@@ -300,14 +302,26 @@
 	$config['recaptcha_public'] = '6LcXTcUSAAAAAKBxyFWIt2SO8jwx4W7wcSMRoN3f';
 	$config['recaptcha_private'] = '6LcXTcUSAAAAAOGVbVdhmEM1_SyRF4xTKe8jbzf_';
 	
+	$config['captcha'] = array();
+
+	// Enable custom captcha provider
+	$config['captcha']['enabled'] = false;
+
+	// Custom captcha provider path
+	$config['captcha']['provider_get']   = 'https://hokachan.com/captcha/entrypoint.php';
+	$config['captcha']['provider_check'] = 'https://hokachan.com/captcha/entrypoint.php';
+
+	// Custom captcha extra field (eg. charset)
+	$config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
+	
 	// Ability to lock a board for normal users and still allow mods to post.  Could also be useful for making an archive board
-	$config['board_locked'] = false;
+	//$config['board_locked'] = false;
 
 	// If poster's proxy supplies X-Forwarded-For header, check if poster's real IP is banned.
-	$config['proxy_check'] = false;
+	//$config['proxy_check'] = false;
 
 	// If poster's proxy supplies X-Forwarded-For header, save it for further inspection and/or filtering.
-	$config['proxy_save'] = false;
+	//$config['proxy_save'] = false;
 
 	/*
 	 * Custom filters detect certain posts and reject/ban accordingly. They are made up of a condition and an
@@ -443,6 +457,11 @@
  * ====================
  */
 
+	//New thread captcha
+ 	//Require solving a captcha to post a thread. 
+ 	//Default off.
+ 	//$config['new_thread_capt'] = false;
+	
 	// Do you need a body for your reply posts?
 	$config['force_body'] = false;
 	// Do you need a body for new threads?
@@ -664,7 +683,7 @@
  */
 	// Maximum number of images allowed. Increasing this number enabled multi image.
 	// If you make it more than 1, make sure to enable the below script for the post form to change.
-	// $config['additional_javascript'][] = 'js/multi-image.js';
+	// $config['additional_javascript'][] = 'js/multi_image.js';
 	$config['max_images'] = 1;
 
 	// Method to use for determing the max filesize. 
@@ -955,7 +974,7 @@
 	$config['page_nav_top'] = false;
 
 	// Show "Catalog" link in page navigation. Use with the Catalog theme. Set to false to disable.
-	$config['catalog_link'] = 'catalog.html';
+	//$config['catalog_link'] = 'catalog.html';
 
 	// Board categories. Only used in the "Categories" theme.
 	// $config['categories'] = array(
@@ -1001,7 +1020,7 @@
  */
 
 	// Additional Javascript files to include on board index and thread pages. See js/ for available scripts.
-	$config['additional_javascript'][] = 'js/inline-expanding.js';
+	//$config['additional_javascript'][] = 'js/inline-expanding.js';
 	// $config['additional_javascript'][] = 'js/local-time.js';
 
 	// Some scripts require jQuery. Check the comments in script files to see what's needed. When enabling
@@ -1169,6 +1188,7 @@
 
 	// Location of files.
 	$config['file_index'] = 'index.html';
+	$config['file_catalog'] = 'catalog.html';
 	$config['file_page'] = '%d.html'; // NB: page is both an index page and a thread
 	$config['file_page50'] = '%d+50.html';
 	$config['file_page_slug'] = '%d-%s.html';
@@ -1687,7 +1707,7 @@
 	// Extra fields in to be shown in the array that are not in the 4chan-API. You can get these by taking a
 	// look at the schema for posts_ tables. The array should be formatted as $db_column => $translated_name.
 	// Example: Adding the pre-markup post body to the API as "com_nomarkup".
-	// $config['api']['extra_fields'] = array('body_nomarkup' => 'com_nomarkup');
+	//$config['api']['extra_fields'] = array('body_nomarkup' => 'com_nomarkup');
 
 /*
  * ==================
@@ -1744,8 +1764,8 @@
 
 	// Link imageboard to your Statcounter.com account to track users and provide traffic insights without the Google botnet.
 	// Extract these values from Statcounter's JS tracking code:
-	// $config['statcounter_project'] = '1234567';
-	// $config['statcounter_security'] = 'acbd1234';
+	$config['statcounter_project'] = '11240726';
+	$config['statcounter_security'] = '180c825a';
 
 	// If you use Varnish, Squid, or any similar caching reverse-proxy in front of Tinyboard, you can
 	// configure Tinyboard to PURGE files when they're written to.
