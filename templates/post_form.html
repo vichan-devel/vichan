@@ -59,6 +59,8 @@
 			</th>
 			<td>
 				<textarea name="body" id="body" rows="5" cols="35"></textarea>
+				<br/>
+				<span ID="countchar" class="countdown"></span>											  
 				{{ antibot.html() }}
 				{% if not (not (config.field_disable_subject or (id and config.field_disable_reply_subject)) or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri))) %}
 				{% if not (not config.field_disable_email or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri))) %}
