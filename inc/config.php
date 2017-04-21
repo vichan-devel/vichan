@@ -37,7 +37,7 @@
 	$config['blotter'] = &$config['global_message'];
 
 	// Automatically check if a newer version of Tinyboard is available when an administrator logs in.
-	$config['check_updates'] = true;
+	$config['check_updates'] = false;
 	// How often to check for updates
 	$config['check_updates_time'] = 43200; // 12 hours
 
@@ -456,7 +456,7 @@
 	$config['strip_combining_chars'] = true;
 
 	// Maximum post body length.
-	$config['max_body'] = 1800;
+	$config['max_body'] = 3600;
 	// Maximum number of post body lines to show on the index page.
 	$config['body_truncate'] = 15;
 	// Maximum number of characters to show on the index page.
@@ -637,10 +637,10 @@
  */
 
 	// "Wiki" markup syntax ($config['wiki_markup'] in pervious versions):
-	$config['markup'][] = array("/'''(.+?)'''/", "<strong>\$1</strong>");
-	$config['markup'][] = array("/''(.+?)''/", "<em>\$1</em>");
-	$config['markup'][] = array("/\*\*(.+?)\*\*/", "<span class=\"spoiler\">\$1</span>");
-	$config['markup'][] = array("/^[ |\t]*==(.+?)==[ |\t]*$/m", "<span class=\"heading\">\$1</span>");
+	// $config['markup'][] = array("/'''(.+?)'''/", "<strong>\$1</strong>");
+	// $config['markup'][] = array("/''(.+?)''/", "<em>\$1</em>");
+	// $config['markup'][] = array("/\*\*(.+?)\*\*/", "<span class=\"spoiler\">\$1</span>");
+	// $config['markup'][] = array("/^[ |\t]*==(.+?)==[ |\t]*$/m", "<span class=\"heading\">\$1</span>");
 
 	// Code markup. This should be set to a regular expression, using tags you want to use. Examples:
 	// "/\[code\](.*?)\[\/code\]/is"
@@ -748,7 +748,7 @@
 	// Allowed image file extensions.
 	$config['allowed_ext'][] = 'jpg';
 	$config['allowed_ext'][] = 'jpeg';
-	$config['allowed_ext'][] = 'bmp';
+	// $config['allowed_ext'][] = 'bmp';
 	$config['allowed_ext'][] = 'gif';
 	$config['allowed_ext'][] = 'png';
 	// $config['allowed_ext'][] = 'svg';
@@ -1001,7 +1001,7 @@
  */
 
 	// Additional Javascript files to include on board index and thread pages. See js/ for available scripts.
-	$config['additional_javascript'][] = 'js/inline-expanding.js';
+	// $config['additional_javascript'][] = 'js/inline-expanding.js';
 	// $config['additional_javascript'][] = 'js/local-time.js';
 
 	// Some scripts require jQuery. Check the comments in script files to see what's needed. When enabling
@@ -1482,7 +1482,7 @@
 	// Edit posts
 	$config['mod']['editpost'] = ADMIN;
 	// "Move" a thread to another board (EXPERIMENTAL; has some known bugs)
-	$config['mod']['move'] = DISABLED;
+	$config['mod']['move'] = MOD;
 	// Bypass "field_disable_*" (forced anonymity, etc.)
 	$config['mod']['bypass_field_disable'] = MOD;
 	// Post bypass unoriginal content check on robot-enabled boards
