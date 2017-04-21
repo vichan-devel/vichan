@@ -44,7 +44,7 @@
 
 	{% include 'attention_bar.html' %}
 
-	<div class="banner">{% trans %}Posting mode: Reply{% endtrans %} <a class="unimportant" href="{{ return }}">[{% trans %}Return{% endtrans %}]</a> <a class="unimportant" href="#bottom">[{% trans %}Go to bottom {% endtrans %}]</a></div>
+	<div class="banner">{% trans %}Posting mode: Reply{% endtrans %}</div>
 
 	{{ config.ad.top }}
 
@@ -55,6 +55,16 @@
 	<form name="postcontrols" action="{{ config.post_url }}" method="post">
 		<input type="hidden" name="board" value="{{ board.uri }}" />
 		{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
+		
+		<div id="thread-interactions-alt">
+			<span id="thread-links-alt">
+				<a id="thread-return" href="{{ return }}">[{% trans %}Return{% endtrans %}]</a>
+				<a id="thread-top" href="#bottom">[{% trans %}Go to bottom{% endtrans %}]</a>
+                		{% if config.catalog_link %}
+					<a id="thread-catalog" href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>
+		                {% endif %}
+			</span>
+		</div>
 		
 		{{ body }}
 		
