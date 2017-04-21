@@ -8,7 +8,7 @@
  * Copyright (c) 2012 Michael Save <savetheinternet@tinyboard.org>
  * Copyright (c) 2013-2014 Marcin Łabanowski <marcin@6irc.net>
  * Copyright (c) 2013 undido <firekid109@hotmail.com>
- * Copyright (c) 2014 Fredrick Brennan <admin@8chan.co>
+ * Copyright (c) 2014-2015 Fredrick Brennan <admin@8chan.co>
  *
  * Usage:
  *   $config['additional_javascript'][] = 'js/jquery.min.js';
@@ -17,20 +17,99 @@
  *
  */
 
+// From http://stackoverflow.com/a/14035162
+$.fn.scrollStopped = function(callback) {		   
+	$(this).scroll(function(){
+		var self = this, $this = $(self);
+		if ($this.data('scrollTimeout')) {
+		  clearTimeout($this.data('scrollTimeout'));
+		}
+		$this.data('scrollTimeout', setTimeout(callback,250,self));
+	});
+};
 
+function makeIcon(mode){
+	var favicon = $("link[rel='shortcut icon']");
+
+	if (!favicon.length) {
+		var favicon = $('<link rel="shortcut icon"></link>').appendTo('head');
+	}
+
+	$("link[rel='shortcut icon']").attr("href", configRoot+"static/favicon"+(mode?"-"+mode:"")+".ico");
+}
+
++function(){
+var notify = false;
 auto_reload_enabled = true; // for watch.js to interop
 
 $(document).ready(function(){
-	if($('div.banner').length == 0)
-		return; // not index
-		
-	if($(".post.op").size() != 1)
-		return; //not thread page
+
+	// Adds Options panel item
+	if (typeof localStorage.auto_thread_update === 'undefined') {
+		localStorage.auto_thread_update = 'true'; //default value
+	}
+	if (window.Options && Options.get_tab('general')) {
+		Options.extend_tab("general", "<fieldset id='auto-update-fs'><legend>"+_("Auto update")+"</legend>"
+		+ ('<label id="auto-thread-update"><input type="checkbox">' + _('Auto update thread') + '</label>')
+		// + ('<label id="auto_thread_desktop_notifications"><input type="checkbox">' + _('Show desktop notifications when users quote me') + '</label>')
+		+ ('<label id="auto_thread_desktop_notifications_all"><input type="checkbox">' + _('Show desktop notifications on all replies') + '</label>')
+		+ '</fieldset>');
+
+		$('#auto-thread-update>input').on('click', function() {
+			if ($('#auto-thread-update>input').is(':checked')) {
+				localStorage.auto_thread_update = 'true';
+			} else {
+				localStorage.auto_thread_update = 'false';
+			}
+		});
+
+		$('#auto_thread_desktop_notifications>input,#auto_thread_desktop_notifications_all>input').on('click', function() {
+			if (!("Notification" in window)) return;
 	
+			var setting = $(this).parent().attr('id');
+
+			if ($(this).is(':checked')) {
+				Notification.requestPermission(function(permission){
+					if (permission === "granted") {
+						localStorage[setting] = 'true';
+					}
+				});
+				if (Notification.permission === "granted") {
+					localStorage[setting] = 'true';
+				}
+			} else {
+				localStorage[setting] = 'false';
+			}
+		});
+
+		if (localStorage.auto_thread_update === 'true') {
+			$('#auto-thread-update>input').prop('checked', true);
+		}
+
+		if (localStorage.auto_thread_desktop_notifications === 'true') {
+			$('#auto_thread_desktop_notifications>input').prop('checked', true);
+			notify = "mention";
+		}
+
+		if (localStorage.auto_thread_desktop_notifications_all === 'true') {
+			$('#auto_thread_desktop_notifications_all>input').prop('checked', true);
+			notify = "all";
+		}
+	}
+
+	// not thread
+	if (active_page != 'thread')
+		return;
+
 	var countdown_interval;
 
 	// Add an update link
-	$('.boardlist.bottom').prev().after("<span id='updater'><a href='#' id='update_thread' style='padding-left:10px'>["+_("Update")+"]</a> (<input type='checkbox' id='auto_update_status' checked> "+_("Auto")+") <span id='update_secs'></span></span>");
+	$('span#thread-links').append("<span id='updater'><a href='#' id='update_thread'>["+_("Update")+"]</a> (<input type='checkbox' id='auto_update_status'> "+_("Auto")+") <span id='update_secs'></span></span>");
+
+	// Set the updater checkbox according to user setting
+	if (localStorage.auto_thread_update === 'true') {
+		$('#auto_update_status').prop('checked', true);
+	}
 
 	// Grab the settings
 	var settings = new script_settings('auto-reload');
@@ -44,19 +123,20 @@ $(document).ready(function(){
 
 	var end_of_page = false;
 
-        var new_posts = 0;
+	var new_posts = 0;
 	var first_new_post = null;
 	
 	var title = document.title;
 
 	if (typeof update_title == "undefined") {
-	   var update_title = function() { 
-	   	if (new_posts) {
-	   		document.title = "("+new_posts+") "+title;
-	   	} else {
-	   		document.title = title;
-	   	}
-	   };
+		var update_title = function() { 
+			if (new_posts) {
+				document.title = "("+new_posts+") "+title;
+			} else {
+				document.title = title;
+				makeIcon(false);
+			}
+		};
 	}
 
 	if (typeof add_title_collector != "undefined")
@@ -99,10 +179,11 @@ $(document).ready(function(){
 		}
 	}
 
-	var recheck_activated = function() {
-		if (new_posts && window_active &&
+	var recheck_activated = function(end_of_page) {
+		if (typeof end_of_page == "undefined") var end_of_page = false;
+		if (end_of_page || (new_posts && window_active &&
 			$(window).scrollTop() + $(window).height() >=
-			$('div.boardlist.bottom').position().top) {
+			$('div.boardlist.bottom').position().top)) {
 
 			new_posts = 0;
 		}
@@ -123,9 +204,9 @@ $(document).ready(function(){
 		clearInterval(countdown_interval);
 	}
 		
-    	var epoch = (new Date).getTime();
-    	var epochold = epoch;
-    	
+	var epoch = (new Date).getTime();
+	var epochold = epoch;
+		
 	var timeDiff = function (delay) {
 		if((epoch-epochold) > delay) {
 			epochold = epoch = (new Date).getTime();
@@ -149,8 +230,13 @@ $(document).ready(function(){
 					if($('#' + id).length == 0) {
 						if (!new_posts) {
 							first_new_post = this;
+							makeIcon('reply');
+							if (notify === "all" || (notify === "mention" && $(this).find('.own_post').length)) {
+								var body = $(this).children('.body').html().replace(/<br\s*[\/]?>/gi, "\n");
+								var n = new Notification("New reply to "+$('title').text(), {body: $('<div/>').html(body).text()});
+							}
 						}
-						$(this).insertAfter($('div.post:last').next()).after('<br class="clear">');
+						$(this).insertAfter($('div.post:not(.post-hover):last').next()).after('<br class="clear">');
 						new_posts++;
 						loaded_posts++;
 						$(document).trigger('new_post', this);
@@ -212,20 +298,18 @@ $(document).ready(function(){
 		return false;
 	};
 	
-	$(window).scroll(function() {
-		recheck_activated();
-		
+	$(window).scrollStopped(function() {
 		// if the newest post is not visible
 		if($(this).scrollTop() + $(this).height() <
 			$('div.post:last').position().top + $('div.post:last').height()) {
 			end_of_page = false;
-			return;
 		} else {
 			if($("#auto_update_status").is(':checked') && timeDiff(poll_interval_mindelay)) {
 				poll(manualUpdate = true);
 			}
 			end_of_page = true;
 		}
+		recheck_activated(end_of_page);
 	});
 
 	$('#update_thread').on('click', function() { poll(manualUpdate = true); return false; });
@@ -234,4 +318,4 @@ $(document).ready(function(){
 		auto_update(poll_interval_delay);
 	}
 });
-
+}();
