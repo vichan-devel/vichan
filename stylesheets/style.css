@@ -540,7 +540,7 @@ table.mod.config-editor input[type="text"] {
   width: 98%;
 }
 
-.desktop-style div.boardlist:nth-child(1) {
+.desktop-style div.boardlist:not(.bottom) {
   position: fixed;
   top: 0;
   left: 0;
