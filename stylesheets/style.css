@@ -988,17 +988,7 @@ div.boardlist a {
 
 /* Threads */
 /* Thread Footer */
-#thread-interactions-alt {
-	margin: 8px 0;
-	clear: both;
-}
-#thread-links-alt {
-	float: left;
-}
-#thread-links-alt > a {
-	padding-left: none;
-	padding-right: 10px;
-}
+
 #thread-interactions {
 	margin: 8px 0;
 	clear: both;

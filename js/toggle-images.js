@@ -74,10 +74,10 @@ $(document).ready(function(){
 		.on(event, function() {
 			hide_images = !hide_images;
 			if (hide_images) {
-				$('img.post-image, .theme-catalog .thread>a>img').each(hideImage);
+				$('img.post-image, .theme-catalog .thread>a>img, img.banner, img.board_image').each(hideImage);
 				localStorage.hideimages = true;
 			} else {
-				$('img.post-image, .theme-catalog .thread>a>img').each(restoreImage);
+				$('img.post-image, .theme-catalog .thread>a>img, img.banner, img.board_image').each(restoreImage);
 				delete localStorage.hideimages;
 			}
 			
@@ -87,7 +87,7 @@ $(document).ready(function(){
 		});
 
 	if (hide_images) {
-		$('img.post-image, .theme-catalog .thread>a>img').each(hideImage);
+		$('img.post-image, .theme-catalog .thread>a>img, img.banner, img.board_image').each(hideImage);
 		show_hide_hide_images_buttons();
 
                 if (window.Options && Options.get_tab('general')) {

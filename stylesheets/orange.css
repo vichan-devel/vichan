@@ -1,4 +1,4 @@
-/* +piwnichan style, based on testorange.css from Karachan */
+/* +piwnichan style, based on orange.css from Karachan */
 
 body {
 	font-family: sans-serif;
@@ -6,19 +6,19 @@ body {
 	color:#bebebe;
 	
 	background-color: #1e1e1e;
-	background-image: url('img/testorange_testo.png'), url('img/testorange_top_bg.png'), url('img/testorange_bg.png');
-	background-repeat: no-repeat, repeat-x, repeat;
-	background-attachment: fixed, scroll, scroll;
-	background-position: right bottom, 0% 0%, 0% 0%;
+	background-image: url('img/orange_top_bg.png'), url('img/orange_bg.png');
+	background-repeat: repeat-x, repeat;
+	background-attachment: scroll, scroll;
+	background-position: 0% 0%, 0% 0%;
 }
 
 .desktop-style .bl-menu{
-background-image: url('img/testorange_bg.png');
+background-image: url('img/orange_bg.png');
 	background-repeat: repeat;
 } 
 
 .boardlist .board a {
-background-image: url('img/testorange_bg.png');
+background-image: url('img/orange_bg.png');
 	background-repeat: repeat;
 }
 
@@ -46,7 +46,7 @@ input {
 	background: #fff;
 }
 textarea {
-	background: #dedede url('img/testorange_textarea_bg.gif') repeat-x;
+	background: #dedede url('img/orange_textarea_bg.gif') repeat-x;
 }
 input, textarea {
 	border: 1px #fff solid;
@@ -180,7 +180,7 @@ div.post.reply {
 	color: #bebebe;
 }
 form table th, div.banner, div.pages, .replymode, .postblock, .passvalid, .catalogmode {
-	background: #ff9100 url('img/testorange_f_bg.gif') repeat-x !important;
+	background: #ff9100 url('img/orange_f_bg.gif') repeat-x !important;
 }
 div.pages, div.pages a {
 	color: black;
