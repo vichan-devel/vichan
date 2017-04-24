@@ -80,7 +80,7 @@ header div.subtitle {
 }
 
 form {
-  margin-bottom: 4em;
+  margin-bottom: 3em;
 }
 
 form table {
@@ -1216,4 +1216,29 @@ table.fileboard .intro a {
 }
 div.mix {
 	display: inline-block;
+}
+
+/* Collapsed post area */
+#PostAreaToggle + span {
+	font-size: 22px;
+	font-weight: bold;
+}
+#PostAreaToggle + span > a > label {
+	cursor: pointer;
+}
+#PostAreaToggle + span + div {
+	display: none;
+}
+#PostAreaToggle:checked + span {
+	display: none;
+}
+#PostAreaToggle:checked + span + div {
+	display: block;
+}
+form[name="post"] {
+  margin-bottom: 0em;
+  text-align: center;
+}
+form[name="post"] > div {
+	margin-bottom: 1em;
 }
