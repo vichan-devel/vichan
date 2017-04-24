@@ -17,32 +17,32 @@ if (active_page == 'thread' || active_page == 'index') {
 				key: 's',
 				multiline: false, 
 				exclusiveline: false, 
-				prefix:'**',
-				suffix:'**'
+				prefix:'[s]',
+				suffix:'[/s]'
 			},
 			italics: {
 				text: _('Italics'),
 				key: 'i',
 				multiline: false, 
 				exclusiveline: false, 
-				prefix: "''",
-				suffix: "''"
+				prefix: "[i]",
+				suffix: "[/i]"
 			},
 			bold: {
 				text: _('Bold'),
 				key: 'b',
 				multiline: false, 
 				exclusiveline: false, 
-				prefix: "'''",
-				suffix: "'''"
+				prefix: "[b]",
+				suffix: "[/b]"
 			},
 			underline: {
 				text: _('Underline'),
 				key: 'u',
 				multiline: false, 
 				exclusiveline: false, 
-				prefix:'__',
-				suffix:'__'
+				prefix:'[u]',
+				suffix:'[/u]'
 			},
 			code: {
 				text: _('Code'),
@@ -57,16 +57,8 @@ if (active_page == 'thread' || active_page == 'index') {
 				key: 'd',
 				multiline:false, 
 				exclusiveline:false, 
-				prefix:'~~',
-				suffix:'~~'
-			},
-			heading: {
-				text: _('Heading'),
-				key: 'r',
-				multiline:false, 
-				exclusiveline:true, 
-				prefix:'==',
-				suffix:'=='
+				prefix:'[-]',
+				suffix:'[/-]'
 			}
 		};
 		
@@ -322,7 +314,7 @@ if (active_page == 'thread' || active_page == 'index') {
 			// setting for enabling formatting keybinds
 			$(s1).on(e, function(e) {
 				console.log('Keybind');
-				if (!localStorage.formatText_keybinds || localStorage.formatText_keybinds == 'false') {
+				if (!localStorage.formatText_keybinds || localStorage.formatText_keybinds == 'true') {
 					localStorage.formatText_keybinds = 'true';
 					if (window.Options && Options.get_tab('general')) e.target.checked = true;
 				} else {

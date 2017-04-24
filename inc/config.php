@@ -635,6 +635,16 @@
  *  Markup settings
  * ====================
  */
+ 
+	// Standard Markup
+	$config['markup'][] = array("/\[b\](.+?)\[\/b\]/s", "<b>\$1</b>");
+	$config['markup'][] = array("/\[i\](.+?)\[\/i\]/s", "<i>\$1</i>");
+	$config['markup'][] = array("/\[u\](.+?)\[\/u\]/s", "<u>\$1</u>");
+	$config['markup'][] = array("/\[-\](.+?)\[\/-\]/s", "<s>\$1</s>");
+	// Special Markup
+	$config['markup'][] = array("/\[s\]/s", "<span class=\"spoiler\">");
+	$config['markup'][] = array("/\[g\]/s", "<span class=\"quote\">");
+	$config['markup'][] = array("/\[\/\]/s", "</span>");
 
 	// "Wiki" markup syntax ($config['wiki_markup'] in pervious versions):
 	// $config['markup'][] = array("/'''(.+?)'''/", "<strong>\$1</strong>");
@@ -675,11 +685,11 @@
 	$config['multiimage_method'] = 'split';
 
 	// For resizing, maximum thumbnail dimensions.
-	$config['thumb_width'] = 255;
-	$config['thumb_height'] = 255;
+	$config['thumb_width'] = 125;
+	$config['thumb_height'] = 125;
 	// Maximum thumbnail dimensions for thread (OP) images.
-	$config['thumb_op_width'] = 255;
-	$config['thumb_op_height'] = 255;
+	$config['thumb_op_width'] = 250;
+	$config['thumb_op_height'] = 250;
 
 	// Thumbnail extension ("png" recommended). Leave this empty if you want the extension to be inherited
 	// from the uploaded file.
