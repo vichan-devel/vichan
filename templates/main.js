@@ -1,4 +1,10 @@
 {% raw %}
+/* 
+ * main.js - This file is compiled and contains code from the following scripts, concatenated together in order:
+ * {% endraw %}{{ config.additional_javascript|join(', ') }}{% raw %}
+ * Please see those files for licensing and authorship information.
+ * Compiled on {% endraw %}{{ time()|date("%c") }}{% raw %}
+ */
 
 /* gettext-compatible _ function, example of usage:
  *
@@ -390,6 +396,9 @@ function ready() {
 
 var post_date = "{{ config.post_date }}";
 var max_images = {{ config.max_images }};
+if (typeof active_page === "undefined") {
+	active_page = "page";
+}
 
 onready(init);
 

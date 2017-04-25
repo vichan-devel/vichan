@@ -1855,13 +1855,16 @@ function markup_url($matches) {
 	$link = (object) array(
 		'href' => $config['link_prefix'] . $url,
 		'text' => $url,
-		'rel' => 'nofollow',
+		'rel' => 'nofollow noreferrer',
 		'target' => '_blank',
 	);
 	
 	event('markup-url', $link);
 	$link = (array)$link;
-
+	if (strncasecmp($link['href'], 'http', 4) === 0)
+	{
+		$link['href'] = 'https://href.li/?' . $link['href'];
+	}
 	$parts = array();
 	foreach ($link as $attr => $value) {
 		if ($attr == 'text' || $attr == 'after')
