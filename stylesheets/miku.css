@@ -82,16 +82,13 @@ hr {
 	border-color: #B7D9C5;
 }
 
-div.boardlist {
-	color: #0093AB;
-    background-color: rgba(65%, 85%, 95%, 0.2);
-}
-
-.desktop-style div.boardlist:nth-child(1) {
+.desktop-style div.boardlist:not(.bottom) {
   text-shadow: #D2FFEE 1px 1px 1px, #D2FFEE -1px -1px 1px;
+  color: #0093AB;
+  background-color: rgba(65%, 85%, 95%, 0.2);
 }
 
 
-.desktop-style div.boardlist:nth-child(1):hover, .desktop-style div.boardlist:nth-child(1).cb-menu {
+.desktop-style div.boardlist:not(.bottom):hover, .desktop-style div.boardlist:not(.bottom).cb-menu {
   background-color: rgba(70%, 95%, 100%, 0.45);
 }

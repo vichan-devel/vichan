@@ -63,6 +63,6 @@ table.modlog tr th {
 	background: #f0e0d6;
 }
 
-.desktop-style div.boardlist:nth-child(1) {
+.desktop-style div.boardlist:not(.bottom) {
 	background-color: #F0E0D6;
 }

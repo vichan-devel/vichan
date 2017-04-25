@@ -186,19 +186,17 @@ div.pages, div.pages a {
 	color: black;
 	border: 0;
 }
-div.boardlist {
-    background-color: rgba(5%,5%,5%,0.2);
-}
 div.boardlist.bottom {
     background-color:transparent;
 }
 
-.desktop-style div.boardlist:nth-child(1) {
+.desktop-style div.boardlist:not(.bottom) {
+  background-color: rgba(5%,5%,5%,0.2);
   text-shadow: #000 1px 1px 1px, #500 -1px -1px 1px;
 }
 
 
-.desktop-style div.boardlist:nth-child(1):hover, .desktop-style div.boardlist:nth-child(1).cb-menu {
+.desktop-style div.boardlist:not(.bottom):hover, .desktop-style div.boardlist:not(.bottom).cb-menu {
   background-color: rgba(0%, 0%, 0%, 0.45);
 }
 
