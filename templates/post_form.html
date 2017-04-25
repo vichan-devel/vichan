@@ -1,5 +1,10 @@
 <form name="post" onsubmit="return dopost(this);" enctype="multipart/form-data" action="{{ config.post_url }}" method="post">
 {{ antibot.html() }}
+{% if not id %}
+<input type="checkbox" id="PostAreaToggle" class="hidden"/>
+<span>[<a href="#" class="no-decoration" title="Start a new thread"><label for="PostAreaToggle">New Thread</label></a>]</span>
+{% endif %}
+<div>
 {% if id %}<input type="hidden" name="thread" value="{{ id }}">{% endif %}
 {{ antibot.html() }}
 <input type="hidden" name="board" value="{{ board.uri }}">
@@ -170,6 +175,7 @@
 	</table>
 {{ antibot.html(true) }}
 <input type="hidden" name="hash" value="{{ antibot.hash() }}">
+</div>
 </form>
 
 <script type="text/javascript">{% raw %}

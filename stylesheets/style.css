@@ -80,7 +80,7 @@ header div.subtitle {
 }
 
 form {
-  margin-bottom: 4em;
+  margin-bottom: 3em;
 }
 
 form table {
@@ -540,7 +540,7 @@ table.mod.config-editor input[type="text"] {
   width: 98%;
 }
 
-.desktop-style div.boardlist:nth-child(1) {
+.desktop-style div.boardlist:not(.bottom) {
   position: fixed;
   top: 0;
   left: 0;
@@ -1206,4 +1206,29 @@ table.fileboard .intro a {
 }
 div.mix {
 	display: inline-block;
+}
+
+/* Collapsed post area */
+#PostAreaToggle + span {
+	font-size: 22px;
+	font-weight: bold;
+}
+#PostAreaToggle + span > a > label {
+	cursor: pointer;
+}
+#PostAreaToggle + span + div {
+	display: none;
+}
+#PostAreaToggle:checked + span {
+	display: none;
+}
+#PostAreaToggle:checked + span + div {
+	display: block;
+}
+form[name="post"] {
+  margin-bottom: 0em;
+  text-align: center;
+}
+form[name="post"] > div {
+	margin-bottom: 1em;
 }
