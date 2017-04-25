@@ -310,11 +310,11 @@ if (active_page == 'thread' || active_page == 'index') {
 					self.add_rule(rules[index], index);
 				}
 			}
-		
+			
 			// setting for enabling formatting keybinds
 			$(s1).on(e, function(e) {
 				console.log('Keybind');
-				if (!localStorage.formatText_keybinds || localStorage.formatText_keybinds == 'true') {
+				if (localStorage.formatText_keybinds == 'false') {
 					localStorage.formatText_keybinds = 'true';
 					if (window.Options && Options.get_tab('general')) e.target.checked = true;
 				} else {
@@ -339,8 +339,8 @@ if (active_page == 'thread' || active_page == 'index') {
 			
 			// make sure the tab settings are switch properly at loadup
 			if (window.Options && Options.get_tab('general')) {
-				if (localStorage.formatText_keybinds == 'true') $(s1)[0].checked = true;
-				else $(s1)[0].checked = false;
+				if (localStorage.formatText_keybinds == 'false') $(s1)[0].checked = false;
+				else $(s1)[0].checked = true;
 				if (localStorage.formatText_toolbar == 'true') $(s2)[0].checked = true;
 				else $(s2)[0].checked = false;
 			}
@@ -350,7 +350,7 @@ if (active_page == 'thread' || active_page == 'index') {
 			
 			//attach listener to <body> so it also works on quick-reply box
 			$('body').on('keydown', '[name="body"]', function(e) {
-				if (!localStorage.formatText_keybinds || localStorage.formatText_keybinds == 'false') return;
+				if (localStorage.formatText_keybinds == 'false') return;
 				var key = String.fromCharCode(e.which).toLowerCase();
 				var rules = JSON.parse(localStorage.formatText_rules);
 				for (var index in rules) {
