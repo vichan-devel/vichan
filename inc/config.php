@@ -1427,6 +1427,7 @@
 	// new ones.
 	$config['mod']['groups'] = array(
 		10	=> 'Janitor',
+		15  => 'Developer'
 		20	=> 'Mod',
 		30	=> 'Admin',
 		// 98	=> 'God',
@@ -1457,51 +1458,50 @@
 	// Don't worry about per-board moderators. Let all mods moderate any board.
 	$config['mod']['skip_per_board'] = false;
 
-	/* Post Controls */
-	// View IP addresses
-	$config['mod']['show_ip'] = MOD;
-	// Delete a post
-	$config['mod']['delete'] = JANITOR;
-	// Ban a user for a post
-	$config['mod']['ban'] = MOD;
-	// Ban and delete (one click; instant)
-	$config['mod']['bandelete'] = MOD;
-	// Remove bans
-	$config['mod']['unban'] = MOD;
-	// Spoiler image
-	$config['mod']['spoilerimage'] = JANITOR;
-	// Delete file (and keep post)
-	$config['mod']['deletefile'] = JANITOR;
-	// Delete all posts by IP
-	$config['mod']['deletebyip'] = MOD;
-	// Delete all posts by IP across all boards
-	$config['mod']['deletebyip_global'] = ADMIN;
-	// Sticky a thread
-	$config['mod']['sticky'] = MOD;
-	// Cycle a thread
-	$config['mod']['cycle'] = MOD;
-	$config['cycle_limit'] = &$config['reply_limit'];
-	// Lock a thread
-	$config['mod']['lock'] = MOD;
-	// Post in a locked thread
-	$config['mod']['postinlocked'] = MOD;
-	// Prevent a thread from being bumped
-	$config['mod']['bumplock'] = MOD;
-	// View whether a thread has been bumplocked ("-1" to allow non-mods to see too)
-	$config['mod']['view_bumplock'] = MOD;
-	// Edit posts
-	$config['mod']['editpost'] = ADMIN;
-	// "Move" a thread to another board (EXPERIMENTAL; has some known bugs)
-	$config['mod']['move'] = MOD;
-	// Bypass "field_disable_*" (forced anonymity, etc.)
-	$config['mod']['bypass_field_disable'] = MOD;
-	// Post bypass unoriginal content check on robot-enabled boards
-	$config['mod']['postunoriginal'] = ADMIN;
-	// Bypass flood check
-	$config['mod']['bypass_filters'] = ADMIN;
-	$config['mod']['flood'] = &$config['mod']['bypass_filters'];
-	// Raw HTML posting
-	$config['mod']['rawhtml'] = ADMIN;
+    // View IP addresses
+    $config['mod']['show_ip'] = DEVELOPER;
+    // Delete a post
+    $config['mod']['delete'] = MOD;
+    // Ban a user for a post
+    $config['mod']['ban'] = MOD;
+    // Ban and delete (one click; instant)
+    $config['mod']['bandelete'] = MOD;
+    // Remove bans
+    $config['mod']['unban'] = JANITOR;
+    // Spoiler image
+    $config['mod']['spoilerimage'] = MOD;
+    // Delete file (and keep post)
+    $config['mod']['deletefile'] = MOD;
+    // Delete all posts by IP
+    $config['mod']['deletebyip'] = MOD;
+    // Delete all posts by IP across all boards	
+    $config['mod']['deletebyip_global'] = MOD;
+    // Sticky a thread
+    $config['mod']['sticky'] = JANITOR;
+    // Cycle a thread
+    $config['mod']['cycle'] = MOD;
+    $config['cycle_limit'] = &$config['reply_limit'];
+    // Lock a thread
+    $config['mod']['lock'] = JANITOR;
+    // Post in a locked thread
+    $config['mod']['postinlocked'] = JANITOR;
+    // Prevent a thread from being bumped
+    $config['mod']['bumplock'] = JANITOR;
+    // View whether a thread has been bumplocked ("-1" to allow non-mods to see too)
+    $config['mod']['view_bumplock'] = JANITOR;
+    // Edit posts
+    $config['mod']['editpost'] = ADMIN;
+    // "Move" a thread to another board (EXPERIMENTAL; has some known bugs)
+    $config['mod']['move'] = DISABLED;
+    // Bypass "field_disable_*" (forced anonymity, etc.)
+    $config['mod']['bypass_field_disable'] = MOD;
+    // Post bypass unoriginal content check on robot-enabled boards
+    $config['mod']['postunoriginal'] = ADMIN;
+    // Bypass flood check
+    $config['mod']['bypass_filters'] = ADMIN;
+    $config['mod']['flood'] = &$config['mod']['bypass_filters'];
+    // Raw HTML posting
+    $config['mod']['rawhtml'] = ADMIN;
 
 	/* Administration */
 	// View the report queue
