@@ -312,6 +312,10 @@ span.quote {
   color: #789922;
 }
 
+span.quote-pepe {
+  color: #148800;
+}
+
 span.omitted {
   display: block;
   margin-top: 1em;
