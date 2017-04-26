@@ -392,11 +392,11 @@ div.blotter {
 	text-align: center;
 }
 
-.desktop-style div.boardlist:nth-child(1) {
+.desktop-style div.boardlist:not(.bottom) {
  
 }
 
 
-.desktop-style div.boardlist:nth-child(1):hover, .desktop-style div.boardlist:nth-child(1).cb-menu {
+.desktop-style div.boardlist:not(.bottom):hover, .desktop-style div.boardlist:not(.bottom).cb-menu {
   background-color: rgba(100%, 100%, 30%, 0.35);
 }
