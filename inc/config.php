@@ -1427,7 +1427,7 @@
 	// new ones.
 	$config['mod']['groups'] = array(
 		10	=> 'Janitor',
-		15  => 'Developer'
+		15  => 'Developer',
 		20	=> 'Mod',
 		30	=> 'Admin',
 		// 98	=> 'God',
