@@ -593,7 +593,7 @@ if (file_exists($config['has_installed'])) {
 			}	
 			query('ALTER TABLE ``bans`` ADD `cookie` VARCHAR(40) CHARACTER SET ascii NOT NULL AFTER `ipend`;') or error(db_error());
 			query('ALTER TABLE ``bans`` ADD INDEX(`cookie`);') or error(db_error());
-			query('ALTER TABLE ``bans`` ADD `cookie_banned` BOOLEAN NOT NULL AFTER `cookie`;') or error(db_error());
+			query('ALTER TABLE ``bans`` ADD `cookiebanned` BOOLEAN NOT NULL AFTER `cookie`;') or error(db_error());
 			query('CREATE TABLE ``filehashes`` (
 				  `id` int(11) NOT NULL AUTO_INCREMENT,
 				  `board` varchar(58) NOT NULL,

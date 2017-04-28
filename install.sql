@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `bans` (
   `ipstart` varbinary(16) NOT NULL,
   `ipend` varbinary(16) DEFAULT NULL,
   `cookie` varchar(40) CHARACTER SET ascii NOT NULL,
-  `cookie_banned` tinyint(1) NOT NULL,
+  `cookiebanned` tinyint(1) NOT NULL,
   `created` int(10) UNSIGNED NOT NULL,
   `expires` int(10) UNSIGNED DEFAULT NULL,
   `board` varchar(58) DEFAULT NULL,
