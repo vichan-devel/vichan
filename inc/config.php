@@ -289,6 +289,8 @@
 		'embed',
 		'recaptcha_challenge_field',
 		'recaptcha_response_field',
+		'captcha_cookie',
+		'captcha_text',
 		'spoiler',
 		'page',
 		'file_url',
@@ -304,6 +306,26 @@
 	// Public and private key pair from https://www.google.com/recaptcha/admin/create
 	$config['recaptcha_public'] = '6LcXTcUSAAAAAKBxyFWIt2SO8jwx4W7wcSMRoN3f';
 	$config['recaptcha_private'] = '6LcXTcUSAAAAAOGVbVdhmEM1_SyRF4xTKe8jbzf_';
+
+	// Enable Custom Captcha you need to change a couple of settings 
+	//Read more at: /captcha/instructions.md
+	 $config['captcha'] = array();
+
+	// Enable custom captcha provider
+	$config['captcha']['enabled'] = false;
+
+	//New thread captcha
+ 	//Require solving a captcha to post a thread. 
+ 	//Default off.
+ 	 $config['new_thread_capt'] = false;
+
+	// Custom captcha get provider path (if not working get the absolute path aka your url.)
+	$config['captcha']['provider_get'] = '../inc/captcha/entrypoint.php';
+	// Custom captcha check provider path
+	$config['captcha']['provider_check'] = '../inc/captcha/entrypoint.php';
+
+	// Custom captcha extra field (eg. charset)
+	 $config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
 	
 	// Ability to lock a board for normal users and still allow mods to post.  Could also be useful for making an archive board
 	$config['board_locked'] = false;
@@ -1029,6 +1051,7 @@
 	// $config['additional_javascript'][] = 'js/auto-reload.js';
 	// $config['additional_javascript'][] = 'js/post-hover.js';
 	// $config['additional_javascript'][] = 'js/style-select.js';
+	// $config['additional_javascript'][] = 'js/captcha.js';
 
 	// Where these script files are located on the web. Defaults to $config['root'].
 	// $config['additional_javascript_url'] = 'http://static.example.org/tinyboard-javascript-stuff/';

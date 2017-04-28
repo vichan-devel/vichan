@@ -560,7 +560,7 @@ if (file_exists($config['has_installed'])) {
 			query('ALTER TABLE ``mods`` CHANGE `salt` `version` VARCHAR(64) NOT NULL;') or error(db_error());
 		case '5.0.1':
 		case '5.1.0':
-			query('CREATE TABLE ``pages`` (
+			query('CREATE TABLE IF NOT EXISTS ``pages`` (
 			  `id` int(11) NOT NULL AUTO_INCREMENT,
 			  `board` varchar(255) DEFAULT NULL,
 			  `name` varchar(255) NOT NULL,
@@ -575,7 +575,7 @@ if (file_exists($config['has_installed'])) {
                                 query(sprintf("ALTER TABLE ``posts_%s`` ADD `cycle` int(1) NOT NULL AFTER `locked`", $board['uri'])) or error(db_error());
                         }
 		case '5.1.2':
-			query('CREATE TABLE ``nntp_references`` (
+			query('CREATE TABLE IF NOT EXISTS ``nntp_references`` (
 				  `board` varchar(60) NOT NULL,
 				  `id` int(11) unsigned NOT NULL,
 				  `message_id` varchar(255) CHARACTER SET ascii NOT NULL,
@@ -615,9 +615,14 @@ if (file_exists($config['has_installed'])) {
 				  UNIQUE KEY `cookie` (`cookie`)
 				) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 			') or error(db_error());
-	
-		
-
+			query('CREATE TABLE IF NOT EXISTS ``captchas`` (
+			  	`cookie` varchar(50),
+			  	`extra` varchar(200),
+			  	`text` varchar(255),
+			  	`created_at` int(11),
+			  	PRIMARY KEY (`cookie`,`extra`),
+				) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+			') or error(db_error());
 		case false:
 			// TODO: enhance Tinyboard -> vichan upgrade path.
 			query("CREATE TABLE IF NOT EXISTS ``search_queries`` (  `ip` varchar(39) NOT NULL,  `time` int(11) NOT NULL,  `query` text NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;") or error(db_error());
