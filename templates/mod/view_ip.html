@@ -105,6 +105,16 @@
 						<td>{{ ban.mask }}</td>
 					</tr>
 					<tr>
+						<th>Cookie</th>
+						<td> 
+							{%  if ban.cookiebanned %}
+								<s style="background-color: #F33">{{ ban.cookie }}</s> 
+							{%  else %}
+								{{ ban.cookie }}
+							{%  endif %}
+						</td>
+					</tr>
+					<tr>
 						<th>{% trans 'Reason' %}</th>
 						<td>
 							{% if ban.reason %}
@@ -160,6 +170,7 @@
 					</tr>
 				</table>
 				<input type="hidden" name="ban_id" value="{{ ban.id }}">
+				<input type="submit" name="ban_cookie" value="Ban Cookie">
 				<input type="submit" name="unban" value="{% trans 'Remove ban' %}">
 			</form>
 		{% endfor %}

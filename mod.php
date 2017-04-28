@@ -60,6 +60,8 @@ $pages = array(
 	
 	'/IP/([\w.:]+)'				=> 'secure_POST ip',		// view ip address
 	'/IP/([\w.:]+)/remove_note/(\d+)'	=> 'secure ip_remove_note',	// remove note from ip address
+
+	'/ban-cookie'			=> 'secure_POST ban_cookie',		// Ban Cookie
 	
 	'/ban'					=> 'secure_POST ban',		// new ban
 	'/bans'					=> 'secure_POST bans',		// ban list
@@ -84,6 +86,7 @@ $pages = array(
 	'/(\%b)/(un)?sticky/(\d+)'		=> 'secure sticky',		// sticky thread
 	'/(\%b)/(un)?cycle/(\d+)'                         => 'secure cycle',          // cycle thread
 	'/(\%b)/bump(un)?lock/(\d+)'		=> 'secure bumplock',		// "bumplock" thread
+	'/(\%b)/deletefilepermaban/(\d+)/(\d+)'     => 'secure deletefilepermaban',     // delete file from post and permaban it
 	
 	'/themes'				=> 'themes_list',		// manage themes
 	'/themes/(\w+)'				=> 'secure_POST theme_configure',		// configure/reconfigure theme

@@ -799,8 +799,15 @@ if (isset($_POST['delete'])) {
 			}
 
 			$file['hash'] = $hash;
-			$allhashes .= $hash;
+			// Add Hashes as an imploded string
+			$allhashes .= $hash . ":";
 		}
+
+
+		// Remove exsessive ":" from imploded list
+		$allhashes = substr_replace($allhashes, "", -1);
+		$post['allhashes'] = $allhashes;
+
 
 		if (count ($post['files']) == 1) {
 			$post['filehash'] = $hash;
@@ -982,9 +989,23 @@ if (isset($_POST['delete'])) {
 				error($config['error']['nomove']);
 			}
 		}
+		
 
+		// Check if multiple images and if same image is added more than once
+		$hashArray = explode(":", $post['allhashes']);
+		$hashCount = count($hashArray);
+		for($i=0; $i<$hashCount; $i++) {
+			for($j=0; $j<$hashCount; $j++) {
+				if($i != $j && $hashArray[$i] == $hashArray[$j]) {
+					error($config['error']['fileduplicate']);
+				}
+			}
+		}
+
+		
 		if ($config['image_reject_repost']) {
-			if ($p = getPostByHash($post['filehash'])) {
+			// if ($p = getPostByHash($post['filehash'])) {
+			if ($p = getPostByAllHash($post['allhashes'])) {
 				undoImage($post);
 				error(sprintf($config['error']['fileexists'], 
 					($post['mod'] ? $config['root'] . $config['file_mod'] . '?/' : $config['root']) .
@@ -997,7 +1018,22 @@ if (isset($_POST['delete'])) {
 				));
 			}
 		} else if (!$post['op'] && $config['image_reject_repost_in_thread']) {
-			if ($p = getPostByHashInThread($post['filehash'], $post['thread'])) {
+			// if ($p = getPostByHashInThread($post['filehash'], $post['thread'])) {
+			if ($p = getPostByAllHashInThread($post['allhashes'], $post['thread'])) {
+				undoImage($post);
+				error(sprintf($config['error']['fileexistsinthread'], 
+					($post['mod'] ? $config['root'] . $config['file_mod'] . '?/' : $config['root']) .
+					($board['dir'] . $config['dir']['res'] .
+						($p['thread'] ?
+							$p['thread'] . '.html#' . $p['id']
+						:
+							$p['id'] . '.html'
+						))
+				));
+			}
+		} else if ($post['op'] && $config['image_reject_repost_in_thread']) {
+			// Check all OP images and see if any have been used before
+			if ($p = getPostByAllHashInOP($post['allhashes'])) {
 				undoImage($post);
 				error(sprintf($config['error']['fileexistsinthread'], 
 					($post['mod'] ? $config['root'] . $config['file_mod'] . '?/' : $config['root']) .
@@ -1010,7 +1046,7 @@ if (isset($_POST['delete'])) {
 				));
 			}
 		}
-		}
+	}
 	
 	// Do filters again if OCRing
 	if ($config['tesseract_ocr'] && !hasPermission($config['mod']['bypass_filters'], $board['uri']) && !$dropped_post) {

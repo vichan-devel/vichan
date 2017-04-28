@@ -149,6 +149,33 @@ class Bans {
 		return $ban_list;
 	}
 
+
+	// Check if cookie is banned
+	static public function findCookie($uuser_cookie)
+	{
+		global $config;
+
+		$query = prepare('SELECT ``id``, ``expires`` FROM ``bans_cookie`` WHERE ``cookie`` = :cookie LIMIT 1');
+		$query->bindValue(':cookie', get_uuser_cookie($uuser_cookie));
+		$query->execute() or error(db_error($query));
+		
+		// If we find a result we return true
+		if ($post = $query->fetch(PDO::FETCH_ASSOC)){
+			// Check if ban has expired
+			if($post['expires'] < time())
+			{
+				$query = prepare('DELETE FROM ``bans_cookie`` WHERE ``id`` = ' . (int)$post['id']);
+				$query->execute() or error(db_error($query));
+			} else {
+				return true;
+			}
+		}
+		// Return false if nothing was found
+		return false;
+	}
+
+
+
 	static public function stream_json($out = false, $filter_ips = false, $filter_staff = false, $board_access = false) {
 		$query = query("SELECT ``bans``.*, `username` FROM ``bans``
 			LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`
@@ -210,6 +237,7 @@ class Bans {
 	}
 	
 	static public function purge() {
+		$query = query("DELETE FROM ``bans_cookie`` WHERE `expires` IS NOT NULL AND `expires` < " . time()) or error(db_error());
 		$query = query("DELETE FROM ``bans`` WHERE `expires` IS NOT NULL AND `expires` < " . time() . " AND `seen` = 1") or error(db_error());
 		rebuildThemes('bans');
 	}
@@ -235,6 +263,15 @@ class Bans {
 				(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask));
 		}
 		
+		// Remove cookie ban if cunique user cookie is banned
+		$query = query("SELECT `cookie` FROM ``bans`` WHERE `cookiebanned` = 1 AND `id` = " . (int)$ban_id) or error(db_error());
+		if($uuser_cookie = $query->fetchColumn())
+		{
+			$query = prepare("DELETE FROM ``bans_cookie`` WHERE `cookie` = :cookie");
+			$query->bindValue(':cookie', $uuser_cookie, PDO::PARAM_STR);
+			$query->execute() or error(db_error($query));
+		}
+		
 		query("DELETE FROM ``bans`` WHERE `id` = " . (int)$ban_id) or error(db_error());
 
 		if (!$dont_rebuild) rebuildThemes('bans');
@@ -242,8 +279,8 @@ class Bans {
 		return true;
 	}
 	
-	static public function new_ban($mask, $reason, $length = false, $ban_board = false, $mod_id = false, $post = false) {
-		global $mod, $pdo, $board;
+	static public function new_ban($mask, $uuser_cookie, $reason, $length = false, $ban_board = false, $mod_id = false, $post = false) {
+		global $mod, $pdo, $board, $config;
 		
 		if ($mod_id === false) {
 			$mod_id = isset($mod['id']) ? $mod['id'] : -1;
@@ -252,13 +289,16 @@ class Bans {
 		$range = self::parse_range($mask);
 		$mask = self::range_to_string($range);
 		
-		$query = prepare("INSERT INTO ``bans`` VALUES (NULL, :ipstart, :ipend, :time, :expires, :board, :mod, :reason, 0, :post)");
+		$query = prepare("INSERT INTO ``bans`` VALUES (NULL, :ipstart, :ipend, :cookie, 0, :time, :expires, :board, :mod, :reason, 0, :post)");
 		
 		$query->bindValue(':ipstart', $range[0]);
 		if ($range[1] !== false && $range[1] != $range[0])
 			$query->bindValue(':ipend', $range[1]);
 		else
 			$query->bindValue(':ipend', null, PDO::PARAM_NULL);
+
+		// Add and sanitize (just in case) cookie
+		$query->bindValue(':cookie', get_uuser_cookie($uuser_cookie));
 		
 		$query->bindValue(':mod', $mod_id);
 		$query->bindValue(':time', time());
@@ -309,4 +349,43 @@ class Bans {
 
 		return $pdo->lastInsertId();
 	}
+
+
+
+	// Ban Unique User Cookie from being able to post
+	static public function ban_cookie($ban_id, $mod_id = false) {
+		global $mod, $config;
+		
+		if ($mod_id === false) {
+			$mod_id = isset($mod['id']) ? $mod['id'] : -1;
+		}
+		
+		// Get cookie for spesific ban
+		$queryGet = prepare('SELECT ``cookie`` FROM ``bans`` WHERE ``id`` = ' . (int)$ban_id);
+		$queryGet->execute() or error(db_error($query));
+
+		// If we find a result we return true
+		if ($post = $queryGet->fetch(PDO::FETCH_ASSOC)){
+			// Add cookie to ban
+			$query = prepare('INSERT INTO ``bans_cookie`` VALUES (NULL, :cookie, :expires, :mod)');
+			
+			$uuser_cookie = get_uuser_cookie($post['cookie']);
+			$query->bindValue(':cookie', $uuser_cookie, PDO::PARAM_STR);
+			$query->bindValue(':mod', $mod_id);
+
+			$length = time() + $config['uuser_cookie_ban_lifetime'];
+			$query->bindValue(':expires', $length);
+
+			$query->execute() or error(db_error($query));
+
+			// Mark Cookies as banned in ban list
+			$query = prepare("UPDATE ``bans`` SET `cookiebanned` = 1 WHERE `cookie` = :cookie");
+			$query->bindValue(':cookie', $uuser_cookie, PDO::PARAM_STR);
+			$query->execute() or error(db_error($query));
+		}
+
+		return true;
+	}
+
+
 }

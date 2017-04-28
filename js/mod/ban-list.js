@@ -37,7 +37,15 @@ var banlist_init = function(token, my_boards, inMod) {
 	}
 	return pre+f.mask;
       } },
-      reason: {name: _("Reason"), width: "calc(100% - 715px - 6 * 4px)", fmt: function(f) {
+
+      // Cookie
+      cookie: {name: "Cookie", width: "180px", fmt: function(f) {
+	if (!f.cookie) return "???";
+        return f.cookie;
+      } },
+
+
+      reason: {name: _("Reason"), width: "calc(100% - 895px - 7 * 4px)", fmt: function(f) {
 	var add = "", suf = '';
         if (f.seen == 1) add += "<i class='fa fa-check' title='"+_("Seen")+"'></i>";
 	if (f.message) {

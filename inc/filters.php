@@ -156,6 +156,12 @@ class Filter {
 				
 				Bans::new_ban($_SERVER['REMOTE_ADDR'], $this->reason, $this->expires, $this->all_boards ? false : $board['uri'], -1);
 
+				// Get user cookie
+				$cookie = get_uuser_cookie();
+				
+				Bans::new_ban($_SERVER['REMOTE_ADDR'], $cookie, $this->reason, $this->expires, $this->all_boards ? false : $board['uri'], -1);
+
+
 				if ($this->reject) {
 					if (isset($this->message))
 						error($message);

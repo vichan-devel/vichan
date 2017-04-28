@@ -180,6 +180,11 @@
 	// Used to salt secure tripcodes ("##trip") and poster IDs (if enabled).
 	$config['secure_trip_salt'] = ')(*&^%$#@!98765432190zyxwvutsrqponmlkjihgfedcba';
 
+
+	// Cookie name for check of dumb posters ban evade
+	$config['cookies']['uuser_cookie_name'] = 'ponypoontang';
+	$config['uuser_cookie_ban_lifetime'] = 60 * 60 * 6; // 6 hours
+
 /*
  * ====================
  *  Flood/spam settings
@@ -196,7 +201,7 @@
 
 	// Prevents most Tor exit nodes from making posts. Recommended, as a lot of abuse comes from Tor because
 	// of the strong anonymity associated with it.
-	$config['dnsbl'][] = array('tor.dnsbl.sectoor.de', 1);
+	// $config['dnsbl'][] = array('tor.dnsbl.sectoor.de', 1);
 
 	// http://www.sorbs.net/using.shtml
 	// $config['dnsbl'][] = array('dnsbl.sorbs.net', array(2, 3, 4, 5, 6, 7, 8, 9));
@@ -1125,6 +1130,7 @@
 	$config['error']['webmhasaudio'] 	= _('The uploaded webm contains an audio or another type of additional stream.');
 	$config['error']['webmtoolong'] 	= _('The uploaded webm is longer than ' . $config['webm']['max_length'] . ' seconds.');
 	$config['error']['fileexists']		= _('That file <a href="%s">already exists</a>!');
+	$config['error']['fileduplicate']		= _('You can\'t add duplicates of same file!');
 	$config['error']['fileexistsinthread']	= _('That file <a href="%s">already exists</a> in this thread!');
 	$config['error']['delete_too_soon']	= _('You\'ll have to wait another %s before deleting that.');
 	$config['error']['mime_exploit']	= _('MIME type detection XSS exploit (IE) detected; post discarded.');
@@ -1322,6 +1328,7 @@
 	$config['mod']['link_ban'] = '[B]';
 	$config['mod']['link_bandelete'] = '[B&amp;D]';
 	$config['mod']['link_deletefile'] = '[F]';
+	$config['mod']['link_deletefilepermaban'] = '[FPb]';
 	$config['mod']['link_spoilerimage'] = '[S]';
 	$config['mod']['link_deletebyip'] = '[D+]';
 	$config['mod']['link_deletebyip_global'] = '[D++]';
@@ -1458,6 +1465,7 @@
 	// Don't worry about per-board moderators. Let all mods moderate any board.
 	$config['mod']['skip_per_board'] = false;
 
+	/* Post Controls */					
     // View IP addresses
     $config['mod']['show_ip'] = DEVELOPER;
     // Delete a post
@@ -1470,6 +1478,8 @@
     $config['mod']['unban'] = JANITOR;
     // Spoiler image
     $config['mod']['spoilerimage'] = MOD;
+	// Ban cookies for posting
+	$config['mod']['ban_cookie'] = MOD;
     // Delete file (and keep post)
     $config['mod']['deletefile'] = MOD;
     // Delete all posts by IP

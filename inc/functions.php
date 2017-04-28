@@ -924,6 +924,21 @@ function checkBan($board = false) {
 		$ips = array_merge($ips, explode(", ", $_SERVER['HTTP_X_FORWARDED_FOR']));
 	}
 
+
+	// Set Cookie Variable if not already set and check for cookie ban if set.
+	$uuser_cookie = get_uuser_cookie();
+	if($uuser_cookie === "???")
+	{
+		// Set unique User cookie variable
+		$uuser_cookie = sha1($config['cookies']['salt'] . microtime() . implode(",", $ips));
+		setcookie($config['cookies']['uuser_cookie_name'], $uuser_cookie, 0);
+	} else {
+		// If cookie is banned just die and ignore everything else.
+		if(Bans::findCookie($uuser_cookie))
+			die();
+	}
+
+
 	foreach ($ips as $ip) {
 		$bans = Bans::find($_SERVER['REMOTE_ADDR'], $board, $config['show_modname']);
 	
@@ -1029,8 +1044,8 @@ function insertFloodPost(array $post) {
 }
 
 function post(array $post) {
-	global $pdo, $board;
-	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :sticky, :locked, :cycle, 0, :embed, :slug)", $board['uri']));
+	global $pdo, $board, $config;
+	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :cookie, :sticky, :locked, :cycle, 0, :embed, :slug)", $board['uri']));
 
 	// Basic stuff
 	if (!empty($post['subject'])) {
@@ -1057,6 +1072,19 @@ function post(array $post) {
 	$query->bindValue(':time', isset($post['time']) ? $post['time'] : time(), PDO::PARAM_INT);
 	$query->bindValue(':password', $post['password']);		
 	$query->bindValue(':ip', isset($post['ip']) ? $post['ip'] : $_SERVER['REMOTE_ADDR']);
+
+
+	// Get and set Cookie Variable
+	$cookie = "???";
+	if(isset($_COOKIE[$config['cookies']['uuser_cookie_name']])) {
+		$cookie = $_COOKIE[$config['cookies']['uuser_cookie_name']];
+		if(!ctype_xdigit($cookie))
+			$cookie = "???";
+		if(strlen($cookie) > 40)
+			$cookie = substr($cookie, 0, 40);
+	}
+	$query->bindValue(':cookie', $cookie);
+
 
 	if ($post['op'] && $post['mod'] && isset($post['sticky']) && $post['sticky']) {
 		$query->bindValue(':sticky', true, PDO::PARAM_INT);
@@ -1117,7 +1145,32 @@ function post(array $post) {
 		error(db_error($query));
 	}
 
-	return $pdo->lastInsertId();
+	// Save Post ID
+	$postID = $pdo->lastInsertId();
+
+	// Add file-hashes to database
+	if($post['has_file'])
+	{
+		// If OP then thread ID is same as post ID
+		$threadID = (!isset($post['thread']) || $post['op'])?$postID:$post['thread'];
+
+		// Get all filehashes for post
+		$hashes = explode(":", $post['allhashes']);
+		$hc = count($hashes);
+		for($i=0; $i<$hc;$i++)
+		{
+			// Build entry for database
+			$query = prepare(sprintf("INSERT INTO ``filehashes`` VALUES ( NULL, '%s', :thread, :postid, :filehash)", $board['uri']));
+			$query->bindValue(':thread', $threadID, PDO::PARAM_INT);
+			$query->bindValue(':postid', $postID, PDO::PARAM_INT);
+			$query->bindValue(':filehash', $hashes[$i]);
+			// Add entry to database
+			$query->execute() or error(db_error($query));
+		}
+	}
+
+	// Return Post ID
+	return $postID;
 }
 
 function bumpThread($id) {
@@ -1153,6 +1206,21 @@ function deleteFile($id, $remove_entirely_if_already=true, $file=null) {
 	if ($files[0]->file == 'deleted' && $post['num_files'] == 1 && !$post['thread'])
 		return; // Can't delete OP's image completely.
 
+	
+	// Delete filehash from filehashes table
+	if($file == null)
+	{
+		$query = prepare(sprintf("DELETE FROM ``filehashes`` WHERE `thread` = :thread AND `board` = '%s' AND `post`= :id", $board['uri']));
+		$query->bindValue(':thread', $post['thread'], PDO::PARAM_INT);
+		$query->bindValue(':id', $id, PDO::PARAM_INT);
+		$query->execute() or error(db_error($query));
+	} else {
+		$query = prepare(sprintf("DELETE FROM ``filehashes`` WHERE `thread` = :thread AND `board` = '%s' AND `filehash`= :hash", $board['uri']));
+		$query->bindValue(':thread', $post['thread'], PDO::PARAM_INT);
+		$query->bindValue(':hash', $file_to_delete->hash, PDO::PARAM_STR);
+		$query->execute() or error(db_error($query));
+	}
+
 	$query = prepare(sprintf("UPDATE ``posts_%s`` SET `files` = :file WHERE `id` = :id", $board['uri']));
 	if (($file && $file_to_delete->file == 'deleted') && $remove_entirely_if_already) {
 		// Already deleted; remove file fully
@@ -1183,6 +1251,68 @@ function deleteFile($id, $remove_entirely_if_already=true, $file=null) {
 	else
 		buildThread($id);
 }
+
+
+
+
+// Remove file from post
+function deleteFilePermaban($id, $remove_entirely_if_already=true, $file=null) {
+	global $board, $config;
+
+	$query = prepare(sprintf("SELECT `thread`, `files`, `num_files` FROM ``posts_%s`` WHERE `id` = :id LIMIT 1", $board['uri']));
+	$query->bindValue(':id', $id, PDO::PARAM_INT);
+	$query->execute() or error(db_error($query));
+	if (!$post = $query->fetch(PDO::FETCH_ASSOC))
+		error($config['error']['invalidpost']);
+	$files = json_decode($post['files']);
+	$file_to_delete = $file !== false ? $files[(int)$file] : (object)array('file' => false);
+
+	if (!$files[0]) error(_('That post has no files.'));
+
+	if ($files[0]->file == 'deleted' && $post['num_files'] == 1 && !$post['thread'])
+		return; // Can't delete OP's image completely.
+
+	
+	// Delete filehash from filehashes table
+	$query = prepare(sprintf("UPDATE ``filehashes`` SET `board` = '%s' WHERE `thread` = :thread AND `board` = '%s' AND `filehash`= :hash", "permaban", $board['uri']));
+	$query->bindValue(':thread', $post['thread'], PDO::PARAM_INT);
+	$query->bindValue(':hash', $file_to_delete->hash, PDO::PARAM_STR);
+	$query->execute() or error(db_error($query));
+
+
+	$query = prepare(sprintf("UPDATE ``posts_%s`` SET `files` = :file WHERE `id` = :id", $board['uri']));
+	if (($file && $file_to_delete->file == 'deleted') && $remove_entirely_if_already) {
+		// Already deleted; remove file fully
+		$files[$file] = null;
+	} else {
+		foreach ($files as $i => $f) {
+			if (($file !== false && $i == $file) || $file === null) {
+				// Delete thumbnail
+				if (isset ($f->thumb) && $f->thumb) {
+					file_unlink($board['dir'] . $config['dir']['thumb'] . $f->thumb);
+					unset($files[$i]->thumb);
+				}
+
+				// Delete file
+				file_unlink($board['dir'] . $config['dir']['img'] . $f->file);
+				$files[$i]->file = 'deleted';
+			}
+		}
+	}
+
+	$query->bindValue(':file', json_encode($files), PDO::PARAM_STR);
+
+	$query->bindValue(':id', $id, PDO::PARAM_INT);
+	$query->execute() or error(db_error($query));
+
+	if ($post['thread'])
+		buildThread($post['thread']);
+	else
+		buildThread($id);
+}
+
+
+
 
 // rebuild post (markup)
 function rebuildPost($id) {
@@ -1262,6 +1392,13 @@ function deletePost($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
 	$query = prepare(sprintf("DELETE FROM ``posts_%s`` WHERE `id` = :id OR `thread` = :id", $board['uri']));
 	$query->bindValue(':id', $id, PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
+
+
+	// Delete filehash entries for thread from filehash table
+	$query = prepare(sprintf("DELETE FROM ``filehashes`` WHERE ( `thread` = :id OR `post` = :id ) AND `board` = '%s'", $board['uri']));
+	$query->bindValue(':id', $id, PDO::PARAM_INT);
+	$query->execute() or error(db_error($query));
+
 
 	$query = prepare("SELECT `board`, `post` FROM ``cites`` WHERE `target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ") ORDER BY `board`");
 	$query->bindValue(':board', $board['uri']);
@@ -2495,6 +2632,72 @@ function getPostByHashInThread($hash, $thread) {
 	return false;
 }
 
+
+// Function to check all posts on entire board for file hash 
+function getPostByAllHash($allhashes)
+{
+	global $board;
+	$hashes = explode(":", $allhashes);
+	foreach($hashes as $hash)
+	{
+		// Search for filehash
+		$query = prepare(sprintf("SELECT `post` AS `d`, `thread` FROM `filehashes` WHERE `filehash` = :hash AND ( `board` = '%s' OR `board` = '%s' )", $board['uri'], "permaban"));
+		$query->bindValue(':hash', $hash, PDO::PARAM_STR);
+		$query->execute() or error(db_error($query));
+
+		// Return result if found
+		if ($post = $query->fetch(PDO::FETCH_ASSOC)) {
+			return $post;
+		}
+	}
+	// Return false if no matching hash found
+	return false;
+}
+
+// Function to check all posts in thread for file hash
+function getPostByAllHashInThread($allhashes, $thread)
+{
+	global $board;
+	$hashes = explode(":", $allhashes);
+	foreach($hashes as $hash)
+	{
+		$query = prepare(sprintf("SELECT `post` AS `id`,`thread` FROM `filehashes` WHERE `filehash` = :hash AND ( ( `board` = '%s' AND `thread` = :thread ) OR `board` = '%s' )", $board['uri'], "permaban"));
+		$query->bindValue(':hash', $hash, PDO::PARAM_STR);
+		$query->bindValue(':thread', $thread, PDO::PARAM_INT);
+		$query->execute() or error(db_error($query));
+
+		// Return result if found
+		if ($post = $query->fetch(PDO::FETCH_ASSOC)) {
+			return $post;
+		}
+	}
+	// Return false if no matching hash found
+	return false;
+}
+
+// Function to check all OP posts in board for file hash
+function getPostByAllHashInOP($allhashes)
+{
+	global $board;
+	$hashes = explode(":", $allhashes);
+	foreach($hashes as $hash)
+	{
+		// Search for filehash amongst OP images
+		$query = prepare(sprintf("SELECT `post` AS `id`,`thread` FROM `filehashes` WHERE `filehash` = :hash AND ( ( `board` = '%s' AND `thread` = `post` ) OR `board` = '%s' )", $board['uri'], "permaban"));
+		$query->bindValue(':hash', $hash, PDO::PARAM_STR);
+		$query->execute() or error(db_error($query));
+
+		// Return result if found
+		if ($post = $query->fetch(PDO::FETCH_ASSOC)) {
+			return $post;
+		}
+	}
+	// Return false if no matching hash found
+	return false;
+}
+
+
+
 function undoImage(array $post) {
 	if (!$post['has_file'] || !isset($post['files']))
 		return;
@@ -2841,4 +3044,27 @@ function strategy_first($fun, $array) {
 	case 'sb_ukko':
 		return array('defer');
 	}
+}
+
+
+
+// Get Unique User Cookie and sanitize it
+function get_uuser_cookie($uuser_cookie = false)
+{
+	global $config;
+
+	// If cookie parameter isn't set we retreave cookie from users browser
+	if($uuser_cookie == false)
+	{
+		$uuser_cookie = "???";
+		if(isset($_COOKIE[$config['cookies']['uuser_cookie_name']])) {
+			$uuser_cookie = $_COOKIE[$config['cookies']['uuser_cookie_name']];
+		}
+	}
+
+	// Sanitize cookie data
+	if(!ctype_xdigit($uuser_cookie) || strlen($uuser_cookie) != 40)
+		$uuser_cookie = "???";
+
+	return $uuser_cookie;
 }

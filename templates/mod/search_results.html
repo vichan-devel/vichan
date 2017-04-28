@@ -45,6 +45,7 @@
 	<table class="modlog" style="width:100%">
 		<tr>
 			<th>{% trans 'IP address/mask' %}</th>
+			<th>{% trans 'Cookie' %}</th>
 			<th>{% trans 'Reason' %}</th>
 			<th>{% trans 'Board' %}</th>
 			<th>{% trans 'Set' %}</th>
@@ -60,6 +61,13 @@
 						<a href="?/IP/{{ ban.mask }}#bans">{{ ban.mask }}</a>
 					{% else %}
 						{{ ban.mask|e }}
+					{% endif %}
+				</td>
+				<td>
+					{% if ban.cookie %}
+						{{ ban.cookie }}
+					{% else %}
+						-
 					{% endif %}
 				</td>
 				<td>

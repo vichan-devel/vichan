@@ -90,7 +90,7 @@
 			<li><a href="?/bans">{% trans 'Ban list' %}</a></li>
 		{% endif %}
 		{% if config.ban_appeals and mod|hasPermission(config.mod.view_ban_appeals) %}
-			<li><a href="?/ban-appeals">{% trans 'Ban appeals' %}</a></li>
+			<li><a href="?/ban-appeals">{% trans 'Ban appeals' %} ({{ appealcount }})</a></li>
 		{% endif %}
 		{% if mod|hasPermission(config.mod.manageusers) %}
 			<li><a href="?/users">{% trans 'Manage users' %}</a></li>

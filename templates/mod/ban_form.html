@@ -29,6 +29,18 @@
 		</tr>
 		<tr>
 			<th>
+				<label for="ip">Unique User Cookie</span></label>
+			</th>
+			<td>
+				{% if not hide_ip %}
+					<input type="text" name="uuser_cookie" id="uuser_cookie" size="40" maxlength="40" value="{{ uusercookie|e }}">
+				{% else %}
+					<em>{% trans 'hidden' %}</em>
+				{% endif %}
+			</td>
+		</tr>
+		<tr>
+			<th>
 				<label for="reason">{% trans 'Reason' %}</label>
 			</th>
 			<td>

@@ -1,19 +1,20 @@
 -- phpMyAdmin SQL Dump
--- version 4.0.4.1
--- http://www.phpmyadmin.net
+-- version 4.7.0
+-- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 30, 2013 at 09:45 PM
--- Server version: 5.6.10
--- PHP Version: 5.3.15
+-- Generation Time: Apr 27, 2017 at 08:29 AM
+-- Server version: 5.7.17-0ubuntu0.16.04.2
+-- PHP Version: 7.0.15-0ubuntu0.16.04.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 -- --------------------------------------------------------
 
@@ -40,11 +41,13 @@ CREATE TABLE IF NOT EXISTS `antispam` (
 --
 
 CREATE TABLE IF NOT EXISTS `bans` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `ipstart` varbinary(16) NOT NULL,
   `ipend` varbinary(16) DEFAULT NULL,
-  `created` int(10) unsigned NOT NULL,
-  `expires` int(10) unsigned DEFAULT NULL,
+  `cookie` varchar(40) CHARACTER SET ascii NOT NULL,
+  `cookie_banned` tinyint(1) NOT NULL,
+  `created` int(10) UNSIGNED NOT NULL,
+  `expires` int(10) UNSIGNED DEFAULT NULL,
   `board` varchar(58) DEFAULT NULL,
   `creator` int(10) NOT NULL,
   `reason` text,
@@ -52,8 +55,41 @@ CREATE TABLE IF NOT EXISTS `bans` (
   `post` blob,
   PRIMARY KEY (`id`),
   KEY `expires` (`expires`),
-  KEY `ipstart` (`ipstart`,`ipend`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+  KEY `ipstart` (`ipstart`,`ipend`),
+  KEY `cookie` (`cookie`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bans_cookie`
+--
+
+CREATE TABLE IF NOT EXISTS `bans_cookie` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `cookie` varchar(40) CHARACTER SET ascii NOT NULL,
+  `expires` int(11) NOT NULL,
+  `creator` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `cookie` (`cookie`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ban_appeals`
+--
+
+CREATE TABLE IF NOT EXISTS `ban_appeals` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ban_id` int(10) UNSIGNED NOT NULL,
+  `time` int(10) UNSIGNED NOT NULL,
+  `message` text NOT NULL,
+  `denied` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ban_id` (`ban_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -65,7 +101,6 @@ CREATE TABLE IF NOT EXISTS `boards` (
   `uri` varchar(58) CHARACTER SET utf8 NOT NULL,
   `title` tinytext NOT NULL,
   `subtitle` tinytext,
-  -- `indexed` boolean default true,
   PRIMARY KEY (`uri`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
@@ -73,7 +108,7 @@ CREATE TABLE IF NOT EXISTS `boards` (
 -- Dumping data for table `boards`
 --
 
-INSERT INTO `boards` VALUES
+INSERT INTO `boards` (`uri`, `title`, `subtitle`) VALUES
 ('b', 'Random', NULL);
 
 -- --------------------------------------------------------
@@ -94,17 +129,55 @@ CREATE TABLE IF NOT EXISTS `cites` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `filehashes`
+--
+
+CREATE TABLE IF NOT EXISTS `filehashes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `board` varchar(58) NOT NULL,
+  `thread` int(11) NOT NULL,
+  `post` int(11) NOT NULL,
+  `filehash` text CHARACTER SET ascii NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `thread_id` (`thread`),
+  KEY `post_id` (`post`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `flood`
+--
+
+CREATE TABLE IF NOT EXISTS `flood` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ip` varchar(39) COLLATE ascii_bin NOT NULL,
+  `board` varchar(58) CHARACTER SET utf8 NOT NULL,
+  `time` int(11) NOT NULL,
+  `posthash` char(32) COLLATE ascii_bin NOT NULL,
+  `filehash` char(32) COLLATE ascii_bin DEFAULT NULL,
+  `isreply` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ip` (`ip`),
+  KEY `posthash` (`posthash`),
+  KEY `filehash` (`filehash`),
+  KEY `time` (`time`)
+) ENGINE=MyISAM DEFAULT CHARSET=ascii COLLATE=ascii_bin AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `ip_notes`
 --
 
 CREATE TABLE IF NOT EXISTS `ip_notes` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `ip` varchar(39) CHARACTER SET ascii NOT NULL,
   `mod` int(11) DEFAULT NULL,
   `time` int(11) NOT NULL,
   `body` text NOT NULL,
   UNIQUE KEY `id` (`id`),
-  KEY `ip_lookup` (`ip`, `time`)
+  KEY `ip_lookup` (`ip`,`time`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -120,7 +193,7 @@ CREATE TABLE IF NOT EXISTS `modlogs` (
   `time` int(11) NOT NULL,
   `text` text NOT NULL,
   KEY `time` (`time`),
-  KEY `mod`(`mod`)
+  KEY `mod` (`mod`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -130,7 +203,7 @@ CREATE TABLE IF NOT EXISTS `modlogs` (
 --
 
 CREATE TABLE IF NOT EXISTS `mods` (
-  `id` smallint(6) unsigned NOT NULL AUTO_INCREMENT,
+  `id` smallint(6) UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` varchar(30) NOT NULL,
   `password` varchar(256) CHARACTER SET ascii NOT NULL COMMENT 'SHA256',
   `version` varchar(64) CHARACTER SET ascii NOT NULL,
@@ -138,13 +211,13 @@ CREATE TABLE IF NOT EXISTS `mods` (
   `boards` text CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`,`username`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `mods`
 --
 
-INSERT INTO `mods` VALUES
+INSERT INTO `mods` (`id`, `username`, `password`, `version`, `type`, `boards`) VALUES
 (1, 'admin', 'cedad442efeef7112fed0f50b011b2b9bf83f6898082f995f69dd7865ca19fb7', '4a44c6c55df862ae901b413feecb0d49', 30, '*');
 
 -- --------------------------------------------------------
@@ -166,7 +239,7 @@ CREATE TABLE IF NOT EXISTS `mutes` (
 --
 
 CREATE TABLE IF NOT EXISTS `news` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` text NOT NULL,
   `time` int(11) NOT NULL,
   `subject` text NOT NULL,
@@ -178,11 +251,29 @@ CREATE TABLE IF NOT EXISTS `news` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `nntp_references`
+--
+
+CREATE TABLE IF NOT EXISTS `nntp_references` (
+  `board` varchar(30) NOT NULL,
+  `id` int(11) UNSIGNED NOT NULL,
+  `message_id` varchar(255) CHARACTER SET ascii NOT NULL,
+  `message_id_digest` varchar(40) CHARACTER SET ascii NOT NULL,
+  `own` tinyint(1) NOT NULL,
+  `headers` text,
+  PRIMARY KEY (`message_id_digest`),
+  UNIQUE KEY `message_id` (`message_id`),
+  UNIQUE KEY `u_board_id` (`board`,`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `noticeboard`
 --
 
 CREATE TABLE IF NOT EXISTS `noticeboard` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `mod` int(11) NOT NULL,
   `time` int(11) NOT NULL,
   `subject` text NOT NULL,
@@ -194,18 +285,35 @@ CREATE TABLE IF NOT EXISTS `noticeboard` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `pages`
+--
+
+CREATE TABLE IF NOT EXISTS `pages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `board` varchar(58) CHARACTER SET utf8 DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8 NOT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `content` text,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `u_pages` (`name`,`board`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `pms`
 --
 
 CREATE TABLE IF NOT EXISTS `pms` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `sender` int(11) NOT NULL,
   `to` int(11) NOT NULL,
   `message` text NOT NULL,
   `time` int(11) NOT NULL,
   `unread` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `to` (`to`, `unread`)
+  KEY `to` (`to`,`unread`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -215,14 +323,14 @@ CREATE TABLE IF NOT EXISTS `pms` (
 --
 
 CREATE TABLE IF NOT EXISTS `reports` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `time` int(11) NOT NULL,
   `ip` varchar(39) CHARACTER SET ascii NOT NULL,
   `board` varchar(58) CHARACTER SET utf8 DEFAULT NULL,
   `post` int(11) NOT NULL,
   `reason` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -260,80 +368,6 @@ CREATE TABLE IF NOT EXISTS `theme_settings` (
   KEY `theme` (`theme`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `flood`
---
-
-CREATE TABLE IF NOT EXISTS `flood` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `ip` varchar(39) NOT NULL,
-  `board` varchar(58) CHARACTER SET utf8 NOT NULL,
-  `time` int(11) NOT NULL,
-  `posthash` char(32) NOT NULL,
-  `filehash` char(32) DEFAULT NULL,
-  `isreply` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `ip` (`ip`),
-  KEY `posthash` (`posthash`),
-  KEY `filehash` (`filehash`),
-  KEY `time` (`time`)
-) ENGINE=MyISAM DEFAULT CHARSET=ascii COLLATE=ascii_bin AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `ban_appeals`
---
-
-CREATE TABLE IF NOT EXISTS `ban_appeals` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `ban_id` int(10) unsigned NOT NULL,
-  `time` int(10) unsigned NOT NULL,
-  `message` text NOT NULL,
-  `denied` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `ban_id` (`ban_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `pages`
---
-
-CREATE TABLE `pages` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `board` varchar(58) CHARACTER SET utf8 DEFAULT NULL,
-  `name` varchar(255) CHARACTER SET utf8 NOT NULL,
-  `title` varchar(255) DEFAULT NULL,
-  `type` varchar(255) DEFAULT NULL,
-  `content` text,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `u_pages` (`name`,`board`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `nntp_references`
---
-
-CREATE TABLE `nntp_references` (
-  `board` varchar(30) NOT NULL,
-  `id` int(11) unsigned NOT NULL,
-  `message_id` varchar(255) CHARACTER SET ascii NOT NULL,
-  `message_id_digest` varchar(40) CHARACTER SET ascii NOT NULL,
-  `own` tinyint(1) NOT NULL,
-  `headers` text,
-  PRIMARY KEY (`message_id_digest`),
-  UNIQUE KEY `message_id` (`message_id`),
-  UNIQUE KEY `u_board_id` (`board`, `id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
-
-
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-

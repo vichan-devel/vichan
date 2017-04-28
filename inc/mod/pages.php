@@ -102,6 +102,10 @@ function mod_dashboard() {
 	
 	$query = query('SELECT COUNT(*) FROM ``reports``') or error(db_error($query));
 	$args['reports'] = $query->fetchColumn();
+
+	// Counter for number of appeals
+	$query = query('SELECT COUNT(*) FROM ``ban_appeals`` WHERE ``denied`` = 0') or error(db_error($query));
+	$args['appealcount'] = $query->fetchColumn();
 	
 	if ($mod['type'] >= ADMIN && $config['check_updates']) {
 		if (!$config['version'])
@@ -808,6 +812,20 @@ function mod_page_ip($ip) {
 		return;
 	}
 	
+
+	// Ban The Cookie
+	if(isset($_POST['ban_id'], $_POST['ban_cookie']))
+	{
+		if (!hasPermission($config['mod']['ban_cookie']))
+			error($config['error']['noaccess']);
+
+		Bans::ban_cookie($_POST['ban_id']);
+		
+		header('Location: ?/IP/' . $ip . '#bans', true, $config['redirect_http']);
+		return;
+	}
+
+
 	if (isset($_POST['note'])) {
 		if (!hasPermission($config['mod']['create_notes']))
 			error($config['error']['noaccess']);
@@ -891,14 +909,14 @@ function mod_ban() {
 	if (!hasPermission($config['mod']['ban']))
 		error($config['error']['noaccess']);
 	
-	if (!isset($_POST['ip'], $_POST['reason'], $_POST['length'], $_POST['board'])) {
+	if (!isset($_POST['ip'], $_POST['uuser_cookie'], $_POST['reason'], $_POST['length'], $_POST['board'])) {
 		mod_page(_('New ban'), 'mod/ban_form.html', array('token' => make_secure_link_token('ban')));
 		return;
 	}
 	
 	require_once 'inc/mod/ban.php';
 	
-	Bans::new_ban($_POST['ip'], $_POST['reason'], $_POST['length'], $_POST['board'] == '*' ? false : $_POST['board']);
+	Bans::new_ban($_POST['ip'], $_POST['uuser_cookie'], $_POST['reason'], $_POST['length'], $_POST['board'] == '*' ? false : $_POST['board']);
 
 	if (isset($_POST['redirect']))
 		header('Location: ' . $_POST['redirect'], true, $config['redirect_http']);
@@ -1449,23 +1467,26 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 	
 	$security_token = make_secure_link_token($board . '/ban/' . $post);
 	
-	$query = prepare(sprintf('SELECT ' . ($config['ban_show_post'] ? '*' : '`ip`, `thread`') .
+	$query = prepare(sprintf('SELECT ' . ($config['ban_show_post'] ? '*' : '`ip`, `cookie`, `thread`') .
 		' FROM ``posts_%s`` WHERE `id` = :id', $board));
 	$query->bindValue(':id', $post);
 	$query->execute() or error(db_error($query));
 	if (!$_post = $query->fetch(PDO::FETCH_ASSOC))
 		error($config['error']['404']);
-	
+
 	$thread = $_post['thread'];
 	$ip = $_post['ip'];
 
-	if (isset($_POST['new_ban'], $_POST['reason'], $_POST['length'], $_POST['board'])) {
+	// Get Unique User Cookie
+	$cookie = get_uuser_cookie($_post['cookie']);
+	
+	if (isset($_POST['new_ban'], $_POST['uuser_cookie'], $_POST['reason'], $_POST['length'], $_POST['board'])) {
 		require_once 'inc/mod/ban.php';
 		
 		if (isset($_POST['ip']))
 			$ip = $_POST['ip'];
 		
-		Bans::new_ban($_POST['ip'], $_POST['reason'], $_POST['length'], $_POST['board'] == '*' ? false : $_POST['board'],
+		Bans::new_ban($_POST['ip'],  $_POST['uuser_cookie'], $_POST['reason'], $_POST['length'], $_POST['board'] == '*' ? false : $_POST['board'],
 			false, $config['ban_show_post'] ? $_post : false);
 		
 		if (isset($_POST['public_message'], $_POST['message'])) {
@@ -1499,6 +1520,7 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 	$args = array(
 		'ip' => $ip,
 		'hide_ip' => !hasPermission($config['mod']['show_ip'], $board),
+		'uusercookie' => $cookie,
 		'post' => $post,
 		'board' => $board,
 		'delete' => (bool)$delete,
@@ -1629,6 +1651,31 @@ function mod_deletefile($board, $post, $file) {
 	// Redirect
 	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
 }
+
+// Delete and Permaban Image
+function mod_deletefilepermaban($board, $post, $file) {
+	global $config, $mod;
+	
+	if (!openBoard($board))
+		error($config['error']['noboard']);
+	
+	if (!hasPermission($config['mod']['deletefile'], $board))
+		error($config['error']['noaccess']);
+	
+	// Delete file
+	deleteFilePermaban($post, TRUE, $file);
+	// Record the action
+	modLog("Deleted and Permabanned filefrom post #{$post}");
+	
+	// Rebuild board
+	buildIndex();
+	// Rebuild themes
+	rebuildThemes('post-delete', $board);
+	
+	// Redirect
+	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
+}
+
 
 function mod_spoiler_image($board, $post, $file) {
 	global $config, $mod;
