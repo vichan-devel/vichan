@@ -620,7 +620,7 @@ if (file_exists($config['has_installed'])) {
 			  	`extra` varchar(200),
 			  	`text` varchar(255),
 			  	`created_at` int(11),
-			  	PRIMARY KEY (`cookie`,`extra`),
+			  	PRIMARY KEY (`cookie`,`extra`)
 				) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 			') or error(db_error());
 		case false:
