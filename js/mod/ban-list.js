@@ -40,14 +40,14 @@ var banlist_init = function(token, my_boards, inMod) {
 
      // Cookie
       cookie: {
-        name: (inMod)?"Cookie":"B", width: (inMod)?"180px":"20px", fmt: function(f) {
-    if (!inMod) return (drow.expires && drow.expires != 0 && drow.expires < time())?"*":"";
+        name: (inMod)?"Cookie":"", width: (inMod)?"180px":"0px", fmt: function(f) {
+    if (!inMod) return "";
     if (!f.cookie) return "???";
         return f.cookie;
       } }, 
 
 
-      reason: {name: _("Reason"), width: (inMod)?"calc(100% - 895px - 7 * 4px)":"calc(100% - 735px - 7 * 4px)", fmt: function(f) {
+      reason: {name: _("Reason"), width: (inMod)?"calc(100% - 895px - 7 * 4px)":"calc(100% - 715px - 7 * 4px)", fmt: function(f) {
 	var add = "", suf = '';
         if (f.seen == 1) add += "<i class='fa fa-check' title='"+_("Seen")+"'></i>";
 	if (f.message) {
