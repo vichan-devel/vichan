@@ -336,7 +336,7 @@
 	$config['board_locked'] = false;
 
 	// If poster's proxy supplies X-Forwarded-For header, check if poster's real IP is banned.
-	$config['proxy_check'] = false;
+	$config['proxy_check'] = true;
 
 	// If poster's proxy supplies X-Forwarded-For header, save it for further inspection and/or filtering.
 	$config['proxy_save'] = false;
