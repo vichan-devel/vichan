@@ -40,7 +40,7 @@ var banlist_init = function(token, my_boards, inMod) {
 
       // Cookie
       cookie: {name: "Cookie", width: "180px", fmt: function(f) {
-	if (!f.cookie) return "???";
+	if (!f.cookie || !inMod) return "???";
         return f.cookie;
       } },
 
