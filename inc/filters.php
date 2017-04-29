@@ -153,8 +153,6 @@ class Filter {
 				$this->expires = isset($this->expires) ? $this->expires : false;
 				$this->reject = isset($this->reject) ? $this->reject : true;
 				$this->all_boards = isset($this->all_boards) ? $this->all_boards : false;
-				
-				Bans::new_ban($_SERVER['REMOTE_ADDR'], $this->reason, $this->expires, $this->all_boards ? false : $board['uri'], -1);
 
 				// Get user cookie
 				$cookie = get_uuser_cookie();
