@@ -14,10 +14,10 @@ $(document).ready(function(){
 	// every time an event is fired.
 	var $inputArea = $('#body');
 	var $coundownField = $('#countchar');
-	var $maxChars = 3600;
+	var $maxChars = 3601;
         
 	// Preset countdown field to max initial content length
-	$coundownField.text($maxChars - $inputArea.val().length);
+	$coundownField.text($maxChars - $inputArea.length);
 
 	// input           :: for all modern browsers [1]
 	// selectionchange :: for IE9 [2]
