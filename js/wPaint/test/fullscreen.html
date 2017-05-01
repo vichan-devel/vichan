@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Websanova :: Paint</title>
+
+  <script type="text/javascript" src="../lib/jquery.1.10.2.min.js"></script>
+</head>
+<body>
+  <!-- jQuery UI -->
+  <script type="text/javascript" src="../lib/jquery.ui.core.1.10.3.min.js"></script>
+  <script type="text/javascript" src="../lib/jquery.ui.widget.1.10.3.min.js"></script>
+  <script type="text/javascript" src="../lib/jquery.ui.mouse.1.10.3.min.js"></script>
+  <script type="text/javascript" src="../lib/jquery.ui.draggable.1.10.3.min.js"></script>
+  
+  <!-- wColorPicker -->
+  <link rel="Stylesheet" type="text/css" href="../lib/wColorPicker.min.css" />
+  <script type="text/javascript" src="../lib/wColorPicker.min.js"></script>
+
+  <!-- wPaint -->
+  <link rel="Stylesheet" type="text/css" href="../src/wPaint.css" />
+  <script type="text/javascript" src="../src/wPaint.utils.js"></script>
+  <script type="text/javascript" src="../src/wPaint.js"></script>
+
+  <!-- wPaint main -->
+  <script type="text/javascript" src="../plugins/main/src/fillArea.min.js"></script>
+  <script type="text/javascript" src="../plugins/main/src/wPaint.menu.main.js"></script>
+
+  <!-- wPaint text -->
+  <script type="text/javascript" src="../plugins/text/src/wPaint.menu.text.js"></script>
+
+  <!-- wPaint shapes -->
+  <script type="text/javascript" src="../plugins/shapes/src/shapes.min.js"></script>
+  <script type="text/javascript" src="../plugins/shapes/src/wPaint.menu.main.shapes.js"></script>
+
+  <!-- wPaint file -->
+  <script type="text/javascript" src="../plugins/file/src/wPaint.menu.main.file.js"></script>
+
+  <div id="wPaint" style="position:relative; width:200px; height:200px; background:#CACACA;"></div>
+
+  <style>
+    body, html {
+      margin: 0px;
+      overflow: hidden;
+    }
+  </style>
+
+  <script type="text/javascript">
+
+    // update elements dimensions
+    // call wPaint('resize')
+    $(window).resize(function () {
+      $('#wPaint').css({
+        width: $(window).width(),
+        height: $(window).height()
+      })
+      .wPaint('resize');
+    })
+    
+    // init size based on browser dimensions
+    $(window).resize();
+
+    // set test image
+    // get from tapping enter below
+    $('#wPaint').wPaint({
+      image: 'data:image/png;base64,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'
+    });
+
+    // get an image for testing (just tap enter key)
+    $(document).keypress(function (e) {
+      if (e.keyCode === 13) {
+        console.log($('#wPaint').wPaint('image'));
+      }
+    });
+  </script>
+</body>
+</html>

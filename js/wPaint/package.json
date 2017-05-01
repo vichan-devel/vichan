@@ -1,0 +1,25 @@
+{
+  "name": "wPaint",
+  "title": "wPaint jQuery Paint Plugin",
+  "version": "2.5.0",
+  "description": "A jQuery paint plugin for a simple drawing surface that you can easily pop into your pages, similar to the basic windows paint program.",
+  "main": "wPaint.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/websanova/wPaint"
+  },
+  "author": {
+    "name": "Websanova",
+    "email": "rob@websanova.com",
+    "url": "http://websanova.com"
+  },
+  "homepage" : "http://wpaint.websanova.com",
+  "license": "MIT, GPL",
+  "dependencies": {
+    "grunt-contrib-uglify": "",
+    "grunt-contrib-jshint": "",
+    "grunt-contrib-stylus": "",
+    "grunt-contrib-concat": "",
+    "grunt-contrib-watch": ""
+  }
+}

@@ -1,0 +1,217 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-03-21 21:07+0800\n"
+"PO-Revision-Date: 2015-03-21 21:30+0800\n"
+"Language: ja_JP\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.7.5\n"
+
+#: ../../..//2ch.js:421 ../../..//lib/wColorPicker.js:28
+#: ../../..//wPaint.min.js:409
+msgid "R"
+msgstr "赤"
+
+#: ../../..//2ch.js:421 ../../..//lib/wColorPicker.js:28
+#: ../../..//wPaint.min.js:409
+msgid "G"
+msgstr "緑"
+
+#: ../../..//2ch.js:421 ../../..//lib/wColorPicker.js:28
+#: ../../..//wPaint.min.js:409
+msgid "B"
+msgstr "青"
+
+#: ../../..//2ch.js:421 ../../..//lib/wColorPicker.js:28
+#: ../../..//wPaint.min.js:409
+msgid "Both"
+msgstr "両面"
+
+#: ../../..//2ch.js:421 ../../..//lib/wColorPicker.js:28
+#: ../../..//wPaint.min.js:409
+msgid "Flip"
+msgstr "反転し"
+
+#: ../../..//2ch.js:2226 ../../..//lib/plugins.js:9
+#: ../../..//plugins/main/main.js:9
+#: ../../..//plugins/main/src/wPaint.menu.main.js:9
+msgid "Undo"
+msgstr "取り消し"
+
+#: ../../..//2ch.js:2233 ../../..//lib/plugins.js:16
+#: ../../..//plugins/main/main.js:16
+#: ../../..//plugins/main/src/wPaint.menu.main.js:16
+msgid "Redo"
+msgstr "再実行"
+
+#: ../../..//2ch.js:2240 ../../..//lib/plugins.js:23
+#: ../../..//plugins/main/main.js:23
+#: ../../..//plugins/main/src/wPaint.menu.main.js:23
+msgid "Clear"
+msgstr "消去"
+
+#: ../../..//2ch.js:2247 ../../..//lib/plugins.js:30
+#: ../../..//plugins/main/main.js:30
+#: ../../..//plugins/main/src/wPaint.menu.main.js:30
+msgid "Rectangle"
+msgstr "長方形"
+
+#: ../../..//2ch.js:2253 ../../..//lib/plugins.js:36
+#: ../../..//plugins/main/main.js:36
+#: ../../..//plugins/main/src/wPaint.menu.main.js:36
+msgid "Ellipse"
+msgstr "楕円"
+
+#: ../../..//2ch.js:2259 ../../..//lib/plugins.js:42
+#: ../../..//plugins/main/main.js:42
+#: ../../..//plugins/main/src/wPaint.menu.main.js:42
+msgid "Line"
+msgstr "線"
+
+#: ../../..//2ch.js:2266 ../../..//lib/plugins.js:49
+#: ../../..//plugins/main/main.js:49
+#: ../../..//plugins/main/src/wPaint.menu.main.js:49
+msgid "Pencil"
+msgstr "鉛筆"
+
+#: ../../..//2ch.js:2273 ../../..//lib/plugins.js:56
+#: ../../..//plugins/main/main.js:56
+#: ../../..//plugins/main/src/wPaint.menu.main.js:56
+msgid "Eraser"
+msgstr "消しゴム"
+
+#: ../../..//2ch.js:2280 ../../..//lib/plugins.js:63
+#: ../../..//plugins/main/main.js:63
+#: ../../..//plugins/main/src/wPaint.menu.main.js:63
+msgid "Bucket"
+msgstr "バケツツール"
+
+#: ../../..//2ch.js:2286 ../../..//lib/plugins.js:69
+#: ../../..//plugins/main/main.js:69
+#: ../../..//plugins/main/src/wPaint.menu.main.js:69
+msgid "Fill Color"
+msgstr "塗りつぶし"
+
+#: ../../..//2ch.js:2292 ../../..//lib/plugins.js:75
+#: ../../..//plugins/main/main.js:75
+#: ../../..//plugins/main/src/wPaint.menu.main.js:75
+msgid "Stroke Width"
+msgstr "塗り幅"
+
+#: ../../..//2ch.js:2299 ../../..//lib/plugins.js:82
+#: ../../..//plugins/main/main.js:82
+#: ../../..//plugins/main/src/wPaint.menu.main.js:82
+msgid "Stroke Color"
+msgstr "塗り色"
+
+#: ../../..//2ch.js:2573 ../../..//lib/plugins.js:356
+#: ../../..//plugins/text/src/wPaint.menu.text.js:9
+#: ../../..//plugins/text/text.js:9
+msgid "Bold"
+msgstr "太字"
+
+#: ../../..//2ch.js:2579 ../../..//lib/plugins.js:362
+#: ../../..//plugins/text/src/wPaint.menu.text.js:15
+#: ../../..//plugins/text/text.js:15
+msgid "Italic"
+msgstr "斜体"
+
+#: ../../..//2ch.js:2590 ../../..//lib/plugins.js:373
+#: ../../..//plugins/text/src/wPaint.menu.text.js:26
+#: ../../..//plugins/text/text.js:26
+msgid "Font Size"
+msgstr "フォントサイズ"
+
+#: ../../..//2ch.js:2598 ../../..//lib/plugins.js:381
+#: ../../..//plugins/text/src/wPaint.menu.text.js:34
+#: ../../..//plugins/text/text.js:34
+msgid "Font Family"
+msgstr "フォントファミリ"
+
+#: ../../..//2ch.js:2804 ../../..//lib/plugins.js:587
+#: ../../..//plugins/shapes/shapes.js:12
+#: ../../..//plugins/shapes/src/wPaint.menu.main.shapes.js:12
+msgid "Rounded Rectangle"
+msgstr "角丸長方形"
+
+#: ../../..//2ch.js:2812 ../../..//lib/plugins.js:595
+#: ../../..//plugins/shapes/shapes.js:20
+#: ../../..//plugins/shapes/src/wPaint.menu.main.shapes.js:20
+msgid "Square"
+msgstr "四角"
+
+#: ../../..//2ch.js:2820 ../../..//lib/plugins.js:603
+#: ../../..//plugins/shapes/shapes.js:28
+#: ../../..//plugins/shapes/src/wPaint.menu.main.shapes.js:28
+msgid "Rounded Square"
+msgstr "角丸長方形 (正方形)"
+
+#: ../../..//2ch.js:2828 ../../..//lib/plugins.js:611
+#: ../../..//plugins/shapes/shapes.js:36
+#: ../../..//plugins/shapes/src/wPaint.menu.main.shapes.js:36
+msgid "Diamond"
+msgstr "ダイヤモンド"
+
+#: ../../..//2ch.js:2840 ../../..//lib/plugins.js:623
+#: ../../..//plugins/shapes/shapes.js:48
+#: ../../..//plugins/shapes/src/wPaint.menu.main.shapes.js:48
+msgid "Circle"
+msgstr "円形"
+
+#: ../../..//2ch.js:2848 ../../..//lib/plugins.js:631
+#: ../../..//plugins/shapes/shapes.js:56
+#: ../../..//plugins/shapes/src/wPaint.menu.main.shapes.js:56
+msgid "Pentagon"
+msgstr "五角形"
+
+#: ../../..//2ch.js:2856 ../../..//lib/plugins.js:639
+#: ../../..//plugins/shapes/shapes.js:64
+#: ../../..//plugins/shapes/src/wPaint.menu.main.shapes.js:64
+msgid "Hexagon"
+msgstr "六角形"
+
+#: ../../..//2ch.js:3022 ../../..//src/oekaki8.js:21
+msgid "Post my oekaki"
+msgstr "お絵描きを書き込む"
+
+#: ../../..//2ch.js:3022 ../../..//src/oekaki8.js:21
+msgid "Check image size"
+msgstr "サイズCHECK"
+
+#: ../../..//2ch.js:3064 ../../..//src/oekaki8.js:63
+msgid "Your image size is %size%/%maxsize%."
+msgstr "画像の容量は%size%/%maxsize%です。"
+
+#: ../../..//2ch.js:3071 ../../..//src/oekaki8.js:70
+msgid "Image must be 500x250 to be uploaded. Please resize it."
+msgstr "像サイズが500x250ピクセルでないためアップロードできません。リサイズしてください"
+
+#: ../../..//2ch.js:3075 ../../..//src/oekaki8.js:74
+msgid "Your image is too large, it needs to be 128KB or less."
+msgstr "画像が128KBより大きいのでアップロードできません。"
+
+#: ../../..//2ch.js:3091 ../../..//src/oekaki8.js:90
+msgid "Click on any image on this site to load it into oekaki applet."
+msgstr "このサイトの画像をクリックするとお絵かき上に貼りつけます。"
+
+#: ../../..//plugins/file/src/wPaint.menu.main.file.js:8
+msgid "Save Image"
+msgstr "画像を保存する"
+
+#: ../../..//plugins/file/src/wPaint.menu.main.file.js:18
+msgid "Load Image to Foreground"
+msgstr "画像を取り込む"
+
+#: ../../..//plugins/file/src/wPaint.menu.main.file.js:28
+msgid "Load Image to Background"
+msgstr "画像を取り込む"
