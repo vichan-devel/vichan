@@ -3,7 +3,7 @@ vichan - A lightweight and full featured PHP imageboard.
 
 About
 ------------
-vichan is a free light-weight, fast, highly configurable and user-friendly
+This is the version of vichan running on [mlpol.net](https://mlpol.net), a free light-weight, fast, highly configurable and user-friendly
 imageboard software package. It is written in PHP and has few dependencies.
 
 vichan is a fork of (now defunc'd) [Tinyboard](http://github.com/savetheinternet/Tinyboard),
