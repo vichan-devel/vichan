@@ -919,6 +919,12 @@ if (isset($_POST['delete'])) {
 				$size = @getimagesize($config['spoiler_image']);
 				$file['thumbwidth'] = $size[0];
 				$file['thumbheight'] = $size[1];
+
+				if ($file['thumbwidth'] == 0)
+					$file['thumbwidth'] = $config['thumb_width'];
+				if ($file['thumbheight'] == 0)
+					$file['thumbheight'] = $config['thumb_height'];
+					
 			} elseif ($config['minimum_copy_resize'] &&
 				$image->size->width <= $config['thumb_width'] &&
 				$image->size->height <= $config['thumb_height'] &&
