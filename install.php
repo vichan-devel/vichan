@@ -624,7 +624,7 @@ if (file_exists($config['has_installed'])) {
 				) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;') or error(db_error());
 		case '5.1.4':
 			query('CREATE TABLE IF NOT EXISTS ``warnings`` (
-				id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+				`id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 				`ip` varbinary(16) NOT NULL,
 				`created` int(10) UNSIGNED NOT NULL,
 				`board` varchar(58) DEFAULT NULL,
