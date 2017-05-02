@@ -17,9 +17,9 @@
  *  Some directives are commented out. This is either because they are optional and examples, or because
  *  they are "optionally configurable", and given their default values by Tinyboard's code later if unset.
  *
- *  More information: http://tinyboard.org/docs/?p=Config
+ *  More information: https://web.archive.org/web/20121003095922/http://tinyboard.org/docs/?p=Config
  *
- *  Tinyboard documentation: http://tinyboard.org/docs/
+ *  Tinyboard documentation: https://web.archive.org/web/20121003095807/http://tinyboard.org/docs/?p=Main_Page
  *
  */
 
@@ -112,7 +112,7 @@
 	 * designed to minimize SQL queries and can significantly increase speed when posting or using the 
 	 * moderator interface. APC is the recommended method of caching.
 	 *
-	 * http://tinyboard.org/docs/index.php?p=Config/Cache
+	 * https://web.archive.org/web/20121003095807/http://tinyboard.org/docs/?p=Config/Cache
 	 */
 
 	$config['cache']['enabled'] = 'php';
@@ -196,7 +196,7 @@
 	 * addresses published through the Internet Domain Name Service (DNS) either as a zone file that can be
 	 * used by DNS server software, or as a live DNS zone that can be queried in real-time.
 	 *
-	 * Read more: http://tinyboard.org/docs/?p=Config/DNSBL
+	 * Read more: https://web.archive.org/web/20121003095807/http://tinyboard.org/docs/?p=Config/DNSBL
 	 */
 
 	// Prevents most Tor exit nodes from making posts. Recommended, as a lot of abuse comes from Tor because
@@ -245,7 +245,7 @@
 	 * $config['spam']['hidden_inputs_max_pass'] and $config['spam']['hidden_inputs_expire'] to
 	 * something higher to avoid false positives.
 	 *
-	 * See also: http://tinyboard.org/docs/?p=Your_request_looks_automated
+	 * See also: https://web.archive.org/web/20121003095807/http://tinyboard.org/docs/?p=Your_request_looks_automated
 	 *
 	 */
 
@@ -354,7 +354,7 @@
 	 * it still is, as long as you leave the relevant $config['filters'] intact. These old config variables
 	 * still exist for backwards-compatability and general convenience.
 	 *
-	 * Read more: http://tinyboard.org/docs/index.php?p=Config/Filters
+	 * Read more: https://web.archive.org/web/20121003095648/http://tinyboard.org/docs/?p=Config/Flood_filters
 	 */
 
 	// Minimum time between between each post by the same IP address.
@@ -1729,7 +1729,7 @@
  * ====================
  */
 
-	// http://tinyboard.org/docs/?p=Events
+	// https://web.archive.org/web/20121003095807/http://tinyboard.org/docs/?p=Events
 
 	// event_handler('post', function($post) {
 	// 	// do something
