@@ -88,15 +88,6 @@ links may be helpful for you as well:
 
 *	Tinyboard documentation can be found [here](https://web.archive.org/web/20121016074303/http://tinyboard.org/docs/?p=Main_Page).
 
-Donations
----------
-Do you like our work? You can motivate us financially to do better ;)
-* Bitcoin: 1GjZEdLaTQ8JWVFGZW921Yv4x59f9oiZME
-
-You can also ask us to develop some feature specially for you <3. Join our IRC
-channel and ask for a quote (there are a few of us, who work with the codebase
-and are skilled enough to develop such features pretty quickly).
-
 CLI tools
 -----------------
 There are a few command line interface tools, based on Tinyboard-Tools. These need
