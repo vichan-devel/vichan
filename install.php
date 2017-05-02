@@ -1,7 +1,7 @@
 <?php
 
 // Installation/upgrade file	
-define('VERSION', '5.1.4');
+define('VERSION', '5.1.5');
 
 require 'inc/functions.php';
 
@@ -52,10 +52,10 @@ if (file_exists($config['has_installed'])) {
 			// Upgrade to v0.9.2-dev-1
 			
 			// New table: `theme_settings`
-			query("CREATE TABLE IF NOT EXISTS `theme_settings` ( `name` varchar(40) NOT NULL, `value` text, UNIQUE KEY `name` (`name`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;") or error(db_error());
+			query("CREATE TABLE IF NOT EXISTS `theme_settings` ( `name` varchar(40) NOT NULL, `value` text, UNIQUE KEY `name` (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;") or error(db_error());
 			
 			// New table: `news`
-			query("CREATE TABLE IF NOT EXISTS `news` ( `id` int(11) NOT NULL AUTO_INCREMENT, `name` text NOT NULL, `time` int(11) NOT NULL, `subject` text NOT NULL, `body` text NOT NULL, UNIQUE KEY `id` (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;") or error(db_error());
+			query("CREATE TABLE IF NOT EXISTS `news` ( `id` int(11) NOT NULL AUTO_INCREMENT, `name` text NOT NULL, `time` int(11) NOT NULL, `subject` text NOT NULL, `body` text NOT NULL, UNIQUE KEY `id` (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;") or error(db_error());
 		case 'v0.9.2.1-dev':
 		case 'v0.9.2-dev-1':
 			// Fix broken version number/mistake
@@ -594,25 +594,25 @@ if (file_exists($config['has_installed'])) {
 			query('ALTER TABLE ``bans`` ADD `cookie` VARCHAR(40) CHARACTER SET ascii NOT NULL AFTER `ipend`;') or error(db_error());
 			query('ALTER TABLE ``bans`` ADD INDEX(`cookie`);') or error(db_error());
 			query('ALTER TABLE ``bans`` ADD `cookiebanned` BOOLEAN NOT NULL AFTER `cookie`;') or error(db_error());
-			query('CREATE TABLE ``filehashes`` (
-				  `id` int(11) NOT NULL AUTO_INCREMENT,
-				  `board` varchar(58) NOT NULL,
-				  `thread` int(11) NOT NULL,
-				  `post` int(11) NOT NULL,
-				  `filehash` text CHARACTER SET ascii NOT NULL,
-				  PRIMARY KEY (`id`),
-				  KEY `thread_id` (`thread`),
-				  KEY `post_id` (`post`)
+			query('CREATE TABLE IF NOT EXISTS ``filehashes`` (
+				`id` int(11) NOT NULL AUTO_INCREMENT,
+				`board` varchar(58) NOT NULL,
+				`thread` int(11) NOT NULL,
+				`post` int(11) NOT NULL,
+				`filehash` text CHARACTER SET ascii NOT NULL,
+				PRIMARY KEY (`id`),
+				KEY `thread_id` (`thread`),
+				KEY `post_id` (`post`)
 				) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 			') or error(db_error());
-			query('CREATE TABLE ``bans_cookie`` (
-				  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-				  `cookie` varchar(40) CHARACTER SET ascii NOT NULL,
-				  `expires` int(11) NOT NULL,
-				  `creator` int(11) NOT NULL,
-				  PRIMARY KEY (`id`),
-				  UNIQUE KEY `id` (`id`),
-				  UNIQUE KEY `cookie` (`cookie`)
+			query('CREATE TABLE IF NOT EXISTS ``bans_cookie`` (
+				id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+				`cookie` varchar(40) CHARACTER SET ascii NOT NULL,
+				`expires` int(11) NOT NULL,
+				`creator` int(11) NOT NULL,
+				PRIMARY KEY (`id`),
+				UNIQUE KEY `id` (`id`),
+				UNIQUE KEY `cookie` (`cookie`)
 				) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 			') or error(db_error());
 			query('CREATE TABLE IF NOT EXISTS ``captchas`` (
@@ -621,7 +621,20 @@ if (file_exists($config['has_installed'])) {
 			  	`text` varchar(255),
 			  	`created_at` int(11),
 			  	PRIMARY KEY (`cookie`,`extra`)
-				) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+				) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;') or error(db_error());
+		case '5.1.4':
+			query('CREATE TABLE IF NOT EXISTS ``warnings`` (
+				id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+				`ip` varbinary(16) NOT NULL,
+				`created` int(10) UNSIGNED NOT NULL,
+				`board` varchar(58) DEFAULT NULL,
+				`creator` int(10) NOT NULL,
+				`reason` text,
+				`seen` tinyint(1) NOT NULL,
+				`post` blob,
+				PRIMARY KEY (`id`),
+				KEY `ipstart` (`ip`)
+				) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 			') or error(db_error());
 		case false:
 			// TODO: enhance Tinyboard -> vichan upgrade path.

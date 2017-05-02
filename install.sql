@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 27, 2017 at 08:29 AM
--- Server version: 5.7.17-0ubuntu0.16.04.2
+-- Generation Time: May 02, 2017 at 01:45 AM
+-- Server version: 5.7.18-0ubuntu0.16.04.1
 -- PHP Version: 7.0.15-0ubuntu0.16.04.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -15,6 +15,7 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
+
 
 -- --------------------------------------------------------
 
@@ -110,6 +111,20 @@ CREATE TABLE IF NOT EXISTS `boards` (
 
 INSERT INTO `boards` (`uri`, `title`, `subtitle`) VALUES
 ('b', 'Random', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `captchas`
+--
+
+CREATE TABLE IF NOT EXISTS `captchas` (
+  `cookie` varchar(50) NOT NULL,
+  `extra` varchar(200) NOT NULL,
+  `text` varchar(255) DEFAULT NULL,
+  `created_at` int(11) DEFAULT NULL,
+  PRIMARY KEY (`cookie`,`extra`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -371,16 +386,21 @@ CREATE TABLE IF NOT EXISTS `theme_settings` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `captchas`
+-- Table structure for table `warnings`
 --
 
-CREATE TABLE IF NOT EXISTS `captchas` (
-  `cookie` VARCHAR(50),
-  `extra` VARCHAR(200),
-  `text` VARCHAR(255),
-  `created_at` INT(11),
-  PRIMARY KEY (`cookie`,`extra`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS `warnings` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ip` varbinary(16) NOT NULL,
+  `created` int(10) UNSIGNED NOT NULL,
+  `board` varchar(58) DEFAULT NULL,
+  `creator` int(10) NOT NULL,
+  `reason` text,
+  `seen` tinyint(1) NOT NULL,
+  `post` blob,
+  PRIMARY KEY (`id`),
+  KEY `ipstart` (`ip`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
