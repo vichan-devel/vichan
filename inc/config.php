@@ -1443,7 +1443,7 @@
 	// Default public warning message
 	$config['mod']['default_warning_message'] = _('user was warned for this post');
 	// HTML to append to post bodies for public warning messages (where "%s" is the message).
-	$config['mod']['ban_message'] = '<span class="public_warning">(%s)</span>';
+	$config['mod']['warning_message'] = '<span class="public_warning">(%s)</span>';
 
 	// When moving a thread to another board and choosing to keep a "shadow thread", an automated post (with
 	// a capcode) will be made, linking to the new location for the thread. "%s" will be replaced with a

@@ -945,7 +945,7 @@ function mod_warning_post($board, $post, $token = false) {
 			$_POST['message'] = strtolower(preg_replace('/[\r\n]/', '', $_POST['message']));
 			$query = prepare(sprintf('UPDATE ``posts_%s`` SET `body_nomarkup` = CONCAT(`body_nomarkup`, :body_nomarkup) WHERE `id` = :id', $board));
 			$query->bindValue(':id', $post);
-			$query->bindValue(':body_nomarkup', sprintf("\n<tinyboard ban message>%s</tinyboard>", utf8tohtml($_POST['message'])));
+			$query->bindValue(':body_nomarkup', sprintf("\n<tinyboard warning message>%s</tinyboard>", utf8tohtml($_POST['message'])));
 			$query->execute() or error(db_error($query));
 			rebuildPost($post);
 			
