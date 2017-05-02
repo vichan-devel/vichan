@@ -487,6 +487,8 @@
 	// Strip combining characters from Unicode strings (eg. "Zalgo").
 	$config['strip_combining_chars'] = true;
 
+	// Minimum post body length for OP.
+	$config['min_body'] = 0;
 	// Maximum post body length.
 	$config['max_body'] = 3600;
 	// Maximum number of post body lines to show on the index page.
