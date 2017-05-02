@@ -150,6 +150,35 @@ class Bans {
 	}
 
 
+
+	static public function findWarning($ip, $get_mod_info = false) {
+		global $config;
+		
+		$query = prepare('SELECT ``warnings``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``warnings``
+		' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
+		WHERE `ip` = :ip');
+		
+		$query->bindValue(':ip', inet_pton($ip));
+		$query->execute() or error(db_error($query));
+		
+		$warning_list = array();
+		
+		while ($warning = $query->fetch(PDO::FETCH_ASSOC)) {
+			if ($warning['seen']) {
+				// self::deleteWarning($warning['id']);
+			} else {
+				if ($warning['post'])
+					$warning['post'] = json_decode($warning['post'], true);
+				$warning_list[] = $warning;
+			}
+		}
+		
+		return $warning_list;
+	}
+
+
+
+
 	// Check if cookie is banned
 	static public function findCookie($uuser_cookie)
 	{
@@ -231,6 +260,15 @@ class Bans {
 
 	}
 	
+
+
+	static public function seenWarning($warning_id) {
+		$query = query("UPDATE ``warnings`` SET `seen` = 1 WHERE `id` = " . (int)$warning_id) or error(db_error());
+	}
+	
+
+
+	
 	static public function seen($ban_id) {
 		$query = query("UPDATE ``bans`` SET `seen` = 1 WHERE `id` = " . (int)$ban_id) or error(db_error());
                 rebuildThemes('bans');
@@ -278,6 +316,61 @@ class Bans {
 		
 		return true;
 	}
+
+
+
+
+	
+	static public function new_warning($mask, $reason, $warning_board = false, $mod_id = false, $post = false) {
+		global $mod, $pdo, $board, $config;
+		
+		if ($mod_id === false) {
+			$mod_id = isset($mod['id']) ? $mod['id'] : -1;
+		}
+		
+		$range = self::parse_range($mask);
+		$mask = self::range_to_string($range);
+		
+		$query = prepare("INSERT INTO ``warnings`` VALUES (NULL, :ip, :time, :board, :mod, :reason, 0, :post)");
+		
+		$query->bindValue(':ip', $range[0]);
+		$query->bindValue(':mod', $mod_id);
+		$query->bindValue(':time', time());
+		
+		if ($warning_board)
+			$query->bindValue(':board', $warning_board);
+		else
+			$query->bindValue(':board', null, PDO::PARAM_NULL);
+		
+		if ($reason !== '') {
+			$reason = escape_markup_modifiers($reason);
+			markup($reason);
+			$query->bindValue(':reason', $reason);
+		} else
+			$query->bindValue(':reason', null, PDO::PARAM_NULL);
+
+		if ($post) {
+			$post['board'] = $board['uri'];
+			$query->bindValue(':post', json_encode($post));
+		} else
+			$query->bindValue(':post', null, PDO::PARAM_NULL);
+		
+		$query->execute() or error(db_error($query));
+		
+		if (isset($mod['id']) && $mod['id'] == $mod_id) {
+			modLog('Issued a new warning for ' .
+				(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask) .
+				' (<small>#' . $pdo->lastInsertId() . '</small>)' .
+				' with ' . ($reason ? 'reason: ' . utf8tohtml($reason) . '' : 'no reason'));
+		}
+
+		return $pdo->lastInsertId();
+	}
+
+
+
+
+
 	
 	static public function new_ban($mask, $uuser_cookie, $reason, $length = false, $ban_board = false, $mod_id = false, $post = false) {
 		global $mod, $pdo, $board, $config;
