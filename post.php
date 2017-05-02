@@ -699,6 +699,8 @@ if (isset($_POST['delete'])) {
 			error(sprintf($config['error']['toolong'], 'subject'));
 		if (!$mod && mb_strlen($post['body']) > $config['max_body'])
 			error($config['error']['toolong_body']);
+		if (mb_strlen($post['body']) <= $config['min_body'] && $post['op'])
+			error(sprintf(_('OP must be at least %d chars.'), $config['min_body']));
 		if (mb_strlen($post['password']) > 20)
 			error(sprintf($config['error']['toolong'], 'password'));
 	}
@@ -919,6 +921,12 @@ if (isset($_POST['delete'])) {
 				$size = @getimagesize($config['spoiler_image']);
 				$file['thumbwidth'] = $size[0];
 				$file['thumbheight'] = $size[1];
+
+				if ($file['thumbwidth'] == 0)
+					$file['thumbwidth'] = $config['thumb_width'];
+				if ($file['thumbheight'] == 0)
+					$file['thumbheight'] = $config['thumb_height'];
+					
 			} elseif ($config['minimum_copy_resize'] &&
 				$image->size->width <= $config['thumb_width'] &&
 				$image->size->height <= $config['thumb_height'] &&
