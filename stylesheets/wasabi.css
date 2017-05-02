@@ -382,6 +382,12 @@ span.public_ban {
 	font-weight: bold;
 	margin-top: 15px;
 }
+span.public_warning {
+	display: block;
+	color: #0000FF;
+	font-weight: bold;
+	margin-top: 10px;
+}
 span.toolong {
 	display: block;
 	margin-top: 15px;

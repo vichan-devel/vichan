@@ -172,6 +172,9 @@ h1 {
 .public_ban {
 	color: #E62C2C !important;
 }
+.public_warning {
+	color: #0000FF !important;
+}
 blockquote {
 	color: #fff !important;
 }

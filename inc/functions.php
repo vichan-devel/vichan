@@ -911,10 +911,15 @@ function checkBan($board = false) {
 	if (!isset($_SERVER['REMOTE_ADDR'])) {
 		// Server misconfiguration
 		return;
-	}		
+	}
 
 	if (event('check-ban', $board))
 		return true;
+	
+
+	// Check for Warnings
+	checkWarning($board);
+
 
 	$ips = array();
 
@@ -976,6 +981,90 @@ function checkBan($board = false) {
 	if ($config['cache']['enabled'])
 		cache::set('purged_bans_last', time());
 }
+
+
+
+
+function displayWarning($warning) {
+	global $config, $board;
+
+	// If Warning havent benseen before mark it as seen.
+	if (!$warning['seen']) {
+		Bans::seenWarning($warning['id']);
+	}
+
+	$warning['ip'] = $_SERVER['REMOTE_ADDR'];
+
+	if ($warning['post'] && isset($warning['post']['board'], $warning['post']['id'])) {
+		if (openBoard($warning['post']['board'])) {
+			$query = query(sprintf("SELECT `files` FROM ``posts_%s`` WHERE `id` = " .
+				(int)$warning['post']['id'], $board['uri']));
+			if ($_post = $query->fetch(PDO::FETCH_ASSOC)) {
+				$warning['post'] = array_merge($warning['post'], $_post);
+			}
+		}
+		if ($warning['post']['thread']) {
+			$post = new Post($warning['post']);
+		} else {
+			$post = new Thread($warning['post'], null, false, false);
+		}
+	}
+	
+	// Show warning page and exit
+	die(
+		Element('page.html', array(
+			'title' => _('Warning Issued!'),
+			'config' => $config,
+			'boardlist' => createBoardlist(isset($mod) ? $mod : false),
+			'body' => Element('warning.html', array(
+				'config' => $config,
+				'warning' => $warning,
+				'board' => $board,
+				'post' => isset($post) ? $post->build(true) : false
+			)
+		))
+	));
+}
+
+
+
+function checkWarning($board = false) {
+	global $config;
+
+	if (!isset($_SERVER['REMOTE_ADDR'])) {
+		// Server misconfiguration
+		return;
+	}
+
+
+	if (event('check-warning', $board))
+		return true;
+
+	$ips = array();
+	$ips[] = $_SERVER['REMOTE_ADDR'];
+
+	if ($config['proxy_check'] && isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+		$ips = array_merge($ips, explode(", ", $_SERVER['HTTP_X_FORWARDED_FOR']));
+	}
+
+
+	foreach ($ips as $ip) {
+		$warnings = Bans::findWarning($_SERVER['REMOTE_ADDR'], $config['show_modname']);
+	
+		foreach ($warnings as &$warning) {
+			if (!isset($_POST['json_response'])) {
+				displayWarning($warning);
+			} else {
+				header('Content-Type: text/json');
+				die(json_encode(array('error' => true, 'banned' => true)));
+			}
+		}
+	}
+}
+
+
+
+
 
 function threadLocked($id) {
 	global $board;

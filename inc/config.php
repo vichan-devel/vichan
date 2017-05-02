@@ -662,6 +662,16 @@
 	// Show moderator name on ban page.
 	$config['show_modname'] = false;
 
+
+	// Show the post the user was issued warning for on the "You were issued a warning" page.
+	$config['warning_show_post'] = true;
+
+	// Optional HTML to append to "You were issued a warning. For example, you could include instructions and/or
+	// a link to an email address or IRC chat room to appeal the ban.
+	$config['warning_page_extra'] = '';
+
+
+
 /*
  * ====================
  *  Markup settings
@@ -1353,6 +1363,7 @@
 
 	// Mod links (full HTML).
 	$config['mod']['link_delete'] = '[D]';
+	$config['mod']['link_warning'] = '[W]';
 	$config['mod']['link_ban'] = '[B]';
 	$config['mod']['link_bandelete'] = '[B&amp;D]';
 	$config['mod']['link_deletefile'] = '[F]';
@@ -1427,6 +1438,13 @@
 	// HTML to append to post bodies for public bans messages (where "%s" is the message).
 	$config['mod']['ban_message'] = '<span class="public_ban">(%s)</span>';
 
+	// Check public warning message by default.
+	$config['mod']['check_warning_message'] = false;
+	// Default public warning message
+	$config['mod']['default_warning_message'] = _('user was warned for this post');
+	// HTML to append to post bodies for public warning messages (where "%s" is the message).
+	$config['mod']['ban_message'] = '<span class="public_warning">(%s)</span>';
+
 	// When moving a thread to another board and choosing to keep a "shadow thread", an automated post (with
 	// a capcode) will be made, linking to the new location for the thread. "%s" will be replaced with a
 	// standard cross-board post citation (>>>/board/xxx)
@@ -1498,6 +1516,8 @@
     $config['mod']['show_ip'] = DEVELOPER;
     // Delete a post
     $config['mod']['delete'] = MOD;
+    // Ban a user for a post
+    $config['mod']['warning'] = JANITOR;
     // Ban a user for a post
     $config['mod']['ban'] = MOD;
     // Ban and delete (one click; instant)
