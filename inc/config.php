@@ -1223,6 +1223,7 @@
 
 	// Location of files.
 	$config['file_index'] = 'index.html';
+	$config['file_catalog'] = 'catalog.html';			// Catalog page (used in preg_match for post referer)
 	$config['file_page'] = '%d.html'; // NB: page is both an index page and a thread
 	$config['file_page50'] = '%d+50.html';
 	$config['file_page_slug'] = '%d-%s.html';

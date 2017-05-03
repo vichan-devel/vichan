@@ -188,6 +188,7 @@ function loadConfig() {
 							str_replace('%s', $config['board_regex'], preg_quote($config['board_path'], '/')) .
 							'(' .
 								preg_quote($config['file_index'], '/') . '|' .
+								preg_quote($config['file_catalog'], '/') . '|' .
 								str_replace('%d', '\d+', preg_quote($config['file_page'])) .
 							')?' .
 						'|' .

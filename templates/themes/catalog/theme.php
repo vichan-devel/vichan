@@ -1,6 +1,6 @@
 <?php
 	require 'info.php';
-	
+
 	function catalog_build($action, $settings, $board) {
 		global $config;
 		
@@ -109,6 +109,10 @@
 					$config['additional_javascript'][] = $s;
 			}
 
+			// Antibot
+			$antibot = create_antibot($board_name);
+			$antibot->reset();
+
 			file_write($config['dir']['home'] . $board_name . '/catalog.html', Element('themes/catalog/catalog.html', Array(
 				'settings' => $settings,
 				'config' => $config,
@@ -116,7 +120,9 @@
 				'recent_images' => $recent_images,
 				'recent_posts' => $recent_posts,
 				'stats' => $stats,
-				'board' => $board_name,
+				'board_name' => $board_name,
+				'board' => $board,
+				'antibot' => $antibot,
 				'link' => $config['root'] . $board['dir']
 			)));
 
