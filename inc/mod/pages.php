@@ -1267,10 +1267,29 @@ function mod_move_reply($originBoard, $postID) {
 		
 		if (!openBoard($targetBoard))
 			error($config['error']['noboard']);
+
+
+		// Get all filhashes associated wiht post
+		$post['allhashes'] = '';
+		$hashquery = prepare('SELECT `filehash` FROM ``filehashes`` WHERE `board` = :board AND `post` = :post');
+		$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
+		$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
+		$hashquery->execute() or error(db_error($hashquery));
+		while ($hash = $hashquery->fetch(PDO::FETCH_ASSOC)) {
+			$post['allhashes'] .= $hash['filehash'] . ":";
+		}
+		$post['allhashes'] = substr($post['allhashes'], 0, -1);
+
 		
 		// create the new post 
 		$newID = post($post);
 		
+		// Delete old file hash list.
+		$hashquery = prepare('DELETE FROM ``filehashes`` WHERE  `board` = :board AND `post` = :post');
+		$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
+		$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
+		$hashquery->execute() or error(db_error($hashquery));
+
 		if ($post['has_file']) {
 			foreach ($post['files'] as $i => &$file) {
 				// move the image
@@ -1369,8 +1388,28 @@ function mod_move($originBoard, $postID) {
 		if (!openBoard($targetBoard))
 			error($config['error']['noboard']);
 		
+
+		// Get all filhashes associated wiht post
+		$post['allhashes'] = '';
+		$hashquery = prepare('SELECT `filehash` FROM ``filehashes`` WHERE `board` = :board AND `post` = :post');
+		$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
+		$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
+		$hashquery->execute() or error(db_error($hashquery));
+		while ($hash = $hashquery->fetch(PDO::FETCH_ASSOC)) {
+			$post['allhashes'] .= $hash['filehash'] . ":";
+		}
+		$post['allhashes'] = substr($post['allhashes'], 0, -1);
+
 		// create the new thread
 		$newID = post($post);
+
+
+		// Delete old file hash list.
+		$hashquery = prepare('DELETE FROM ``filehashes`` WHERE  `board` = :board AND `post` = :post');
+		$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
+		$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
+		$hashquery->execute() or error(db_error($hashquery));
+
 	
 		$op = $post;
 		$op['id'] = $newID;
@@ -1446,9 +1485,31 @@ function mod_move($originBoard, $postID) {
 					$clone($file['thumb_path'], sprintf($config['board_path'], $board['uri']) . $config['dir']['thumb'] . $file['thumb']);
 				}
 			}
+
+
+
+			// Get all filhashes associated wiht post
+			$post['allhashes'] = '';
+			$hashquery = prepare('SELECT `filehash` FROM ``filehashes`` WHERE `board` = :board AND `post` = :post ORDER BY `id`');
+			$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
+			$hashquery->bindValue(':post', $post['id'], PDO::PARAM_INT);
+			$hashquery->execute() or error(db_error($hashquery));
+			while ($hash = $hashquery->fetch(PDO::FETCH_ASSOC)) {
+				$post['allhashes'] .= $hash['filehash'] . ":";
+			}
+			$post['allhashes'] = substr($post['allhashes'], 0, -1);
+
+
 			// insert reply
 			$newIDs[$post['id']] = $newPostID = post($post);
 			
+
+			// Delete old file hash list.
+			$hashquery = prepare('DELETE FROM ``filehashes`` WHERE  `board` = :board AND `post` = :post');
+			$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
+			$hashquery->bindValue(':post', $post['id'], PDO::PARAM_INT);
+			$hashquery->execute() or error(db_error($hashquery));
+		
 			
 			if (!empty($post['tracked_cites'])) {
 				$insert_rows = array();
@@ -1517,7 +1578,7 @@ function mod_move($originBoard, $postID) {
 			header('Location: ?/' . sprintf($config['board_path'], $newboard['uri']) . $config['dir']['res'] . link_for($op, false, $newboard), true, $config['redirect_http']);
 		}
 	}
-	
+
 	$boards = listBoards();
 	if (count($boards) <= 1)
 		error(_('Impossible to move thread; there is only one board.'));
