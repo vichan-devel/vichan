@@ -34,7 +34,7 @@
 						{{ config.file_thumb|sprintf(config.file_icons.default) }}
 					{% endif %}
 				{% elseif post.thumb == 'spoiler' %}
-					{{ config.root }}{{ config.spoiler_image }}
+					{{ config.spoiler_image }}
 				{% else %}
 					{{ config.uri_thumb }}{{ post.thumb }}
 				{% endif %}
