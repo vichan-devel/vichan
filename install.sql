@@ -263,25 +263,6 @@ CREATE TABLE IF NOT EXISTS `news` (
   KEY `time` (`time`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nntp_references`
---
-
-CREATE TABLE IF NOT EXISTS `nntp_references` (
-  `board` varchar(30) NOT NULL,
-  `id` int(11) UNSIGNED NOT NULL,
-  `message_id` varchar(255) CHARACTER SET ascii NOT NULL,
-  `message_id_digest` varchar(40) CHARACTER SET ascii NOT NULL,
-  `own` tinyint(1) NOT NULL,
-  `headers` text,
-  PRIMARY KEY (`message_id_digest`),
-  UNIQUE KEY `message_id` (`message_id`),
-  UNIQUE KEY `u_board_id` (`board`,`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `noticeboard`
