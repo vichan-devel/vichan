@@ -5,17 +5,19 @@
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<script type='text/javascript'>
 		var active_page = "catalog"
-		  , board_name = "{{ board }}";
+		  , board_name = "{{ board_name }}";
 	</script>
 	{% include 'header.html' %}
-	<title>{{ board }} - Catalog</title>
+	<title>{{ board_name }} - Catalog</title>
 </head>
 <body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %} theme-catalog active-catalog" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
 	{{ boardlist.top }}
 	<header>
-		<h1>{{ settings.title }} (<a href="{{link}}">/{{ board }}/</a>)</h1>
+		<h1>{{ settings.title }} (<a href="{{link}}">/{{ board_name }}/</a>)</h1>
 		<div class="subtitle">{{ settings.subtitle }}</div>
 	</header>
+
+	{% include 'post_form.html' %}
 
         <span>{% trans 'Sort by' %}: </span>
         <select id="sort_by" style="display: inline-block">
