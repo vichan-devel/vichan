@@ -175,6 +175,9 @@ h1 {
 .public_warning {
 	color: #0000FF !important;
 }
+span.public_bantz {
+	color: #00FF00 !important;
+}
 blockquote {
 	color: #fff !important;
 }

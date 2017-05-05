@@ -65,6 +65,9 @@
 		{% if post.modifiers['warning message'] %}
 			{{ config.mod.warning_message|sprintf(post.modifiers['warning message']) }}
 		{% endif %}
+		{% if post.modifiers['bantz message'] %}
+			{{ config.mod.bantz_message|sprintf(post.modifiers['bantz message']) }}
+		{% endif %}
 	</div>
 	{% if post.omitted or post.omitted_images %}
 		<span class="omitted">

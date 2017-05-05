@@ -62,6 +62,7 @@ $pages = array(
 	'/IP/([\w.:]+)/remove_note/(\d+)'	=> 'secure ip_remove_note',	// remove note from ip address
 
 
+	'/(\%b)/bantz/(\d+)'		=> 'secure_POST bantz_post', 	// issue bantz for post
 
 	'/(\%b)/warning/(\d+)'		=> 'secure_POST warning_post', 	// issue warning for post
 

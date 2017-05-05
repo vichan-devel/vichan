@@ -388,6 +388,12 @@ span.public_warning {
 	font-weight: bold;
 	margin-top: 10px;
 }
+span.public_bantz {
+	display: block;
+	color: #00FF00;
+	font-weight: bold;
+	margin-top: 10px;
+}
 span.toolong {
 	display: block;
 	margin-top: 15px;
