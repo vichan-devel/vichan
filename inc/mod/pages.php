@@ -907,6 +907,69 @@ function mod_page_ip($ip) {
 
 
 
+function mod_bantz_post($board, $post, $token = false) {
+	global $config, $mod;
+	
+	if (!openBoard($board))
+		error($config['error']['noboard']);
+	
+	if (!hasPermission($config['mod']['bantz'], $board))
+		error($config['error']['noaccess']);
+	
+	$security_token = make_secure_link_token($board . '/bantz/' . $post);
+	
+	$query = prepare(sprintf('SELECT `ip`, `thread` FROM ``posts_%s`` WHERE `id` = :id', $board));
+	$query->bindValue(':id', $post);
+	$query->execute() or error(db_error($query));
+	if (!$_post = $query->fetch(PDO::FETCH_ASSOC))
+		error($config['error']['404']);
+
+	$thread = $_post['thread'];
+	$ip = $_post['ip'];
+
+	if (isset($_POST['new_bantz'], $_POST['message'])) {
+		
+		$text_size = 10;
+		if(isset($_POST['text_size']))
+		{
+			$text_size = (int)$_POST['text_size'];
+			if($text_size < $config['mod']['bantz_message_min_size'])
+				$text_size = $config['mod']['bantz_message_min_size'];
+			else if($text_size > $config['mod']['bantz_message_max_size'])
+				$text_size = $config['mod']['bantz_message_max_size'];
+		}
+
+		// public ban message
+		$_POST['message'] = preg_replace('/[\r\n]/', '', $_POST['message']);
+		$query = prepare(sprintf('UPDATE ``posts_%s`` SET `body_nomarkup` = CONCAT(`body_nomarkup`, :body_nomarkup) WHERE `id` = :id', $board));
+		$query->bindValue(':id', $post);
+		$query->bindValue(':body_nomarkup', sprintf("\n<tinyboard bantz message>%s</tinyboard>", '<span style="font-size:' . $text_size . 'px !important">' . utf8tohtml($_POST['message']) . '</span>'));
+		$query->execute() or error(db_error($query));
+		rebuildPost($post);
+		
+		modLog("Attached a public BANTZ message to post #{$post}: " . utf8tohtml($_POST['message']));
+		buildThread($thread ? $thread : $post);
+		buildIndex();
+
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
+	}
+	
+	$args = array(
+		'post' => $post,
+		'board' => $board,
+		'token' => $security_token
+	);
+	
+	mod_page(_('New bantz'), 'mod/bantz_form.html', $args);
+}
+
+
+
+
+
+
+
+
 function mod_warning_post($board, $post, $token = false) {
 	global $config, $mod;
 	

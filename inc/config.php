@@ -1367,6 +1367,7 @@
 
 	// Mod links (full HTML).
 	$config['mod']['link_delete'] = '[D]';
+	$config['mod']['link_bantz'] = '[Bantz]';
 	$config['mod']['link_warning'] = '[W]';
 	$config['mod']['link_ban'] = '[B]';
 	$config['mod']['link_bandelete'] = '[B&amp;D]';
@@ -1449,6 +1450,14 @@
 	// HTML to append to post bodies for public warning messages (where "%s" is the message).
 	$config['mod']['warning_message'] = '<span class="public_warning">(%s)</span>';
 
+	// Default public warning message
+	$config['mod']['default_bantz_message'] = _('user was owned with this text');
+	// HTML to append to post bodies for public warning messages (where "%s" is the message).
+	$config['mod']['bantz_message'] = '<span class="public_bantz">(%s)</span>';
+	// Max an min Bantz text size in px
+	$config['mod']['bantz_message_min_size'] = 5;
+	$config['mod']['bantz_message_max_size'] = 800;
+
 	// When moving a thread to another board and choosing to keep a "shadow thread", an automated post (with
 	// a capcode) will be made, linking to the new location for the thread. "%s" will be replaced with a
 	// standard cross-board post citation (>>>/board/xxx)
@@ -1520,6 +1529,8 @@
     $config['mod']['show_ip'] = DEVELOPER;
     // Delete a post
     $config['mod']['delete'] = MOD;
+    // Deliver Bantz to User and Post
+    $config['mod']['bantz'] = MOD;
     // Ban a user for a post
     $config['mod']['warning'] = JANITOR;
     // Ban a user for a post
