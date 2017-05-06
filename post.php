@@ -11,7 +11,169 @@ if ((!isset($_POST['mod']) || !$_POST['mod']) && $config['board_locked']) {
     error("Board is locked");
 }
 
-// Removed NNTPChan
+$dropped_post = false;
+
+// Is it a post coming from NNTP? Let's extract it and pretend it's a normal post.
+if (isset($_GET['Newsgroups']) && $config['nntpchan']['enabled']) {
+	if ($_SERVER['REMOTE_ADDR'] != $config['nntpchan']['trusted_peer']) {
+		error("NNTPChan: Forbidden. $_SERVER[REMOTE_ADDR] is not a trusted peer");
+	}
+
+	$_POST = array();
+	$_POST['json_response'] = true;
+
+	$headers = json_encode($_GET);
+
+	if (!isset ($_GET['Message-Id'])) {
+		if (!isset ($_GET['Message-ID'])) {
+			error("NNTPChan: No message ID");
+		}
+		else $msgid = $_GET['Message-ID'];
+	}
+	else $msgid = $_GET['Message-Id'];
+
+	$groups = preg_split("/,\s*/", $_GET['Newsgroups']);
+	if (count($groups) != 1) {
+		error("NNTPChan: Messages can go to only one newsgroup");
+	}
+	$group = $groups[0];
+
+	if (!isset($config['nntpchan']['dispatch'][$group])) {
+		error("NNTPChan: We don't synchronize $group");
+	}
+	$xboard = $config['nntpchan']['dispatch'][$group];
+
+	$ref = null;
+	if (isset ($_GET['References'])) {
+		$refs = preg_split("/,\s*/", $_GET['References']);
+
+		if (count($refs) > 1) {
+			error("NNTPChan: We don't support multiple references");
+		}
+
+		$ref = $refs[0];
+
+		$query = prepare("SELECT `board`,`id` FROM ``nntp_references`` WHERE `message_id` = :ref");
+                $query->bindValue(':ref', $ref);
+                $query->execute() or error(db_error($query));
+
+		$ary = $query->fetchAll(PDO::FETCH_ASSOC);
+
+		if (count($ary) == 0) {
+			error("NNTPChan: We don't have $ref that $msgid references");
+		}
+
+		$p_id = $ary[0]['id'];
+		$p_board = $ary[0]['board'];
+
+		if ($p_board != $xboard) {
+			error("NNTPChan: Cross board references not allowed. Tried to reference $p_board on $xboard");
+		}
+
+		$_POST['thread'] = $p_id;
+	}
+
+	$date = isset($_GET['Date']) ? strtotime($_GET['Date']) : time();
+
+	list($ct) = explode('; ', $_GET['Content-Type']);
+
+	$query = prepare("SELECT COUNT(*) AS `c` FROM ``nntp_references`` WHERE `message_id` = :msgid");
+	$query->bindValue(":msgid", $msgid);
+	$query->execute() or error(db_error($query));
+
+	$a = $query->fetch(PDO::FETCH_ASSOC);
+	if ($a['c'] > 0) {
+		error("NNTPChan: We already have this post. Post discarded.");
+	}
+
+	if ($ct == 'text/plain') {
+		$content = file_get_contents("php://input");
+	}
+	elseif ($ct == 'multipart/mixed' || $ct == 'multipart/form-data') {
+		_syslog(LOG_INFO, "MM: Files: ".print_r($GLOBALS, true)); // Debug
+
+		$content = '';
+
+		$newfiles = array();
+		foreach ($_FILES['attachment']['error'] as $id => $error) {
+			if ($_FILES['attachment']['type'][$id] == 'text/plain') {
+				$content .= file_get_contents($_FILES['attachment']['tmp_name'][$id]);
+			}
+			elseif ($_FILES['attachment']['type'][$id] == 'message/rfc822') { // Signed message, ignore for now
+			}
+			else { // A real attachment :^)
+				$file = array();
+				$file['name']     = $_FILES['attachment']['name'][$id];
+				$file['type']     = $_FILES['attachment']['type'][$id];
+				$file['size']     = $_FILES['attachment']['size'][$id];
+				$file['tmp_name'] = $_FILES['attachment']['tmp_name'][$id];
+				$file['error']    = $_FILES['attachment']['error'][$id];
+
+				$newfiles["file$id"] = $file;
+			}
+		}
+
+		$_FILES = $newfiles;
+	}
+	else {
+		error("NNTPChan: Wrong mime type: $ct");
+	}
+
+	$_POST['subject'] = isset($_GET['Subject']) ? ($_GET['Subject'] == 'None' ? '' : $_GET['Subject']) : '';
+	$_POST['board'] = $xboard;
+
+	if (isset ($_GET['From'])) {
+		list($name, $mail) = explode(" <", $_GET['From'], 2);
+		$mail = preg_replace('/>\s+$/', '', $mail);
+
+		$_POST['name'] = $name;
+		//$_POST['email'] = $mail;
+		$_POST['email'] = '';
+	}
+
+	if (isset ($_GET['X_Sage'])) {
+		$_POST['email'] = 'sage';
+	}
+
+	$content = preg_replace_callback('/>>([0-9a-fA-F]{6,})/', function($id) use ($xboard) {
+		$id = $id[1];
+
+		$query = prepare("SELECT `board`,`id` FROM ``nntp_references`` WHERE `message_id_digest` LIKE :rule");
+		$idx = $id . "%";
+                $query->bindValue(':rule', $idx);
+                $query->execute() or error(db_error($query));
+		
+		$ary = $query->fetchAll(PDO::FETCH_ASSOC);
+		if (count($ary) == 0) {
+			return ">>>>$id";
+		}
+		else {
+			$ret = array();
+			foreach ($ary as $v) {
+				if ($v['board'] != $xboard) {
+					$ret[] = ">>>/".$v['board']."/".$v['id'];
+				}
+				else {
+					$ret[] = ">>".$v['id'];
+				}
+			}
+			return implode($ret, ", ");
+		}
+	}, $content);
+
+	$_POST['body'] = $content;
+
+	$dropped_post = array(
+		'date' => $date,
+		'board' => $xboard,
+		'msgid' => $msgid,
+		'headers' => $headers,
+		'from_nntp' => true,
+	);
+}
+elseif (isset($_GET['Newsgroups'])) {
+	error("NNTPChan: NNTPChan support is disabled");
+}
 
 if (isset($_POST['delete'])) {
 	// Delete
@@ -182,8 +344,8 @@ if (isset($_POST['delete'])) {
 		header('Content-Type: text/json');
 		echo json_encode(array('success' => true));
 	}
-} elseif (isset($_POST['post'])) {
-	if (!isset($_POST['body'], $_POST['board']))
+} elseif (isset($_POST['post']) || $dropped_post) {
+	if (!isset($_POST['body'], $_POST['board']) && !$dropped_post)
 		error($config['error']['bot']);
 
 	$post = array('board' => $_POST['board'], 'files' => array());
@@ -211,7 +373,7 @@ if (isset($_POST['delete'])) {
 		$post['op'] = true;
 
 
-	// Note: Function was here....
+	if (!$dropped_post) {
 		// Check for CAPTCHA right after opening the board so the "return" link is in there
 		if ($config['recaptcha']) {
 			if (!isset($_POST['recaptcha_challenge_field']) || !isset($_POST['recaptcha_response_field']))
@@ -223,7 +385,7 @@ if (isset($_POST['delete'])) {
 				$_POST['recaptcha_response_field']);
 			if (!$resp->is_valid) {
 				error($config['error']['captcha']);
-			
+			}
 		// Same, but now with our custom captcha provider
  		if (($config['captcha']['enabled']) || (($post['op']) && ($config['new_thread_capt'])) ) {
 		$resp = file_get_contents($config['captcha']['provider_check'] . "?" . http_build_query([
@@ -396,11 +558,13 @@ if (isset($_POST['delete'])) {
 	$post['password'] = $_POST['password'];
 	$post['has_file'] = (!isset($post['embed']) && (($post['op'] && !isset($post['no_longer_require_an_image_for_op']) && $config['force_image_op']) || count($_FILES) > 0));
 	
+	if (!$dropped_post) {
 
 		if (!($post['has_file'] || isset($post['embed'])) || (($post['op'] && $config['force_body_op']) || (!$post['op'] && $config['force_body']))) {
 			$stripped_whitespace = preg_replace('/[\s]/u', '', $post['body']);
 			if ($stripped_whitespace == '') {
 				error($config['error']['tooshort_body']);
+			}
 		}
 	
 		if (!$post['op']) {
@@ -471,7 +635,7 @@ if (isset($_POST['delete'])) {
 	
 	$trip = generate_tripcode($post['name']);
 	$post['name'] = $trip[0];
-	$post['trip'] = isset($trip[1]) ? $trip[1] : '';
+	$post['trip'] = isset($trip[1]) ? $trip[1] : ''; // XX: Dropped posts and tripcodes
 	
 	$noko = false;
 	if (strtolower($post['email']) == 'noko') {
@@ -506,11 +670,12 @@ if (isset($_POST['delete'])) {
 
 	if (empty($post['files'])) $post['has_file'] = false;
 
+	if (!$dropped_post) {
 		// Check for a file
 		if ($post['op'] && !isset($post['no_longer_require_an_image_for_op'])) {
 			if (!$post['has_file'] && $config['force_image_op'])
 				error($config['error']['noimage']);
-		
+		}
 
 		// Check for too many files
 		if (sizeof($post['files']) > $config['max_images'])
@@ -524,6 +689,7 @@ if (isset($_POST['delete'])) {
 		$post['body'] = strip_combining_chars($post['body']);
 	}
 	
+	if (!$dropped_post) {
 		// Check string lengths
 		if (mb_strlen($post['name']) > 35)
 			error(sprintf($config['error']['toolong'], 'name'));	
@@ -537,7 +703,7 @@ if (isset($_POST['delete'])) {
 			error(sprintf(_('OP must be at least %d chars.'), $config['min_body']));
 		if (mb_strlen($post['password']) > 20)
 			error(sprintf($config['error']['toolong'], 'password'));
-
+	}
 	wordfilters($post['body']);
 	
 	$post['body'] = escape_markup_modifiers($post['body']);
@@ -545,7 +711,8 @@ if (isset($_POST['delete'])) {
 	if ($mod && isset($post['raw']) && $post['raw']) {
 		$post['body'] .= "\n<tinyboard raw html>1</tinyboard>";
 	}
-
+	
+	if (!$dropped_post)
 	if (($config['country_flags'] && !$config['allow_no_country']) || ($config['country_flags'] && $config['allow_no_country'] && !isset($_POST['no_country']))) {
 		require 'inc/lib/geoip/geoip.inc';
 		$gi=geoip\geoip_open('inc/lib/geoip/GeoIPv6.dat', GEOIP_STANDARD);
@@ -587,6 +754,7 @@ if (isset($_POST['delete'])) {
 		$post['body'] .= "\n<tinyboard tag>" . $_POST['tag'] . "</tinyboard>";
 	}
 
+	if (!$dropped_post)
         if ($config['proxy_save'] && isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
 		$proxy = preg_replace("/[^0-9a-fA-F.,: ]/", '', $_SERVER['HTTP_X_FORWARDED_FOR']);
 		$post['body'] .= "\n<tinyboard proxy>".$proxy."</tinyboard>";
@@ -666,7 +834,7 @@ if (isset($_POST['delete'])) {
 		}
 	}
 
-	if (!hasPermission($config['mod']['bypass_filters'], $board['uri'])) {
+	if (!hasPermission($config['mod']['bypass_filters'], $board['uri']) && !$dropped_post) {
 		require_once 'inc/filters.php';
 
 		do_filters($post);
@@ -904,11 +1072,11 @@ if (isset($_POST['delete'])) {
 	}
 	
 	// Do filters again if OCRing
-	if ($config['tesseract_ocr'] && !hasPermission($config['mod']['bypass_filters'], $board['uri'])) {
+	if ($config['tesseract_ocr'] && !hasPermission($config['mod']['bypass_filters'], $board['uri']) && !$dropped_post) {
 		do_filters($post);
 	}
 
-	if (!hasPermission($config['mod']['postunoriginal'], $board['uri']) && $config['robot_enable'] && checkRobot($post['body_nomarkup'])) {
+	if (!hasPermission($config['mod']['postunoriginal'], $board['uri']) && $config['robot_enable'] && checkRobot($post['body_nomarkup']) && !$dropped_post) {
 		undoImage($post);
 		if ($config['robot_mute']) {
 			error(sprintf($config['error']['muted'], mute()));
@@ -946,6 +1114,42 @@ if (isset($_POST['delete'])) {
 	
 	$post['id'] = $id = post($post);
 	$post['slug'] = slugify($post);
+	
+
+	if ($dropped_post && $dropped_post['from_nntp']) {
+	        $query = prepare("INSERT INTO ``nntp_references`` (`board`, `id`, `message_id`, `message_id_digest`, `own`, `headers`) VALUES ".
+	                                                         "(:board , :id , :message_id , :message_id_digest , false, :headers)");
+
+		$query->bindValue(':board', $dropped_post['board']);
+		$query->bindValue(':id', $id);
+		$query->bindValue(':message_id', $dropped_post['msgid']);
+		$query->bindValue(':message_id_digest', sha1($dropped_post['msgid']));
+		$query->bindValue(':headers', $dropped_post['headers']);
+		$query->execute() or error(db_error($query));
+	}	// ^^^^^ For inbound posts  ^^^^^
+	elseif ($config['nntpchan']['enabled'] && $config['nntpchan']['group']) {
+		// vvvvv For outbound posts vvvvv
+
+		require_once('inc/nntpchan/nntpchan.php');
+		$msgid = gen_msgid($post['board'], $post['id']);
+
+		list($headers, $files) = post2nntp($post, $msgid);
+
+		$message = gen_nntp($headers, $files);
+
+	        $query = prepare("INSERT INTO ``nntp_references`` (`board`, `id`, `message_id`, `message_id_digest`, `own`, `headers`) VALUES ".
+	                                                         "(:board , :id , :message_id , :message_id_digest , true , :headers)");
+
+		$query->bindValue(':board', $post['board']);
+                $query->bindValue(':id', $post['id']);
+                $query->bindValue(':message_id', $msgid);
+                $query->bindValue(':message_id_digest', sha1($msgid));
+                $query->bindValue(':headers', json_encode($headers));
+                $query->execute() or error(db_error($query));
+
+		// Let's broadcast it!
+		nntp_publish($message, $msgid);
+	}
 
 	insertFloodPost($post);
 
