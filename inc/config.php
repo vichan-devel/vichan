@@ -1453,8 +1453,11 @@
 	// Default public warning message
 	$config['mod']['default_bantz_message'] = _('user was owned with this text');
 	// HTML to append to post bodies for public warning messages (where "%s" is the message).
-	$config['mod']['bantz_message'] = '<span class="public_bantz">(%s)</span>';
+	$config['mod']['bantz_message'] = '<span class="public_bantz">%s</span>';
+	$config['mod']['bantz_message_prefix'] = '(';
+	$config['mod']['bantz_message_postfix'] = ')';
 	// Max an min Bantz text size in px
+	$config['mod']['bantz_message_default_size'] = 15;
 	$config['mod']['bantz_message_min_size'] = 5;
 	$config['mod']['bantz_message_max_size'] = 800;
 
