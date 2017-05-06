@@ -929,7 +929,7 @@ function mod_bantz_post($board, $post, $token = false) {
 
 	if (isset($_POST['new_bantz'], $_POST['message'])) {
 		
-		$text_size = 10;
+		$text_size = $config['mod']['bantz_message_default_size'];
 		if(isset($_POST['text_size']))
 		{
 			$text_size = (int)$_POST['text_size'];
@@ -943,7 +943,7 @@ function mod_bantz_post($board, $post, $token = false) {
 		$_POST['message'] = preg_replace('/[\r\n]/', '', $_POST['message']);
 		$query = prepare(sprintf('UPDATE ``posts_%s`` SET `body_nomarkup` = CONCAT(`body_nomarkup`, :body_nomarkup) WHERE `id` = :id', $board));
 		$query->bindValue(':id', $post);
-		$query->bindValue(':body_nomarkup', sprintf("\n<tinyboard bantz message>%s</tinyboard>", '<span style="font-size:' . $text_size . 'px !important">' . utf8tohtml($_POST['message']) . '</span>'));
+		$query->bindValue(':body_nomarkup', sprintf("\n<tinyboard bantz message>%s</tinyboard>", '<span style="font-size:' . $text_size . 'px !important">' . utf8tohtml($config['mod']['bantz_message_prefix'] . $_POST['message'] . $config['mod']['bantz_message_postfix']) . '</span>'));
 		$query->execute() or error(db_error($query));
 		rebuildPost($post);
 		
