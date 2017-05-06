@@ -1,9 +1,0 @@
-[submodule "js/wPaint"]
-	path = js/wPaint
-	url = https://github.com/vichan-devel/wPaint.git
-	branch = master
-
-[submodule "inc/lib/parsedown"]
-	path = inc/lib/parsedown
-	url = https://github.com/vichan-devel/parsedown
-	branch = master

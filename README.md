@@ -1,16 +1,14 @@
-vichan - A lightweight and full featured PHP imageboard.
+NPFchan - A lightweight and full featured PHP imageboard.
 ========================================================
 
 About
 ------------
-This is the version of vichan running on [mlpol.net](https://mlpol.net), a free light-weight, fast, highly configurable and user-friendly
+This is the a fork of vichan running on [mlpol.net](https://mlpol.net), a free light-weight, fast, highly configurable and user-friendly
 imageboard software package. It is written in PHP and has few dependencies.
 
-vichan is a fork of (now defunc'd) [Tinyboard](http://github.com/savetheinternet/Tinyboard),
+NPFchan is a fork of [vichan](https://github.com/vichan-devel/vichan) which is a fork of (now defunc'd) [Tinyboard](http://github.com/savetheinternet/Tinyboard),
 a great imageboard package, actively building on it and adding a lot of features and other
 improvements.
-
-Support and announcements: https://engine.vichan.net/
 
 Requirements
 ------------
@@ -59,7 +57,7 @@ See also: [Configuration Basics](https://web.archive.org/web/20121003095922/http
 
 Upgrade
 -------
-To upgrade from any version of Tinyboard or vichan:
+To upgrade from any version of Tinyboard or vichan or NFPchan:
 
 Either run ```git pull``` to update your files, if you used git, or
 backup your ```inc/instance-config.php```, replace all your files in place
@@ -70,6 +68,10 @@ To migrate from a Kusaba X board, use http://github.com/vichan-devel/Tinyboard-M
 
 Support
 --------
+
+As it stands NPFchan has no public support system.
+
+### vichan support
 vichan is still beta software -- there are bound to be bugs. If you find a
 bug, please report it.
 
@@ -106,12 +108,7 @@ https://www.transifex.com/projects/p/tinyboard-vichan-devel/
 
 Oekaki
 ------
-vichan makes use of [wPaint](https://github.com/websanova/wPaint) for oekaki. After you pull the repository, however, you will need to download wPaint separately using git's `submodule` feature. Use the following commands:
-
-```
-git submodule init
-git submodule update
-```
+NPFchan makes use of [wPaint](https://github.com/websanova/wPaint) for oekaki.
 
 To enable oekaki, add all the scripts listed in `js/wpaint.js` to your `instance-config.php`.
 
@@ -126,5 +123,5 @@ https://github.com/vichan-devel/vichan-API/ .
 
 License
 --------
-See [LICENSE.md](http://github.com/vichan-devel/vichan/blob/master/LICENSE.md).
+See [LICENSE.md](http://github.com/fallenPineapple/NPFchan/blob/master/LICENSE.md).
 
