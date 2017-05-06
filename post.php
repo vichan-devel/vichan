@@ -287,7 +287,7 @@ if (isset($_POST['delete'])) {
 	
 	if (empty($report))
 		error($config['error']['noreport']);
-	if (count($report) > 30)
+	if (mb_strlen($_POST['reason']) > 30)
 		error($config['error']['invalidreport']);
 	
 	if (count($report) > $config['report_limit'])
