@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: May 02, 2017 at 01:45 AM
+-- Generation Time: May 08, 2017 at 01:32 PM
 -- Server version: 5.7.18-0ubuntu0.16.04.1
 -- PHP Version: 7.0.15-0ubuntu0.16.04.4
 
@@ -144,6 +144,18 @@ CREATE TABLE IF NOT EXISTS `cites` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `custom_geoip`
+--
+
+CREATE TABLE IF NOT EXISTS `custom_geoip` (
+  `ip` varchar(45) NOT NULL,
+  `country` int(4) NOT NULL,
+  UNIQUE KEY `ip` (`ip`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `filehashes`
 --
 
@@ -226,7 +238,7 @@ CREATE TABLE IF NOT EXISTS `mods` (
   `boards` text CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`,`username`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `mods`

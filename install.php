@@ -1,7 +1,7 @@
 <?php
 
 // Installation/upgrade file	
-define('VERSION', '5.1.5');
+define('VERSION', '6.0.0');
 
 require 'inc/functions.php';
 
@@ -560,7 +560,7 @@ if (file_exists($config['has_installed'])) {
 			query('ALTER TABLE ``mods`` CHANGE `salt` `version` VARCHAR(64) NOT NULL;') or error(db_error());
 		case '5.0.1':
 		case '5.1.0':
-			query('CREATE TABLE IF NOT EXISTS ``pages`` (
+			query('CREATE TABLE ``pages`` (
 			  `id` int(11) NOT NULL AUTO_INCREMENT,
 			  `board` varchar(255) DEFAULT NULL,
 			  `name` varchar(255) NOT NULL,
@@ -569,13 +569,13 @@ if (file_exists($config['has_installed'])) {
 			  `content` text,
 			  PRIMARY KEY (`id`),
 			  UNIQUE KEY `u_pages` (`name`,`board`)
-			) ENGINE=MyISAM DEFAULT CHARSET=utf8;') or error(db_error());
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;') or error(db_error());
 		case '5.1.1':
                         foreach ($boards as &$board) {
                                 query(sprintf("ALTER TABLE ``posts_%s`` ADD `cycle` int(1) NOT NULL AFTER `locked`", $board['uri'])) or error(db_error());
                         }
 		case '5.1.2':
-			query('CREATE TABLE IF NOT EXISTS ``nntp_references`` (
+			query('CREATE TABLE ``nntp_references`` (
 				  `board` varchar(60) NOT NULL,
 				  `id` int(11) unsigned NOT NULL,
 				  `message_id` varchar(255) CHARACTER SET ascii NOT NULL,
@@ -585,9 +585,16 @@ if (file_exists($config['has_installed'])) {
 				  PRIMARY KEY (`message_id_digest`),
 				  UNIQUE KEY `message_id` (`message_id`),
 				  UNIQUE KEY `u_board_id` (`board`, `id`)
-				) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 			') or error(db_error());
 		case '5.1.3':
+			$tables = array(
+				'pages', 'nntp_references'
+			);
+			
+			foreach ($tables as &$table) {
+				query("ALTER TABLE  `{$table}` ENGINE=MyISAM DEFAULT CHARSET=utf8;") or error(db_error());
+			}								 
 			foreach ($boards as &$board) {
 				query(sprintf("ALTER TABLE ``posts_%s`` ADD `cookie` varchar(40) CHARACTER SET ascii NOT NULL AFTER `ip`", $board['uri'])) or error(db_error());
 			}	
@@ -634,6 +641,13 @@ if (file_exists($config['has_installed'])) {
 				`post` blob,
 				PRIMARY KEY (`id`),
 				KEY `ipstart` (`ip`)
+				) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+			') or error(db_error());
+		case '5.1.5':
+			query('CREATE TABLE IF NOT EXISTS ``custom_geoip`` (
+				`ip` varchar(45) NOT NULL,
+				`country` int(4) NOT NULL,
+				UNIQUE KEY `ip` (`ip`)
 				) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 			') or error(db_error());
 		case false:
