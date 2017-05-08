@@ -123,7 +123,7 @@ class GeoIP {
 	    "VU" => 234, "WF" => 235, "WS" => 236, "YE" => 237, "YT" => 238, "RS" => 239,
 	    "ZA" => 240, "ZM" => 241, "ME" => 242, "ZW" => 243, "A1" => 244, "A2" => 245,
 	    "O1" => 246, "AX" => 247, "GG" => 248, "IM" => 249, "JE" => 250, "BL" => 251,
-	    "MF" => 252, "BQ" => 253, "SS" => 254
+	    "MF" => 252, "BQ" => 253, "SS" => 254, "GX" => 255
 		);
     var $GEOIP_COUNTRY_CODES = array(
 	    "","AP","EU","AD","AE","AF","AG","AI","AL","AM","CW",
@@ -151,7 +151,7 @@ class GeoIP {
 	    "TZ","UA","UG","UM","US","UY","UZ","VA","VC","VE",
 	    "VG","VI","VN","VU","WF","WS","YE","YT","RS","ZA",
 	    "ZM","ME","ZW","A1","A2","O1","AX","GG","IM","JE",
-	    "BL","MF", "BQ", "SS", "O1" );
+	    "BL","MF", "BQ", "SS", "O1", "GX" );
     var $GEOIP_COUNTRY_CODES3 = array(
 	    "","AP","EU","AND","ARE","AFG","ATG","AIA","ALB","ARM","CUW",
 	    "AGO","ATA","ARG","ASM","AUT","AUS","ABW","AZE","BIH","BRB",
@@ -178,7 +178,7 @@ class GeoIP {
 	    "TZA","UKR","UGA","UMI","USA","URY","UZB","VAT","VCT","VEN",
 	    "VGB","VIR","VNM","VUT","WLF","WSM","YEM","MYT","SRB","ZAF",
 	    "ZMB","MNE","ZWE","A1","A2","O1","ALA","GGY","IMN","JEY",
-	    "BLM","MAF", "BES", "SSD", "O1"
+	    "BLM","MAF", "BES", "SSD", "O1", "GYP"
 		);
     var $GEOIP_COUNTRY_NAMES = array(
 	    "","Asia/Pacific Region","Europe","Andorra","United Arab Emirates","Afghanistan","Antigua and Barbuda","Anguilla","Albania","Armenia","Curacao",
@@ -207,7 +207,7 @@ class GeoIP {
 	    "Virgin Islands, British","Virgin Islands, U.S.","Vietnam","Vanuatu","Wallis and Futuna","Samoa","Yemen","Mayotte","Serbia","South Africa",
 	    "Zambia","Montenegro","Zimbabwe","Anonymous Proxy","Satellite Provider","Other","Aland Islands","Guernsey","Isle of Man","Jersey",
 	    "Saint Barthelemy","Saint Martin", "Bonaire, Saint Eustatius and Saba",
-	    "South Sudan", "Other"
+	    "South Sudan", "Other", "Gypsy"
 		);
 
     var $GEOIP_CONTINENT_CODES = array(
@@ -236,7 +236,7 @@ class GeoIP {
 	    "AF","EU","AF","OC","NA","SA","AS","EU","NA","SA",
 	    "NA","NA","AS","OC","OC","OC","AS","AF","EU","AF",
 	    "AF","EU","AF","--","--","--","EU","EU","EU","EU",
-	    "NA","NA","NA", "AF", "--"
+	    "NA","NA","NA", "AF", "--", "EU"
 		);
 
 }
@@ -431,6 +431,13 @@ function geoip_country_id_by_name($gi, $name) {
 }
 
 function geoip_country_code_by_name_v6($gi, $name) {
+	// Find Entry in DB for Gypsies
+	$query = prepare("SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip");
+	$query->bindValue(":ip", $addr, \PDO::PARAM_STR);
+	$query->execute() or error(db_error($query));
+	if (($custom_code = $query->fetchColumn(0)) !== false)
+		return $gi->GEOIP_COUNTRY_CODES[$custom_code];
+
     $country_id = geoip_country_id_by_name_v6($gi,$name);
     if ($country_id !== false) {
 	return $gi->GEOIP_COUNTRY_CODES[$country_id];
@@ -447,6 +454,13 @@ function geoip_country_code_by_name($gi, $name) {
 }
 
 function geoip_country_name_by_name_v6($gi, $name) {
+	// Find Entry in DB for Gypsies
+	$query = prepare("SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip");
+	$query->bindValue(":ip", $addr, \PDO::PARAM_STR);
+	$query->execute() or error(db_error($query));
+	if (($custom_code = $query->fetchColumn(0)) !== false)
+		return $gi->GEOIP_COUNTRY_NAMES[$custom_code];
+
     $country_id = geoip_country_id_by_name_v6($gi,$name);
     if ($country_id !== false) {
 	return $gi->GEOIP_COUNTRY_NAMES[$country_id];
@@ -463,6 +477,13 @@ function geoip_country_name_by_name($gi, $name) {
 }
 
 function geoip_country_id_by_addr_v6($gi, $addr) {
+	// Find Entry in DB for Gypsies
+	$query = prepare("SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip");
+	$query->bindValue(":ip", $addr, \PDO::PARAM_STR);
+	$query->execute() or error(db_error($query));
+	if (($custom_code = $query->fetchColumn(0)) !== false)
+		return $custom_code;
+
     $ipnum = inet_pton($addr);
     return _geoip_seek_country_v6($gi, $ipnum) - GEOIP_COUNTRY_BEGIN;
 }
@@ -473,6 +494,13 @@ function geoip_country_id_by_addr($gi, $addr) {
 }
 
 function geoip_country_code_by_addr_v6($gi, $addr) {
+	// Find Entry in DB for Gypsies
+	$query = prepare("SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip");
+	$query->bindValue(":ip", $addr, \PDO::PARAM_STR);
+	$query->execute() or error(db_error($query));
+	if (($custom_code = $query->fetchColumn(0)) !== false)
+		return $gi->GEOIP_COUNTRY_CODES[$custom_code];
+
     $country_id = geoip_country_id_by_addr_v6($gi,$addr);
     if ($country_id !== false) {
 	return $gi->GEOIP_COUNTRY_CODES[$country_id];
@@ -496,6 +524,13 @@ function geoip_country_code_by_addr($gi, $addr) {
 }
 
 function geoip_country_name_by_addr_v6($gi, $addr) {
+	// Find Entry in DB for Gypsies
+	$query = prepare("SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip");
+	$query->bindValue(":ip", $addr, \PDO::PARAM_STR);
+	$query->execute() or error(db_error($query));
+	if (($custom_code = $query->fetchColumn(0)) !== false)
+		return $gi->GEOIP_COUNTRY_NAMES[$custom_code];
+
     $country_id = geoip_country_id_by_addr_v6($gi,$addr);
     if ($country_id !== false) {
 	return $gi->GEOIP_COUNTRY_NAMES[$country_id];
