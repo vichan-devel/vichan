@@ -1193,6 +1193,7 @@
 	$config['error']['invalidtheme']	= _('That theme doesn\'t exist!');
 	$config['error']['csrf']		= _('Invalid security token! Please go back and try again.');
 	$config['error']['badsyntax']		= _('Your code contained PHP syntax errors. Please go back and correct them. PHP says: ');
+	$config['error']['bad_gypsie']		= _('The provided Country ID is not allowed');
 
 /*
  * =========================
@@ -1575,6 +1576,12 @@
     $config['mod']['flood'] = &$config['mod']['bypass_filters'];
     // Raw HTML posting
     $config['mod']['rawhtml'] = ADMIN;
+	// The ability to make IP's into Gypsies
+	$config['mod']['make_gypsies'] = MOD;
+	$config['mod']['gypsie_countries'] = array(
+		38 		=>	'Canada',
+		256 	=>	'Gypsy'
+	);
 
 	/* Administration */
 	// View the report queue

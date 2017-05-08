@@ -777,6 +777,52 @@ function mod_view_thread50($boardName, $thread) {
 	echo $page;
 }
 
+
+
+function mod_ip_to_gypsy($ip, $country_id) {
+	global $config, $mod;
+	
+	if (!hasPermission($config['mod']['make_gypsies']))
+			error($config['error']['noaccess']);
+	
+	if (filter_var($ip, FILTER_VALIDATE_IP) === false)
+		error("Invalid IP address.");
+
+	$country_id = (int)$country_id;
+	if(!isset($config['mod']['gypsie_countries'][$country_id]))
+		error($config['error']['bad_gypsie']);
+
+	$query = prepare('INSERT INTO ``custom_geoip`` VALUES(:ip, :country_id)');
+	$query->bindValue(':ip', ipv4to6($ip));
+	$query->bindValue(':country_id', $country_id);
+	$query->execute() or error(db_error($query));
+	
+	modLog("Added forced {$config['mod']['gypsie_countries'][$country_id]} for <a href=\"?/IP/{$ip}\">{$ip}</a>");
+	
+	header('Location: ?/IP/' . $ip, true, $config['redirect_http']);
+}
+
+
+function mod_ip_to_nongypsy($ip) {
+	global $config, $mod;
+	
+	if (!hasPermission($config['mod']['make_gypsies']))
+			error($config['error']['noaccess']);
+	
+	if (filter_var($ip, FILTER_VALIDATE_IP) === false)
+		error("Invalid IP address.");
+	
+	$query = prepare('DELETE FROM ``custom_geoip`` WHERE `ip` = :ip');
+	$query->bindValue(':ip', ipv4to6($ip));
+	$query->execute() or error(db_error($query));
+	
+	modLog("Removed forced Gypsy for <a href=\"?/IP/{$ip}\">{$ip}</a>");
+	
+	header('Location: ?/IP/' . $ip, true, $config['redirect_http']);
+}
+
+
+
 function mod_ip_remove_note($ip, $id) {
 	global $config, $mod;
 	
@@ -812,6 +858,20 @@ function mod_page_ip($ip) {
 		return;
 	}
 	
+
+	// Make a Gypsie
+	if(isset($_POST['make_gypsie'], $_POST['country'])) {
+		mod_ip_to_gypsy($ip, $_POST['country']);
+		return;
+	}
+
+	// UnMake a Gypsie
+	if(isset($_POST['free_gypsie'])) {
+		mod_ip_to_nongypsy($ip);
+		return;
+	}
+
+
 
 	// Ban The Cookie
 	if(isset($_POST['ban_id'], $_POST['ban_cookie']))
@@ -897,7 +957,26 @@ function mod_page_ip($ip) {
 	} else {
 		$args['logs'] = array();
 	}
+
+	// Add values for Gypsie data 
+	if (hasPermission($config['mod']['make_gypsies'])) {
+		$query = prepare("SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip");
+		$query->bindValue(":ip", ipv4to6($ip), \PDO::PARAM_STR);
+		$query->execute() or error(db_error($query));
+		if (($country_id = $query->fetchColumn(0)) !== false)
+			$args['is_gypsie'] = $config['mod']['gypsie_countries'][$country_id];
+		else 
+			$args['is_gypsie'] = false;
+
+		// Make list of allowed countries
+		foreach($config['mod']['gypsie_countries'] as $key => $val)
+			$args['countries'][] = array('id' => $key, 'name' => $val);
+	} else {
+		$args['is_gypsie'] = false;
+		$args['countries'] = array();
+	}
 	
+
 	$args['security_token'] = make_secure_link_token('IP/' . $ip);
 	
 	mod_page(sprintf('%s: %s', _('IP'), htmlspecialchars($ip)), 'mod/view_ip.html', $args, $args['hostname']);
