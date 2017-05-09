@@ -1583,7 +1583,8 @@
 	$config['mod']['make_gypsies'] = MOD;
 	$config['mod']['gypsie_countries'] = array(
 		38 		=>	'Canada',
-		256 	=>	'Gypsy'
+		256 	=>	'Gypsy',
+		257 	=>	'Gay'
 	);
 
 	/* Administration */
