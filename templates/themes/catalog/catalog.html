@@ -54,7 +54,37 @@
                                                  id="img-{{ post.id }}" data-subject="{% if post.subject %}{{ post.subject|e }}{% endif %}" data-name="{{ post.name|e }}" data-muhdifference="{{ post.muhdifference }}" class="{{post.board}} thread-image" title="{{post.bump|date('%b %d %H:%M')}}">
                                         </a>
                                                 <div class="replies">
-                                                        <strong>R: {{ post.reply_count }} / I: {{ post.image_count }}{% if post.sticky %} (sticky){% endif %}</strong>
+							<style>strong > i, strong > img { margin-left: 4px;}</style>
+                                                        <strong>R: {{ post.reply_count }} / I: {{ post.image_count }}
+								{% if post.sticky %}
+									{% if config.font_awesome %}
+										<i class="fa fa-thumb-tack" title="Sticky"></i>
+									{% else %}
+										<img class="icon" title="Sticky" src="{{ config.image_sticky }}" alt="Sticky" />
+									{% endif %}
+								{% endif %}
+								{% if post.locked %}
+									{% if config.font_awesome %}
+										<i class="fa fa-lock" title="Locked"></i>
+									{% else %}
+										<img class="icon" title="Locked" src="{{ config.image_locked }}" alt="Locked" />
+									{% endif %}
+								{% endif %}
+								{% if post.bumplocked and (config.mod.view_bumplock < 0 or (post.mod and post.mod|hasPermission(config.mod.view_bumplock, board.uri))) %}
+									{% if config.font_awesome %}
+										<i class="fa fa-anchor" title="Bumplocked"></i>
+									{% else %}
+										<img class="icon" title="Bumplocked" src="{{ config.image_bumplocked }}" alt="Bumplocked" />
+									{% endif %}
+								{% endif %}
+								{% if post.cycle %}
+									{% if config.font_awesome %}
+										<i class="fa fa-refresh" title="Cyclical"></i>
+									{% else %}
+										<img class="icon" title="Cyclical" src="{{ config.image_sticky }}" alt="Cyclical" />
+									{% endif %}
+								{% endif %}
+							</strong>
                                                         {% if post.subject %}
 								<p class="intro">
 									<span class="subject">
@@ -76,10 +106,11 @@
 	<hr/>
 	<footer>
 		<p class="unimportant" style="margin-top:20px;text-align:center;">- Tinyboard + 
-			<a href="https://engine.vichan.net/">vichan</a> {{ config.version }} -
-		<br>Tinyboard Copyright &copy; 2010-2017 Tinyboard Development Group    
-		<br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2017 vichan-devel</p>
-		<br><a href="https://github.com/fallenPineapple/vichan">mlpol.net</a> Copyright &copy; 2017-2017 mlpol.net Administration</p>
+			<a href="https://engine.vichan.net/">vichan</a> + 
+            <a href="https://github.com/fallenPineapple/NPFchan">NPFchan</a> {{ config.version }} -
+		<br>Tinyboard Copyright &copy; 2010-2014 Tinyboard Development Group    
+		<br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2016 vichan-devel
+		<br><a href="https://github.com/fallenPineapple/NPFchan">NPFchan</a> Copyright &copy; 2017 NPFchan</p>
 	</footer>
 	<script type="text/javascript">{% raw %}
 		var styles = {

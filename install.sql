@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 27, 2017 at 08:29 AM
--- Server version: 5.7.17-0ubuntu0.16.04.2
+-- Generation Time: May 08, 2017 at 01:32 PM
+-- Server version: 5.7.18-0ubuntu0.16.04.1
 -- PHP Version: 7.0.15-0ubuntu0.16.04.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -15,6 +15,7 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
+
 
 -- --------------------------------------------------------
 
@@ -114,6 +115,20 @@ INSERT INTO `boards` (`uri`, `title`, `subtitle`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `captchas`
+--
+
+CREATE TABLE IF NOT EXISTS `captchas` (
+  `cookie` varchar(50) NOT NULL,
+  `extra` varchar(200) NOT NULL,
+  `text` varchar(255) DEFAULT NULL,
+  `created_at` int(11) DEFAULT NULL,
+  PRIMARY KEY (`cookie`,`extra`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `cites`
 --
 
@@ -124,6 +139,18 @@ CREATE TABLE IF NOT EXISTS `cites` (
   `target` int(11) NOT NULL,
   KEY `target` (`target_board`,`target`),
   KEY `post` (`board`,`post`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `custom_geoip`
+--
+
+CREATE TABLE IF NOT EXISTS `custom_geoip` (
+  `ip` varchar(45) NOT NULL,
+  `country` int(4) NOT NULL,
+  UNIQUE KEY `ip` (`ip`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -211,7 +238,7 @@ CREATE TABLE IF NOT EXISTS `mods` (
   `boards` text CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`,`username`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `mods`
@@ -371,16 +398,21 @@ CREATE TABLE IF NOT EXISTS `theme_settings` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `captchas`
+-- Table structure for table `warnings`
 --
 
-CREATE TABLE IF NOT EXISTS `captchas` (
-  `cookie` VARCHAR(50),
-  `extra` VARCHAR(200),
-  `text` VARCHAR(255),
-  `created_at` INT(11),
-  PRIMARY KEY (`cookie`,`extra`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS `warnings` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ip` varbinary(16) NOT NULL,
+  `created` int(10) UNSIGNED NOT NULL,
+  `board` varchar(58) DEFAULT NULL,
+  `creator` int(10) NOT NULL,
+  `reason` text,
+  `seen` tinyint(1) NOT NULL,
+  `post` blob,
+  PRIMARY KEY (`id`),
+  KEY `ipstart` (`ip`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

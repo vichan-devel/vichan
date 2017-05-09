@@ -29,6 +29,6 @@ function multi_image() {
     })
 }
 
-if (active_page == 'thread' || active_page == 'index' && max_images > 1) {
+if (active_page == 'thread' || active_page == 'index' || active_page == 'catalog' && max_images > 1) {
 	$(document).ready(multi_image);
 }
