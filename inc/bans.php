@@ -8,6 +8,11 @@ use Lifo\IP\CIDR;
 
 class Bans {
 	static public function range_to_string($mask) {
+		global $config;
+
+		if($config['obscure_ip_addresses'])
+			return $mask[0];
+
 		list($ipstart, $ipend) = $mask;
 		
 		if (!isset($ipend) || $ipend === false) {
@@ -78,6 +83,11 @@ class Bans {
 	}
 	
 	static public function parse_range($mask) {
+		global $config;
+
+		if($config['obscure_ip_addresses'])
+			return array($mask, false);
+
 		$ipstart = false;
 		$ipend = false;
 		
@@ -121,16 +131,18 @@ class Bans {
 		global $config;
 		
 		$query = prepare('SELECT ``bans``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``bans``
-		' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
-		WHERE
+			' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
+			WHERE
 			(' . ($board !== false ? '(`board` IS NULL OR `board` = :board) AND' : '') . '
-			(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)))
-		ORDER BY `expires` IS NULL, `expires` DESC');
+			' . ($config['obscure_ip_addresses'] ? '(`ipstart` = MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))))' : '(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)))') . ' 
+			ORDER BY `expires` IS NULL, `expires` DESC');
 		
 		if ($board !== false)
 			$query->bindValue(':board', $board, PDO::PARAM_STR);
 		
-		$query->bindValue(':ip', inet_pton($ip));
+		$query->bindValue(':ip', $config['obscure_ip_addresses'] ? $ip : inet_pton($ip));
+		if($config['obscure_ip_addresses'])
+			$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
 		$query->execute() or error(db_error($query));
 		
 		$ban_list = array();
@@ -155,10 +167,12 @@ class Bans {
 		global $config;
 		
 		$query = prepare('SELECT ``warnings``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``warnings``
-		' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
-		WHERE `ip` = :ip');
-		
-		$query->bindValue(':ip', inet_pton($ip));
+			' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
+			WHERE `ip` = ' . ($config['obscure_ip_addresses'] ? 'MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))' : ':ip'));
+					
+		$query->bindValue(':ip', $config['obscure_ip_addresses'] ? $ip : inet_pton($ip));
+		if($config['obscure_ip_addresses'])
+			$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
 		$query->execute() or error(db_error($query));
 		
 		$warning_list = array();
@@ -378,7 +392,7 @@ class Bans {
 		if ($mod_id === false) {
 			$mod_id = isset($mod['id']) ? $mod['id'] : -1;
 		}
-				
+		
 		$range = self::parse_range($mask);
 		$mask = self::range_to_string($range);
 		

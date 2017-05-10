@@ -128,10 +128,16 @@ function destroyCookies() {
 }
 
 function modLog($action, $_board=null) {
+	global $config;
+
 	global $mod, $board, $config;
-	$query = prepare("INSERT INTO ``modlogs`` VALUES (:id, :ip, :board, :time, :text)");
+	$query = prepare("INSERT INTO ``modlogs`` VALUES (:id, " 
+		. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip") 
+		. ", :board, :time, :text)");
 	$query->bindValue(':id', (isset($mod['id']) ? $mod['id'] : -1), PDO::PARAM_INT);
 	$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
+	if($config['obscure_ip_addresses'])
+		$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
 	$query->bindValue(':time', time(), PDO::PARAM_INT);
 	$query->bindValue(':text', $action);
 	if (isset($_board))

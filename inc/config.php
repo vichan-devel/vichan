@@ -101,6 +101,13 @@
 	// Connection timeout duration in seconds
 	$config['db']['timeout'] = 30;
 
+	// Secret key for encrypting IP addresses
+	// https://www.grc.com/passwords.htm
+	$config['db']['ip_encrypt_key'] = '1#ZY?foF^x!py{rC&aa8#D+|0;K,!,*P:$NV#Fx&"\l+n`m71BSZwUjIx~#_VEb';
+	$config['obscure_ip_addresses'] = true;
+
+
+
 /*
  * ====================
  *  Cache, lock and queue settings

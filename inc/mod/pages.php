@@ -784,8 +784,10 @@ function mod_ip_to_gypsy($ip, $country_id) {
 	
 	if (!hasPermission($config['mod']['make_gypsies']))
 			error($config['error']['noaccess']);
-	
-	if (filter_var($ip, FILTER_VALIDATE_IP) === false)
+
+	if (!$config['obscure_ip_addresses'] && filter_var($ip, FILTER_VALIDATE_IP) === false)
+		error("Invalid IP address.");
+	else if ($config['obscure_ip_addresses'] && preg_match('/^[a-f0-9]{32}$/i', $ip) === false)
 		error("Invalid IP address.");
 
 	$country_id = (int)$country_id;
@@ -793,7 +795,7 @@ function mod_ip_to_gypsy($ip, $country_id) {
 		error($config['error']['bad_gypsie']);
 
 	$query = prepare('INSERT INTO ``custom_geoip`` VALUES(:ip, :country_id)');
-	$query->bindValue(':ip', ipv4to6($ip));
+	$query->bindValue(':ip', $config['obscure_ip_addresses'] ? $ip : ipv4to6($ip));
 	$query->bindValue(':country_id', $country_id);
 	$query->execute() or error(db_error($query));
 	
@@ -809,7 +811,9 @@ function mod_ip_to_nongypsy($ip) {
 	if (!hasPermission($config['mod']['make_gypsies']))
 			error($config['error']['noaccess']);
 	
-	if (filter_var($ip, FILTER_VALIDATE_IP) === false)
+	if (!$config['obscure_ip_addresses'] && filter_var($ip, FILTER_VALIDATE_IP) === false)
+		error("Invalid IP address.");
+	else if ($config['obscure_ip_addresses'] && preg_match('/^[a-f0-9]{32}$/i', $ip) === false)
 		error("Invalid IP address.");
 
 	$query = prepare('SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip');
@@ -823,7 +827,7 @@ function mod_ip_to_nongypsy($ip) {
 		$country_name = $config['mod']['gypsie_countries'][$country_id];
 
 	$query = prepare('DELETE FROM ``custom_geoip`` WHERE `ip` = :ip');
-	$query->bindValue(':ip', ipv4to6($ip));
+	$query->bindValue(':ip', $config['obscure_ip_addresses'] ? $ip : ipv4to6($ip));
 	$query->execute() or error(db_error($query));
 	
 	modLog("Removed forced {$country_name} for <a href=\"?/IP/{$ip}\">{$ip}</a>");
@@ -840,7 +844,9 @@ function mod_ip_remove_note($ip, $id) {
 	if (!hasPermission($config['mod']['remove_notes']))
 			error($config['error']['noaccess']);
 	
-	if (filter_var($ip, FILTER_VALIDATE_IP) === false)
+	if (!$config['obscure_ip_addresses'] && filter_var($ip, FILTER_VALIDATE_IP) === false)
+		error("Invalid IP address.");
+	else if ($config['obscure_ip_addresses'] && preg_match('/^[a-f0-9]{32}$/i', $ip) === false)
 		error("Invalid IP address.");
 	
 	$query = prepare('DELETE FROM ``ip_notes`` WHERE `ip` = :ip AND `id` = :id');
@@ -856,7 +862,9 @@ function mod_ip_remove_note($ip, $id) {
 function mod_page_ip($ip) {
 	global $config, $mod;
 	
-	if (filter_var($ip, FILTER_VALIDATE_IP) === false)
+	if (!$config['obscure_ip_addresses'] && filter_var($ip, FILTER_VALIDATE_IP) === false)
+		error("Invalid IP address.");
+	else if ($config['obscure_ip_addresses'] && preg_match('/^[a-f0-9]{32}$/i', $ip) === false)
 		error("Invalid IP address.");
 	
 	if (isset($_POST['ban_id'], $_POST['unban'])) {
@@ -921,7 +929,7 @@ function mod_page_ip($ip) {
 	$args['posts'] = array();
 	
 	if ($config['mod']['dns_lookup'])
-		$args['hostname'] = rDNS($ip);
+		$args['hostname'] = $config['obscure_ip_addresses'] ? _('No lookup for hashed ip') : rDNS($ip);
 	
 	$boards = listBoards();
 	foreach ($boards as $board) {
@@ -972,7 +980,7 @@ function mod_page_ip($ip) {
 	// Add values for Gypsie data 
 	if (hasPermission($config['mod']['make_gypsies'])) {
 		$query = prepare("SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip");
-		$query->bindValue(":ip", ipv4to6($ip), \PDO::PARAM_STR);
+		$query->bindValue(":ip", $config['obscure_ip_addresses'] ? $ip : ipv4to6($ip), \PDO::PARAM_STR);
 		$query->execute() or error(db_error($query));
 		if (($country_id = $query->fetchColumn(0)) !== false)
 			$args['is_gypsie'] = $config['mod']['gypsie_countries'][$country_id];
@@ -990,7 +998,9 @@ function mod_page_ip($ip) {
 
 	$args['security_token'] = make_secure_link_token('IP/' . $ip);
 	
-	mod_page(sprintf('%s: %s', _('IP'), htmlspecialchars($ip)), 'mod/view_ip.html', $args, $args['hostname']);
+	mod_page(sprintf('%s: %s', _('IP'), 
+		($config['obscure_ip_addresses'] ? htmlspecialchars(wordwrap($ip, 4, ":", true)) : htmlspecialchars($ip))), 
+		'mod/view_ip.html', $args, $args['hostname']);
 }
 
 
@@ -2032,12 +2042,16 @@ function mod_deletebyip($boardName, $post, $global = false) {
 	
 	$query = '';
 	foreach ($boards as $_board) {
-		$query .= sprintf("SELECT `thread`, `id`, '%s' AS `board` FROM ``posts_%s`` WHERE `ip` = :ip UNION ALL ", $_board['uri'], $_board['uri']);
+		$query .= sprintf("SELECT `thread`, `id`, '%s' AS `board` FROM ``posts_%s`` WHERE `ip` = "
+			. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip")
+			. " UNION ALL ", $_board['uri'], $_board['uri']);
 	}
 	$query = preg_replace('/UNION ALL $/', '', $query);
 	
 	$query = prepare($query);
 	$query->bindValue(':ip', $ip);
+	if($config['obscure_ip_addresses'])
+		$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
 	$query->execute() or error(db_error($query));
 	
 	if ($query->rowCount() < 1)
@@ -2625,8 +2639,11 @@ function mod_report_dismiss($id, $all = false) {
 		error($config['error']['noaccess']);
 	
 	if ($all) {
-		$query = prepare("DELETE FROM ``reports`` WHERE `ip` = :ip");
+		$query = prepare("DELETE FROM ``reports`` WHERE `ip` = " 
+			. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip"));
 		$query->bindValue(':ip', $ip);
+		if($config['obscure_ip_addresses'])
+			$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
 	} else {
 		$query = prepare("DELETE FROM ``reports`` WHERE `id` = :id");
 		$query->bindValue(':id', $id);

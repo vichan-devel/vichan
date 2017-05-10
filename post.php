@@ -325,9 +325,13 @@ if (isset($_POST['delete'])) {
 				'/' . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '') .
 				' for "' . $reason . '"'
 			);
-		$query = prepare("INSERT INTO ``reports`` VALUES (NULL, :time, :ip, :board, :post, :reason)");
+		$query = prepare("INSERT INTO ``reports`` VALUES (NULL, :time, " 
+			. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip") 
+			. ", :board, :post, :reason)");
 		$query->bindValue(':time', time(), PDO::PARAM_INT);
 		$query->bindValue(':ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
+		if($config['obscure_ip_addresses'])
+			$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
 		$query->bindValue(':board', $board['uri'], PDO::PARAM_INT);
 		$query->bindValue(':post', $id, PDO::PARAM_INT);
 		$query->bindValue(':reason', $reason, PDO::PARAM_STR);
@@ -717,10 +721,10 @@ if (isset($_POST['delete'])) {
 		require 'inc/lib/geoip/geoip.inc';
 		$gi=geoip\geoip_open('inc/lib/geoip/GeoIPv6.dat', GEOIP_STANDARD);
 
-		if ($country_code = geoip\geoip_country_code_by_addr_v6($gi, ipv4to6($_SERVER['REMOTE_ADDR']))) {
+		if ($country_code = geoip\geoip_country_code_by_addr_v6v4($gi, ipv4to6($_SERVER['REMOTE_ADDR']), $_SERVER['REMOTE_ADDR'])) {
 			if (!in_array(strtolower($country_code), array('eu', 'ap', 'o1', 'a1', 'a2')))
 				$post['body'] .= "\n<tinyboard flag>".strtolower($country_code)."</tinyboard>".
-				"\n<tinyboard flag alt>".geoip\geoip_country_name_by_addr_v6($gi, ipv4to6($_SERVER['REMOTE_ADDR']))."</tinyboard>";
+				"\n<tinyboard flag alt>".geoip\geoip_country_name_by_addr_v6v4($gi, ipv4to6($_SERVER['REMOTE_ADDR']), $_SERVER['REMOTE_ADDR'])."</tinyboard>";
 		}
 	}
 
