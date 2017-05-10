@@ -811,12 +811,23 @@ function mod_ip_to_nongypsy($ip) {
 	
 	if (filter_var($ip, FILTER_VALIDATE_IP) === false)
 		error("Invalid IP address.");
-	
+
+	$query = prepare('SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip');
+	$query->bindValue(':ip', ipv4to6($ip));
+	$query->execute() or error(db_error($query));
+	$country_id = $query->fetch(PDO::FETCH_ASSOC);
+	$country_id = $country_id['country'];
+
+	$country_name = "UNKNOWN";
+	if(isset($config['mod']['gypsie_countries'][$country_id]))
+		$country_name = $config['mod']['gypsie_countries'][$country_id];
+
 	$query = prepare('DELETE FROM ``custom_geoip`` WHERE `ip` = :ip');
 	$query->bindValue(':ip', ipv4to6($ip));
 	$query->execute() or error(db_error($query));
 	
-	modLog("Removed forced Gypsy for <a href=\"?/IP/{$ip}\">{$ip}</a>");
+	modLog("Removed forced {$country_name} for <a href=\"?/IP/{$ip}\">{$ip}</a>");
+	//modLog("Removed forced Gypsy for <a href=\"?/IP/{$ip}\">{$ip}</a>");
 	
 	header('Location: ?/IP/' . $ip, true, $config['redirect_http']);
 }
