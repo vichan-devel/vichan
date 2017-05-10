@@ -469,7 +469,7 @@ class Thread {
 					if(($num >= $min_post_num) || ($um == $thread_num))
                     {
 						$patterns[] = '/' . str_replace('/', '\/', preg_quote($results[0][$key])) . '/';
-						$changes[] = $results[1][$key] . $results[2][$key] . '-50' . $results[3][$key] . $results[4][$key] . '"';
+						$changes[] = $results[1][$key] . sprintf($config['file_page50'], $results[2][$key]) . "#" . $results[4][$key] . '"';
                     }
 				}
 
