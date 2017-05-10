@@ -508,6 +508,31 @@ function geoip_country_code_by_addr_v6($gi, $addr) {
     return false;
 }
 
+function geoip_country_code_by_addr_v6v4($gi, $addrv6, $addrv4) {
+	global $config;
+
+	$addr = $addrv6;
+	if($config['obscure_ip_addresses'])
+		$addr = $addrv4;
+
+	// Find Entry in DB for Gypsies
+	$query = prepare("SELECT `country` FROM ``custom_geoip`` WHERE `ip` = " 
+		. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip"));
+	$query->bindValue(":ip", $addr, \PDO::PARAM_STR);
+	if($config['obscure_ip_addresses'])
+		$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
+	$query->execute() or error(db_error($query));
+	if (($custom_code = $query->fetchColumn(0)) !== false)
+		return $gi->GEOIP_COUNTRY_CODES[$custom_code];
+
+    $country_id = geoip_country_id_by_addr_v6($gi,$addr);
+    if ($country_id !== false) {
+	return $gi->GEOIP_COUNTRY_CODES[$country_id];
+    }
+    return false;
+}
+
+
 function geoip_country_code_by_addr($gi, $addr) {
     if ($gi->databaseType == GEOIP_CITY_EDITION_REV1) {
 	$record = geoip_record_by_addr($gi,$addr);
@@ -527,6 +552,32 @@ function geoip_country_name_by_addr_v6($gi, $addr) {
 	// Find Entry in DB for Gypsies
 	$query = prepare("SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip");
 	$query->bindValue(":ip", $addr, \PDO::PARAM_STR);
+	$query->execute() or error(db_error($query));
+	if (($custom_code = $query->fetchColumn(0)) !== false)
+		return $gi->GEOIP_COUNTRY_NAMES[$custom_code];
+
+    $country_id = geoip_country_id_by_addr_v6($gi,$addr);
+    if ($country_id !== false) {
+	return $gi->GEOIP_COUNTRY_NAMES[$country_id];
+    }
+    return false;
+}
+
+
+
+function geoip_country_name_by_addr_v6v4($gi, $addrv6, $addrv4) {
+	global $config;
+
+	$addr = $addrv6;
+	if($config['obscure_ip_addresses'])
+		$addr = $addrv4;
+
+	// Find Entry in DB for Gypsies
+	$query = prepare("SELECT `country` FROM ``custom_geoip`` WHERE `ip` = " 
+		. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip"));
+	$query->bindValue(":ip", $addr, \PDO::PARAM_STR);
+	if($config['obscure_ip_addresses'])
+		$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
 	$query->execute() or error(db_error($query));
 	if (($custom_code = $query->fetchColumn(0)) !== false)
 		return $gi->GEOIP_COUNTRY_NAMES[$custom_code];

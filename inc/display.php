@@ -348,6 +348,11 @@ class Post {
 			$this->{$key} = $value;
 		}
 
+		// Make human readable ip address
+		$this->ip_human_readable = $this->ip;
+		if($config['obscure_ip_addresses'])
+			$this->ip_human_readable = wordwrap($this->ip_human_readable, 4, ":", true);
+
 		if (isset($this->files) && $this->files)
 			$this->files = @json_decode($this->files);
 		
@@ -398,6 +403,11 @@ class Thread {
 			$this->{$key} = $value;
 		}
 		
+		// Make human readable ip address
+		$this->ip_human_readable = $this->ip;
+		if($config['obscure_ip_addresses'])
+			$this->ip_human_readable = wordwrap($this->ip_human_readable, 4, ":", true);
+
 		if (isset($this->files))
 			$this->files = @json_decode($this->files);
 		

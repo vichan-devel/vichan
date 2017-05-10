@@ -1134,10 +1134,14 @@ function threadExists($id) {
 }
 
 function insertFloodPost(array $post) {
-	global $board;
+	global $board, $config;
 	
-	$query = prepare("INSERT INTO ``flood`` VALUES (NULL, :ip, :board, :time, :posthash, :filehash, :isreply)");
+	$query = prepare("INSERT INTO ``flood`` VALUES (NULL, " 
+		. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip") 
+		. ", :board, :time, :posthash, :filehash, :isreply)");
 	$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
+	if($config['obscure_ip_addresses'])
+		$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
 	$query->bindValue(':board', $board['uri']);
 	$query->bindValue(':time', time());
 	$query->bindValue(':posthash', make_comment_hex($post['body_nomarkup']));
@@ -1151,7 +1155,9 @@ function insertFloodPost(array $post) {
 
 function post(array $post) {
 	global $pdo, $board, $config;
-	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :cookie, :sticky, :locked, :cycle, 0, :embed, :slug)", $board['uri']));
+	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, " 
+		. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip") 
+		. ", :cookie, :sticky, :locked, :cycle, 0, :embed, :slug)", $board['uri']));
 
 	// Basic stuff
 	if (!empty($post['subject'])) {
@@ -1178,6 +1184,8 @@ function post(array $post) {
 	$query->bindValue(':time', isset($post['time']) ? $post['time'] : time(), PDO::PARAM_INT);
 	$query->bindValue(':password', $post['password']);		
 	$query->bindValue(':ip', isset($post['ip']) ? $post['ip'] : $_SERVER['REMOTE_ADDR']);
+	if($config['obscure_ip_addresses'])
+		$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
 
 
 	// Get and set Cookie Variable
@@ -1810,9 +1818,12 @@ function muteTime() {
 		return $time;
 
 	// Find number of mutes in the past X hours
-	$query = prepare("SELECT COUNT(*) FROM ``mutes`` WHERE `time` >= :time AND `ip` = :ip");
+	$query = prepare("SELECT COUNT(*) FROM ``mutes`` WHERE `time` >= :time AND `ip` = " 
+		. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip"));
 	$query->bindValue(':time', time()-($config['robot_mute_hour']*3600), PDO::PARAM_INT);
 	$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
+	if($config['obscure_ip_addresses'])
+		$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
 	$query->execute() or error(db_error($query));
 
 	if (!$result = $query->fetchColumn())
@@ -1821,10 +1832,16 @@ function muteTime() {
 }
 
 function mute() {
+	global $config;
+
 	// Insert mute
-	$query = prepare("INSERT INTO ``mutes`` VALUES (:ip, :time)");
+	$query = prepare("INSERT INTO ``mutes`` VALUES (" 
+		. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip") 
+		. ", :time)");
 	$query->bindValue(':time', time(), PDO::PARAM_INT);
 	$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
+	if($config['obscure_ip_addresses'])
+		$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
 	$query->execute() or error(db_error($query));
 
 	return muteTime();
@@ -1843,8 +1860,12 @@ function checkMute() {
 	$mutetime = muteTime();
 	if ($mutetime > 0) {
 		// Find last mute time
-		$query = prepare("SELECT `time` FROM ``mutes`` WHERE `ip` = :ip ORDER BY `time` DESC LIMIT 1");
+		$query = prepare("SELECT `time` FROM ``mutes`` WHERE `ip` = " 
+			. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip") 
+			. " ORDER BY `time` DESC LIMIT 1");
 		$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
+		if($config['obscure_ip_addresses'])
+			$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
 		$query->execute() or error(db_error($query));
 
 		if (!$mute = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -2958,7 +2979,7 @@ function max_posts_per_hour($post) {
 
 	if ($post['op']) {
 		$query = prepare(sprintf('SELECT COUNT(*) AS `count` FROM ``posts_%s`` WHERE `thread` IS NULL AND FROM_UNIXTIME(`time`) > DATE_SUB(NOW(), INTERVAL 1 HOUR);', $board['uri']));
-		$query->bindValue(':ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
+		// $query->bindValue(':ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);	// Redundant ?
 		$query->execute() or error(db_error($query));
 		$r = $query->fetch(PDO::FETCH_ASSOC);
 
