@@ -448,6 +448,36 @@ class Thread {
 		
 		event('show-thread', $this);
 
+		// Fix Inline Links for Last 50
+		// Get minimum post_no in thread
+		// Go through all post.body and use regex on links
+		// if link is to a post within the thread and shown
+		// alter it to  CURRENT_URL#POST_NR
+		if($isnoko50)
+		{
+			$thread_num = $this->posts[0]['id'];
+			$min_post_num = $this->posts[1]['id'];
+			for($i=1; i<count($this->posts); $i++)
+			{
+				// Find all links
+				preg_match_all('/(href="\/' . $board['uri'] . '\/res\/)([\d]*)(.html#)([\d]*)(")/', $this->posts[$i], $results, PREG_PATTERN_ORDER);
+				// Build list of links to change
+                $patterns = array();
+				$changes = array();
+				foreach($results[4] as $key => $num)
+				{
+					if(($num >= $min_post_num) || ($um == $thread_num))
+                    {
+						$patterns[] = '/' . str_replace('/', '\/', preg_quote($results[0][$key])) . '/';
+						$changes[] = $results[1][$key] . $results[2][$key] . '-50' . $results[3][$key] . $results[4][$key] . '"';
+                    }
+				}
+
+				// Update Links
+				$this->posts[$i] = preg_replace($patterns, $changes, $this->posts[$i]);
+			}
+		}
+
 		$file = ($index && $config['file_board']) ? 'post_thread_fileboard.html' : 'post_thread.html';
 		$built = Element($file, array('config' => $config, 'board' => $board, 'post' => &$this, 'index' => $index, 'hasnoko50' => $hasnoko50, 'isnoko50' => $isnoko50, 'mod' => $this->mod));
 		
