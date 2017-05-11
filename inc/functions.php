@@ -1143,12 +1143,8 @@ function threadExists($id) {
 function insertFloodPost(array $post) {
 	global $board, $config;
 	
-	$query = prepare("INSERT INTO ``flood`` VALUES (NULL, " 
-		. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip") 
-		. ", :board, :time, :posthash, :filehash, :isreply)");
-	$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
-	if($config['obscure_ip_addresses'])
-		$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
+	$query = prepare("INSERT INTO ``flood`` VALUES (NULL, :ip, :board, :time, :posthash, :filehash, :isreply)");
+	$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
 	$query->bindValue(':board', $board['uri']);
 	$query->bindValue(':time', time());
 	$query->bindValue(':posthash', make_comment_hex($post['body_nomarkup']));
@@ -1162,9 +1158,7 @@ function insertFloodPost(array $post) {
 
 function post(array $post) {
 	global $pdo, $board, $config;
-	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, " 
-		. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip") 
-		. ", :cookie, :sticky, :locked, :cycle, 0, :embed, :slug)", $board['uri']));
+	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :cookie, :sticky, :locked, :cycle, 0, :embed, :slug)", $board['uri']));
 
 	// Basic stuff
 	if (!empty($post['subject'])) {
@@ -1189,10 +1183,8 @@ function post(array $post) {
 	$query->bindValue(':body', $post['body']);
 	$query->bindValue(':body_nomarkup', $post['body_nomarkup']);
 	$query->bindValue(':time', isset($post['time']) ? $post['time'] : time(), PDO::PARAM_INT);
-	$query->bindValue(':password', $post['password']);		
-	$query->bindValue(':ip', isset($post['ip']) ? $post['ip'] : $_SERVER['REMOTE_ADDR']);
-	if($config['obscure_ip_addresses'])
-		$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
+	$query->bindValue(':password', $post['password']);
+	$query->bindValue(':ip', isset($post['ip']) ? $post['ip'] : ($config['obscure_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']));
 
 
 	// Get and set Cookie Variable
@@ -1825,12 +1817,9 @@ function muteTime() {
 		return $time;
 
 	// Find number of mutes in the past X hours
-	$query = prepare("SELECT COUNT(*) FROM ``mutes`` WHERE `time` >= :time AND `ip` = " 
-		. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip"));
+	$query = prepare("SELECT COUNT(*) FROM ``mutes`` WHERE `time` >= :time AND `ip` = :ip");
 	$query->bindValue(':time', time()-($config['robot_mute_hour']*3600), PDO::PARAM_INT);
-	$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
-	if($config['obscure_ip_addresses'])
-		$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
+	$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
 	$query->execute() or error(db_error($query));
 
 	if (!$result = $query->fetchColumn())
@@ -1842,13 +1831,9 @@ function mute() {
 	global $config;
 
 	// Insert mute
-	$query = prepare("INSERT INTO ``mutes`` VALUES (" 
-		. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip") 
-		. ", :time)");
+	$query = prepare("INSERT INTO ``mutes`` VALUES (:ip, :time)");
 	$query->bindValue(':time', time(), PDO::PARAM_INT);
-	$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
-	if($config['obscure_ip_addresses'])
-		$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
+	$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
 	$query->execute() or error(db_error($query));
 
 	return muteTime();
@@ -1867,12 +1852,8 @@ function checkMute() {
 	$mutetime = muteTime();
 	if ($mutetime > 0) {
 		// Find last mute time
-		$query = prepare("SELECT `time` FROM ``mutes`` WHERE `ip` = " 
-			. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip") 
-			. " ORDER BY `time` DESC LIMIT 1");
-		$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
-		if($config['obscure_ip_addresses'])
-			$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
+		$query = prepare("SELECT `time` FROM ``mutes`` WHERE `ip` = :ip ORDER BY `time` DESC LIMIT 1");
+		$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
 		$query->execute() or error(db_error($query));
 
 		if (!$mute = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -3201,4 +3182,15 @@ function get_uuser_cookie($uuser_cookie = false)
 		$uuser_cookie = "???";
 
 	return $uuser_cookie;
+}
+
+
+// Returns hashed version of IP address
+function get_ip_hash($ip)
+{
+	global $config;
+
+	// Generate BCrypt Hash and remove $2a$[cost]$ header info 
+	$hash = crypt($ip, "$2y$" . $config['obscure_ip_cost'] . "$" . $config['obscure_ip_salt'] . "$");
+	return substr($hash, 7);
 }

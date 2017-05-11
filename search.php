@@ -21,12 +21,8 @@
 		$phrase = $_GET['search'];
 		$_body = '';
 		
-		$query = prepare("SELECT COUNT(*) FROM ``search_queries`` WHERE `ip` = " 
-			. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip") 
-			. " AND `time` > :time");
-		$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
-		if($config['obscure_ip_addresses'])
-			$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
+		$query = prepare("SELECT COUNT(*) FROM ``search_queries`` WHERE `ip` = :ip AND `time` > :time");
+		$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
 		$query->bindValue(':time', time() - ($queries_per_minutes[1] * 60));
 		$query->execute() or error(db_error($query));
 		if($query->fetchColumn() > $queries_per_minutes[0])
@@ -39,12 +35,8 @@
 			error(_('Wait a while before searching again, please.'));
 			
 		
-		$query = prepare("INSERT INTO ``search_queries`` VALUES (" 
-			. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip") 
-			. ", :time, :query)");
-		$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
-		if($config['obscure_ip_addresses'])
-			$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
+		$query = prepare("INSERT INTO ``search_queries`` VALUES (:ip, :time, :query)");
+		$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
 		$query->bindValue(':time', time());
 		$query->bindValue(':query', $phrase);
 		$query->execute() or error(db_error($query));
