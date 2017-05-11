@@ -1,7 +1,7 @@
 <?php
 
 // Installation/upgrade file	
-define('VERSION', '6.0.0');
+define('VERSION', '6.0.1');
 
 require 'inc/functions.php';
 
@@ -650,6 +650,21 @@ if (file_exists($config['has_installed'])) {
 				UNIQUE KEY `ip` (`ip`)
 				) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 			') or error(db_error());
+		case '6.0.0':
+		// Update tables to accept hashed IPs
+			foreach ($boards as &$board) {
+				query(sprintf("ALTER TABLE ``posts_%s`` CHANGE `ip` `ip`  VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL", $board['uri'])) or error(db_error());
+			}
+			query('ALTER TABLE ``bans`` CHANGE `ipstart` `ipstart`  VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
+			query('ALTER TABLE ``bans`` CHANGE `ipend` `ipend`  VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
+			query('ALTER TABLE ``ip_notes`` CHANGE `ip` `ip`  VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
+			query('ALTER TABLE ``custom_geoip`` CHANGE `ip` `ip`  VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
+			query('ALTER TABLE ``flood`` CHANGE `ip` `ip`  VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
+			query('ALTER TABLE ``modlogs`` CHANGE `ip` `ip`  VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
+			query('ALTER TABLE ``mutes`` CHANGE `ip` `ip`  VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
+			query('ALTER TABLE ``reports`` CHANGE `ip` `ip`  VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
+			query('ALTER TABLE ``search_queries`` CHANGE `ip` `ip`  VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
+			query('ALTER TABLE ``warnings`` CHANGE `ip` `ip`  VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
 		case false:
 			// TODO: enhance Tinyboard -> vichan upgrade path.
 			query("CREATE TABLE IF NOT EXISTS ``search_queries`` (  `ip` varchar(39) NOT NULL,  `time` int(11) NOT NULL,  `query` text NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;") or error(db_error());
