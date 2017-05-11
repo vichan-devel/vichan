@@ -525,7 +525,7 @@ function geoip_country_code_by_addr_v6v4($gi, $addrv6, $addrv4) {
 	if (($custom_code = $query->fetchColumn(0)) !== false)
 		return $gi->GEOIP_COUNTRY_CODES[$custom_code];
 
-    $country_id = geoip_country_id_by_addr_v6($gi,$addr);
+    $country_id = geoip_country_id_by_addr_v6($gi,$addrv6);
     if ($country_id !== false) {
 	return $gi->GEOIP_COUNTRY_CODES[$country_id];
     }
@@ -582,7 +582,7 @@ function geoip_country_name_by_addr_v6v4($gi, $addrv6, $addrv4) {
 	if (($custom_code = $query->fetchColumn(0)) !== false)
 		return $gi->GEOIP_COUNTRY_NAMES[$custom_code];
 
-    $country_id = geoip_country_id_by_addr_v6($gi,$addr);
+    $country_id = geoip_country_id_by_addr_v6($gi,$addrv6);
     if ($country_id !== false) {
 	return $gi->GEOIP_COUNTRY_NAMES[$country_id];
     }
