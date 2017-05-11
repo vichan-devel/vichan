@@ -134,15 +134,13 @@ class Bans {
 			' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
 			WHERE
 			(' . ($board !== false ? '(`board` IS NULL OR `board` = :board) AND' : '') . '
-			' . ($config['obscure_ip_addresses'] ? '(`ipstart` = MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))))' : '(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)))') . ' 
+			' . ($config['obscure_ip_addresses'] ? '(`ipstart` = :ip))' : '(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)))') . ' 
 			ORDER BY `expires` IS NULL, `expires` DESC');
 		
 		if ($board !== false)
 			$query->bindValue(':board', $board, PDO::PARAM_STR);
 		
-		$query->bindValue(':ip', $config['obscure_ip_addresses'] ? $ip : inet_pton($ip));
-		if($config['obscure_ip_addresses'])
-			$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
+		$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($ip) : inet_pton($ip));
 		$query->execute() or error(db_error($query));
 		
 		$ban_list = array();
@@ -167,12 +165,9 @@ class Bans {
 		global $config;
 		
 		$query = prepare('SELECT ``warnings``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``warnings``
-			' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
-			WHERE `ip` = ' . ($config['obscure_ip_addresses'] ? 'MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))' : ':ip'));
+			' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . 'WHERE `ip` = :ip');
 					
-		$query->bindValue(':ip', $config['obscure_ip_addresses'] ? $ip : inet_pton($ip));
-		if($config['obscure_ip_addresses'])
-			$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
+		$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($ip) : inet_pton($ip));
 		$query->execute() or error(db_error($query));
 		
 		$warning_list = array();

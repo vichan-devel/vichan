@@ -28,15 +28,15 @@ switch($step)
         $sql_errors = "";
 
         // Update bans table to accept hashed ip 
-        query("ALTER TABLE ``bans`` CHANGE `ipstart` `ipstart` VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
-        query("ALTER TABLE ``bans`` CHANGE `ipstart` `ipstart` VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
+        query("ALTER TABLE ``bans`` CHANGE `ipstart` `ipstart` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
+        query("ALTER TABLE ``bans`` CHANGE `ipstart` `ipstart` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
 
         $query = prepare("UPDATE ``bans`` SET `ipstart` = MD5(AES_ENCRYPT(ipstart, UNHEX(SHA2(:aeskey, 512)))), `ipend` = NULL");
         $query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
         $query->execute() or $sql_errors .= '<li>Alter bans<br/>' . db_error($query) . '</li>';
 
         // Update custom_goip table to accept hashed ip
-        query("ALTER TABLE ``custom_geoip`` CHANGE `ip` `ip` VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter custom_geoip<br/>' . db_error() . '</li>';
+        query("ALTER TABLE ``custom_geoip`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter custom_geoip<br/>' . db_error() . '</li>';
 
         $query = prepare("UPDATE ``custom_geoip`` SET `ip` = MD5(AES_ENCRYPT(ip, UNHEX(SHA2(:aeskey, 512))))");
         $query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
@@ -44,7 +44,7 @@ switch($step)
 
 
         // Update flood table to accept hashed ip
-        query("ALTER TABLE ``flood`` CHANGE `ip` `ip` VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter flood<br/>' . db_error() . '</li>';
+        query("ALTER TABLE ``flood`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter flood<br/>' . db_error() . '</li>';
 
         $query = prepare("UPDATE ``flood`` SET `ip` = MD5(AES_ENCRYPT(ip, UNHEX(SHA2(:aeskey, 512))))");
         $query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
@@ -52,7 +52,7 @@ switch($step)
 
 
         // Update ip_notes table to accept hashed ip
-        query("ALTER TABLE ``ip_notes`` CHANGE `ip` `ip` VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter ip_notes<br/>' . db_error() . '</li>';
+        query("ALTER TABLE ``ip_notes`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter ip_notes<br/>' . db_error() . '</li>';
 
         $query = prepare("UPDATE ``ip_notes`` SET `ip` = MD5(AES_ENCRYPT(ip, UNHEX(SHA2(:aeskey, 512))))");
         $query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
@@ -60,7 +60,7 @@ switch($step)
 
 
         // Update modlogs table to accept hashed ip
-        query("ALTER TABLE ``modlogs`` CHANGE `ip` `ip` VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter modlogs<br/>' . db_error() . '</li>';
+        query("ALTER TABLE ``modlogs`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter modlogs<br/>' . db_error() . '</li>';
 
         $query = prepare("UPDATE ``modlogs`` SET `ip` = MD5(AES_ENCRYPT(ip, UNHEX(SHA2(:aeskey, 512))))");
         $query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
@@ -68,7 +68,7 @@ switch($step)
 
 
         // Update mutes table to accept hashed ip
-        query("ALTER TABLE ``mutes`` CHANGE `ip` `ip` VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter mutes<br/>' . db_error() . '</li>';
+        query("ALTER TABLE ``mutes`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter mutes<br/>' . db_error() . '</li>';
 
         $query = prepare("UPDATE ``modlogs`` SET `ip` = MD5(AES_ENCRYPT(ip, UNHEX(SHA2(:aeskey, 512))))");
         $query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
@@ -80,7 +80,7 @@ switch($step)
         $boards = listBoards();
         foreach ($boards as &$_board) {
             // Increase field sizes
-            query(sprintf("ALTER TABLE `posts_%s` CHANGE `ip` `ip`  VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL", $_board['uri'])) or $sql_errors .= '<li>Alter posts_%s<br/>' . db_error() . '</li>';
+            query(sprintf("ALTER TABLE `posts_%s` CHANGE `ip` `ip`  VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL", $_board['uri'])) or $sql_errors .= '<li>Alter posts_%s<br/>' . db_error() . '</li>';
 
             $query = prepare(sprintf("UPDATE ``posts_%s`` SET `ip` = MD5(AES_ENCRYPT(ip, UNHEX(SHA2(:aeskey, 512))))", $_board['uri']));
             $query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
@@ -89,7 +89,7 @@ switch($step)
 
 
         // Update reports table to accept hashed ip
-        query("ALTER TABLE `reports` CHANGE `ip` `ip`  VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter reports<br/>' . db_error() . '</li>';
+        query("ALTER TABLE `reports` CHANGE `ip` `ip`  VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter reports<br/>' . db_error() . '</li>';
 
         $query = prepare("UPDATE ``reports`` SET `ip` = MD5(AES_ENCRYPT(ip, UNHEX(SHA2(:aeskey, 512))))");
         $query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
@@ -98,7 +98,7 @@ switch($step)
 
 
         // Update mutes table to accept hashed ip
-        query("ALTER TABLE `search_queries` CHANGE `ip` `ip` VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter search_queries<br/>' . db_error() . '</li>';
+        query("ALTER TABLE `search_queries` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter search_queries<br/>' . db_error() . '</li>';
 
         $query = prepare("UPDATE ``search_queries`` SET `ip` = MD5(AES_ENCRYPT(ip, UNHEX(SHA2(:aeskey, 512))))");
         $query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
@@ -107,7 +107,7 @@ switch($step)
 
 
         // Update warnings table to accept hashed ip
-        query("ALTER TABLE `warnings` CHANGE `ip` `ip` VARCHAR(39) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter warnings<br/>' . db_error() . '</li>';
+        query("ALTER TABLE `warnings` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter warnings<br/>' . db_error() . '</li>';
 
         $query = prepare("UPDATE ``search_queries`` SET `ip` = MD5(AES_ENCRYPT(ip, UNHEX(SHA2(:aeskey, 512))))");
         $query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);

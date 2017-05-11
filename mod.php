@@ -61,9 +61,6 @@ $pages = array(
 	'/IP/([\w.:]+)'				=> 'secure_POST ip',		// view ip address
 	'/IP/([\w.:]+)/remove_note/(\d+)'	=> 'secure ip_remove_note',	// remove note from ip address
 
-	// '/IP/([\w.:]Y/make_gypsy+)'				=> 'secure_POST ip_to_gypsy',		// make ip address show up as Gypsy
-	// '/IP/([\w.:]Y/free_gypsy+)'				=> 'secure_POST ip_to_nongypsy',		// make ip address show up as true country
-
 	'/(\%b)/bantz/(\d+)'		=> 'secure_POST bantz_post', 	// issue bantz for post
 
 	'/(\%b)/warning/(\d+)'		=> 'secure_POST warning_post', 	// issue warning for post

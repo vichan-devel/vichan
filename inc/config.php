@@ -101,11 +101,13 @@
 	// Connection timeout duration in seconds
 	$config['db']['timeout'] = 30;
 
-	// Secret key for encrypting IP addresses
-	// https://www.grc.com/passwords.htm
-	$config['db']['ip_encrypt_key'] = '1#ZY?foF^x!py{rC&aa8#D+|0;K,!,*P:$NV#Fx&"\l+n`m71BSZwUjIx~#_VEb';
+	// Setting to indicate if ip addresses should be hashed
 	$config['obscure_ip_addresses'] = true;
-
+	// Salt for hashing ip addresses NEEDS TO BE 22 CHAR [0-9A-Za-z]
+	$config['obscure_ip_salt'] = "WOR8UpuLbHRTXzIf6bc0tq";
+	// Cost of hashing the ip
+	$config['obscure_ip_cost'] = 12;
+	
 
 
 /*
@@ -1203,7 +1205,7 @@
 	$config['error']['invalidtheme']	= _('That theme doesn\'t exist!');
 	$config['error']['csrf']		= _('Invalid security token! Please go back and try again.');
 	$config['error']['badsyntax']		= _('Your code contained PHP syntax errors. Please go back and correct them. PHP says: ');
-	$config['error']['bad_gypsie']		= _('The provided Country ID is not allowed');
+	$config['error']['bad_forcedflag']		= _('The provided Country ID is not allowed');
 
 /*
  * =========================
@@ -1586,9 +1588,9 @@
     $config['mod']['flood'] = &$config['mod']['bypass_filters'];
     // Raw HTML posting
     $config['mod']['rawhtml'] = ADMIN;
-	// The ability to make IP's into Gypsies
-	$config['mod']['make_gypsies'] = MOD;
-	$config['mod']['gypsie_countries'] = array(
+	// The ability to set Forced Flag on IP
+	$config['mod']['forcedflag'] = MOD;
+	$config['mod']['forcedflag_countries'] = array(
 		38 		=>	'Canada',
 		256 	=>	'Gypsy',
 		257 	=>	'Gay'

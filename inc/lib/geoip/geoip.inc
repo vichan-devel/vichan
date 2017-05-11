@@ -417,14 +417,11 @@ function geoip_forced_country_code_by_addr($gi, $addrv6, $addrv4 = false) {
 
 	$addr = $addrv6;
 	if($config['obscure_ip_addresses'])
-		$addr = $addrv4;
+		$addr = get_ip_hash($addrv4);
 
 	// Find Entry in DB for Forced Country
-	$query = prepare("SELECT `country` FROM ``custom_geoip`` WHERE `ip` = " 
-		. ($config['obscure_ip_addresses'] ? "MD5(AES_ENCRYPT(:ip, UNHEX(SHA2(:aeskey, 512))))" : ":ip"));
+	$query = prepare("SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip");
 	$query->bindValue(":ip", $addr, \PDO::PARAM_STR);
-	if($config['obscure_ip_addresses'])
-		$query->bindValue(':aeskey', $config['db']['ip_encrypt_key']);
 	$query->execute() or error(db_error($query));
 	if (($custom_code = $query->fetchColumn(0)) !== false)
 		return $custom_code;
@@ -517,7 +514,7 @@ function _geoip_country_code_by_addr_v6($gi, $addr) {
     return false;
 }
 
-function geoip_country_code_by_addr_v6_forceflag($gi, $addrv6, $addrv4) {
+function geoip_country_code_by_addr_v6_forcedflag($gi, $addrv6, $addrv4) {
 	// Find Entry in DB for Forced Country
 	if (($custom_code = geoip_forced_country_code_by_addr($gi, $addrv6, $addrv4)) !== false)
 		return $gi->GEOIP_COUNTRY_CODES[$custom_code];
@@ -559,7 +556,7 @@ function _geoip_country_name_by_addr_v6($gi, $addr) {
 
 
 
-function geoip_country_name_by_addr_v6_forceflag($gi, $addrv6, $addrv4) {
+function geoip_country_name_by_addr_v6_forcedflag($gi, $addrv6, $addrv4) {
 	// Find Entry in DB for Forced Country
 	if (($custom_code = geoip_forced_country_code_by_addr($gi, $addrv6, $addrv4)) !== false)
 		return $gi->GEOIP_COUNTRY_NAMES[$custom_code];

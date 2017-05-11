@@ -82,17 +82,17 @@
 {% endif %}
 
 
-{% if mod|hasPermission(config.mod.make_gypsies) %}
-	<fieldset id="gypsie">
+{% if mod|hasPermission(config.mod.forcedflag) %}
+	<fieldset id="forcedflag">
 		<legend>
 			<legend>{% trans 'Set custom user flag' %}</legend>
 		</legend>
 		
-		{% if is_gypsie %}
+		{% if is_forcedflag %}
 			<form action="" method="post" style="text-align:center; margin:0">
-				<b>{% trans 'Fucking' %} {{ is_gypsie }}</b><br/>
+				<b>{% trans 'Fucking' %} {{ is_forcedflag }}</b><br/>
 				<input type="hidden" name="token" value="{{ security_token }}">
-				<input type="submit" name="free_gypsie" value="{% trans 'Remove' %} {{ is_gypsie }} {% trans 'Flag' %}">
+				<input type="submit" name="remove_forcedflag" value="{% trans 'Remove' %} {{ is_forcedflag }} {% trans 'Flag' %}">
 			</form>
 		{% else %}
 			<form action="" method="post"  style="text-align:center; margin:0">
@@ -106,7 +106,7 @@
 					{% endfor %}
 				</select>
 
-				<input type="submit" name="make_gypsie" value="{% trans 'Make it so' %}">
+				<input type="submit" name="set_forcedflag" value="{% trans 'Make it so' %}">
 			</form>
 		{% endif %}
 	</fieldset>
