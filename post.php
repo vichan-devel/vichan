@@ -721,10 +721,10 @@ if (isset($_POST['delete'])) {
 		require 'inc/lib/geoip/geoip.inc';
 		$gi=geoip\geoip_open('inc/lib/geoip/GeoIPv6.dat', GEOIP_STANDARD);
 
-		if ($country_code = geoip\geoip_country_code_by_addr_v6v4($gi, ipv4to6($_SERVER['REMOTE_ADDR']), $_SERVER['REMOTE_ADDR'])) {
+		if ($country_code = geoip\geoip_country_code_by_addr_v6_forceflag($gi, ipv4to6($_SERVER['REMOTE_ADDR']), $_SERVER['REMOTE_ADDR'])) {
 			if (!in_array(strtolower($country_code), array('eu', 'ap', 'o1', 'a1', 'a2')))
 				$post['body'] .= "\n<tinyboard flag>".strtolower($country_code)."</tinyboard>".
-				"\n<tinyboard flag alt>".geoip\geoip_country_name_by_addr_v6v4($gi, ipv4to6($_SERVER['REMOTE_ADDR']), $_SERVER['REMOTE_ADDR'])."</tinyboard>";
+				"\n<tinyboard flag alt>".geoip\geoip_country_name_by_addr_v6_forceflag($gi, ipv4to6($_SERVER['REMOTE_ADDR']), $_SERVER['REMOTE_ADDR'])."</tinyboard>";
 		}
 	}
 
