@@ -998,9 +998,7 @@ function mod_page_ip($ip) {
 
 	$args['security_token'] = make_secure_link_token('IP/' . $ip);
 	
-	mod_page(sprintf('%s: %s', _('IP'), 
-		($config['obscure_ip_addresses'] ? htmlspecialchars(wordwrap($ip, 4, ":", true)) : htmlspecialchars($ip))), 
-		'mod/view_ip.html', $args, $args['hostname']);
+	mod_page(sprintf('%s: %s', _('IP'), getHumanReadableIP($ip)), 'mod/view_ip.html', $args, $args['hostname']);
 }
 
 

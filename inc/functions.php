@@ -1000,6 +1000,13 @@ function checkBan($board = false) {
 }
 
 
+// Returns Human Readable version of IP
+function getHumanReadableIP($ip)
+{
+	global $config;
+	
+	return ($config['obscure_ip_addresses'] ? htmlspecialchars(wordwrap(substr($ip,0,16), 4, ":", true)) : htmlspecialchars($ip));
+}
 
 
 function displayWarning($warning) {
