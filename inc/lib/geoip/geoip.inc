@@ -505,7 +505,11 @@ function geoip_country_code_by_addr_v6($gi, $addr) {
 	// Find Entry in DB for Forced Country
 	if (($custom_code = geoip_forced_country_code_by_addr($gi, $addr)) !== false)
 		return $gi->GEOIP_COUNTRY_CODES[$custom_code];
+	
+	return _geoip_country_code_by_addr_v6($gi, $addr);
+}
 
+function _geoip_country_code_by_addr_v6($gi, $addr) {
     $country_id = geoip_country_id_by_addr_v6($gi,$addr);
     if ($country_id !== false) {
 		return $gi->GEOIP_COUNTRY_CODES[$country_id];
@@ -513,16 +517,12 @@ function geoip_country_code_by_addr_v6($gi, $addr) {
     return false;
 }
 
-function geoip_country_code_by_addr_v6v4($gi, $addrv6, $addrv4) {
+function geoip_country_code_by_addr_v6_forceflag($gi, $addrv6, $addrv4) {
 	// Find Entry in DB for Forced Country
 	if (($custom_code = geoip_forced_country_code_by_addr($gi, $addrv6, $addrv4)) !== false)
 		return $gi->GEOIP_COUNTRY_CODES[$custom_code];
 
-    $country_id = geoip_country_id_by_addr_v6($gi,$addrv6);
-    if ($country_id !== false) {
-		return $gi->GEOIP_COUNTRY_CODES[$country_id];
-    }
-    return false;
+	return  _geoip_country_code_by_addr_v6($gi, $addrv6);
 }
 
 
@@ -545,7 +545,11 @@ function geoip_country_name_by_addr_v6($gi, $addr) {
 	// Find Entry in DB for Forced Country
 	if (($custom_code = geoip_forced_country_code_by_addr($gi, $addr)) !== false)
 		return $gi->GEOIP_COUNTRY_NAMES[$custom_code];
+	
+	return _geoip_country_name_by_addr_v6($gi, $addr);
+}
 
+function _geoip_country_name_by_addr_v6($gi, $addr) {
     $country_id = geoip_country_id_by_addr_v6($gi,$addr);
     if ($country_id !== false) {
 	return $gi->GEOIP_COUNTRY_NAMES[$country_id];
@@ -555,16 +559,12 @@ function geoip_country_name_by_addr_v6($gi, $addr) {
 
 
 
-function geoip_country_name_by_addr_v6v4($gi, $addrv6, $addrv4) {
+function geoip_country_name_by_addr_v6_forceflag($gi, $addrv6, $addrv4) {
 	// Find Entry in DB for Forced Country
 	if (($custom_code = geoip_forced_country_code_by_addr($gi, $addrv6, $addrv4)) !== false)
 		return $gi->GEOIP_COUNTRY_NAMES[$custom_code];
-
-    $country_id = geoip_country_id_by_addr_v6($gi,$addrv6);
-    if ($country_id !== false) {
-	return $gi->GEOIP_COUNTRY_NAMES[$country_id];
-    }
-    return false;
+	
+	return _geoip_country_name_by_addr_v6($gi, $addrv6);
 }
 
 function geoip_country_name_by_addr($gi, $addr) {
