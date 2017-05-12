@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS ``posts_{{ board }}`` (
    `num_files` int(11) DEFAULT 0,
    `filehash` text CHARACTER SET ascii,
    `password` varchar(20) DEFAULT NULL,
-   `ip` varchar(39) CHARACTER SET ascii NOT NULL,
+   `ip` varchar(61) CHARACTER SET ascii NOT NULL,
    `cookie` varchar(40) CHARACTER SET ascii NOT NULL,
    `sticky` int(1) NOT NULL,
    `locked` int(1) NOT NULL,
