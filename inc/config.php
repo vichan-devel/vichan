@@ -104,7 +104,7 @@
 	// Setting to indicate if ip addresses should be hashed
 	$config['obscure_ip_addresses'] = true;
 	// Salt for hashing ip addresses NEEDS TO BE 22 CHAR [0-9A-Za-z]
-	$config['obscure_ip_salt'] = "WOR8UpuLbHRTXzIf6bc0tq";
+	$config['obscure_ip_salt'] = "gAQlzt99Ynwnnc5QWY2lTk";
 	// Cost of hashing the ip
 	$config['obscure_ip_cost'] = 12;
 	
