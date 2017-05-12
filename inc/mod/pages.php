@@ -785,9 +785,7 @@ function mod_ip_set_forcedflag($ip, $country_id) {
 	if (!hasPermission($config['mod']['forcedflag']))
 			error($config['error']['noaccess']);
 
-	if (!$config['obscure_ip_addresses'] && filter_var($ip, FILTER_VALIDATE_IP) === false)
-		error("Invalid IP address.");
-	else if ($config['obscure_ip_addresses'] && !ctype_alnum($ip) && strlen($ip) != 53)
+	if (!validate_ip_string($ip))
 		error("Invalid IP address.");
  
 	$country_id = (int)$country_id;
@@ -811,9 +809,7 @@ function mod_ip_remove_forcedflag($ip) {
 	if (!hasPermission($config['mod']['forcedflag']))
 			error($config['error']['noaccess']);
 	
-	if (!$config['obscure_ip_addresses'] && filter_var($ip, FILTER_VALIDATE_IP) === false)
-		error("Invalid IP address.");
-	else if ($config['obscure_ip_addresses'] && !ctype_alnum($ip) && strlen($ip) != 53)
+	if (!validate_ip_string($ip))
 		error("Invalid IP address.");
 
 	$query = prepare('SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip');
@@ -843,9 +839,7 @@ function mod_ip_remove_note($ip, $id) {
 	if (!hasPermission($config['mod']['remove_notes']))
 			error($config['error']['noaccess']);
 	
-	if (!$config['obscure_ip_addresses'] && filter_var($ip, FILTER_VALIDATE_IP) === false)
-		error("Invalid IP address.");
-	else if ($config['obscure_ip_addresses'] && !ctype_alnum($ip) && strlen($ip) != 53)
+	if (!validate_ip_string($ip))
 		error("Invalid IP address.");
 	
 	$query = prepare('DELETE FROM ``ip_notes`` WHERE `ip` = :ip AND `id` = :id');
@@ -861,9 +855,7 @@ function mod_ip_remove_note($ip, $id) {
 function mod_page_ip($ip) {
 	global $config, $mod;
 	
-	if (!$config['obscure_ip_addresses'] && filter_var($ip, FILTER_VALIDATE_IP) === false)
-		error("Invalid IP address.");
-	else if ($config['obscure_ip_addresses'] && !ctype_alnum($ip) && strlen($ip) != 53)
+	if (!validate_ip_string($ip))
 		error("Invalid IP address.");
 	
 	if (isset($_POST['ban_id'], $_POST['unban'])) {

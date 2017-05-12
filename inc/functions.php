@@ -3194,3 +3194,16 @@ function get_ip_hash($ip)
 	$hash = crypt($ip, "$2y$" . $config['obscure_ip_cost'] . "$" . $config['obscure_ip_salt'] . "$");
 	return substr($hash, 7);
 }
+
+
+// Verify ip address string
+function validate_ip_string($ip)
+{
+	if (!$config['obscure_ip_addresses'] && filter_var($ip, FILTER_VALIDATE_IP) === false)
+		return false;
+	else if ($config['obscure_ip_addresses'] && !ctype_alnum($ip) && strlen($ip) != 53)
+		return false;
+	
+	return true;
+}
+
