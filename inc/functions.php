@@ -3190,7 +3190,22 @@ function get_ip_hash($ip)
 {
 	global $config;
 
-	// Generate BCrypt Hash and remove $2a$[cost]$ header info 
+	// Generate BCrypt Hash and remove $2a$[cost]$[salt_22_char]$ header info 
 	$hash = crypt($ip, "$2y$" . $config['obscure_ip_cost'] . "$" . $config['obscure_ip_salt'] . "$");
-	return substr($hash, 7);
+	return substr($hash, 29);
 }
+
+
+// Verify ip address string
+function validate_ip_string($ip)
+{
+	global $config;
+
+	if (!$config['obscure_ip_addresses'] && filter_var($ip, FILTER_VALIDATE_IP) === false)
+		return false;
+	else if ($config['obscure_ip_addresses'] && !ctype_alnum($ip) && strlen($ip) != 53)
+		return false;
+	
+	return true;
+}
+
