@@ -1002,14 +1002,16 @@
 	 * "Groups" in the boardlinks are marked with square brackets. Tinyboard allows for infinite recursion
 	 * with groups. Each array() in $config['boards'] represents a new square bracket group.
 	 */
+	// We enable boardlinks here because not having them enabled looks wonky when the options are enabled.
+	// /b/ is listed because that is the default board created by NPFchan
 
-	// $config['boards'] = array(
-	// 	array('a', 'b'),
+	 $config['boards'] = array(
+	 	array('b'),
 	// 	array('c', 'd', 'e', 'f', 'g'),
 	// 	array('h', 'i', 'j'),
 	// 	array('k', array('l', 'm')),
 	// 	array('status' => 'http://status.example.org/')
-	// );
+	 );
 
 	// Whether or not to put brackets around the whole board list
 	$config['boardlist_wrap_bracket'] = false;
@@ -1071,13 +1073,34 @@
 	// jQuery, you should first empty the array so that "js/query.min.js" can be the first, and then re-add
 	// "js/inline-expanding.js" or else the inline-expanding script might not interact properly with other
 	// scripts.
+
+
+	// We'll enable some reasonable defaults here that most imageboards would want / need.
 	// $config['additional_javascript'] = array();
-	// $config['additional_javascript'][] = 'js/jquery.min.js';
-	// $config['additional_javascript'][] = 'js/inline-expanding.js';
-	// $config['additional_javascript'][] = 'js/auto-reload.js';
-	// $config['additional_javascript'][] = 'js/post-hover.js';
-	// $config['additional_javascript'][] = 'js/style-select.js';
-	// $config['additional_javascript'][] = 'js/captcha.js';
+	$config['additional_javascript'][] = 'js/jquery.min.js';
+	$config['additional_javascript'][] = 'js/jquery-ui.custom.min.js';
+	$config['additional_javascript'][] = 'js/ajax.js';
+	$config['additional_javascript'][] = 'js/show-own-posts.js';
+	$config['additional_javascript'][] = 'js/hide-images.js';
+	$config['additional_javascript'][] = 'js/hide-threads.js';
+	$config['additional_javascript'][] = 'js/download-original.js';
+	$config['additional_javascript'][] = 'js/quick-reply.js';
+	$config['additional_javascript'][] = 'js/inline-expanding.js';
+	$config['additional_javascript'][] = 'js/expand-all-images.js';
+	$config['additional_javascript'][] = 'js/auto-reload.js';
+	$config['additional_javascript'][] = 'js/post-hover.js';
+	$config['additional_javascript'][] = 'js/style-select.js';
+	$config['additional_javascript'][] = 'js/options.js';
+	$config['additional_javascript'][] = 'js/options/general.js';
+	$config['additional_javascript'][] = 'js/options/user-css.js';
+	$config['additional_javascript'][] = 'js/options/user-js.js';
+	$config['additional_javascript'][] = 'js/options/fav.js';
+	$config['additional_javascript'][] = 'js/id_colors.js';
+	$config['additional_javascript'][] = 'js/id_highlighter.js';
+	$config['additional_javascript'][] = 'js/quote-selection.js';
+	$config['additional_javascript'][] = 'js/forced-anon.js';
+	
+	// $config['additional_javascript'][] = 'js/captcha.js'; // Use CAPTCHA on your board? You probably want to enable this.
 
 	// Where these script files are located on the web. Defaults to $config['root'].
 	// $config['additional_javascript_url'] = 'http://static.example.org/tinyboard-javascript-stuff/';
