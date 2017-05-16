@@ -1057,6 +1057,55 @@ function mod_bantz_post($board, $post, $token = false) {
 
 
 
+function mod_nicenotice_post($board, $post, $token = false) {
+	global $config, $mod;
+	
+	if (!openBoard($board))
+		error($config['error']['noboard']);
+	
+	if (!hasPermission($config['mod']['nicenotice'], $board))
+		error($config['error']['noaccess']);
+	
+	$security_token = make_secure_link_token($board . '/nicenotice/' . $post);
+	
+	$query = prepare(sprintf('SELECT ' . ($config['nicenotice_show_post'] ? '*' : '`ip`, `cookie`, `thread`') .
+		' FROM ``posts_%s`` WHERE `id` = :id', $board));
+	$query->bindValue(':id', $post);
+	$query->execute() or error(db_error($query));
+	if (!$_post = $query->fetch(PDO::FETCH_ASSOC))
+		error($config['error']['404']);
+
+	$thread = $_post['thread'];
+	$ip = $_post['ip'];
+	
+	if (isset($_POST['new_nicenotice'], $_POST['reason'])) {
+		require_once 'inc/mod/ban.php';
+		
+		if (isset($_POST['ip']))
+			$ip = $_POST['ip'];
+		
+	 	Bans::new_nicenotice($_post['ip'], $_POST['reason'], $board, false, $_post);
+
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
+	}
+	
+	$args = array(
+		'ip' => $ip,
+		'hide_ip' => !hasPermission($config['mod']['show_ip'], $board),
+		'post' => $post,
+		'board' => $board,
+		'boards' => listBoards(),
+		'token' => $security_token
+	);
+	
+	mod_page(_('New nicenotice'), 'mod/nicenotice_form.html', $args);
+}
+
+
+
+
+
+
 
 
 function mod_warning_post($board, $post, $token = false) {
@@ -1070,7 +1119,7 @@ function mod_warning_post($board, $post, $token = false) {
 	
 	$security_token = make_secure_link_token($board . '/warning/' . $post);
 	
-	$query = prepare(sprintf('SELECT ' . ($config['ban_show_post'] ? '*' : '`ip`, `cookie`, `thread`') .
+	$query = prepare(sprintf('SELECT ' . ($config['warning_show_post'] ? '*' : '`ip`, `cookie`, `thread`') .
 		' FROM ``posts_%s`` WHERE `id` = :id', $board));
 	$query->bindValue(':id', $post);
 	$query->execute() or error(db_error($query));
@@ -1118,7 +1167,7 @@ function mod_warning_post($board, $post, $token = false) {
 		'token' => $security_token
 	);
 	
-	mod_page(_('New ban'), 'mod/warning_form.html', $args);
+	mod_page(_('New warning'), 'mod/warning_form.html', $args);
 }
 
 

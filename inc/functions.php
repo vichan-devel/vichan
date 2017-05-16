@@ -937,6 +937,9 @@ function checkBan($board = false) {
 	// Check for Warnings
 	checkWarning($board);
 
+	// // Check for Nicenotices
+	// checkNicenotice($board);
+
 
 	$ips = array();
 
@@ -1000,6 +1003,8 @@ function checkBan($board = false) {
 }
 
 
+
+
 // Returns Human Readable version of IP
 function getHumanReadableIP($ip)
 {
@@ -1007,6 +1012,8 @@ function getHumanReadableIP($ip)
 	
 	return ($config['obscure_ip_addresses'] ? htmlspecialchars(wordwrap(substr($ip,0,16), 4, ":", true)) : htmlspecialchars($ip));
 }
+
+
 
 
 function displayWarning($warning) {
@@ -1082,6 +1089,77 @@ function checkWarning($board = false) {
 				header('Content-Type: text/json');
 				die(json_encode(array('error' => true, 'banned' => true)));
 			}
+		}
+	}
+}
+
+
+
+
+
+
+function displayNicenotice($nicenotice) {
+	global $config, $board;
+
+	// If Warning havent benseen before mark it as seen.
+	if (!$nicenotice['seen']) {
+		Bans::seenNicenotice($nicenotice['id']);
+	}
+
+	$nicenotice['ip'] = $_SERVER['REMOTE_ADDR'];
+
+	if ($nicenotice['post'] && isset($nicenotice['post']['board'], $nicenotice['post']['id'])) {
+		if (openBoard($nicenotice['post']['board'])) {
+			$query = query(sprintf("SELECT `files` FROM ``posts_%s`` WHERE `id` = " .
+				(int)$nicenotice['post']['id'], $board['uri']));
+			if ($_post = $query->fetch(PDO::FETCH_ASSOC)) {
+				$nicenotice['post'] = array_merge($nicenotice['post'], $_post);
+			}
+		}
+		if ($nicenotice['post']['thread']) {
+			$post = new Post($nicenotice['post']);
+		} else {
+			$post = new Thread($nicenotice['post'], null, false, false);
+		}
+	}
+	
+	// Show nicenotice "popup"
+	error(Element('nicenotice.html', array(
+			'config' => $config,
+			'nicenotice' => $nicenotice,
+			'board' => $board,
+			'post' => isset($post) ? $post->build(true) : false
+		)
+	));
+}
+
+
+
+function checkNicenotice($board = false) {
+	global $config;
+
+	if (!isset($_SERVER['REMOTE_ADDR'])) {
+		// Server misconfiguration
+		return;
+	}
+
+
+	if (event('check-nicenotice', $board))
+		return true;
+
+	$ips = array();
+	$ips[] = $_SERVER['REMOTE_ADDR'];
+
+	if ($config['proxy_check'] && isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+		$ips = array_merge($ips, explode(", ", $_SERVER['HTTP_X_FORWARDED_FOR']));
+	}
+
+
+	foreach ($ips as $ip) {
+		$nicenotices = Bans::findNicenotice($_SERVER['REMOTE_ADDR'], $config['show_modname']);
+	
+		foreach ($nicenotices as &$nicenotice) {
+			displayNicenotice($nicenotice);
 		}
 	}
 }

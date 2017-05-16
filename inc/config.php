@@ -674,6 +674,10 @@
 	$config['show_modname'] = false;
 
 
+	// Show the post the user was issued warning for on the "Nicenotice" page.
+	$config['nicenotice_show_post'] = true;
+
+
 	// Show the post the user was issued warning for on the "You were issued a warning" page.
 	$config['warning_show_post'] = true;
 
@@ -1378,6 +1382,7 @@
 	// Mod links (full HTML).
 	$config['mod']['link_delete'] = '[D]';
 	$config['mod']['link_bantz'] = '[Bantz]';
+	$config['mod']['link_nicenotice'] = '[NiceNotice]';
 	$config['mod']['link_warning'] = '[W]';
 	$config['mod']['link_ban'] = '[B]';
 	$config['mod']['link_bandelete'] = '[B&amp;D]';
@@ -1544,6 +1549,10 @@
     $config['mod']['delete'] = MOD;
     // Deliver Bantz to User and Post
     $config['mod']['bantz'] = MOD;
+
+	// Issue Nicenotice to a poster
+	$config['mod']['nicenotice'] = MOD;
+
     // Ban a user for a post
     $config['mod']['warning'] = JANITOR;
     // Ban a user for a post
