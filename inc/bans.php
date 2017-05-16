@@ -10,7 +10,7 @@ class Bans {
 	static public function range_to_string($mask) {
 		global $config;
 
-		if($config['obscure_ip_addresses'])
+		if($config['bcrypt_ip_addresses'])
 			return $mask[0];
 
 		list($ipstart, $ipend) = $mask;
@@ -85,7 +85,7 @@ class Bans {
 	static public function parse_range($mask) {
 		global $config;
 
-		if($config['obscure_ip_addresses'])
+		if($config['bcrypt_ip_addresses'])
 			return array($mask, false);
 
 		$ipstart = false;
@@ -134,13 +134,13 @@ class Bans {
 			' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
 			WHERE
 			(' . ($board !== false ? '(`board` IS NULL OR `board` = :board) AND' : '') . '
-			' . ($config['obscure_ip_addresses'] ? '(`ipstart` = :ip))' : '(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)))') . ' 
+			' . ($config['bcrypt_ip_addresses'] ? '(`ipstart` = :ip))' : '(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)))') . ' 
 			ORDER BY `expires` IS NULL, `expires` DESC');
 		
 		if ($board !== false)
 			$query->bindValue(':board', $board, PDO::PARAM_STR);
 		
-		$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($ip) : inet_pton($ip));
+		$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($ip) : inet_pton($ip));
 		$query->execute() or error(db_error($query));
 		
 		$ban_list = array();
@@ -167,7 +167,7 @@ class Bans {
 		$query = prepare('SELECT ``nicenotices``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``nicenotices``
 			' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . 'WHERE `ip` = :ip');
 					
-		$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($ip) : inet_pton($ip));
+		$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($ip) : inet_pton($ip));
 		$query->execute() or error(db_error($query));
 		
 		$nicenotice_list = array();
@@ -195,7 +195,7 @@ class Bans {
 		$query = prepare('SELECT ``warnings``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``warnings``
 			' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . 'WHERE `ip` = :ip');
 					
-		$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($ip) : inet_pton($ip));
+		$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($ip) : inet_pton($ip));
 		$query->execute() or error(db_error($query));
 		
 		$warning_list = array();
@@ -243,6 +243,8 @@ class Bans {
 
 
 	static public function stream_json($out = false, $filter_ips = false, $filter_staff = false, $board_access = false) {
+		global $config;
+
 		$query = query("SELECT ``bans``.*, `username` FROM ``bans``
 			LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`
  			ORDER BY `created` DESC") or error(db_error());
@@ -267,23 +269,36 @@ class Bans {
 				$ban['access'] = true;
 			}
 
-			if (filter_var($ban['mask'], FILTER_VALIDATE_IP) !== false) {
+			if (validate_ip_string($ban['mask']) !== false) {
 				$ban['single_addr'] = true;
 			}
 			if ($filter_staff || ($board_access !== false && !in_array($ban['board'], $board_access))) {
 				$ban['username'] = '?';				
 			}
-			if ($filter_ips || ($board_access !== false && !in_array($ban['board'], $board_access))) {
-				@list($ban['mask'], $subnet) = explode("/", $ban['mask']);
-				$ban['mask'] = preg_split("/[\.:]/", $ban['mask']);
-				$ban['mask'] = array_slice($ban['mask'], 0, 2);
-				$ban['mask'] = implode(".", $ban['mask']);
-				$ban['mask'] .= ".x.x";
-				if (isset ($subnet)) {
-					$ban['mask'] .= "/$subnet";
+			if ($filter_ips || (($board_access !== false && !in_array($ban['board'], $board_access)) && !hasPermission($config['mod']['sitewide_post_info']))) {
+				if($config['bcrypt_ip_addresses']) {
+					$ban['mask'] = getHumanReadableIP_masked($ban['mask']);
+				} else {
+					@list($ban['mask'], $subnet) = explode("/", $ban['mask']);
+					$ban['mask'] = preg_split("/[\.:]/", $ban['mask']);
+					$ban['mask'] = array_slice($ban['mask'], 0, 2);
+					$ban['mask'] = implode(".", $ban['mask']);
+					$ban['mask'] .= ".x.x";
+					if (isset ($subnet)) {
+						$ban['mask'] .= "/$subnet";
+					}
 				}
+
 				$ban['masked'] = true;
 			}
+
+			// // If BCrypted IP Hash encode special chars
+			// if($config['bcrypt_ip_addresses'])
+			// 	$ban['mask'] = getURLEncoded_HashIP($ban['mask']);
+
+			// Create human readable version of ip
+			$ban['mask_human_readable'] = getHumanReadableIP($ban['mask']);
+
 
 			$json = json_encode($ban);
 			$out ? fputs($out, $json) : print($json);
@@ -342,7 +357,7 @@ class Bans {
 			$mask = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
 			
 			modLog("Removed ban #{$ban_id} for " .
-				(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask));
+				(validate_ip_string($mask) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask));
 		}
 		
 		// Remove cookie ban if cunique user cookie is banned
@@ -378,7 +393,7 @@ class Bans {
 		                error($config['error']['noaccess']);
 			
 			modLog("Removed nicenotice #{$nicenotice_id} for " .
-				(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask));
+				(validate_ip_string($mask) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask));
 		}
 		
 		query("DELETE FROM ``nicenotices`` WHERE `id` = " . (int)$nicenotice_id) or error(db_error());
@@ -403,7 +418,7 @@ class Bans {
 		                error($config['error']['noaccess']);
 			
 			modLog("Removed warning #{$warning_id} for " .
-				(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask));
+				(validate_ip_string($mask) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask));
 		}
 		
 		query("DELETE FROM ``warnings`` WHERE `id` = " . (int)$warning_id) or error(db_error());
@@ -453,7 +468,7 @@ class Bans {
 		
 		if (isset($mod['id']) && $mod['id'] == $mod_id) {
 			modLog('Issued a new warning for ' .
-				(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask) .
+				(validate_ip_string($mask) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask) .
 				' (<small>#' . $pdo->lastInsertId() . '</small>)' .
 				' with ' . ($reason ? 'reason: ' . utf8tohtml($reason) . '' : 'no reason'));
 		}
@@ -504,7 +519,7 @@ class Bans {
 		
 		if (isset($mod['id']) && $mod['id'] == $mod_id) {
 			modLog('Issued a new nicenotice for ' .
-				(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask) .
+				(validate_ip_string($mask) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask) .
 				' (<small>#' . $pdo->lastInsertId() . '</small>)' .
 				' with ' . ($reason ? 'reason: ' . utf8tohtml($reason) . '' : 'no reason'));
 		}
@@ -578,7 +593,7 @@ class Bans {
 				' ban on ' .
 				($ban_board ? '/' . $ban_board . '/' : 'all boards') .
 				' for ' .
-				(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask) .
+				(validate_ip_string($mask) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask) .
 				' (<small>#' . $pdo->lastInsertId() . '</small>)' .
 				' with ' . ($reason ? 'reason: ' . utf8tohtml($reason) . '' : 'no reason'));
 		}

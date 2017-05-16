@@ -327,7 +327,7 @@ if (isset($_POST['delete'])) {
 			);
 		$query = prepare("INSERT INTO ``reports`` VALUES (NULL, :time, :ip, :board, :post, :reason)");
 		$query->bindValue(':time', time(), PDO::PARAM_INT);
-		$query->bindValue(':ip', ($config['obscure_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']), PDO::PARAM_STR);
+		$query->bindValue(':ip', ($config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']), PDO::PARAM_STR);
 		$query->bindValue(':board', $board['uri'], PDO::PARAM_INT);
 		$query->bindValue(':post', $id, PDO::PARAM_INT);
 		$query->bindValue(':reason', $reason, PDO::PARAM_STR);
@@ -414,12 +414,6 @@ if (isset($_POST['delete'])) {
 		
 		// Check if banned, warned or nicenoticed
 		checkBan($board['uri']);
-
-
-
-			// Check for Nicenotices
-			checkNicenotice($board['uri']);
-
 
 
 		if ($post['mod'] = isset($_POST['mod']) && $_POST['mod']) {

@@ -937,8 +937,8 @@ function checkBan($board = false) {
 	// Check for Warnings
 	checkWarning($board);
 
-	// // Check for Nicenotices
-	// checkNicenotice($board);
+	// Check for Nicenotices
+	checkNicenotice($board);
 
 
 	$ips = array();
@@ -1003,15 +1003,6 @@ function checkBan($board = false) {
 }
 
 
-
-
-// Returns Human Readable version of IP
-function getHumanReadableIP($ip)
-{
-	global $config;
-	
-	return ($config['obscure_ip_addresses'] ? htmlspecialchars(wordwrap(substr($ip,0,16), 4, ":", true)) : htmlspecialchars($ip));
-}
 
 
 
@@ -1222,7 +1213,7 @@ function insertFloodPost(array $post) {
 	global $board, $config;
 	
 	$query = prepare("INSERT INTO ``flood`` VALUES (NULL, :ip, :board, :time, :posthash, :filehash, :isreply)");
-	$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
+	$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
 	$query->bindValue(':board', $board['uri']);
 	$query->bindValue(':time', time());
 	$query->bindValue(':posthash', make_comment_hex($post['body_nomarkup']));
@@ -1262,7 +1253,7 @@ function post(array $post) {
 	$query->bindValue(':body_nomarkup', $post['body_nomarkup']);
 	$query->bindValue(':time', isset($post['time']) ? $post['time'] : time(), PDO::PARAM_INT);
 	$query->bindValue(':password', $post['password']);
-	$query->bindValue(':ip', isset($post['ip']) ? $post['ip'] : ($config['obscure_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']));
+	$query->bindValue(':ip', isset($post['ip']) ? $post['ip'] : ($config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']));
 
 
 	// Get and set Cookie Variable
@@ -1897,7 +1888,7 @@ function muteTime() {
 	// Find number of mutes in the past X hours
 	$query = prepare("SELECT COUNT(*) FROM ``mutes`` WHERE `time` >= :time AND `ip` = :ip");
 	$query->bindValue(':time', time()-($config['robot_mute_hour']*3600), PDO::PARAM_INT);
-	$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
+	$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
 	$query->execute() or error(db_error($query));
 
 	if (!$result = $query->fetchColumn())
@@ -1911,7 +1902,7 @@ function mute() {
 	// Insert mute
 	$query = prepare("INSERT INTO ``mutes`` VALUES (:ip, :time)");
 	$query->bindValue(':time', time(), PDO::PARAM_INT);
-	$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
+	$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
 	$query->execute() or error(db_error($query));
 
 	return muteTime();
@@ -1931,7 +1922,7 @@ function checkMute() {
 	if ($mutetime > 0) {
 		// Find last mute time
 		$query = prepare("SELECT `time` FROM ``mutes`` WHERE `ip` = :ip ORDER BY `time` DESC LIMIT 1");
-		$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
+		$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
 		$query->execute() or error(db_error($query));
 
 		if (!$mute = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -3263,15 +3254,25 @@ function get_uuser_cookie($uuser_cookie = false)
 }
 
 
+
+
+
+
 // Returns hashed version of IP address
 function get_ip_hash($ip)
 {
 	global $config;
 
-	// Generate BCrypt Hash and remove $2a$[cost]$[salt_22_char]$ header info 
-	$hash = crypt($ip, "$2y$" . $config['obscure_ip_cost'] . "$" . $config['obscure_ip_salt'] . "$");
-	return substr($hash, 29);
+	// Bcrypt [., /, 0–9, A–Z, a–z]
+	// preg_match("/[\.\/0-9A-Za-z]{53}/", $ip) != 1)
+
+
+	// Generate BCrypt Hash and remove $2a$[cost]$[salt_22_char]$ header info - leaving 31 char hash
+	$hash = crypt($ip, "$2y$" . $config['bcrypt_ip_cost'] . "$" . $config['bcrypt_ip_salt'] . "$");
+	return str_replace("/", "_", substr($hash, 29));
 }
+
+
 
 
 // Verify ip address string
@@ -3279,11 +3280,61 @@ function validate_ip_string($ip)
 {
 	global $config;
 
-	if (!$config['obscure_ip_addresses'] && filter_var($ip, FILTER_VALIDATE_IP) === false)
+	// Bcrypt [., /, 0–9, A–Z, a–z]
+	// preg_match("/[\.\/0-9A-Za-z]{53}/", $ip) != 1)
+
+	if (!$config['bcrypt_ip_addresses'] && filter_var($ip, FILTER_VALIDATE_IP) === false)
 		return false;
-	else if ($config['obscure_ip_addresses'] && !ctype_alnum($ip) && strlen($ip) != 53)
+	// else if ($config['bcrypt_ip_addresses'] && !ctype_alnum($ip) && strlen($ip) != 53)
+	else if ($config['bcrypt_ip_addresses'] && preg_match("/[._0-9A-Za-z]{31}/", $ip) != 1)
 		return false;
 	
 	return true;
 }
+
+
+
+
+
+
+
+// Returns URL Encoded version of Hahsed BCrypt IP
+function getURLEncoded_HashIP($ip)
+{
+	// Bcrypt [., /, 0–9, A–Z, a–z]
+	return str_replace("\\", "_", $ip);
+}
+
+// Returns URL Encoded version of Hahsed BCrypt IP
+function getURLDecoded_HashIP($ip)
+{
+	// Bcrypt [., /, 0–9, A–Z, a–z]
+	return str_replace("_", "\\", $ip);
+}
+
+
+
+
+
+
+
+// Returns Human Readable version of IP
+function getHumanReadableIP($ip)
+{
+	global $config;
+	
+	return ($config['bcrypt_ip_addresses'] ? htmlspecialchars(wordwrap(substr($ip,0,16), 4, ":", true)) : htmlspecialchars($ip));
+}
+
+
+// Returns Masked Human Readable version of IP
+function getHumanReadableIP_masked($ip)
+{
+	global $config;
+	
+	return wordwrap(substr($ip,0,8), 4, ":", true) . ":xxxx:xxxx";
+}
+
+
+
 

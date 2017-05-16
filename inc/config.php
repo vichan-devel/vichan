@@ -102,11 +102,11 @@
 	$config['db']['timeout'] = 30;
 
 	// Setting to indicate if ip addresses should be hashed
-	$config['obscure_ip_addresses'] = true;
+	$config['bcrypt_ip_addresses'] = true;
 	// Salt for hashing ip addresses NEEDS TO BE 22 CHAR [0-9A-Za-z]
-	$config['obscure_ip_salt'] = "gAQlzt99Ynwnnc5QWY2lTk";
+	$config['bcrypt_ip_salt'] = "gAQlzt99Ynwnnc5QWY2lTk";
 	// Cost of hashing the ip
-	$config['obscure_ip_cost'] = 12;
+	$config['bcrypt_ip_cost'] = 12;
 	
 
 
@@ -1550,6 +1550,9 @@
     // Deliver Bantz to User and Post
     $config['mod']['bantz'] = MOD;
 
+	// Ability to See Sitewide Post and Ban info
+	$config['mod']['sitewide_post_info'] = MOD;
+	
 	// Issue Nicenotice to a poster
 	$config['mod']['nicenotice'] = MOD;
 

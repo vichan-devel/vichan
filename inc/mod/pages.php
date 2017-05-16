@@ -793,7 +793,7 @@ function mod_ip_set_forcedflag($ip, $country_id) {
 		error($config['error']['bad_forcedflag']);
 
 	$query = prepare('INSERT INTO ``custom_geoip`` VALUES(:ip, :country_id)');
-	$query->bindValue(':ip', $config['obscure_ip_addresses'] ? $ip : ipv4to6($ip));
+	$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? $ip : ipv4to6($ip));
 	$query->bindValue(':country_id', $country_id);
 	$query->execute() or error(db_error($query));
 	
@@ -823,7 +823,7 @@ function mod_ip_remove_forcedflag($ip) {
 		$country_name = $config['mod']['forcedflag_countries'][$country_id];
 
 	$query = prepare('DELETE FROM ``custom_geoip`` WHERE `ip` = :ip');
-	$query->bindValue(':ip', $config['obscure_ip_addresses'] ? $ip : ipv4to6($ip));
+	$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? $ip : ipv4to6($ip));
 	$query->execute() or error(db_error($query));
 	
 	modLog("Removed forced {$country_name} flag for <a href=\"?/IP/{$ip}\">{$ip}</a>");
@@ -855,8 +855,12 @@ function mod_ip_remove_note($ip, $id) {
 function mod_page_ip($ip) {
 	global $config, $mod;
 	
+	// // If BCrypted IP Hash decode special chars
+	// if($config['bcrypt_ip_addresses'])
+	// 	$ip = getURLDecoded_HashIP($ip);
+
 	if (!validate_ip_string($ip))
-		error("Invalid IP address.");
+		error("Invalid IP address." . $ip);
 	
 	if (isset($_POST['ban_id'], $_POST['unban'])) {
 		if (!hasPermission($config['mod']['unban']))
@@ -920,12 +924,12 @@ function mod_page_ip($ip) {
 	$args['posts'] = array();
 	
 	if ($config['mod']['dns_lookup'])
-		$args['hostname'] = $config['obscure_ip_addresses'] ? _('No lookup for hashed ip') : rDNS($ip);
+		$args['hostname'] = $config['bcrypt_ip_addresses'] ? _('No lookup for hashed ip') : rDNS($ip);
 	
 	$boards = listBoards();
 	foreach ($boards as $board) {
 		openBoard($board['uri']);
-		if (!hasPermission($config['mod']['show_ip'], $board['uri']))
+		if (!hasPermission($config['mod']['show_ip'], $board['uri']) && !hasPermission($config['mod']['sitewide_post_info']))
 			continue;
 		$query = prepare(sprintf('SELECT * FROM ``posts_%s`` WHERE `ip` = :ip ORDER BY `sticky` DESC, `id` DESC LIMIT :limit', $board['uri']));
 		$query->bindValue(':ip', $ip);
@@ -971,7 +975,7 @@ function mod_page_ip($ip) {
 	// Add values for Forced Flag data 
 	if (hasPermission($config['mod']['forcedflag'])) {
 		$query = prepare("SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip");
-		$query->bindValue(":ip", $config['obscure_ip_addresses'] ? $ip : ipv4to6($ip), \PDO::PARAM_STR);
+		$query->bindValue(":ip", $config['bcrypt_ip_addresses'] ? $ip : ipv4to6($ip), \PDO::PARAM_STR);
 		$query->execute() or error(db_error($query));
 		if (($country_id = $query->fetchColumn(0)) !== false)
 			$args['is_forcedflag'] = $config['mod']['forcedflag_countries'][$country_id];
@@ -1223,6 +1227,13 @@ function mod_bans() {
 		return;
 	}
 	
+
+	// mod_page(_('Ban list'), 'mod/ban_list.html', array(
+	// 	'mod' => $mod,
+	// 	'boards' => json_encode(listBoards()),
+	// 	'token' => make_secure_link_token('bans'),
+	// 	'token_json' => make_secure_link_token('bans.json')
+	// ));
 	mod_page(_('Ban list'), 'mod/ban_list.html', array(
 		'mod' => $mod,
 		'boards' => json_encode($mod['boards']),
@@ -2085,7 +2096,7 @@ function mod_deletebyip($boardName, $post, $global = false) {
 	$query = preg_replace('/UNION ALL $/', '', $query);
 	
 	$query = prepare($query);
-	$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($ip) : $ip);
+	$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($ip) : $ip);
 	$query->execute() or error(db_error($query));
 	
 	if ($query->rowCount() < 1)
@@ -2674,7 +2685,7 @@ function mod_report_dismiss($id, $all = false) {
 	
 	if ($all) {
 		$query = prepare("DELETE FROM ``reports`` WHERE `ip` = :ip");
-		$query->bindValue(':ip', $config['obscure_ip_addresses'] ? get_ip_hash($ip) : $ip);
+		$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($ip) : $ip);
 	} else {
 		$query = prepare("DELETE FROM ``reports`` WHERE `id` = :id");
 		$query->bindValue(':id', $id);

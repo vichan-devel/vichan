@@ -416,7 +416,7 @@ function geoip_forced_country_code_by_addr($gi, $addrv6, $addrv4 = false) {
 	global $config;
 
 	$addr = $addrv6;
-	if($config['obscure_ip_addresses'])
+	if($config['bcrypt_ip_addresses'])
 		$addr = get_ip_hash($addrv4);
 
 	// Find Entry in DB for Forced Country
