@@ -1011,7 +1011,7 @@ if ($step == 0) {
 	}
 	
 	$page['title'] = 'Installation complete';
-	$page['body'] = '<p style="text-align:center">Thank you for using vichan. Please remember to report any bugs you discover. <a href="http://tinyboard.org/docs/?p=Config">How do I edit the config files?</a></p>';
+	$page['body'] = '<p style="text-align:center">Thank you for using NPFchan. Please remember to report any bugs you discover. <a href="http://tinyboard.org/docs/?p=Config">How do I edit the config files?</a></p>';
 	
 	if (!empty($sql_errors)) {
 		$page['body'] .= '<div class="ban"><h2>SQL errors</h2><p>SQL errors were encountered when trying to install the database. This may be the result of using a database which is already occupied with a vichan installation; if so, you can probably ignore this.</p><p>The errors encountered were:</p><ul>' . $sql_errors . '</ul><p><a href="?step=5">Ignore errors and complete installation.</a></p></div>';
@@ -1031,7 +1031,7 @@ if ($step == 0) {
 	echo Element('page.html', $page);
 } elseif ($step == 5) {
 	$page['title'] = 'Installation complete';
-	$page['body'] = '<p style="text-align:center">Thank you for using vichan. Please remember to report any bugs you discover.</p>';
+	$page['body'] = '<p style="text-align:center">Thank you for using NPFchan. Please remember to report any bugs you discover.</p>';
 	
 	$boards = listBoards();
 	foreach ($boards as &$_board) {
