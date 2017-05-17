@@ -1,0 +1,19 @@
+{% filter remove_whitespace %}
+{# Automatically removes unnecessary whitespace #}
+	<h2>{% trans %}We wanted to show we cared.{% endtrans %}</h2>
+	{% if nicenotice.reason %}
+		<p class="reason">
+			{{ nicenotice.reason }}
+		</p>
+	{% endif %}
+	{% if config.nicenotice_page_extra %}
+		<p>{{ config.nicenotice_page_extra }}</p>
+	{% endif %}
+	
+	{% if post and config.nicenotice_show_post %}
+		<hr>
+		<p>{% trans %}We were concerned, and wanted to say we cared when we saw your post on{% endtrans %} {{ board.url }}:</p>
+		{{ post }}
+		<br>
+	{% endif %}
+{% endfilter %}

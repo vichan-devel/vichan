@@ -26,28 +26,29 @@ var banlist_init = function(token, my_boards, inMod) {
     var selall = "<input type='checkbox' id='select-all' style='float: left;'>";
 
     lt = $("#banlist").longtable({
-      mask: {name: selall+_("IP address"), width: "220px", fmt: function(f) {
+      mask: {name: selall+_("IP address"), width: "160px", fmt: function(f) {
         var pre = "";
         if (inMod && f.access) {
           pre = "<input type='checkbox' class='unban'>";
         }
 
         if (inMod && f.single_addr && !f.masked) {
-	  return pre+"<a href='?/IP/"+f.mask+"'>"+f.mask+"</a>";
+	  return pre+"<a href='?/IP/"+f.mask+"'>"+f.mask_human_readable+"</a>";
 	}
-	return pre+f.mask;
+	return pre+f.mask_human_readable;
       } },
 
-     // Cookie
-      cookie: {
-        name: (inMod)?"Cookie":"&nbsp;", width: (inMod)?"180px":"5px", fmt: function(f) {
-    if (!inMod) return "";
-    if (!f.cookie) return "???";
-        return f.cookie;
-      } }, 
+    //  // Cookie
+    //   cookie: {
+    //     name: (inMod)?"Cookie":"&nbsp;", width: (inMod)?"180px":"5px", fmt: function(f) {
+    // if (!inMod) return "";
+    // if (!f.cookie) return "???";
+    //     return f.cookie;
+    //   } }, 
 
 
-      reason: {name: _("Reason"), width: (inMod)?"calc(100% - 895px - 7 * 4px)":"calc(100% - 720px - 7 * 4px)", fmt: function(f) {
+      // reason: {name: _("Reason"), width: (inMod)?"calc(100% - 895px - 7 * 4px)":"calc(100% - 720px - 7 * 4px)", fmt: function(f) {
+      reason: {name: _("Reason"), width: (inMod)?"calc(100% - 675px - 6 * 4px)":"calc(100% - 675px - 6 * 4px)", fmt: function(f) {
 	var add = "", suf = '';
         if (f.seen == 1) add += "<i class='fa fa-check' title='"+_("Seen")+"'></i>";
 	if (f.message) {

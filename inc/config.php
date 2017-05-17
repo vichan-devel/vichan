@@ -102,11 +102,11 @@
 	$config['db']['timeout'] = 30;
 
 	// Setting to indicate if ip addresses should be hashed
-	$config['obscure_ip_addresses'] = true;
+	$config['bcrypt_ip_addresses'] = true;
 	// Salt for hashing ip addresses NEEDS TO BE 22 CHAR [0-9A-Za-z]
-	$config['obscure_ip_salt'] = "gAQlzt99Ynwnnc5QWY2lTk";
+	$config['bcrypt_ip_salt'] = "gAQlzt99Ynwnnc5QWY2lTk";
 	// Cost of hashing the ip
-	$config['obscure_ip_cost'] = 12;
+	$config['bcrypt_ip_cost'] = 12;
 	
 
 
@@ -672,6 +672,10 @@
 
 	// Show moderator name on ban page.
 	$config['show_modname'] = false;
+
+
+	// Show the post the user was issued warning for on the "Nicenotice" page.
+	$config['nicenotice_show_post'] = true;
 
 
 	// Show the post the user was issued warning for on the "You were issued a warning" page.
@@ -1401,6 +1405,7 @@
 	// Mod links (full HTML).
 	$config['mod']['link_delete'] = '[D]';
 	$config['mod']['link_bantz'] = '[Bantz]';
+	$config['mod']['link_nicenotice'] = '[NiceNotice]';
 	$config['mod']['link_warning'] = '[W]';
 	$config['mod']['link_ban'] = '[B]';
 	$config['mod']['link_bandelete'] = '[B&amp;D]';
@@ -1567,6 +1572,13 @@
     $config['mod']['delete'] = MOD;
     // Deliver Bantz to User and Post
     $config['mod']['bantz'] = MOD;
+
+	// Ability to See Sitewide Post and Ban info
+	$config['mod']['sitewide_post_info'] = MOD;
+	
+	// Issue Nicenotice to a poster
+	$config['mod']['nicenotice'] = MOD;
+
     // Ban a user for a post
     $config['mod']['warning'] = JANITOR;
     // Ban a user for a post

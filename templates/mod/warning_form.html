@@ -9,9 +9,6 @@
 	{% if redirect %}
 		<input type="hidden" name="redirect" value="{{ redirect|e }}">
 	{% endif %}
-	{% if post and board %}
-		<input type="hidden" name="delete" value="{% if delete %}1{% else %}0{% endif %}">
-	{% endif %}
 	
 	<table>
 		
