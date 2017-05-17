@@ -70,7 +70,12 @@ function test_password($password, $salt, $test) {
 
 function generate_salt() {
 	// 128 bits of entropy
-	return strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_URANDOM)), '+', '.');
+	if (function_exists('random_bytes')) {
+		return strtr(base64_encode(random_bytes(16)), '+', '.');
+	} else {
+		return strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_URANDOM)), '+', '.');
+	}
+
 }
 
 function login($username, $password) {
