@@ -1251,3 +1251,14 @@ form[name="post"] {
 form[name="post"] > div {
 	margin-bottom: 1em;
 }
+
+
+
+.BanReasonTable tr td:first-child {
+  text-align: right;
+  padding-right: 10px;
+}
+.BanReasonTable tr:hover td {
+  cursor: pointer;
+  background: #890;
+}
