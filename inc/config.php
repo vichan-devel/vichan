@@ -1211,7 +1211,6 @@ $config['ban_reasons']        = array(
 
 	// Error messages
 	$config['error']['bot']			= _('You look like a bot.');
-	$config['error']['bot3']			= _('TEEEESSSTTT RREEEEEEEEEEEEEEEEEEEEEEE.');
 	$config['error']['referer']		= _('Your browser sent an invalid or no HTTP referer.');
 	$config['error']['toolong']		= _('The %s field was too long.');
 	$config['error']['toolong_body']	= _('The body was too long.');
