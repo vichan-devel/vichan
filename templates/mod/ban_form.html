@@ -4,7 +4,28 @@
 	{% set action = '?/ban' %}
 {% endif %}
 
-<form action="{{ action }}" method="post">
+
+<script type="text/javascript">
+$(window).load(function(){
+	function populateFormJQuery(frm, data) {
+		$.each(data, function(key, value){
+			$('[name='+key+']', frm).val(value);
+		});
+	}
+
+	{% for key, reason in reasons %}
+		$('#ResonSelectorID_{{ key }}').click(function() { populateFormJQuery('#BanFormID', $.parseJSON(data_{{ key }})); });
+		var data_{{ key }} = '{"reason":"{{ reason.reason|e }}","ban_length":"{{ reason.length|e }}"}';
+	{% endfor %}
+});
+</script>
+
+
+
+
+
+
+<form action="{{ action }}" method="post" id="BanFormID">
 	<input type="hidden" name="token" value="{{ token }}">
 	{% if redirect %}
 		<input type="hidden" name="redirect" value="{{ redirect|e }}">
@@ -70,7 +91,7 @@
 				<label for="length">{% trans 'Length' %}</label>
 			</th>
 			<td>
-				<input type="text" name="length" id="length" size="20" maxlength="40"> 
+				<input type="text" name="ban_length" id="ban_length" size="20" maxlength="40"> 
 					<span class="unimportant">(eg. "2d1h30m" or "2 days")</span></td>
 			</tr>
 		<tr>
@@ -102,3 +123,18 @@
 	</table>
 </form>
 
+	
+<h3>Predefined Reasons:</h3>
+
+<table class="BanReasonTable">
+	<tr id="ResonSelectorID_{{ key }}">
+		<td><b>Length</b></td>
+		<td><b>Reason</b></td>
+	</tr>
+	{% for key, reason in reasons %}
+		<tr id="ResonSelectorID_{{ key }}">
+			<td>{% if not reason.length %}forever{% else %}{{ reason.length }}{% endif %}</td>
+			<td>{{ reason.reason }}</td>
+		</tr>
+	{% endfor %}
+</table>
