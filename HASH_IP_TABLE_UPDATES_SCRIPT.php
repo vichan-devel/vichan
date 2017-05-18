@@ -71,14 +71,18 @@ switch($step)
         // Update reports table to accept hashed ip
         // query("ALTER TABLE `reports` CHANGE `ip` `ip`  VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter reports<br/>' . db_error() . '</li>';
         query("ALTER TABLE `reports` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL") or $sql_errors .= '<li>Alter reports<br/>' . db_error() . '</li>';
+		
+        // Update nicenotices table to accept hashed ip
+        // query("ALTER TABLE `nicenotices` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter nicenotices<br/>' . db_error() . '</li>';
+        query("ALTER TABLE `nicenotices` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8_general_ci NOT NULL") or $sql_errors .= '<li>Alter nicenotices<br/>' . db_error() . '</li>';
 
-        // Update mutes table to accept hashed ip
+        // Update search_queries table to accept hashed ip
         // query("ALTER TABLE `search_queries` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter search_queries<br/>' . db_error() . '</li>';
-        query("ALTER TABLE `search_queries` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL") or $sql_errors .= '<li>Alter search_queries<br/>' . db_error() . '</li>';
+        query("ALTER TABLE `search_queries` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8_general_ci NOT NULL") or $sql_errors .= '<li>Alter search_queries<br/>' . db_error() . '</li>';
 
         // Update warnings table to accept hashed ip
         // query("ALTER TABLE `warnings` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter warnings<br/>' . db_error() . '</li>';
-        query("ALTER TABLE `warnings` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL") or $sql_errors .= '<li>Alter warnings<br/>' . db_error() . '</li>';
+        query("ALTER TABLE `warnings` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8_general_ci NOT NULL") or $sql_errors .= '<li>Alter warnings<br/>' . db_error() . '</li>';
 
 
         if (!empty($sql_errors))
@@ -190,8 +194,22 @@ switch($step)
                 $update_query->bindValue(':ip_org', $entry['ip']);
                 $update_query->execute() or $sql_errors .= '<li>Alter reports<br/>' . db_error() . '</li>';
             }
+			
+            // Update nicenotices table to accept hashed ip
+            $query = prepare("SELECT DISTINCT `ip` FROM ``nicenotices``");
+            $query->execute() or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
 
-            // Update mutes table to accept hashed ip
+            while($entry = $query->fetch()) {
+                $update_query = prepare("UPDATE ``nicenotices`` SET `ip` = :ip WHERE `ip` = :ip_org");
+                $update_query->bindValue(':ip', get_ip_hash($entry['ip']));
+                $update_query->bindValue(':ip_org', $entry['ip']);
+                $update_query->execute() or $sql_errors .= '<li>Alter nicenotices<br/>' . db_error() . '</li>';
+            }
+
+            if (!empty($sql_errors))
+                $page['body'] .= '<div class="ban"><h2>SQL errors</h2><p>SQL errors were encountered when trying to update the database and hashing ip addresses.</p><p>The errors encountered were:</p><ul>' . $sql_errors . '</ul></div>';
+			
+            // Update search_queries table to accept hashed ip
             $query = prepare("SELECT DISTINCT `ip` FROM ``search_queries``");
             $query->execute() or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
 

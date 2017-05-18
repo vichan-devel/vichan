@@ -1,7 +1,7 @@
 <?php
 
 // Installation/upgrade file	
-define('VERSION', '6.0.1');
+define('VERSION', '6.0.2');
 
 require 'inc/functions.php';
 
@@ -665,6 +665,44 @@ if (file_exists($config['has_installed'])) {
 			query('ALTER TABLE ``reports`` CHANGE `ip` `ip`  VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
 			query('ALTER TABLE ``search_queries`` CHANGE `ip` `ip`  VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
 			query('ALTER TABLE ``warnings`` CHANGE `ip` `ip`  VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
+		case '6.0.1':
+			query('CREATE TABLE IF NOT EXISTS ``nicenotices`` (
+				`id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+				`ip` varchar(61) CHARACTER SET utf8mb4 NOT NULL,
+				`created` int(10) UNSIGNED NOT NULL,
+				`board` varchar(58) CHARACTER SET utf8mb4 DEFAULT NULL,
+				`creator` int(10) NOT NULL,
+				`reason` text CHARACTER SET utf8mb4,
+				`seen` tinyint(1) NOT NULL,
+				`post` blob,
+				PRIMARY KEY (`id`),
+				KEY `ipstart` (`ip`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;') or error(db_error());
+			foreach ($boards as &$board) {
+				query(sprintf("ALTER TABLE ``posts_%s`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NOT NULL;", $board['uri'])) or error(db_error());
+			}
+			query('ALTER TABLE ``bans`` CHANGE `ipstart` `ipstart` VARBINARY(61) NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``bans`` CHANGE `ipstart` `ipstart` VARBINARY(61) NULL DEFAULT NULL;') or error(db_error());
+			query('ALTER TABLE ``custom_geoip`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``flood`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii COLLATE ascii_bin NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``ip_notes`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``modlogs`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``mutes`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``nicenotices`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``reports`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``search_queries`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``warnings`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;') or error(db_error());
+			// change to InnoDB
+			$tables = array(
+				'antispam', 'bans', 'bans_cookie', 'ban_appeals', 'boards', 'captchas', 'cites', 'custom_geoip', 'filehashes', 'flood', 'ip_notes', 'modlogs', 'mods', 'mutes', 'news', 'nntp_references', 'noticeboard', 'pages', 'pms', 'robot', 'search_queries', 'theme_settings', 'warnings'
+			);
+			foreach ($boards as &$board) {
+				$tables[] = "posts_{$board['uri']}";
+			}
+			
+			foreach ($tables as &$table) {
+				query("ALTER TABLE  `{$table}` ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;") or error(db_error());
+			}
 		case false:
 			// TODO: enhance Tinyboard -> vichan upgrade path.
 			query("CREATE TABLE IF NOT EXISTS ``search_queries`` (  `ip` varchar(39) NOT NULL,  `time` int(11) NOT NULL,  `query` text NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;") or error(db_error());
