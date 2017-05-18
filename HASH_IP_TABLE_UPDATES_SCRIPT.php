@@ -74,15 +74,15 @@ switch($step)
 		
         // Update nicenotices table to accept hashed ip
         // query("ALTER TABLE `nicenotices` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter nicenotices<br/>' . db_error() . '</li>';
-        query("ALTER TABLE `nicenotices` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8_general_ci NOT NULL") or $sql_errors .= '<li>Alter nicenotices<br/>' . db_error() . '</li>';
+        query("ALTER TABLE `nicenotices` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL") or $sql_errors .= '<li>Alter nicenotices<br/>' . db_error() . '</li>';
 
         // Update search_queries table to accept hashed ip
         // query("ALTER TABLE `search_queries` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter search_queries<br/>' . db_error() . '</li>';
-        query("ALTER TABLE `search_queries` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8_general_ci NOT NULL") or $sql_errors .= '<li>Alter search_queries<br/>' . db_error() . '</li>';
+        query("ALTER TABLE `search_queries` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL") or $sql_errors .= '<li>Alter search_queries<br/>' . db_error() . '</li>';
 
         // Update warnings table to accept hashed ip
         // query("ALTER TABLE `warnings` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter warnings<br/>' . db_error() . '</li>';
-        query("ALTER TABLE `warnings` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8_general_ci NOT NULL") or $sql_errors .= '<li>Alter warnings<br/>' . db_error() . '</li>';
+        query("ALTER TABLE `warnings` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL") or $sql_errors .= '<li>Alter warnings<br/>' . db_error() . '</li>';
 
 
         if (!empty($sql_errors))

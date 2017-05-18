@@ -688,13 +688,13 @@ if (file_exists($config['has_installed'])) {
 			query('ALTER TABLE ``ip_notes`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL;') or error(db_error());
 			query('ALTER TABLE ``modlogs`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL;') or error(db_error());
 			query('ALTER TABLE ``mutes`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL;') or error(db_error());
-			query('ALTER TABLE ``nicenotices`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8_general_ci NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``nicenotices`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;') or error(db_error());
 			query('ALTER TABLE ``reports`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL;') or error(db_error());
-			query('ALTER TABLE ``search_queries`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8_general_ci NOT NULL;') or error(db_error());
-			query('ALTER TABLE ``warnings`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8_general_ci NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``search_queries`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``warnings`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;') or error(db_error());
 			// change to InnoDB
 			$tables = array(
-				'antispam', 'bans', 'bans_cookie', 'ban_appeals', 'boards', 'captchas', 'cites', 'custom_geoip', 'filehashes', 'flood', 'ip_notes', 'modlogs', 'mods', 'mutes', 'news', 'nntp_references', 'noticeboard', 'pages', 'pms', 'robot', 'search_queries', 'theme_settings', 'warnings'
+				'antispam', 'bans', 'bans_cookie', 'ban_appeals', 'boards', 'captchas', 'cites', 'custom_geoip', 'filehashes', 'flood', 'ip_notes', 'modlogs', 'mods', 'mutes', 'news', 'nntp_references', 'noticeboard', 'pages', 'pms', 'robot', 'reports', 'search_queries', 'theme_settings', 'warnings'
 			);
 			foreach ($boards as &$board) {
 				$tables[] = "posts_{$board['uri']}";
