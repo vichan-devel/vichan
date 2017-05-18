@@ -5,14 +5,13 @@
 		<tr>
 		<th>{% trans %}Markup method{% endtrans %}
 			{% set allowed_html = config.allowed_html %}
-			{% trans %}<p class="unimportant">"markdown" is provided by <a href="http://parsedown.org/">parsedown</a>. Note: images disabled.</p>
-			<p class="unimportant">"html" allows the following tags:<br/>{{ allowed_html }}</p>
+			{% trans %}<p class="unimportant">"html" allows the following tags:<br/>{{ allowed_html }}</p>
 			<p class="unimportant">"infinity" is the same as what is used in posts.</p>
 			<p class="unimportant">This page will not convert between formats,<br/>choose it once or do the conversion yourself!</p>{% endtrans %}
 		</th>
 		<td>
 			<select name="method">
-				{% for markup in ['markdown', 'html', 'infinity'] %}
+				{% for markup in ['html', 'infinity'] %}
 				<option value="{{ markup }}" {% if page.type == markup %}selected{% endif %}>{{ markup }}</option>
 				{% endfor %}
 			</select>
