@@ -34,35 +34,33 @@
  * =======================
  */
  
-
-$config['ban_reasons']        = array(
-		array(  'reason'    =>  'Shilling.',
-				'length'	=>  '3d'),
-
-		array(  'reason'	=>  'Low-Quality posting. Examples: "How can white people even compete?", "BTFO!" Improve your quality of posting.',
-				'length'	=>  '3d'),
-
-		array(  'reason'	=>  'E-Celeb thread.',
-				'length'	=>  '3d'),
-
-		array(  'reason'	=>  'General thread.',
-				'length'	=>  '3d'),
-
-		array(  'reason'	=>  'Check the catalog before posting.',
-				'length'	=>  '1d'),
-
-		array(  'reason'	=>  'Ban evasion.',
-				'length'	=>  '30d'),
-
-		array(  'reason'	=>  'Illegal content. Illegal content is not welcome on mlpol.net.',
-				'length'	=>  ''),
-
-		array(  'reason'	=>  'Please spoiler gay pornography.',
-				'length'	=>  '1d'),
-
-		array(  'reason'	=>  'Lolicon / Shotacon imagery is not allowed.',
-				'length'	=>  '30d')
-);
+$config['ban_reasons'][] = array(
+	'reason'    =>  "Shilling.",
+	'length'	=>  "3d");
+$config['ban_reasons'][] = array(
+	'reason'    =>  "Low-Quality posting. Examples: 'How can white people even compete?', 'BTFO!' Improve your quality of posting.",
+	'length'	=>  "3d");
+$config['ban_reasons'][] = array(
+	'reason'    =>  "E-Celeb thread.",
+	'length'	=>  "3d");
+$config['ban_reasons'][] = array(
+	'reason'    =>  "General thread.",
+	'length'	=>  "3d");
+$config['ban_reasons'][] = array(
+	'reason'    =>  "Check the catalog before posting.",
+	'length'	=>  "1d");
+$config['ban_reasons'][] = array(
+	'reason'    =>  "Ban evasion.",
+	'length'	=>  "30d");
+$config['ban_reasons'][] = array(
+	'reason'    =>  "Illegal content. Illegal content is not welcome on mlpol.net.",
+	'length'	=>  "");
+$config['ban_reasons'][] = array(
+	'reason'    =>  "Please spoiler gay pornography.",
+	'length'	=>  "1d");
+$config['ban_reasons'][] = array(
+	'reason'    =>  "Lolicon / Shotacon imagery is not allowed.",
+	'length'	=>  "30d");
 
 
 

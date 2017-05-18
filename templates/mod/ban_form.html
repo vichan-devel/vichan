@@ -15,7 +15,7 @@ $(window).load(function(){
 
 	{% for key, reason in reasons %}
 		$('#ResonSelectorID_{{ key }}').click(function() { populateFormJQuery('#BanFormID', $.parseJSON(data_{{ key }})); });
-		var data_{{ key }} = '{"reason":"{{ reason.reason|e }}","ban_length":"{{ reason.length|e }}"}';
+		var data_{{ key }} = '{"reason":"{{ reason.reason|escape('js') }}","ban_length":"{{ reason.length|escape('js') }}"}';
 	{% endfor %}
 });
 </script>
@@ -133,8 +133,8 @@ $(window).load(function(){
 	</tr>
 	{% for key, reason in reasons %}
 		<tr id="ResonSelectorID_{{ key }}">
-			<td>{% if not reason.length %}forever{% else %}{{ reason.length }}{% endif %}</td>
-			<td>{{ reason.reason }}</td>
+			<td>{% if not reason.length %}forever{% else %}{{ reason.length|e }}{% endif %}</td>
+			<td>{{ reason.reason|e }}</td>
 		</tr>
 	{% endfor %}
 </table>
