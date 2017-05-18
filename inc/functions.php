@@ -1571,16 +1571,36 @@ function deletePost($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
 
 	}
 
+	$query = prepare(sprintf("SELECT `thread` FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
+	$query->bindValue(':id', $id, PDO::PARAM_INT);
+	$query->execute() or error(db_error($query));
+	$thread_id = $query->fetch(PDO::FETCH_ASSOC)['thread'];
+
 	$query = prepare(sprintf("DELETE FROM ``posts_%s`` WHERE `id` = :id OR `thread` = :id", $board['uri']));
 	$query->bindValue(':id', $id, PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
-
 
 	// Delete filehash entries for thread from filehash table
 	$query = prepare(sprintf("DELETE FROM ``filehashes`` WHERE ( `thread` = :id OR `post` = :id ) AND `board` = '%s'", $board['uri']));
 	$query->bindValue(':id', $id, PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
 
+	// Update bump order
+	if (isset($thread_id))
+	{
+		$query = prepare(sprintf('SELECT MAX(`time`) AS `correct_bump` FROM `posts_%s`
+		                          WHERE (`thread` = :thread AND NOT email <=> "sage")
+		                          OR `id` = :thread', $board['uri']));
+		$query->bindValue(':thread', $thread_id, PDO::PARAM_INT);
+		$query->execute() or error(db_error($query));
+		$correct_bump = $query->fetch(PDO::FETCH_ASSOC)['correct_bump'];
+
+		$query = prepare(sprintf("UPDATE ``posts_%s`` SET `bump` = :bump
+		                          WHERE `id` = :id", $board['uri']));
+		$query->bindValue(':bump', $correct_bump, PDO::PARAM_INT);
+		$query->bindValue(':id', $thread_id, PDO::PARAM_INT);
+		$query->execute() or error(db_error($query));
+	}
 
 	$query = prepare("SELECT `board`, `post` FROM ``cites`` WHERE `target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ") ORDER BY `board`");
 	$query->bindValue(':board', $board['uri']);
@@ -1656,7 +1676,7 @@ function index($page, $mod=false, $brief = false) {
 	$body = '';
 	$offset = round($page*$config['threads_per_page']-$config['threads_per_page']);
 
-	$query = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE `thread` IS NULL ORDER BY `sticky` DESC, `bump` DESC LIMIT :offset,:threads_per_page", $board['uri']));
+	$query = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE `thread` IS NULL ORDER BY `sticky` DESC, `bump` DESC LIMIT :offset, :threads_per_page", $board['uri']));
 	$query->bindValue(':offset', $offset, PDO::PARAM_INT);
 	$query->bindValue(':threads_per_page', $config['threads_per_page'], PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
