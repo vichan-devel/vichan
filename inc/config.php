@@ -609,6 +609,7 @@ $config['ban_reasons']        = array(
 
 	$config['early_404_page'] = 3;
 	$config['early_404_replies'] = 5;
+	$config['early_404_staged'] = false;
 
 	// A wordfilter (sometimes referred to as just a "filter" or "censor") automatically scans users’ posts
 	// as they are submitted and changes or censors particular words or phrases.
