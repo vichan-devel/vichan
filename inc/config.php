@@ -56,9 +56,6 @@ $config['ban_reasons'][] = array(
 	'reason'    =>  "Illegal content. Illegal content is not welcome on mlpol.net.",
 	'length'	=>  "");
 $config['ban_reasons'][] = array(
-	'reason'    =>  "Please spoiler gay pornography.",
-	'length'	=>  "1d");
-$config['ban_reasons'][] = array(
 	'reason'    =>  "Lolicon / Shotacon imagery is not allowed.",
 	'length'	=>  "30d");
 
