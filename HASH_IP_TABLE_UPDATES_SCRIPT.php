@@ -113,7 +113,7 @@ switch($step)
 
             // Update custom_goip table to accept hashed ip
             $query = prepare("SELECT DISTINCT `ip` FROM ``custom_geoip`` WHERE `ip` REGEXP '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$'");
-            $query->execute() or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
+            $query->execute() or $sql_errors .= '<li>custom_goip<br/>' . db_error() . '</li>';
 
             while($entry = $query->fetch()) {
                 $update_query = prepare("UPDATE ``custom_geoip`` SET `ip` = :ip WHERE `ip` = :ip_org");
@@ -124,7 +124,7 @@ switch($step)
 
             // Update flood table to accept hashed ip
             $query = prepare("SELECT DISTINCT `ip` FROM ``flood`` WHERE `ip` REGEXP '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$'");
-            $query->execute() or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
+            $query->execute() or $sql_errors .= '<li>Alter flood<br/>' . db_error() . '</li>';
 
             while($entry = $query->fetch()) {
                 $update_query = prepare("UPDATE ``flood`` SET `ip` = :ip WHERE `ip` = :ip_org");
@@ -136,7 +136,7 @@ switch($step)
 
             // Update ip_notes table to accept hashed ip
             $query = prepare("SELECT DISTINCT `ip` FROM ``ip_notes`` WHERE `ip` REGEXP '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$'");
-            $query->execute() or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
+            $query->execute() or $sql_errors .= '<li>Alter ip_notes<br/>' . db_error() . '</li>';
 
             while($entry = $query->fetch()) {
                 $update_query = prepare("UPDATE ``ip_notes`` SET `ip` = :ip WHERE `ip` = :ip_org");
@@ -148,7 +148,7 @@ switch($step)
 
             // Update modlogs table to accept hashed ip
             $query = prepare("SELECT DISTINCT `ip` FROM ``modlogs`` WHERE `ip` REGEXP '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$'");
-            $query->execute() or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
+            $query->execute() or $sql_errors .= '<li>Alter modlogs<br/>' . db_error() . '</li>';
 
             while($entry = $query->fetch()) {
                 $update_query = prepare("UPDATE ``modlogs`` SET `ip` = :ip WHERE `ip` = :ip_org");
@@ -159,7 +159,7 @@ switch($step)
 
             // Update mutes table to accept hashed ip
             $query = prepare("SELECT DISTINCT `ip` FROM ``mutes`` WHERE `ip` REGEXP '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$'");
-            $query->execute() or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
+            $query->execute() or $sql_errors .= '<li>Alter mutes<br/>' . db_error() . '</li>';
 
             while($entry = $query->fetch()) {
                 $update_query = prepare("UPDATE ``mutes`` SET `ip` = :ip WHERE `ip` = :ip_org");
@@ -173,7 +173,7 @@ switch($step)
             $boards = listBoards();
             foreach ($boards as &$_board) {
                 $query = prepare(sprintf("SELECT DISTINCT `ip` FROM ``posts_%s`` WHERE `ip` REGEXP '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$'", $_board['uri']));
-                $query->execute() or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
+                $query->execute() or $sql_errors .= '<li>posts_*<br/>' . db_error() . '</li>';
 
                 while($entry = $query->fetch()) {
                     $update_query = prepare(sprintf("UPDATE ``posts_%s`` SET `ip` = :ip WHERE `ip` = :ip_org", $_board['uri']));
@@ -182,19 +182,9 @@ switch($step)
                     $update_query->execute() or $sql_errors .= '<li>Alter posts_*<br/>' . db_error() . '</li>';
                 }
             }
-
-
-            $query = prepare("SELECT DISTINCT `ip` FROM ``search_queries`` WHERE `ip` REGEXP '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$'");
-            $query->execute() or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
-
-            while($entry = $query->fetch()) {
-                $update_query = prepare("UPDATE ``search_queries`` SET `ip` = :ip WHERE `ip` = :ip_org");
-                $query->bindValue(':ip', get_ip_hash($entry['ip']));
-                $query->bindValue(':ip_org', $entry['ip']);
-                $query->execute() or $sql_errors .= '<li>Alter search_queries<br/>' . db_error() . '</li>';
-            }
+			// Update reports table to accept hashed ip
             $query = prepare("SELECT DISTINCT `ip` FROM ``reports`` WHERE `ip` REGEXP '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$'");
-            $query->execute() or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
+            $query->execute() or $sql_errors .= '<li>Alter reports<br/>' . db_error() . '</li>';
 
             while($entry = $query->fetch()) {
                 $update_query = prepare("UPDATE ``reports`` SET `ip` = :ip WHERE `ip` = :ip_org");
@@ -202,10 +192,19 @@ switch($step)
                 $update_query->bindValue(':ip_org', $entry['ip']);
                 $update_query->execute() or $sql_errors .= '<li>Alter reports<br/>' . db_error() . '</li>';
             }
-    
+            // Update nicenotices table to accept hashed ip
+            $query = prepare("SELECT DISTINCT `ip` FROM ``nicenotices`` WHERE `ip` REGEXP '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$'");
+            $query->execute() or $sql_errors .= '<li>Alter nicenotices<br/>' . db_error() . '</li>';
+
+            while($entry = $query->fetch()) {
+                $update_query = prepare("UPDATE ``nicenotices`` SET `ip` = :ip WHERE `ip` = :ip_org");
+                $query->bindValue(':ip', get_ip_hash($entry['ip']));
+                $query->bindValue(':ip_org', $entry['ip']);
+                $query->execute() or $sql_errors .= '<li>Alter nicenotices<br/>' . db_error() . '</li>';
+            }
             // Update search_queries table to accept hashed ip
             $query = prepare("SELECT DISTINCT `ip` FROM ``search_queries`` WHERE `ip` REGEXP '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$'");
-            $query->execute() or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
+            $query->execute() or $sql_errors .= '<li>Alter search_queries<br/>' . db_error() . '</li>';
 
             while($entry = $query->fetch()) {
                 $update_query = prepare("UPDATE ``search_queries`` SET `ip` = :ip WHERE `ip` = :ip_org");
@@ -213,10 +212,9 @@ switch($step)
                 $query->bindValue(':ip_org', $entry['ip']);
                 $query->execute() or $sql_errors .= '<li>Alter search_queries<br/>' . db_error() . '</li>';
             }
-
             // Update warnings table to accept hashed ip
             $query = prepare("SELECT DISTINCT `ip` FROM ``warnings`` WHERE `ip` REGEXP '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$'");
-            $query->execute() or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
+            $query->execute() or $sql_errors .= '<li>Alter warnings<br/>' . db_error() . '</li>';
 
             while($entry = $query->fetch()) {
                 $update_query = prepare("UPDATE ``warnings`` SET `ip` = :ip WHERE `ip` = :ip_org");
@@ -233,10 +231,5 @@ switch($step)
 
 
 echo Element('page.html', $page);
-
-
-
-
-
 
 ?>
