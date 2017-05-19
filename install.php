@@ -1,7 +1,7 @@
 <?php
 
 // Installation/upgrade file	
-define('VERSION', '6.0.1');
+define('VERSION', '6.0.2');
 
 require 'inc/functions.php';
 
@@ -665,6 +665,44 @@ if (file_exists($config['has_installed'])) {
 			query('ALTER TABLE ``reports`` CHANGE `ip` `ip`  VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
 			query('ALTER TABLE ``search_queries`` CHANGE `ip` `ip`  VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
 			query('ALTER TABLE ``warnings`` CHANGE `ip` `ip`  VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL;') or error(db_error());
+		case '6.0.1':
+			query('CREATE TABLE IF NOT EXISTS ``nicenotices`` (
+				`id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+				`ip` varchar(61) CHARACTER SET utf8mb4 NOT NULL,
+				`created` int(10) UNSIGNED NOT NULL,
+				`board` varchar(58) CHARACTER SET utf8mb4 DEFAULT NULL,
+				`creator` int(10) NOT NULL,
+				`reason` text CHARACTER SET utf8mb4,
+				`seen` tinyint(1) NOT NULL,
+				`post` blob,
+				PRIMARY KEY (`id`),
+				KEY `ipstart` (`ip`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;') or error(db_error());
+			foreach ($boards as &$board) {
+				query(sprintf("ALTER TABLE ``posts_%s`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NOT NULL;", $board['uri'])) or error(db_error());
+			}
+			query('ALTER TABLE ``bans`` CHANGE `ipstart` `ipstart` VARBINARY(61) NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``bans`` CHANGE `ipstart` `ipstart` VARBINARY(61) NULL DEFAULT NULL;') or error(db_error());
+			query('ALTER TABLE ``custom_geoip`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``flood`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii COLLATE ascii_bin NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``ip_notes`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``modlogs`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``mutes`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``nicenotices`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``reports`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``search_queries`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;') or error(db_error());
+			query('ALTER TABLE ``warnings`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;') or error(db_error());
+			// change to InnoDB
+			$tables = array(
+				'antispam', 'bans', 'bans_cookie', 'ban_appeals', 'boards', 'captchas', 'cites', 'custom_geoip', 'filehashes', 'flood', 'ip_notes', 'modlogs', 'mods', 'mutes', 'news', 'nntp_references', 'noticeboard', 'pages', 'pms', 'robot', 'reports', 'search_queries', 'theme_settings', 'warnings'
+			);
+			foreach ($boards as &$board) {
+				$tables[] = "posts_{$board['uri']}";
+			}
+			
+			foreach ($tables as &$table) {
+				query("ALTER TABLE  `{$table}` ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;") or error(db_error());
+			}
 		case false:
 			// TODO: enhance Tinyboard -> vichan upgrade path.
 			query("CREATE TABLE IF NOT EXISTS ``search_queries`` (  `ip` varchar(39) NOT NULL,  `time` int(11) NOT NULL,  `query` text NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;") or error(db_error());
@@ -677,11 +715,11 @@ if (file_exists($config['has_installed'])) {
 			break;
 		default:
 			$page['title'] = 'Unknown version';
-			$page['body'] = '<p style="text-align:center">vichan was unable to determine what version is currently installed.</p>';
+			$page['body'] = '<p style="text-align:center">NPFchan was unable to determine what version is currently installed.</p>';
 			break;
 		case VERSION:
 			$page['title'] = 'Already installed';
-			$page['body'] = '<p style="text-align:center">It appears that vichan is already installed (' . $version . ') and there is nothing to upgrade! Delete <strong>' . $config['has_installed'] . '</strong> to reinstall.</p>';
+			$page['body'] = '<p style="text-align:center">It appears that NPFchan is already installed (' . $version . ') and there is nothing to upgrade! Delete <strong>' . $config['has_installed'] . '</strong> to reinstall.</p>';
 			break;
 	}			
 	
@@ -758,14 +796,14 @@ if ($step == 0) {
 			'name' => 'PHP &ge; 5.4',
 			'result' => PHP_VERSION_ID >= 50400,
 			'required' => true,
-			'message' => 'vichan requires PHP 5.4 or better.',
+			'message' => 'NPFchan requires PHP 5.4 or better.',
 		),
 		array(
 			'category' => 'PHP',
 			'name' => 'PHP &ge; 5.6',
 			'result' => PHP_VERSION_ID >= 50600,
 			'required' => false,
-			'message' => 'vichan works best on PHP 5.6 or better.',
+			'message' => 'NPFchan works best on PHP 5.6 or better.',
 		),
 		array(
 			'category' => 'PHP',
@@ -870,28 +908,28 @@ if ($step == 0) {
 			'name' => getcwd(),
 			'result' => is_writable('.'),
 			'required' => true,
-			'message' => 'vichan does not have permission to create directories (boards) here. You will need to <code>chmod</code> (or operating system equivalent) appropriately.'
+			'message' => 'NPFchan does not have permission to create directories (boards) here. You will need to <code>chmod</code> (or operating system equivalent) appropriately.'
 		),
 		array(
 			'category' => 'File permissions',
 			'name' => getcwd() . '/templates/cache',
 			'result' => is_writable('templates') || (is_dir('templates/cache') && is_writable('templates/cache')),
 			'required' => true,
-			'message' => 'You must give vichan permission to create (and write to) the <code>templates/cache</code> directory or performance will be drastically reduced.'
+			'message' => 'You must give NPFchan permission to create (and write to) the <code>templates/cache</code> directory or performance will be drastically reduced.'
 		),
 		array(
 			'category' => 'File permissions',
 			'name' => getcwd() . '/tmp/cache',
 			'result' => is_dir('tmp/cache') && is_writable('tmp/cache'),
 			'required' => true,
-			'message' => 'You must give vichan permission to write to the <code>tmp/cache</code> directory.'
+			'message' => 'You must give NPFchan permission to write to the <code>tmp/cache</code> directory.'
 		),
 		array(
 			'category' => 'File permissions',
 			'name' => getcwd() . '/inc/instance-config.php',
 			'result' => is_writable('inc/instance-config.php'),
 			'required' => false,
-			'message' => 'vichan does not have permission to make changes to <code>inc/instance-config.php</code>. To complete the installation, you will be asked to manually copy and paste code into the file instead.'
+			'message' => 'NPFchan does not have permission to make changes to <code>inc/instance-config.php</code>. To complete the installation, you will be asked to manually copy and paste code into the file instead.'
 		),
 		array(
 			'category' => 'Misc',
@@ -903,10 +941,10 @@ if ($step == 0) {
 		),
 		array(
 			'category' => 'Misc',
-			'name' => 'vichan installed using git',
+			'name' => 'NPFchan installed using git',
 			'result' => is_dir('.git'),
 			'required' => false,
-			'message' => 'vichan is still beta software and it\'s not going to come out of beta any time soon. As there are often many months between releases yet changes and bug fixes are very frequent, it\'s recommended to use the git repository to maintain your vichan installation. Using git makes upgrading much easier.'
+			'message' => 'NPFchan is still beta software and it\'s not going to come out of beta any time soon. As there are often many months between releases yet changes and bug fixes are very frequent, it\'s recommended to use the git repository to maintain your NPFchan installation. Using git makes upgrading much easier.'
 		)
 	);
 

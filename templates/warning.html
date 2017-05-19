@@ -1,7 +1,7 @@
 {% filter remove_whitespace %}
 {# Automatically removes unnecessary whitespace #}
 <div class="ban">
-	<h2>{% trans %}You were issued an warning!{% endtrans %}</h2>
+	<h2>{% trans %}You were issued an warning! ;_;{% endtrans %}</h2>
 	{% if warning.reason %}
 		<p>
 			{% trans %}for the following reason:{% endtrans %}
@@ -21,7 +21,7 @@
 				{% endif %}
 			{% endif %}
 	</p>
-	<p>{% trans %}Your IP address is{% endtrans %} <strong>{{ warning.ip }}</strong>.</p>
+	<p><strong>{% trans %}Your IP address is not stored on mlpol.net. We currently hash IP addresses { % endtrans % }</strong>.</p>
 
 	{% if config.warning_page_extra %}
 		<p>{{ config.warning_page_extra }}</p>

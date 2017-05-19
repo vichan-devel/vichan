@@ -1,9 +1,9 @@
-SET NAMES utf8;
+SET NAMES utf8mb4;
 
 CREATE TABLE `captchas` (
-  `cookie` VARCHAR(50),
-  `extra` VARCHAR(200),
-  `text` VARCHAR(255),
-  `created_at` INT(11),
-  PRIMARY KEY (cookie, extra)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4;
+  `cookie` varchar(50) NOT NULL,
+  `extra` varchar(200) NOT NULL,
+  `text` varchar(255) DEFAULT NULL,
+  `created_at` int(11) DEFAULT NULL,
+  PRIMARY KEY (`cookie`,`extra`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
