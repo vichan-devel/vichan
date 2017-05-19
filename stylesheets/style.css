@@ -1254,11 +1254,16 @@ form[name="post"] > div {
 
 
 
-.BanReasonTable tr td:first-child {
+
+.ReasonTableForm tr:first-child td {
+  text-decoration: bold;
+  background: #7B0;
+}
+.ReasonTableForm tr td:first-child {
   text-align: right;
   padding-right: 10px;
 }
-.BanReasonTable tr:hover td {
+.ReasonTableForm tr:hover td {
   cursor: pointer;
   background: #890;
 }

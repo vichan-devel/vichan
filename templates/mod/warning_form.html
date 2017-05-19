@@ -4,7 +4,17 @@
 	{% set action = '?/warning' %}
 {% endif %}
 
-<form action="{{ action }}" method="post">
+<script type="text/javascript">
+$(window).load(function(){
+	{% for key, reason in reasons %}
+		$('#ResonSelectorID_{{ key }}').click(function() { populateFormJQuery('#WarningFromID', $.parseJSON(data_{{ key }})); });
+		var data_{{ key }} = '{"reason":"{{ reason|escape('js') }}"}';
+	{% endfor %}
+});
+</script>
+
+
+<form action="{{ action }}" method="post" id="WarningFromID">
 	<input type="hidden" name="token" value="{{ token }}">
 	{% if redirect %}
 		<input type="hidden" name="redirect" value="{{ redirect|e }}">
@@ -57,3 +67,18 @@
 	</table>
 </form>
 
+
+<h3>Predefined Reasons:</h3>
+
+<table class="ReasonTableForm">
+	<tr>
+		<td></td>
+		<td>Reason</td>
+	</tr>
+	{% for key, reason in reasons %}
+		<tr id="ResonSelectorID_{{ key }}">
+			<td></td>
+			<td>{{ reason|e }}</td>
+		</tr>
+	{% endfor %}
+</table>

@@ -1099,6 +1099,7 @@ function mod_nicenotice_post($board, $post, $token = false) {
 		'post' => $post,
 		'board' => $board,
 		'boards' => listBoards(),
+		'reasons' => $config['nicenotice_reasons'],
 		'token' => $security_token
 	);
 	
@@ -1168,6 +1169,7 @@ function mod_warning_post($board, $post, $token = false) {
 		'post' => $post,
 		'board' => $board,
 		'boards' => listBoards(),
+		'reasons' => $config['warning_reasons'],
 		'token' => $security_token
 	);
 	
