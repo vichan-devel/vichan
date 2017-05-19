@@ -68,10 +68,11 @@ header {
 }
 
 h1 {
-  font-family: tahoma;
+  font-family: tahoma, sans-serif;
   letter-spacing: -2px;
-  font-size: 20pt;
-  margin: 0;
+  font-size: 28px;
+  font-weight:bold;
+  margin-top: 0px;
 }
 
 header div.subtitle,h1 {
