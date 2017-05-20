@@ -39,7 +39,7 @@ switch($step)
         query("ALTER TABLE ``bans`` CHANGE `ipstart` `ipstart` VARBINARY(61) NOT NULL") or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
         query("ALTER TABLE ``bans`` CHANGE `ipstart` `ipstart` VARBINARY(61) NULL DEFAULT NULL") or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
 
-        // Update custom_goip table to accept hashed ip
+        // Update custom_geoip table to accept hashed ip
         // query("ALTER TABLE ``custom_geoip`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NULL DEFAULT NULL") or $sql_errors .= '<li>Alter custom_geoip<br/>' . db_error() . '</li>';
         query("ALTER TABLE ``custom_geoip`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET ascii NOT NULL") or $sql_errors .= '<li>Alter custom_geoip<br/>' . db_error() . '</li>';
 
@@ -111,9 +111,9 @@ switch($step)
                 $update_query->execute() or $sql_errors .= '<li>Alter bans<br/>' . db_error() . '</li>';
             }
 
-            // Update custom_goip table to accept hashed ip
+            // Update custom_geoip table to accept hashed ip
             $query = prepare("SELECT DISTINCT `ip` FROM ``custom_geoip`` WHERE `ip` REGEXP '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$'");
-            $query->execute() or $sql_errors .= '<li>custom_goip<br/>' . db_error() . '</li>';
+            $query->execute() or $sql_errors .= '<li>custom_geoip<br/>' . db_error() . '</li>';
 
             while($entry = $query->fetch()) {
                 $update_query = prepare("UPDATE ``custom_geoip`` SET `ip` = :ip WHERE `ip` = :ip_org");
