@@ -2331,7 +2331,7 @@ function markup(&$body, $track_cites = false, $op = false) {
 	$tracked_cites = array();
 
 	// Cites
-	if (isset($board) && preg_match_all('/(^|\s)&gt;&gt;(\d+?)([\s,.)?]|$)/m', $body, $cites, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
+	if (isset($board) && preg_match_all('/(^|[\s(])&gt;&gt;(\d+?)(?=$|[\s,.?)])/m', $body, $cites, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
 		if (count($cites[0]) > $config['max_cites']) {
 			error($config['error']['toomanycites']);
 		}
@@ -2362,14 +2362,14 @@ function markup(&$body, $track_cites = false, $op = false) {
 			}
 
 			if (isset($cited_posts[$cite])) {
-				$replacement = '<a onclick="highlightReply(\''.$cite.'\', event);" href="' .
+				$replacement = $matches[1][0] . '<a onclick="highlightReply(\''.$cite.'\', event);" href="' .
 					$config['root'] . $board['dir'] . $config['dir']['res'] .
 					link_for(array('id' => $cite, 'thread' => $cited_posts[$cite])) . '#' . $cite . '">' .
 					'&gt;&gt;' . $cite .
 					'</a>';
 
-				$body = mb_substr_replace($body, $matches[1][0] . $replacement . $matches[3][0], $matches[0][1] + $skip_chars, mb_strlen($matches[0][0]));
-				$skip_chars += mb_strlen($matches[1][0] . $replacement . $matches[3][0]) - mb_strlen($matches[0][0]);
+				$body = mb_substr_replace($body, $replacement, $matches[0][1] + $skip_chars, mb_strlen($matches[0][0]));
+				$skip_chars += mb_strlen($replacement) - mb_strlen($matches[0][0]);
 
 				if ($track_cites && $config['track_cites'])
 					$tracked_cites[] = array($board['uri'], $cite);
@@ -2378,7 +2378,7 @@ function markup(&$body, $track_cites = false, $op = false) {
 	}
 
 	// Cross-board linking
-	if (preg_match_all('/(^|\s)&gt;&gt;&gt;\/(' . $config['board_regex'] . 'f?)\/(\d+)?([\s,.)?]|$)/um', $body, $cites, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
+	if (preg_match_all('/(^|[\s(])&gt;&gt;&gt;\/(' . $config['board_regex'] . ')\/(?:(\d+)\/?)?(?=$|[\s,.?)])/um', $body, $cites, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
 		if (count($cites[0]) > $config['max_cites']) {
 			error($config['error']['toomanycross']);
 		}
@@ -2459,25 +2459,25 @@ function markup(&$body, $track_cites = false, $op = false) {
 				if (isset($cited_posts[$_board][$cite])) {
 					$link = $cited_posts[$_board][$cite];
 					
-					$replacement = '<a ' .
+					$replacement = $matches[1][0] . '<a ' .
 						($_board == $board['uri'] ?
 							'onclick="highlightReply(\''.$cite.'\', event);" '
 						: '') . 'href="' . $link . '">' .
 						'&gt;&gt;&gt;/' . $_board . '/' . $cite .
 						'</a>';
 
-					$body = mb_substr_replace($body, $matches[1][0] . $replacement . $matches[4][0], $matches[0][1] + $skip_chars, mb_strlen($matches[0][0]));
-					$skip_chars += mb_strlen($matches[1][0] . $replacement . $matches[4][0]) - mb_strlen($matches[0][0]);
+					$body = mb_substr_replace($body, $replacement, $matches[0][1] + $skip_chars, mb_strlen($matches[0][0]));
+					$skip_chars += mb_strlen($replacement) - mb_strlen($matches[0][0]);
 
 					if ($track_cites && $config['track_cites'])
 						$tracked_cites[] = array($_board, $cite);
 				}
 			} elseif(isset($crossboard_indexes[$_board])) {
-				$replacement = '<a href="' . $crossboard_indexes[$_board] . '">' .
+				$replacement = $matches[1][0] . '<a href="' . $crossboard_indexes[$_board] . '">' .
 						'&gt;&gt;&gt;/' . $_board . '/' .
 						'</a>';
-				$body = mb_substr_replace($body, $matches[1][0] . $replacement . $matches[4][0], $matches[0][1] + $skip_chars, mb_strlen($matches[0][0]));
-				$skip_chars += mb_strlen($matches[1][0] . $replacement . $matches[4][0]) - mb_strlen($matches[0][0]);
+				$body = mb_substr_replace($body, $replacement, $matches[0][1] + $skip_chars, mb_strlen($matches[0][0]));
+				$skip_chars += mb_strlen($replacement) - mb_strlen($matches[0][0]);
 			}
 		}
 	}
