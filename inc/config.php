@@ -4,7 +4,7 @@
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  *  
  *  WARNING: This is a project-wide configuration file and is overwritten when upgrading to a newer
- *  version of Tinyboard. Please leave this file unchanged, or it will be a lot harder for you to upgrade.
+ *  version of NPFchan. Please leave this file unchanged, or it will be a lot harder for you to upgrade.
  *  If you would like to make instance-specific changes to your own setup, please use instance-config.php.
  *
  *  This is the default configuration. You can copy values from here and use them in
@@ -17,9 +17,9 @@
  *  Some directives are commented out. This is either because they are optional and examples, or because
  *  they are "optionally configurable", and given their default values by Tinyboard's code later if unset.
  *
- *  More information: https://web.archive.org/web/20121003095922/http://tinyboard.org/docs/?p=Config
+ *  More information: https://github.com/fallenPineapple/NPFchan/wiki/Configuration
  *
- *  Tinyboard documentation: https://web.archive.org/web/20121003095807/http://tinyboard.org/docs/?p=Main_Page
+ *  NPFchan documentation: https://github.com/fallenPineapple/NPFchan/wiki
  *
  */
 
@@ -187,7 +187,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	 * designed to minimize SQL queries and can significantly increase speed when posting or using the 
 	 * moderator interface. APC is the recommended method of caching.
 	 *
-	 * https://web.archive.org/web/20121003095807/http://tinyboard.org/docs/?p=Config/Cache
+	 * https://github.com/fallenPineapple/NPFchan/wiki/Cache
 	 */
 
 	$config['cache']['enabled'] = 'php';
@@ -271,7 +271,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	 * addresses published through the Internet Domain Name Service (DNS) either as a zone file that can be
 	 * used by DNS server software, or as a live DNS zone that can be queried in real-time.
 	 *
-	 * Read more: https://web.archive.org/web/20121003095807/http://tinyboard.org/docs/?p=Config/DNSBL
+	 * Read more: https://github.com/fallenPineapple/NPFchan/wiki/DNS-Blacklists-%28DNSBL%29
 	 */
 
 	// Prevents most Tor exit nodes from making posts. Recommended, as a lot of abuse comes from Tor because
@@ -320,7 +320,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	 * $config['spam']['hidden_inputs_max_pass'] and $config['spam']['hidden_inputs_expire'] to
 	 * something higher to avoid false positives.
 	 *
-	 * See also: https://web.archive.org/web/20121003095807/http://tinyboard.org/docs/?p=Your_request_looks_automated
+	 * See also: https://github.com/fallenPineapple/NPFchan/wiki/Your-request-looks-automated
 	 *
 	 */
 
