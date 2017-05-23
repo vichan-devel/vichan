@@ -1691,6 +1691,10 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
     // Raw HTML posting
     $config['mod']['rawhtml'] = ADMIN;
 	// The ability to set Forced Flag on IP
+	// To add a country, add it to this array.
+	// The number can be found in inc/lib/geoip/geoip.inc
+	// The country name can be anything; it is only displayed in the moderator interface.
+	// The country name showed to the users will always match the flag.
 	$config['mod']['forcedflag'] = MOD;
 	$config['mod']['forcedflag_countries'] = array(
 		38 		=>	'Canada',
