@@ -14,7 +14,7 @@ Requirements
 ------------
 1.	PHP >= 5.4 (we still try to keep compatibility with php 5.3 as much as possible)
         PHP 7.0 is explicitly supported.
-2.	MySQL/MariaDB server
+2.	MySQL/MariaDB server >= 5.6 (InnoDB)
 3.	[mbstring](http://www.php.net/manual/en/mbstring.installation.php) 
 4.	[PHP GD](http://www.php.net/manual/en/intro.image.php)
 5.	[PHP PDO](http://www.php.net/manual/en/intro.pdo.php)
