@@ -232,7 +232,7 @@
 							<a class="email" href="mailto:{{ post.email }}">
 						{% endif %}
 						{% set capcode = post.capcode|capcode %}
-						<span {% if capcode.name %}style="{{ capcode.name }}" {% endif %}class="name">{{ post.name }}</span>
+						<span {% if capcode.name %}style="{{ capcode.name }}" {% endif %}class="name">{{ post.name|e }}</span>
 						{% if post.trip|length > 0 %}
 							<span {% if capcode.trip %}style="{{ capcode.trip }}" {% endif %}class="trip">{{ post.trip }}</span>
 						{% endif %}
@@ -247,7 +247,7 @@
 				</td>
 				<td style="max-width:250px">
 					{% if post.subject %}
-						<small>{{ post.subject }}</small>
+						<small>{{ post.subject|e }}</small>
 					{% else %}
 						&ndash;
 					{% endif %}
