@@ -369,8 +369,6 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 		'embed',
 		'recaptcha_challenge_field',
 		'recaptcha_response_field',
-		'captcha_cookie',
-		'captcha_text',
 		'spoiler',
 		'page',
 		'file_url',
@@ -387,26 +385,6 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['recaptcha_public'] = '6LcXTcUSAAAAAKBxyFWIt2SO8jwx4W7wcSMRoN3f';
 	$config['recaptcha_private'] = '6LcXTcUSAAAAAOGVbVdhmEM1_SyRF4xTKe8jbzf_';
 
-	// Enable Custom Captcha you need to change a couple of settings 
-	//Read more at: /captcha/instructions.md
-	 $config['captcha'] = array();
-
-	// Enable custom captcha provider
-	$config['captcha']['enabled'] = false;
-
-	//New thread captcha
- 	//Require solving a captcha to post a thread. 
- 	//Default off.
- 	 $config['new_thread_capt'] = false;
-
-	// Custom captcha get provider path (if not working get the absolute path aka your url.)
-	$config['captcha']['provider_get'] = '../inc/captcha/entrypoint.php';
-	// Custom captcha check provider path
-	$config['captcha']['provider_check'] = '../inc/captcha/entrypoint.php';
-
-	// Custom captcha extra field (eg. charset)
-	 $config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
-	
 	// Ability to lock a board for normal users and still allow mods to post.  Could also be useful for making an archive board
 	$config['board_locked'] = false;
 
@@ -1170,8 +1148,6 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['additional_javascript'][] = 'js/id_highlighter.js';
 	$config['additional_javascript'][] = 'js/quote-selection.js';
 	$config['additional_javascript'][] = 'js/forced-anon.js';
-	
-	// $config['additional_javascript'][] = 'js/captcha.js'; // Use CAPTCHA on your board? You probably want to enable this.
 
 	// Where these script files are located on the web. Defaults to $config['root'].
 	// $config['additional_javascript_url'] = 'http://static.example.org/tinyboard-javascript-stuff/';
