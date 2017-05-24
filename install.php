@@ -687,7 +687,7 @@ if (file_exists($config['has_installed'])) {
 			query('ALTER TABLE ``warnings`` CHANGE `ip` `ip` VARCHAR(61) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;') or error(db_error());
 			// change to InnoDB
 			$tables = array(
-				'antispam', 'bans', 'bans_cookie', 'ban_appeals', 'boards', 'captchas', 'cites', 'custom_geoip', 'filehashes', 'flood', 'ip_notes', 'modlogs', 'mods', 'mutes', 'news', 'nntp_references', 'noticeboard', 'pages', 'pms', 'reports', 'robot', 'search_queries', 'theme_settings', 'warnings'
+				'antispam', 'bans', 'bans_cookie', 'ban_appeals', 'boards', 'cites', 'custom_geoip', 'filehashes', 'flood', 'ip_notes', 'modlogs', 'mods', 'mutes', 'news', 'nntp_references', 'noticeboard', 'pages', 'pms', 'reports', 'robot', 'search_queries', 'theme_settings', 'warnings'
 			);
 			foreach ($boards as &$board) {
 				$tables[] = "posts_{$board['uri']}";
