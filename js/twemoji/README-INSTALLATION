@@ -1,0 +1,5 @@
+Add $config['additional_javascript'][] = 'js/twemoji/twemoji.js'; to your instance-config.php
+Taken from OpenIB.
+See LICENSE for licensing details.
+
+Tested with OP threads, replies, and global announcement. All work as expected.
