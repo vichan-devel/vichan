@@ -622,13 +622,6 @@ if (file_exists($config['has_installed'])) {
 				UNIQUE KEY `cookie` (`cookie`)
 				) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 			') or error(db_error());
-			query('CREATE TABLE IF NOT EXISTS ``captchas`` (
-			  	`cookie` varchar(50),
-			  	`extra` varchar(200),
-			  	`text` varchar(255),
-			  	`created_at` int(11),
-			  	PRIMARY KEY (`cookie`,`extra`)
-				) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;') or error(db_error());
 		case '5.1.4':
 			query('CREATE TABLE IF NOT EXISTS ``warnings`` (
 				`id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
