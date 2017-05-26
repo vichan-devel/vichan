@@ -86,7 +86,7 @@ div.banner, .replymode, .catalogmode {
 	font-weight: bold;
 	width:100%;
 }
-.postblock, form table th {
+.postblock, form table th, table.modlog tr th {
 	color: #000;
 	font-size: 11px;
 	font-weight: bold;
@@ -179,7 +179,7 @@ div.post.reply {
 	background-color: #1e1e1e;
 	color: #bebebe;
 }
-form table th, div.banner, div.pages, .replymode, .postblock, .passvalid, .catalogmode {
+form table th, div.banner, div.pages, .replymode, .postblock, .passvalid, .catalogmode, table.modlog tr th {
 	background: #ff9100 url('img/orange_f_bg.gif') repeat-x !important;
 }
 div.pages, div.pages a {

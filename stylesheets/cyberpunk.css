@@ -1,0 +1,455 @@
+/* hello world */
+    /*boardwide font stuff goes here also background image*/
+    body {
+        max-width:100%;
+        padding: 0;
+        font-family: "Lucida Console", Monaco, monospace;
+        font-size: 14px;
+        background: url("https://i.imgur.com/rRLs7q4.png") fixed repeat top #000000;
+float: left;
+margin-left: 10px;
+margin-right: 35px;
+    }
+
+div#thread_39085 {
+background-color:red!important;
+}
+
+.announcement {
+color:#989898;
+}
+
+form table tr td {
+    background-color: rgb(43, 43, 43);}
+
+    /*monoelains ez css for VIP quality imageboards. steal this .css and edit it to your liking. */
+     
+    /* OPTION HIDING */
+     
+     
+    /*removes footer (STI pls dont sue)
+    footer {
+    display:none;
+    color: #ffffff;
+    }
+     
+    /* hides AA in catalog */
+    .theme-catalog span.aa {
+        display: none !important;
+    }
+     
+    /* hides expand all images */
+    #expand-all-images {
+        display: none;
+    }
+     
+    /* hides hints*/
+    .hint {
+        display: none;
+    }
+     
+    /* hides horizontal bar */
+    hr {
+        display: none;
+    }
+     
+    /*banner stuff*/
+    img.banner, img.board_image {
+        border: 1px solid #989898;
+        background-color: #B2A50F;
+        display: ;
+        box-shadow: 3px 5px #989898;
+        margin: 30px auto 0px;
+        margin-top: 50px;
+    }
+     
+    /* hides delete options (obsolete) */
+    div.delete {
+        display: none;
+    }
+     
+    /*makes files align vertically (hw pls fix this shit)*/
+    .file {
+        display: block;
+    margin-right: 11px;
+}
+
+     
+    /*expanded image border/shadow*/
+    .full-image {
+        border-top-right-radius: 0;
+        box-shadow: 3px 5px #2e8b57;
+	border: solid 1px #2e8b57;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+        padding: 5px;
+        margin: 0px 0px 0px;
+        border-radius: 0;
+        max-width: 80% !important;
+        float: none;
+        background-color: #2b2b2b;
+    }
+     
+    /*gives quick reply its border/shadow*/
+    #quick-reply table {
+        background: none repeat scroll 0 0 #2b2b2b;
+        border: 1px solid #989898;
+        margin: 0;
+        box-shadow: 3px 5px #989898;
+        width: auto !important;
+    }
+     
+    /*makes posting form maroon*/
+    form table tr th, table.modlog tr th {
+        background-color: #2e8b57;
+        color: #2b2b2b;
+        font-family: "Lucida Console", Monaco, monospace;
+    }
+     
+    /*gives images border/shadow*/
+    div.files img.post-image {
+        box-shadow: 3px 5px #4D4D4D;
+        background-color: #2b2b2b;
+        border: solid 1px #4D4D4D;
+        padding: 0px;
+        border-radius: 0;
+        margin-bottom: 5px;
+    }
+     
+    /* makes Youtube thumbs not obscenely big */
+    div.video-container  {
+        width: auto !important;
+        height: auto !important;
+        max-height: 300px !important;
+        max-width: 300px !important;
+    }
+     
+    /* Image thumbs size limit (make as big as you want)*/
+    .post-image {
+        border: solid 1px #2e8b57;
+        height: auto !important;
+        width: auto !important;
+        max-height: 60%;
+        max-width: 60%;
+        box-shadow: 3px 5px #2e8b57;
+padding: 5px;
+background-color: #2b2b2b;
+    }
+     
+    /* Keep small thumbnails in replies */
+    .post.reply a:not([data-expanded="true"]) .post-image {
+        width: auto !important;
+        height: auto !important;
+        max-height: 60%;
+        max-width: 60%;
+    }
+     
+    /* reply box size */
+    .input[type="text"], textarea {
+        min-height: 117px;
+        min-width: 240px;
+    }
+     
+    /*saves one pixel of space*/
+    header {
+        margin-bottom: 0px;
+    }
+     
+    /*gives posting table its border/shadow*/
+    form table {
+        width: 100%;
+        minimum-width: 960px;
+        min-height: 250px;
+        display: inline-block;
+        margin: 5px auto;
+        background-color: #2b2b2b;
+        border: solid 1px #989898;
+        color: #61CE3C;
+        padding: 5px;
+        box-shadow: 3px 3px #989898 !important;
+    }
+     
+    /*gives threads its border/shadow*/
+    div[id^="thread_"] {
+        background-color: #1A1A1A;
+        color: #61CE3C;
+        margin-bottom: 20px;
+        padding: 10px;
+        border: solid 1px #7b68ee;
+        width: 100%;
+        box-shadow: 3px 5px #7b68ee;
+    }
+     
+    /*adds horizontal bar below subject*/
+    p.intro {
+        background-image: url('https://i.imgur.com/Ua5aMb0.png');
+        background-repeat: repeat-x;
+        background-position: bottom;
+        padding-bottom: 7px;
+    }
+     
+    /*gives replies border/shadow*/
+    div.post.reply {
+        max-width: 95% !important;
+        box-shadow: 3px 5px #2e8b57;
+        padding: 4px;
+        margin-top: 9px;
+        border: solid 1px #2e8b57;
+        background-color: #2b2b2b;
+    }
+     
+    /*unfucks highlighting replies and gives border/shadow*/
+    div.post.reply.highlighted {
+        background-color: #2b2b2b;
+        border: solid 1px #93e0e3;
+        box-shadow: 3px 5px #93e0e3;
+    }
+     
+    /*dont touch this*/
+    div.body {
+        display: block;
+        clear: both;
+        padding-top: 10px;
+    }
+     
+    /*makes page bar have border/shadow*/
+    div.pages {
+        box-shadow: 3px 5px #2e8b57;
+        width: 100%;
+        display: block;
+        clear: both;
+        border: solid 1px #2e8b57;
+        background-color: #2b2b2b;
+    }
+     
+    /*hovered links have underline*/
+    a:hover {
+        text-decoration: underline;
+    }
+     
+    /*stops textbox resizing shenanigans*/
+    .input[type="text"], textarea {
+        font-size: 14px;
+        max-width: 9000px;
+	font-family: "Lucida Console", Monaco, monospace;
+        min-height: 115px;
+        min-width: 270px;
+	background-color: #1A1A1A;
+	color: #61CE3C;
+    }
+
+input {
+background-color: #1A1A1A;
+	color: #61CE3C;
+}
+select {
+background-color: #1A1A1A;
+	color: #61CE3C;
+}
+     
+    /*boardname nice font. replace with something classy someday*/
+    header div.subtitle, h1 {
+        font-family: "Lucida Console", Monaco, monospace;
+        color: #cc0000;
+    }
+     
+    /*announcement font and color*/
+    div.blotter {
+        padding: 15px;
+        color: #cc0000;
+        font-family: "Lucida Console", Monaco, monospace;
+    }
+     
+    /*makes links red*/
+    a {
+        color: #c80b63;
+        text-decoration: none;
+    }
+     
+    /*top boardlist stuff. change position to "fixed" to make it behave like normal 8chan*/
+    div.boardlist:not(.bottom) {
+        background-color: #1A1A1A !important;
+        text-align: center;
+        padding: 5px 1px;
+        letter-spacing: -2px;
+        color: #989898;
+        font-size: 11px;
+        border-bottom: double 3px #989898 !important;
+        position:fixed;
+    }
+     
+    /*favorites in a new line*/
+    div.boardlist span.favorite-boards {
+        display: ;
+    }
+     
+    /*subject color*/
+    p.intro span.subject {
+        color: #7b68ee;
+    }
+     
+    /*bottom boardlist centered*/
+     
+    div.boardlist.bottom {
+        text-align: center;
+        background-color: #1A1A1A;
+        border: solid 1px #989898;
+        box-shadow: 3px 7px #989898; 
+        width: 100%;
+	margin: 15px;
+
+    
+    }
+     
+    /*colors name*/
+    p.intro span.name {
+        color: #989898;
+        font-family: ;
+    }
+     
+    /*catalog stuff*/
+    .theme-catalog div.thread {
+        background-color: #2b2b2b;
+        color: #61CE3C;
+        border: solid 1px #2e8b57;
+    }
+     
+    .theme-catalog div.thread:hover {
+        background-color: #383838;
+        border: solid 1px #2e8b57;
+    }
+     
+    span.trip {
+        color: rgb(34, 136, 84);
+    }
+     
+    #updater, #thread-links {
+    background-color: #2b2b2b;
+    border:solid 1px #989898;
+    padding: 5px;
+    margin: 5px;
+    box-shadow: 3px 5px #989898;
+    color: #989898;
+    }
+    
+    A#update_thread
+    {color: #ffffff;}
+    A#thread-catalog
+    {color: #ffffff;}
+    A#thread-top
+    {color: #ffffff;}
+    A#thread-return
+    {color: #ffffff;}
+    
+div.banner {
+width: 380px;
+display:block;
+margin-left:auto;
+margin-right:auto;
+
+}
+
+#quick-reply th .close-btn{
+color:#ffffff;
+
+}
+
+div.post-hover {
+
+border: solid 1px #2e8b57;
+box-shadow: 3px 5px #2e8b57;
+max-width: 50%;
+}
+
+
+a:visited {color: #97094b}
+
+.quote {color: #93e0e3;}
+a:hover,p.intro a.post_no:hover {
+  color: #ff0000 !important;
+}
+
+p.intro {color: #989898}
+
+p.intro a {color: #ffffff !important}
+A.post_no {color:#989898}
+
+
+p.fileinfo
+{color: #989898 !important}
+
+p.fileinfo a:link{
+    color: #989898;
+} !important;
+max-width: 50%;
+}
+
+
+a:visited {color: #97094b}
+
+
+p.intro {color: #989898}
+
+p.intro a {color: #ffffff !important}
+A.post_no {color:#989898}
+
+
+p.fileinfo
+{color: #989898 !important}
+
+p.fileinfo a:link{
+    color: #989898;
+}
+
+DIV#thread_stats
+{
+border: solid 1px #989898;
+box-shadow: 3px 5px #989898;
+color: #989898;
+}
+
+DIV.file-hint
+{background-color: #383838;}
+div.dropzone
+{background-color: #383838;
+color: #ffffff}
+
+#options_div
+{background-color: #383838; color: #61CE3C;
+}
+div.options_tab_icon
+{color: #61CE3C;}
+div.options_tab_icon.active
+{color: #ffffff;}
+#filter-container
+{background-color: #707070;
+color: #ffffff;}
+#treeview
+{display:none}
+span.heading
+{color: #FF6400}
+body > footer:nth-child(19)
+{color: #ffffff;}
+div.boardlist a {color: #ffffff;}
+
+form table tr th {
+    color: #ffffff !important;
+}
+
+p.intro a.email span.name{color: #c80b63}
+p.intro span.capcode {color: #FBDE2D}
+p.intro span.capcode:before {font-family: MS PGothic; content: "（　´∀｀） 🔰"}
+
+
+label {display:none}
+
+div.post-menu {color: #ffffff}
+
+
+
+@media only screen and (max-width: 480px), only screen and (max-device-width: 480px) {
+
+div.boardlist:not(.bottom) {position: static;}
+body { min-width: 100%;}
+}

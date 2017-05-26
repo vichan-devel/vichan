@@ -31,7 +31,7 @@ h2, div.title, h1 {
 	color: #800000;
 }
 
-form table tr th {
+form table tr th, table.modlog tr th {
 	background: #95D2D3;
 }
 
