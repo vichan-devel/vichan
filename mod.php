@@ -10,6 +10,7 @@ if ($config['debug'])
 	$parse_start_time = microtime(true);
 
 require_once 'inc/bans.php';
+require_once 'inc/announcements.php';
 require_once 'inc/mod/pages.php';
 
 check_login(true);
@@ -41,6 +42,11 @@ $pages = array(
 	'/edit_news'				=> 'secure_POST news',		// view news
 	'/edit_news/(\d+)'			=> 'secure_POST news',		// view news
 	'/edit_news/delete/(\d+)'		=> 'secure news_delete',	// delete from news
+
+
+	'/announcements'					=> 'secure_POST announcements',		// announcement list
+	'/announcements.json'					=> 'secure announcements_json',		// announcement list JSON
+
 
 	'/edit_pages(?:/?(\%b)?)'		=> 'secure_POST pages',
 	'/edit_page/(\d+)'			=> 'secure_POST edit_page',

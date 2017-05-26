@@ -22,6 +22,7 @@
 require dirname(__FILE__) . '/inc/cli.php';
 
 require_once("inc/bans.php");
+require_once("inc/announcements.php");
 
 $start = microtime(true);
 
@@ -98,6 +99,11 @@ foreach($boards as &$board) {
 		buildThread($post['id']);
 	}
 }
+
+
+// Generate json files for announcements in header of pages
+Announcements::RebuildAnnouncementPages();
+
 
 if(!$options['quiet'])
 	printf("Complete! Took %g seconds\n", microtime(true) - $start);

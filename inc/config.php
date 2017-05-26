@@ -1001,6 +1001,36 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Allow unfiltered HTML in board subtitle. This is useful for placing icons and links.
 	$config['allow_subtitle_html'] = false;
 
+
+
+
+
+
+/*
+ * ====================
+ *  Announcements settings
+ * ====================
+ */
+	// Show Small list of Announcements.
+	$config['announcements']['show'] = true;
+	// Number of announcements to include in small Announcements json file and lists.
+	$config['announcements']['show_count'] = 3;
+	
+	// Create Announcements Page.
+	$config['announcements']['page'] = true;
+
+	// Same as above, but used for Global Announcements pages and lists.
+	$config['announcements']['date_format'] = '%m/%d/%Y';		// Do NOT change this (can result in undesired missmatch to js script)
+
+	// Filenames for json files
+	$config['announcements']['file_json'] = "announcements.json";
+	$config['announcements']['file_json_small'] = "announcements_small.json";
+
+	// Filename for file to hold complete list of announcements
+	$config['announcements']['page_html'] = "announcements.html";
+
+
+
 /*
  * ====================
  *  Display settings
@@ -1705,6 +1735,12 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['mod']['report_dismiss'] = JANITOR;
 	// Dismiss all abuse reports by an IP
 	$config['mod']['report_dismiss_ip'] = JANITOR;
+
+
+	// Create Announcements
+	$config['mod']['announcements'] = ADMIN;
+
+
 	// View list of bans
 	$config['mod']['view_banlist'] = MOD;
 	// View the username of the mod who made a ban
