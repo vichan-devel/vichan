@@ -67,7 +67,7 @@ $config['ban_reasons'][] = array(
  */
  
 $config['warning_reasons'][] = "Shilling: Please do not shill on mlpol.net. Further shilling may result in a ban.";
-$config['warning_reasons'][] = "Low-Quality posting. Examples: 'How can white people even compete?', 'BTFO!' Continued posting of Low-Quality content will could earn you a ban.";
+$config['warning_reasons'][] = "Low-Quality posting. Examples: 'How can white people even compete?', 'BTFO!' Continued posting of Low-Quality content could earn you a ban.";
 $config['warning_reasons'][] = "E-Celeb thread: Further posting of E-Celeb content could earn you a ban.";
 $config['warning_reasons'][] = "General thread: The posting of generals is not allowed on mlpol.net. However, happening threads are allowed.";
 $config['warning_reasons'][] = "Check the catalog before posting: A thread of this type has already been posted.";
