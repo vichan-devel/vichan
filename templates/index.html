@@ -55,6 +55,10 @@
 		</div>
 	{% endif %}
 	
+
+	{% if config.announcements.show %}<table class="announcements" id="announcements"></table>{% endif %}
+
+
 	{% if config.global_message %}<hr /><div class="blotter">{{ config.global_message }}</div>{% endif %}
 	<hr />
 	<form name="postcontrols" action="{{ config.post_url }}" method="post">

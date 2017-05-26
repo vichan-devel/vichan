@@ -1181,6 +1181,60 @@ function mod_warning_post($board, $post, $token = false) {
 
 
 
+
+function mod_announcements() {
+	global $config;
+	global $mod;
+	
+	if (!hasPermission($config['mod']['announcements']))
+		error($config['error']['noaccess']);
+	
+
+	// Add, Edit, or Delete Announcement
+	if (isset($_POST['add_announcement'], $_POST['announcement']) && $_POST['announcement'] != '') {
+		require_once 'inc/announcements.php';
+		Announcements::new_announcement($_POST['announcement']);
+	}
+	else if (isset($_POST['edit_announcement'], $_POST['announcement'], $_POST['id']) && $_POST['announcement'] != '') {
+		require_once 'inc/announcements.php';
+		Announcements::edit_announcement($_POST['id'], $_POST['announcement']);
+	}
+	else if (isset($_POST['delete_announcement'], $_POST['id'])) {
+		require_once 'inc/announcements.php';
+		Announcements::delete_announcement($_POST['id']);
+	}
+
+
+	// Display Announcement Page
+	mod_page(_('Announcements list'), 'mod/announcements_list.html', array(
+		'mod' => $mod,
+		'token' => make_secure_link_token('announcements'),
+		'token_json' => make_secure_link_token('announcements.json')
+	));
+}
+
+
+function mod_announcements_json() {
+	global $config, $mod;
+
+	if (!hasPermission($config['mod']['announcements']))
+			error($config['error']['noaccess']);
+
+	// Compress the json for faster loads
+	if (substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) ob_start("ob_gzhandler");
+
+	Announcements::stream_json(false, !hasPermission($config['mod']['announcements']));
+}
+
+
+
+
+
+
+
+
+
+
 function mod_ban() {
 	global $config;
 	
@@ -1695,8 +1749,10 @@ function mod_move($originBoard, $postID) {
 			if ($post['has_file']) {
 				// copy image
 				foreach ($post['files'] as $i => &$file) {
-					$clone($file['file_path'], sprintf($config['board_path'], $board['uri']) . $config['dir']['img'] . $file['file']);
-					$clone($file['thumb_path'], sprintf($config['board_path'], $board['uri']) . $config['dir']['thumb'] . $file['thumb']);
+					if ($file['file'] !== 'deleted') 
+						$clone($file['file_path'], sprintf($config['board_path'], $board['uri']) . $config['dir']['img'] . $file['file']);
+					if (isset($file['thumb']) && !in_array($file['thumb'], array('spoiler', 'deleted', 'file')))
+						$clone($file['thumb_path'], sprintf($config['board_path'], $board['uri']) . $config['dir']['thumb'] . $file['thumb']);
 				}
 			}
 

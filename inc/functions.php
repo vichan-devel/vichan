@@ -22,6 +22,7 @@ require_once 'inc/mod/auth.php';
 require_once 'inc/lock.php';
 require_once 'inc/queue.php';
 require_once 'inc/polyfill.php';
+require_once 'inc/announcements.php';
 @include_once 'inc/lib/parsedown/Parsedown.php'; // fail silently, this isn't a critical piece of code
 
 if (!extension_loaded('gettext')) {
@@ -189,7 +190,7 @@ function loadConfig() {
 
 		if (!isset($config['global_message']))
 			$config['global_message'] = false;
-
+		
 		if (!isset($config['post_url']))
 			$config['post_url'] = $config['root'] . $config['file_post'];
 
@@ -2076,9 +2077,17 @@ function buildIndex($global_api = "yes") {
 		}
 	}
 
+
+	Announcements::RebuildAnnouncementPages();
+
+
 	if ($config['try_smarter'])
 		$build_pages = array();
 }
+
+
+
+
 
 function buildJavascript() {
 	global $config;

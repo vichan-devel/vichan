@@ -72,6 +72,9 @@
 				{% if unread_pms > 0 %}<strong>{%endif %}({{ unread_pms }} unread){% if unread_pms > 0 %}</strong>{%endif %}
 			</a>
 		</li>
+		{% if mod|hasPermission(config.mod.announcements) %}
+			<li><a href="?/announcements">{% trans 'Announcements' %}</a></li>
+		{% endif %}
 	</ul>
 </fieldset>
 

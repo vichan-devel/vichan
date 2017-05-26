@@ -545,6 +545,74 @@ div.blotter {
   text-align: center;
 }
 
+table.announcements {
+  text-align: center;
+  width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 0.8em;
+}
+table.announcements thead td {
+  border-bottom: 1px solid rgb(63, 63, 63);
+  border-bottom: 1px solid rgba(0, 0, 0, .4);
+  -webkit-background-clip: padding-box; /* for Safari */
+  background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
+}
+table.announcements tbody {
+  text-align: left;
+}
+table.announcements tbody td:first-child {
+  text-align: right;
+  vertical-align: top;
+}
+table.announcements tfoot td {
+  text-align: right;
+}
+
+
+
+table.announcements-list {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80% !important;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+table.announcements-list tr td, table.announcements-list tr th {
+  border: 1px solid rgb(63, 63, 63);
+  border: 1px solid rgba(0, 0, 0, .4);
+  -webkit-background-clip: padding-box; /* for Safari */
+  background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
+  padding: 3px;
+}
+table.announcements-list tr th {
+  font-weight: bold;
+  text-align: center;
+}
+table.announcements-list tbody {
+  text-align: left;
+  vertical-align: top;
+  background: rgb(250, 250, 250);
+  color: black;
+}
+table.announcements-list td:first-child, table.announcements-list th:first-child {
+  text-align: center;
+}
+table.announcements-list tbody tr td:nth-child(4) :first-child {
+  float: left;
+}
+table.announcements-list tbody tr td:nth-child(4) :last-child {
+  float: right;
+}
+.announcementForm input[type=text] {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+
+
+
 table.mod.config-editor {
   font-size: 9pt;
   width: 100%;

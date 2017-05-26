@@ -1,0 +1,33 @@
+
+<script src='main.js'></script>
+<script src='js/jquery.min.js'></script>
+<script src='js/mobile-style.js'></script>
+{% if token_json %}
+<script src='js/mod/announcements-list-edit.js'></script>
+{% endif %}
+<script src='js/mod/announcements-list.js'></script>
+
+
+
+
+
+
+{% if mod %}
+	<form action="?/announcements" method="post" class="announcementForm" id="announcementForm">
+		{% if token %}
+			<input type="hidden" name="token" value="{{ token }}">
+		{% endif %}
+		<table id="announcements-list" class="announcements-list modlog"></table>
+	</form>
+{% else %}
+	<table id="announcements-list" class="announcements-list modlog"></table>
+{% endif %}
+
+
+
+
+{% if token_json %}
+	<script>$(function(){ announcementlist_init("{{ token_json }}"); });</script>
+{% else %}
+	<script>$(function(){ announcementlist_init("{{ uri_json }}", true); });</script>
+{% endif %}
