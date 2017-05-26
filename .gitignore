@@ -30,7 +30,7 @@
 .DS_Store
 .htaccess
 thumbs.db
-Icon?
+# Icon?
 Thumbs.db
 *.patch
 *.diff

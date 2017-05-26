@@ -1,0 +1,12 @@
+Icons made by Xinh Studio
+http://xinh.studio/
+https://www.iconfinder.com/xinhstudio
+
+
+save.png - Save - https://www.iconfinder.com/icons/763360/dish_editor_floopy_guardar_save_storage_store_icon#size=16
+cancel_delete.png - Cancel/Delete - https://www.iconfinder.com/icons/763468/circle_close_delete_remove_stroke_trash_icon#size=16
+edit.png - Edit - https://www.iconfinder.com/icons/763338/draw_edit_editor_pen_pencil_stroke_tool_write_icon#size=16
+add.png - Add - https://www.iconfinder.com/icons/763486/add_circle_new_plus_sign_stroke_icon#size=16
+
+
+License: Free for commercial use
