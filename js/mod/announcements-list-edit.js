@@ -44,7 +44,7 @@ function EditAnnouncement(){
 	var tdAnnouncementText = tdAnnouncement.html();
 	var tdIDText = tdID.html();
 
-	tdAnnouncement.html("<input type='text' name='announcement' value='"+tdAnnouncement.html()+"'/><input type='hidden' name='edit_announcement'/>");
+	tdAnnouncement.html("<input type='text' name='announcement' value='"+tdAnnouncement.text()+"'/><input type='hidden' name='edit_announcement'/>");
 	tdButtons.html("<input type='image' src='/static/icons/save.png' alt='Save' title='Save' width='16' height='16' class='btnSave' onclick=\"return confirm('Are you sure you want to update Announcement?');\"/>" +
 		"<img src='/static/icons/cancel_delete.png' alt='Cancel' title='Cancel' width='16' height='16' class='btnCancel'/>");
 	tdID.html("<input type='hidden' name='id' value='"+tdID.html()+"'/>");
