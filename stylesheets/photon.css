@@ -277,7 +277,7 @@ div.banner, div.banner a {
 div.banner {
     background-color: inherit;
 }
-form table tr th {
+form table tr th, table.modlog tr th {
     background: none;
 }
 
