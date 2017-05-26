@@ -1,0 +1,196 @@
+/** TOMORROW, I'LL ...
+
+A cool dark skin by 7185.
+https://github.com/7185/8chan-tomorrow/
+
+**/
+body {
+  background:#1d1f21 none;
+  color:#C5C8C6
+}
+h1,div.subtitle {
+  color:#C5C8C6!important
+}
+a:link,a:visited,p.intro a.email span.name {
+  color:#81a2be
+}
+a:link:hover {
+  color:#5F89AC
+}
+a.post_no {
+  color:#C5C8C6
+}
+a.post_no:hover {
+  color:#5F89AC!important
+}
+div.banner {
+  background-color:#1d1f21
+}
+div.post.reply {
+  background-color:#282a2e;
+  border:1px solid #282a2e;
+  margin-bottom:2px;
+  margin-left:16px;
+  margin-top:2px
+}
+div.post.reply.highlighted {
+  background-color:#1d1d21;
+  border:1px solid #111
+}
+div.post.reply div.body a {
+  color:#81a2be
+}
+div.post.reply div.body a:hover {
+  color:#5F89AC
+}
+div.post-hover {
+  border:1px solid #000!important;
+  box-shadow:none!important
+}
+.theme-catalog div.thread:hover {
+  background-color:#1d1f21;
+  border-color:#111
+}
+p.intro span.subject {
+  color:#b294bb
+}
+p.intro span.name {
+  color:#C5C8C6
+}
+.quote {
+  color:#adbd68
+}
+span.heading {
+  color:#F20
+}
+form table tr th {
+  background:#282a2e;
+  border:1px solid #111;
+  color:#C5C8C6
+}
+div.ban h2 {
+  background:#282A2E;
+  color:inherit
+}
+div.ban {
+  border-color:#282A2E;
+}
+div.ban {
+  color:#C5C8C6;
+  background-color: inherit;
+}
+div.pages {
+  background:#1d1f21;
+  border-color:#1d1f21
+}
+div.pages a.selected {
+  color:#81a2be;
+  font-weight:700
+}
+div.boardlist {
+  background-color:#282a2e!important;
+  color:#C5C8C6
+}
+div.boardlist:nth-of-type(1) {
+  border-bottom:1px solid #111!important;
+  box-shadow:0 0 3px 0 #111
+}
+div.boardlist a {
+  color:#81a2be
+}
+hr {
+  background-color:#282a2e;
+  border:0;
+  height:1px
+}
+div#options_div {
+  background-color:#282a2e
+}
+div.options_tab_icon {
+  color:#AAA
+}
+div.options_tab_icon:hover {
+  background-color:#111
+}
+div.options_tab_icon.active {
+  color:#F20
+}
+div.blotter {
+  color:#F20
+}
+span.omitted {
+  color:#707070
+}
+p.intro a,span.omitted a {
+  text-decoration:none
+}
+form#quick-reply {
+  padding-right:1px;
+  border: 1px solid #111
+}
+span.capcode {
+  background-color: #000;
+  padding:2px 5px;
+  border-radius: 10px
+}
+div#watchlist,div#alert_div {
+  border:1px solid #111;
+  background-color:#282a2e
+}
+div#watchlist a,a.watchThread {
+  color:#81a2be;
+  text-decoration:none
+}
+div#watchlist a:hover,a.watchThread:hover {
+  color:#5F89AC
+}
+
+/* Remove the following parts if those annoy you */
+/* Keep small thumbnails in replies */
+.post.reply a:not([data-expanded="true"]) .post-image{
+  width:auto!important;
+  height:auto!important;
+  max-height:160px;
+  max-width:160px
+}
+
+.modlog tr:nth-child(even), .modlog th {
+	background-color: #282A2E;
+}
+
+
+
+.box {
+	background: #282a2e;
+	border-color: #111;
+	color: #C5C8C6;
+}
+.box-title {
+	background: #282a2e;
+	color: #C5C8C6;
+}
+
+table thead th {
+	background: #282a2e;
+	border-color: #111;
+	color: #C5C8C6;
+}
+table tbody tr:nth-of-type( even ) {
+	background-color: #282a2e;
+}
+
+table.board-list-table .board-uri .board-sfw {
+	color: #81a2be;
+}
+tbody.board-list-omitted td {
+	background: #282a2e;
+	border-color: #111;
+}
+
+table.board-list-table .board-tags .board-cell:hover {
+	background: #1d1f21;
+}
+table.board-list-table tr:nth-of-type( even ) .board-tags .board-cell {
+	background: #282a2e;
+}
+
