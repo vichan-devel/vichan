@@ -1,0 +1,384 @@
+/* SHADILAY
+ *A PEPE Skin by H0K4CH4N.
+ *https://hokachan.com/
+ *https://github.com/kekkin/H0K4CH4N
+ *Based on TOMORROW STYLE
+ *A cool dark skin by 7185.
+ *https://github.com/7185/8chan-tomorrow/
+ */
+
+ 
+ /* 
+ * GENERAL CSS
+ */
+ 
+body {
+  background:#1d1f21 none;
+  color:#C5C8C6;
+}
+div.banner {
+  background-color:#1d1f21;
+}
+hr {
+  background-color:#282a2e;
+  border:0;
+  height:1px;
+}
+div.blotter {
+  color:#F20;
+}
+tr.captcha{
+  color: #000;
+}
+span.quote {
+  color:#adbd68;
+}
+span.heading {
+  color:#F20;
+}
+span.capcode {
+  background-color: #000;
+  padding:2px 5px;
+  border-radius: 10px;
+}
+span.omitted {
+  color:#707070;
+}
+div.video-container img.post-image {
+  background-color:#000;
+  border-color:#fff;
+  border-width:2px;
+  border-style:none dotted none;
+  padding:0;
+}
+
+/* 
+ * HEADINGS
+ */
+
+h1,div.subtitle {
+  color:#C5C8C6!important;
+}
+h2 {
+  color: #94a93c;
+}
+
+/* 
+ * LINKS
+ */
+
+a:link {
+  color:#8cb14c;
+}
+a:visited {
+  color:#6B8E23;
+}
+a:hover {
+  color:#9ACD32;
+}
+a.post_no {
+  color:#C5C8C6;
+}
+a.post_no:hover {
+  color:#5F89AC!important;
+}
+
+/* 
+ * PARAGRAPHS
+ */
+ 
+p.intro span.subject {
+  color:#b0c700;
+}
+p.intro span.name {
+  color:#C5C8C6;
+}
+p.intro a,span.omitted a {
+  text-decoration:none;
+}
+
+/* 
+ * FORMS
+ */
+
+form {
+  margin-bottom: 4em;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+form table {
+  margin: auto;
+  background: #1d1f21;
+  padding: 5px;
+  box-shadow: 1px 1px 10px 10px rgba(0, 0, 0, 1) !important;
+  border-radius: 15px;
+}
+form table tr th {
+  background:#282a2e;
+  border:1px solid #111;
+  color:#C5C8C6;
+}
+form#quick-reply {
+  padding-right:1px;
+  border: 1px solid #111;
+}
+
+/*
+ * THREADS
+ */	
+ 
+.thread{
+  background: #282a2e!important;
+  padding: 1em 1em 0 1em !important;
+  border: none !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8) !important;
+  border-radius: 15px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}	
+
+/* 
+ * REPLIES
+ */
+ 
+div.post.reply {
+  background-color: #1d1f21;
+  border: 1px solid #1d1f21;
+  margin-bottom: 5px;
+  margin-left: 16px;
+  margin-top: 2px;
+  border-radius: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8) !important;
+}
+div.post.reply.highlighted {
+  background-color:#1d1d21;
+  border:1px solid #111;
+}
+div.post.reply div.body a {
+  color:#81a2be;
+}
+div.post.reply div.body a:hover {
+  color:#5F89AC;
+}
+div.post-hover {
+  border:1px solid #000!important;
+  box-shadow:none!important;
+}
+
+/* 
+ * PAGINATION
+ */
+
+div.pages {
+  background: #282a2e;
+  padding: 1em 1em 1em 1em !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8) !important;
+  border-radius: 15px;
+  border: none;
+}
+div.pages a.selected {
+  color:#81a2be;
+  font-weight:700;
+}
+div.pages.top {
+  display: block;
+  position: fixed;
+  top: 30px;
+  opacity: 0.8;
+  background: #282a2e;
+  padding: 1em 1em 1em 1em !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8) !important;
+  border-radius: 15px;
+}
+
+/* 
+ * BOARDLIST
+ */
+ 
+div.boardlist {
+  background-color:#282a2e!important;
+  color:#C5C8C6;
+}
+div.boardlist:nth-of-type(1) {
+  border-bottom:1px solid #111!important;
+  box-shadow:0 0 3px 0 #111;
+}
+div.boardlist a:link {
+  color:#8cb14c;
+}
+div.boardlist a:visited {
+  color:#6B8E23;
+}
+div.boardlist a:hover {
+  color:#9ACD32;
+}
+div.boardlist.bottom {
+  margin-top: 12px;
+  clear: both;
+  padding: 5px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
+  border-top: 1px solid #111!important;
+}
+
+/* 
+ * OPTIONS
+ */
+ 
+div#options_div {
+  background-color:#282a2e;
+}
+div.options_tab_icon {
+  color:#AAA;
+}
+div.options_tab_icon:hover {
+  background-color:#111;
+}
+div.options_tab_icon.active {
+  color:#F20;
+}
+
+/* 
+ * WATCHLIST
+ */
+div#watchlist,div#alert_div {
+  border:1px solid #111;
+  background-color:#282a2e;
+}
+div#watchlist a,a.watchThread {
+  color:#81a2be;
+  text-decoration:none;
+}
+div#watchlist a:hover,a.watchThread:hover {
+  color:#5F89AC;
+}
+
+/* 
+ * SEARCH CSS  
+ */
+
+div.ban { 
+  margin-left: auto!important;
+  margin-right: auto!important;
+  max-width: 650px!important;
+  background: #282a2e!important;
+  overflow: auto!important;
+  border-radius: 25px!important;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 1)!important;
+  border: none!important;
+}
+	
+div.ban h2 {
+  background: #282a2e!important;
+  color: #fff!important;
+  padding: 3px 7px!important;
+  font-size: 12pt!important;
+  text-align: center!important;
+}
+div.ban p {
+  color: #81a2b9!important;
+  font-size: 9pt!important;
+	} 		
+		
+/*
+ * CATALOG THREAD LAYOUT
+ * Activate the code below if you want to show threads like a grid. 
+ */
+ 
+/*
+.thread{
+ display: inline-block;
+ vertical-align: top;
+ text-align: center;
+ font-weight: normal;
+ margin-top: 2px;
+ height: auto;
+ max-height: 250px;
+ width: 200px;
+ position: relative;
+ font-size: 11px;
+ margin: 3px;
+ border-radius: 15px;
+ overflow:hidden; 
+}
+.file.multifile.post-image{
+   width:25px;		
+}
+.post-image {
+  display: block;
+  float: none !important;
+  margin: 5px 20px 10px 20px;
+  border: none;
+  max-height: 50px;
+  max-width: 50px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.post.reply a:not([data-expanded="true"]) .post-image {
+  max-height: 50px;
+  max-width: 50px;
+}
+iframe {
+    max-width: 150px!important;
+    max-height: 100px!important;
+}
+.file:not(.multifile) .post-image {
+  float: none;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 150px;
+  max-height: 150px;
+}
+p.fileinfo {
+    display: none!important;
+}
+.file:not(.multifile) {
+  float: none;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 155px;
+}
+.thread:hover {
+	overflow-y: scroll;
+	}
+*/
+
+/* 
+ *IMPORTANT 
+ *This conflicts with way too many scripts etc... and benefits are minor when you can do the same with a hover effect. 
+ *If you enable this be warned that it conflicts with infinite scroll, etc...
+ *I could fix it but there is a moment that a modification like this is too much trouble for what it's worth.
+ *INSTRUCTIONS
+ *If you want to enable scroll when on click you need to comment out the .thread and .thread:hover code above and activate the code below.
+ *You also need to add these lines in /public_html/templates/post_thread.html :
+ *<input type="checkbox" id="thread_{{ post.id }}" data-board="{{ board.uri }}" style="display:none;"/>
+ *<label id="thread-label" for="thread_{{ post.id }}" data-board="{{ board.uri }}">
+ *<div class="thread" id="thread_{{ post.id }}" data-board="{{ board.uri }}">
+ * ...... blah blah bunch of code here. 
+ *</div>
+ *</label>
+ */
+
+ /*label#thread-label {
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  font-weight: normal;
+  margin-top: 2px;
+  height: auto;
+  max-height: 250px;
+  width: 200px;
+  position: relative;
+  font-size: 11px;
+  margin: 3px;
+}
+
+#thread_{{ post.id }} data-board={{ board.uri }}:checked + label#thread-label  {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  width: 210px;
+}*/
+
+
