@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: May 17, 2017 at 09:31 PM
+-- Generation Time: May 26, 2017 at 07:40 PM
 -- Server version: 5.7.18-0ubuntu0.16.04.1
--- PHP Version: 7.0.15-0ubuntu0.16.04.4
+-- PHP Version: 7.0.18-0ubuntu0.16.04.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -16,6 +16,19 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `announcements`
+--
+
+CREATE TABLE IF NOT EXISTS `announcements` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `creator` int(10) NOT NULL,
+  `date` int(10) NOT NULL,
+  `text` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -24,7 +37,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `antispam` (
-  `board` varchar(58) CHARACTER SET utf8mb4 NOT NULL,
+  `board` varchar(58) NOT NULL,
   `thread` int(11) DEFAULT NULL,
   `hash` char(40) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
   `created` int(11) NOT NULL,
@@ -43,8 +56,8 @@ CREATE TABLE IF NOT EXISTS `antispam` (
 
 CREATE TABLE IF NOT EXISTS `bans` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `ipstart` varbinary(61) DEFAULT NULL,
-  `ipend` varchar(61) CHARACTER SET ascii DEFAULT NULL,
+  `ipstart` varbinary(61) NOT NULL,
+  `ipend` varchar(61) DEFAULT NULL,
   `cookie` varchar(40) CHARACTER SET ascii NOT NULL,
   `cookiebanned` tinyint(1) NOT NULL,
   `created` int(10) UNSIGNED NOT NULL,
@@ -99,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `ban_appeals` (
 --
 
 CREATE TABLE IF NOT EXISTS `boards` (
-  `uri` varchar(58) CHARACTER SET utf8mb4 NOT NULL,
+  `uri` varchar(58) NOT NULL,
   `title` tinytext NOT NULL,
   `subtitle` tinytext,
   PRIMARY KEY (`uri`)
@@ -119,9 +132,9 @@ INSERT INTO `boards` (`uri`, `title`, `subtitle`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `cites` (
-  `board` varchar(58) CHARACTER SET utf8mb4 NOT NULL,
+  `board` varchar(58) NOT NULL,
   `post` int(11) NOT NULL,
-  `target_board` varchar(58) CHARACTER SET utf8mb4 NOT NULL,
+  `target_board` varchar(58) NOT NULL,
   `target` int(11) NOT NULL,
   KEY `target` (`target_board`,`target`),
   KEY `post` (`board`,`post`)
@@ -147,7 +160,7 @@ CREATE TABLE IF NOT EXISTS `custom_geoip` (
 
 CREATE TABLE IF NOT EXISTS `filehashes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `board` varchar(58) CHARACTER SET utf8mb4 NOT NULL,
+  `board` varchar(58) NOT NULL,
   `thread` int(11) NOT NULL,
   `post` int(11) NOT NULL,
   `filehash` text CHARACTER SET ascii NOT NULL,
@@ -165,7 +178,7 @@ CREATE TABLE IF NOT EXISTS `filehashes` (
 CREATE TABLE IF NOT EXISTS `flood` (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `ip` varchar(61) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
-  `board` varchar(58) CHARACTER SET utf8mb4 NOT NULL,
+  `board` varchar(58) NOT NULL,
   `time` int(11) NOT NULL,
   `posthash` char(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
   `filehash` char(32) CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL,
@@ -202,7 +215,7 @@ CREATE TABLE IF NOT EXISTS `ip_notes` (
 CREATE TABLE IF NOT EXISTS `modlogs` (
   `mod` int(11) NOT NULL,
   `ip` varchar(61) CHARACTER SET ascii NOT NULL,
-  `board` varchar(58) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `board` varchar(58) DEFAULT NULL,
   `time` int(11) NOT NULL,
   `text` text NOT NULL,
   KEY `time` (`time`),
@@ -221,7 +234,7 @@ CREATE TABLE IF NOT EXISTS `mods` (
   `password` varchar(256) CHARACTER SET ascii NOT NULL COMMENT 'SHA256',
   `version` varchar(64) CHARACTER SET ascii NOT NULL,
   `type` smallint(2) NOT NULL,
-  `boards` text CHARACTER SET utf8mb4 NOT NULL,
+  `boards` text NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`,`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
@@ -269,11 +282,11 @@ CREATE TABLE IF NOT EXISTS `news` (
 
 CREATE TABLE IF NOT EXISTS `nicenotices` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `ip` varchar(61) CHARACTER SET utf8mb4 NOT NULL,
+  `ip` varchar(61) NOT NULL,
   `created` int(10) UNSIGNED NOT NULL,
-  `board` varchar(58) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `board` varchar(58) DEFAULT NULL,
   `creator` int(10) NOT NULL,
-  `reason` text CHARACTER SET utf8mb4,
+  `reason` text,
   `seen` tinyint(1) NOT NULL,
   `post` blob,
   PRIMARY KEY (`id`),
@@ -322,8 +335,8 @@ CREATE TABLE IF NOT EXISTS `noticeboard` (
 
 CREATE TABLE IF NOT EXISTS `pages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `board` varchar(58) CHARACTER SET utf8mb4 DEFAULT NULL,
-  `name` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `board` varchar(58) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `type` varchar(255) DEFAULT NULL,
   `content` text,
@@ -358,7 +371,7 @@ CREATE TABLE IF NOT EXISTS `reports` (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `time` int(11) NOT NULL,
   `ip` varchar(61) CHARACTER SET ascii NOT NULL,
-  `board` varchar(58) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `board` varchar(58) DEFAULT NULL,
   `post` int(11) NOT NULL,
   `reason` text NOT NULL,
   PRIMARY KEY (`id`)
@@ -382,7 +395,7 @@ CREATE TABLE IF NOT EXISTS `robot` (
 --
 
 CREATE TABLE IF NOT EXISTS `search_queries` (
-  `ip` varchar(61) CHARACTER SET utf8mb4 NOT NULL,
+  `ip` varchar(61) NOT NULL,
   `time` int(11) NOT NULL,
   `query` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -408,11 +421,11 @@ CREATE TABLE IF NOT EXISTS `theme_settings` (
 
 CREATE TABLE IF NOT EXISTS `warnings` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `ip` varchar(61) CHARACTER SET utf8mb4 NOT NULL,
+  `ip` varchar(61) NOT NULL,
   `created` int(10) UNSIGNED NOT NULL,
-  `board` varchar(58) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `board` varchar(58) DEFAULT NULL,
   `creator` int(10) NOT NULL,
-  `reason` text CHARACTER SET utf8mb4,
+  `reason` text,
   `seen` tinyint(1) NOT NULL,
   `post` blob,
   PRIMARY KEY (`id`),
