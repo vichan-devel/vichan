@@ -12,19 +12,18 @@ improvements.
 
 Requirements
 ------------
-1.	PHP >= 5.4 (we still try to keep compatibility with php 5.3 as much as possible)
-        PHP 7.0 is explicitly supported.
-2.	MySQL/MariaDB server >= 5.6 (InnoDB)
+1.	PHP >= 5.6
+2.	MySQL >= 5.6 (MariaDB Untested)
 3.	[mbstring](http://www.php.net/manual/en/mbstring.installation.php) 
 4.	[PHP GD](http://www.php.net/manual/en/intro.image.php)
 5.	[PHP PDO](http://www.php.net/manual/en/intro.pdo.php)
 
-We try to make sure vichan is compatible with all major web servers and
-operating systems. vichan does not include an Apache ```.htaccess``` file nor does
+We try to make sure NPFchan is compatible with all major web servers and
+operating systems. NPFchan does not include an Apache ```.htaccess``` file nor does
 it need one.
 
 ### Recommended
-1.	MySQL/MariaDB server >= 5.5.3
+1.	MySQL >= 5.7
 2.	ImageMagick (command-line ImageMagick or GraphicsMagick preferred).
 3.	[APC (Alternative PHP Cache)](http://php.net/manual/en/book.apc.php),
 	[XCache](http://xcache.lighttpd.net/) or
@@ -32,23 +31,21 @@ it need one.
 
 Contributing
 ------------
-You can contribute to vichan by:
+You can contribute to NPFchan by:
 *	Developing patches/improvements/translations and using GitHub to submit pull requests
 *	Providing feedback and suggestions
 *	Writing/editing documentation
 
-If you need help developing a patch, please join our IRC channel.
-
 Installation
 -------------
-1.	Download and extract vichan to your web directory or get the latest
+1.	Download and extract NPFchan to your web directory or get the latest
 	development version with:
 
-        git clone git://github.com/vichan-devel/vichan.git
+        git clone git://github.com/fallenPineapple/NPFchan.git
 	
 2.	Navigate to ```install.php``` in your web browser and follow the
 	prompts.
-3.	vichan should now be installed. Log in to ```mod.php``` with the
+3.	NPFchan should now be installed. Log in to ```mod.php``` with the
 	default username and password combination: **admin / password**.
 
 Please remember to change the administrator account password.
@@ -100,12 +97,6 @@ You actually don't need these tools for your imageboard functioning, they are ai
 at the power users. You won't be able to run these from shared hosting accounts
 (i.e. all free web servers).
 
-Localisation
-------------
-Wanting to have vichan in your language? You can contribute your translations at this URL:
-
-https://www.transifex.com/projects/p/tinyboard-vichan-devel/
-
 Oekaki
 ------
 NPFchan makes use of [wPaint](https://github.com/websanova/wPaint) for oekaki.
@@ -116,9 +107,9 @@ WebM support
 ------------
 Read `inc/lib/webm/README.md` for information about enabling webm.
 
-vichan API
+NPFchan API
 ----------
-vichan provides by default a 4chan-compatible JSON API. For documentation on this, see:
+NPFchan provides by default a 4chan-compatible JSON API. For documentation on this, see:
 https://github.com/vichan-devel/vichan-API/ .
 
 License
