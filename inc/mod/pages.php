@@ -813,7 +813,7 @@ function mod_ip_remove_forcedflag($ip) {
 		error("Invalid IP address.");
 
 	$query = prepare('SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip');
-	$query->bindValue(':ip', ipv4to6($ip));
+	$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? $ip : ipv4to6($ip));
 	$query->execute() or error(db_error($query));
 	$country_id = $query->fetch(PDO::FETCH_ASSOC);
 	$country_id = $country_id['country'];
