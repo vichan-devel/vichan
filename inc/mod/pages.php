@@ -813,7 +813,7 @@ function mod_ip_remove_forcedflag($ip) {
 		error("Invalid IP address.");
 
 	$query = prepare('SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip');
-	$query->bindValue(':ip', ipv4to6($ip));
+	$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? $ip : ipv4to6($ip));
 	$query->execute() or error(db_error($query));
 	$country_id = $query->fetch(PDO::FETCH_ASSOC);
 	$country_id = $country_id['country'];
@@ -2020,16 +2020,23 @@ function mod_delete($board, $post) {
 	if (!hasPermission($config['mod']['delete'], $board))
 		error($config['error']['noaccess']);
 	
-	// Delete post
-	deletePost($post);
+	// Delete post (get thread id)
+	$thread_id = deletePost($post);
 	// Record the action
 	modLog("Deleted post #{$post}");
 	// Rebuild board
 	buildIndex();
 	// Rebuild themes
 	rebuildThemes('post-delete', $board);
+
 	// Redirect
-	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
+	if($thread_id !== true) {
+		// If we got a thread id number as response reload to thread
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['dir']['res'] . sprintf($config['file_page'], $thread_id), true, $config['redirect_http']);
+	} else {
+		// Reload to board index
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
+	}
 }
 
 function mod_deletefile($board, $post, $file) {

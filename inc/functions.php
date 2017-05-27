@@ -1627,6 +1627,10 @@ function deletePost($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
 		buildIndex();
 	}
 
+	// If Thread ID is set return it (deleted post within thread) this will pe a positive number and thus viewed as true for legacy purposes
+	if(isset($thread_id))
+		return $thread_id;
+
 	return true;
 }
 
