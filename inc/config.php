@@ -998,7 +998,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['announcements']['page'] = true;
 
 	// Same as above, but used for Global Announcements pages and lists.
-	$config['announcements']['date_format'] = '%m/%d/%Y';		// Do NOT change this (can result in undesired missmatch to js script)
+	$config['announcements']['date_format'] = '%m/%d/%y';
 
 	// Filenames for json files
 	$config['announcements']['file_json'] = "announcements.json";
