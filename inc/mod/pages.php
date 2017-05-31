@@ -1571,7 +1571,7 @@ function mod_move_reply($originBoard, $postID) {
 		// build index
 		buildIndex();
 		// build new thread
-		buildThread($newID);
+		buildThread($post['op'] ? $newID : $post['thread']);
 		
 		// trigger themes
 		rebuildThemes('post', $targetBoard);
@@ -1589,7 +1589,7 @@ function mod_move_reply($originBoard, $postID) {
 		openBoard($targetBoard);
 
 		// Find new thread on our target board
-		$query = prepare(sprintf('SELECT thread FROM ``posts_%s`` WHERE `id` = :id', $targetBoard));
+		$query = prepare(sprintf('SELECT thread, id FROM ``posts_%s`` WHERE `id` = :id', $targetBoard));
 		$query->bindValue(':id', $newID);
 		$query->execute() or error(db_error($query));
 		$post = $query->fetch(PDO::FETCH_ASSOC);
