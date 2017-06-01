@@ -123,7 +123,8 @@ class GeoIP {
 	    "VU" => 234, "WF" => 235, "WS" => 236, "YE" => 237, "YT" => 238, "RS" => 239,
 	    "ZA" => 240, "ZM" => 241, "ME" => 242, "ZW" => 243, "A1" => 244, "A2" => 245,
 	    "O1" => 246, "AX" => 247, "GG" => 248, "IM" => 249, "JE" => 250, "BL" => 251,
-	    "MF" => 252, "BQ" => 253, "SS" => 254, "GX" => 255, "GAY" => 256
+	    "MF" => 252, "BQ" => 253, "SS" => 254, "GX" => 255, "GAY" => 256, "IRO" => 257, "SUR" => 258,
+		"COM" => 259, "ROH" => 260, "CRU" => 261, "REI" => 262
 		);
     var $GEOIP_COUNTRY_CODES = array(
 	    "","AP","EU","AD","AE","AF","AG","AI","AL","AM","CW",
@@ -151,7 +152,8 @@ class GeoIP {
 	    "TZ","UA","UG","UM","US","UY","UZ","VA","VC","VE",
 	    "VG","VI","VN","VU","WF","WS","YE","YT","RS","ZA",
 	    "ZM","ME","ZW","A1","A2","O1","AX","GG","IM","JE",
-	    "BL","MF", "BQ", "SS", "O1", "GX", "GAY" );
+	    "BL","MF", "BQ", "SS", "O1", "GX", "GAY", "IRO", "SUR",
+		"COM", "ROH", "CRU", "REI" );
     var $GEOIP_COUNTRY_CODES3 = array(
 	    "","AP","EU","AND","ARE","AFG","ATG","AIA","ALB","ARM","CUW",
 	    "AGO","ATA","ARG","ASM","AUT","AUS","ABW","AZE","BIH","BRB",
@@ -178,7 +180,8 @@ class GeoIP {
 	    "TZA","UKR","UGA","UMI","USA","URY","UZB","VAT","VCT","VEN",
 	    "VGB","VIR","VNM","VUT","WLF","WSM","YEM","MYT","SRB","ZAF",
 	    "ZMB","MNE","ZWE","A1","A2","O1","ALA","GGY","IMN","JEY",
-	    "BLM","MAF", "BES", "SSD", "O1", "GYP", "GAY"
+	    "BLM","MAF", "BES", "SSD", "O1", "GYP", "GAY", "IRO", "SUR",
+		"COM", "ROH", "CRU", "REI"
 		);
     var $GEOIP_COUNTRY_NAMES = array(
 	    "","Asia/Pacific Region","Europe","Andorra","United Arab Emirates","Afghanistan","Antigua and Barbuda","Anguilla","Albania","Armenia","Curacao",
@@ -207,7 +210,8 @@ class GeoIP {
 	    "Virgin Islands, British","Virgin Islands, U.S.","Vietnam","Vanuatu","Wallis and Futuna","Samoa","Yemen","Mayotte","Serbia","South Africa",
 	    "Zambia","Montenegro","Zimbabwe","Anonymous Proxy","Satellite Provider","Other","Aland Islands","Guernsey","Isle of Man","Jersey",
 	    "Saint Barthelemy","Saint Martin", "Bonaire, Saint Eustatius and Saba",
-	    "South Sudan", "Other", "Gypsy", "Gay"
+	    "South Sudan", "Other", "Gypsy", "Gay", "Iron Guard", "Surrender Monkey", 
+		"Fucking Commie", "Rhodesia", "Crusader", "Reich"
 		);
 
     var $GEOIP_CONTINENT_CODES = array(
@@ -236,7 +240,8 @@ class GeoIP {
 	    "AF","EU","AF","OC","NA","SA","AS","EU","NA","SA",
 	    "NA","NA","AS","OC","OC","OC","AS","AF","EU","AF",
 	    "AF","EU","AF","--","--","--","EU","EU","EU","EU",
-	    "NA","NA","NA", "AF", "--", "EU", "--"
+	    "NA","NA","NA", "AF", "--", "EU", "--", "--", "EU",
+		"--", "AS", "--", "--"
 		);
 
 }

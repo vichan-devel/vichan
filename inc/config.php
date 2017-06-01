@@ -1704,11 +1704,16 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['mod']['forcedflag'] = MOD;
 	$config['mod']['forcedflag_countries'] = array(
 		38 		=>	'Canada',
-		102	=>	'Israel',
+		102		=>	'Israel',
 		256 	=>	'Gypsy',
-		257 	=>	'Gay'
+		257 	=>	'Gay',
+        258     =>  'Iron Guard',
+        259     =>  'Surrender Monkey',
+        260     =>  'Communist',
+        261     =>  'Rhodesia',
+        262     =>  'Crusader',
+        263     =>  'Reich'
 	);
-
 	/* Administration */
 	// View the report queue
 	$config['mod']['reports'] = JANITOR;
