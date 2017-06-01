@@ -167,3 +167,5 @@ switch($step)
 echo Element('page.html', $page);
 
 ?>
+<!-- There is probably a much better way to do this, but eh. -->
+<link rel="stylesheet" type="text/css" href="stylesheets/style.css" />
