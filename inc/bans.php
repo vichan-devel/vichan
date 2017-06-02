@@ -127,7 +127,7 @@ class Bans {
 		return array($ipstart, $ipend);
 	}
 	
-	static public function find($ip, $board = false, $get_mod_info = false) {
+	static public function find($ip, $board = false, $get_mod_info = false, $hashed_ip = false) {
 		global $config;
 		
 		$query = prepare('SELECT ``bans``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``bans``
@@ -140,7 +140,7 @@ class Bans {
 		if ($board !== false)
 			$query->bindValue(':board', $board, PDO::PARAM_STR);
 		
-		$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($ip) : inet_pton($ip));
+		$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? ($hashed_ip?$ip:get_ip_hash($ip)) : inet_pton($ip));
 		$query->execute() or error(db_error($query));
 		
 		$ban_list = array();
@@ -340,7 +340,7 @@ class Bans {
 	}
 	
 	static public function delete($ban_id, $modlog = false, $boards = false, $dont_rebuild = false) {
-		global $config;
+		global $config, $mod;
 
 		if ($boards && $boards[0] == '*') $boards = false;
 
@@ -352,7 +352,7 @@ class Bans {
 			}
 
 			if ($boards !== false && !in_array($ban['board'], $boards))
-		                error($config['error']['noaccess']);
+		        error($config['error']['noaccess']);
 			
 			$mask = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
 			

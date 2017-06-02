@@ -90,12 +90,14 @@ $(window).load(function(){
 			<th>{% trans 'Board' %}</th>
 			<td>
 				<ul style="list-style:none;padding:2px 5px">
-					<li>
-						<input type="radio" name="board" value="*" id="ban-allboards" checked> 
-						<label style="display:inline" for="ban-allboards">
-							<em>{% trans 'all boards' %}</em>
-						</label>
-					</li>
+					{% if mod|hasPermission(config.mod.ban_all_boards) %}
+						<li>
+							<input type="radio" name="board" value="*" id="ban-allboards" checked> 
+							<label style="display:inline" for="ban-allboards">
+								<em>{% trans 'all boards' %}</em>
+							</label>
+						</li>
+					{% endif %}
 					
 					{% for board in boards %}
 						<li>

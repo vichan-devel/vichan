@@ -1640,7 +1640,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 
 	/* Post Controls */					
     // View IP addresses
-    $config['mod']['show_ip'] = DEVELOPER;
+    $config['mod']['show_ip'] = DEVELOPER;	
     // Delete a post
     $config['mod']['delete'] = MOD;
     // Deliver Bantz to User and Post
@@ -1656,10 +1656,14 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
     $config['mod']['warning'] = JANITOR;
     // Ban a user for a post
     $config['mod']['ban'] = MOD;
+    // Ban a user for a post on all boards even if mod isnt moderator of all boards
+    $config['mod']['ban_all_boards'] = MOD;
     // Ban and delete (one click; instant)
     $config['mod']['bandelete'] = MOD;
     // Remove bans
     $config['mod']['unban'] = JANITOR;
+    // Remove a Ban on all boards even if mod isnt moderator of all boards
+    $config['mod']['unban_all_boards'] = JANITOR;
     // Spoiler image
     $config['mod']['spoilerimage'] = MOD;
 	// Ban cookies for posting
@@ -1737,7 +1741,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Show expired bans in the ban list (they are kept in cache until the culprit returns)
 	$config['mod']['view_banexpired'] = true;
 	// View ban for IP address
-	$config['mod']['view_ban'] = $config['mod']['view_banlist'];
+	$config['mod']['view_ban'] = $config['mod']['unban'];
 	// View IP address notes
 	$config['mod']['view_notes'] = JANITOR;
 	// Create notes
@@ -1804,7 +1808,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['mod']['edit_config'] = ADMIN;
 	// View ban appeals
 	$config['mod']['view_ban_appeals'] = MOD;
-	// Accept and deny ban appeals
+	// Accept and deny ban appeals (this will be valid for all borads regardless of mod board setting)
 	$config['mod']['ban_appeals'] = MOD;
 	// View the recent posts page
 	$config['mod']['recent'] = MOD;
