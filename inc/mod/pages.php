@@ -956,7 +956,10 @@ function mod_page_ip($ip) {
 	$args['token'] = make_secure_link_token('ban');
 	
 	if (hasPermission($config['mod']['view_ban'])) {
-		$args['bans'] = Bans::find($ip, false, true, true);
+		if(hasPermission($config['mod']['unban_all_boards']))
+			$args['bans'] = Bans::find($ip, false, true, true);
+		else
+			$args['bans'] = Bans::find($ip, $mod['boards'], true, true);
 	}
 	
 	if (hasPermission($config['mod']['view_notes'])) {

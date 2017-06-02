@@ -130,16 +130,34 @@ class Bans {
 	static public function find($ip, $board = false, $get_mod_info = false, $hashed_ip = false) {
 		global $config;
 		
+		// Build string for array of boards to check for bans on
+		$board_string = '(`board` IS NULL OR `board` = :board) AND';
+		if($board !== false && is_array($board)){
+			$board_string = '(';
+			for($i=0; $i<count($board); $i++)
+				$board_string .= '`board` = :board_' . (int)$i . ' OR ';
+			$board_string = substr($board_string, 0, -4);
+			$board_string .= ') AND';
+		}
+
 		$query = prepare('SELECT ``bans``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``bans``
 			' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
 			WHERE
-			(' . ($board !== false ? '(`board` IS NULL OR `board` = :board) AND' : '') . '
+			(' . ($board !== false ? $board_string : '') . '
 			' . ($config['bcrypt_ip_addresses'] ? '(`ipstart` = :ip))' : '(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)))') . ' 
 			ORDER BY `expires` IS NULL, `expires` DESC');
 		
-		if ($board !== false)
-			$query->bindValue(':board', $board, PDO::PARAM_STR);
-		
+		if ($board !== false){
+			if(is_array($board))
+			{
+				// Build bind to query array of boards to check for bans on
+				for($i=0; $i<count($board); $i++)
+					$query->bindValue(':board_' . (int)$i, $board[$i], PDO::PARAM_STR);
+			} else {
+				$query->bindValue(':board', $board, PDO::PARAM_STR);
+			}
+		}
+
 		$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? ($hashed_ip?$ip:get_ip_hash($ip)) : inet_pton($ip));
 		$query->execute() or error(db_error($query));
 		
