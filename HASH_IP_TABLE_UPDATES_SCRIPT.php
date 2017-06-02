@@ -26,7 +26,7 @@ switch($step)
 {
     default:
     case 0:
-        $page['body'] .= '<p style="text-align:center">You are about to update the entries in the database to hashed version.<br/>THIS IS CAH NOT BE UNDONE!<br/>If any error occure during update and you run the update again some ip data might be wrong in db and not recoverable.</p>';
+        $page['body'] = '<p style="text-align:center">You are about to update the entries in the database to hashed version.<br/>THIS IS CAH NOT BE UNDONE!<br/>If any error occure during update and you run the update again some ip data might be wrong in db and not recoverable.</p>';
         $page['body'] .= '<p style="text-align:center"><a href="?step=2">Click here to update database entries. WARNING: UPDATE IS IRREVERSABLE.</a></p>';
     break;
 	case 2:
