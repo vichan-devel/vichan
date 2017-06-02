@@ -866,7 +866,10 @@ function mod_page_ip($ip) {
 		if (!hasPermission($config['mod']['unban']))
 			error($config['error']['noaccess']);
 		
-		Bans::delete($_POST['ban_id'], true, $mod['boards']);
+		if(hasPermission($config['mod']['unban_all_boards']))
+			Bans::delete($_POST['ban_id'], true, false);
+		else
+			Bans::delete($_POST['ban_id'], true, $mod['boards']);
 		
 		header('Location: ?/IP/' . $ip . '#bans', true, $config['redirect_http']);
 		return;
@@ -953,7 +956,10 @@ function mod_page_ip($ip) {
 	$args['token'] = make_secure_link_token('ban');
 	
 	if (hasPermission($config['mod']['view_ban'])) {
-		$args['bans'] = Bans::find($ip, false, true);
+		if(hasPermission($config['mod']['unban_all_boards']))
+			$args['bans'] = Bans::find($ip, false, true, true);
+		else
+			$args['bans'] = Bans::find($ip, $mod['boards'], true, true);
 	}
 	
 	if (hasPermission($config['mod']['view_notes'])) {
@@ -1247,6 +1253,9 @@ function mod_ban() {
 	}
 	
 	require_once 'inc/mod/ban.php';
+
+	if ($_POST['board'] == '*' && !hasPermission($config['mod']['ban_all_boards']))
+		error($config['error']['noaccess']);
 	
 	Bans::new_ban($_POST['ip'], $_POST['uuser_cookie'], $_POST['reason'], $_POST['ban_length'], $_POST['board'] == '*' ? false : $_POST['board']);
 
@@ -1276,7 +1285,10 @@ function mod_bans() {
 			error(sprintf($config['error']['toomanyunban'], $config['mod']['unban_limit'], count($unban)));
 		
 		foreach ($unban as $id) {
-			Bans::delete($id, true, $mod['boards'], true);
+			if(hasPermission($config['mod']['unban_all_boards']))
+				Bans::delete($_POST['ban_id'], true, false, true);
+			else
+				Bans::delete($_POST['ban_id'], true, $mod['boards'], true);
 		}
                 rebuildThemes('bans');
 		header('Location: ?/bans', true, $config['redirect_http']);
@@ -2019,7 +2031,7 @@ function mod_delete($board, $post) {
 	
 	if (!hasPermission($config['mod']['delete'], $board))
 		error($config['error']['noaccess']);
-	
+
 	// Delete post (get thread id)
 	$thread_id = deletePost($post);
 	// Record the action
