@@ -227,17 +227,23 @@ div.boardlist.bottom {
  */
  
 div#options_div {
-  background-color:#282a2e;
+  background-color:#141517;
+  border: #8CB14C 2px solid;
+  border-radius: 5px;
 }
 div.options_tab_icon {
-  color:#AAA;
+  color:#8CB14C;
 }
 div.options_tab_icon:hover {
-  background-color:#111;
+  background-color:#141517;
 }
 div.options_tab_icon.active {
-  color:#F20;
+  color:#8CB14C;
 }
+#options_tablist {
+  border: #8CB14C 1px solid;
+}
+
 
 /* 
  * WATCHLIST
