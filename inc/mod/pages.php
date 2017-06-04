@@ -2174,7 +2174,7 @@ function mod_deletebyip($boardName, $post, $global = false) {
 	$query = preg_replace('/UNION ALL $/', '', $query);
 	
 	$query = prepare($query);
-	$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($ip) : $ip);
+	$query->bindValue(':ip', $ip);
 	$query->execute() or error(db_error($query));
 	
 	if ($query->rowCount() < 1)
