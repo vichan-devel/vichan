@@ -23,6 +23,7 @@ require_once 'inc/lock.php';
 require_once 'inc/queue.php';
 require_once 'inc/polyfill.php';
 require_once 'inc/announcements.php';
+require_once 'inc/archive.php';
 @include_once 'inc/lib/parsedown/Parsedown.php'; // fail silently, this isn't a critical piece of code
 
 if (!extension_loaded('gettext')) {
@@ -571,6 +572,33 @@ function setupBoard($array) {
 	if (!file_exists($board['dir'] . $config['dir']['res']))
 		@mkdir($board['dir'] . $config['dir']['res'], 0777)
 			or error("Couldn't create " . $board['dir'] . $config['dir']['img'] . ". Check permissions.", true);
+
+	// Create Archive Folders
+	if (!file_exists($board['dir'] . $config['dir']['archive']))
+		@mkdir($board['dir'] . $config['dir']['archive'], 0777)
+			or error("Couldn't create " . $board['dir'] . $config['dir']['archive'] . ". Check permissions.", true);
+	if (!file_exists($board['dir'] . $config['dir']['archive'] . $config['dir']['img']))
+		@mkdir($board['dir'] . $config['dir']['archive'] . $config['dir']['img'], 0777)
+			or error("Couldn't create " . $board['dir'] . $config['dir']['archive'] . $config['dir']['img'] . ". Check permissions.", true);
+	if (!file_exists($board['dir'] . $config['dir']['archive'] . $config['dir']['thumb']))
+		@mkdir($board['dir'] . $config['dir']['archive'] . $config['dir']['thumb'], 0777)
+			or error("Couldn't create " . $board['dir'] . $config['dir']['archive'] . $config['dir']['img'] . ". Check permissions.", true);
+	if (!file_exists($board['dir'] . $config['dir']['archive'] . $config['dir']['res']))
+		@mkdir($board['dir'] . $config['dir']['archive'] . $config['dir']['res'], 0777)
+			or error("Couldn't create " . $board['dir'] . $config['dir']['archive'] . $config['dir']['img'] . ". Check permissions.", true);
+	// Create Featured threads Folders
+	if (!file_exists($board['dir'] . $config['dir']['featured']))
+		@mkdir($board['dir'] . $config['dir']['featured'], 0777)
+			or error("Couldn't create " . $board['dir'] . $config['dir']['featured'] . ". Check permissions.", true);
+	if (!file_exists($board['dir'] . $config['dir']['featured'] . $config['dir']['img']))
+		@mkdir($board['dir'] . $config['dir']['featured'] . $config['dir']['img'], 0777)
+			or error("Couldn't create " . $board['dir'] . $config['dir']['featured'] . $config['dir']['img'] . ". Check permissions.", true);
+	if (!file_exists($board['dir'] . $config['dir']['featured'] . $config['dir']['thumb']))
+		@mkdir($board['dir'] . $config['dir']['featured'] . $config['dir']['thumb'], 0777)
+			or error("Couldn't create " . $board['dir'] . $config['dir']['featured'] . $config['dir']['img'] . ". Check permissions.", true);
+	if (!file_exists($board['dir'] . $config['dir']['featured'] . $config['dir']['res']))
+		@mkdir($board['dir'] . $config['dir']['featured'] . $config['dir']['res'], 0777)
+			or error("Couldn't create " . $board['dir'] . $config['dir']['featured'] . $config['dir']['img'] . ". Check permissions.", true);
 }
 
 function openBoard($uri) {
@@ -1644,6 +1672,8 @@ function clean($pid = false) {
 
 	$query->execute() or error(db_error($query));
 	while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
+		Archive::archiveThread($post['id']);
+		if ($pid) modLog("Automatically archived thread #{$post['id']} due to new thread #{$pid}");
 		deletePost($post['id'], false, false);
 		if ($pid) modLog("Automatically deleting thread #{$post['id']} due to new thread #{$pid}");
 	}
@@ -2083,6 +2113,9 @@ function buildIndex($global_api = "yes") {
 
 
 	Announcements::RebuildAnnouncementPages();
+
+
+	Archive::RebuildArchiveIndexes();
 
 
 	if ($config['try_smarter'])
@@ -2539,6 +2572,21 @@ function markup(&$body, $track_cites = false, $op = false) {
 
 	return $tracked_cites;
 }
+
+
+
+function archive_list_markup(&$body) {
+	
+	$body = str_replace("\r", '', $body);
+	$body = utf8tohtml($body);
+
+	$body = preg_replace("/^\s*&gt;.*$/m", '<span class="quote">$0</span>', $body);
+	// replace tabs with 8 spaces
+	$body = str_replace("\t", '		', $body);
+}
+
+
+
 
 function escape_markup_modifiers($string) {
 	return preg_replace('@<(tinyboard) ([\w\s]+)>@mi', '<$1 escape $2>', $string);

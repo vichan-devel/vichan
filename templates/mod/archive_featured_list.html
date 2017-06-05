@@ -1,0 +1,37 @@
+
+
+<table id="archive-list" class="archive-list modlog">
+	<thead>
+		<tr>
+			<th width='80px'>Post #</th>
+			<th>Snippet</th>
+			<th width='50px'>&nbsp;</th>
+			{% if mod and mod|hasPermission(config.mod.delete_featured_archived_threads, board.uri) %}
+				<th width='80px'>&nbsp;</th>
+			{% endif %}
+		</tr>
+	</thead>
+	<tbody>
+		{% for thread in archive %}
+			<tr>
+				<td>{{ thread.id }}</td>
+				<td>{{ thread.snippet }}</td>
+				<td><a href="{{ thread.featured_url }}">[{% trans 'View' %}]</a></td>
+				{% if mod and mod|hasPermission(config.mod.delete_featured_archived_threads, board.uri) %}
+					<td>
+						<form action="" method="post" class="archiveForm">
+							<input type="hidden" name="token" value="{{ token }}">
+							<input type="hidden" name="id" value="{{ thread.id }}">
+							<input type="hidden" name="delete" value="1">
+							<a href="#"  onclick="return confirm('Are you sure you want to permanently delete this thread from featured archive?')?this.parentNode.submit():false;">[{% trans 'Delete' %}]</a>
+						</form>
+					</td>
+				{% endif %}
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+
+
+

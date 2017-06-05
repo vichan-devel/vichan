@@ -613,6 +613,53 @@ table.announcements-list tbody tr td:nth-child(4) :last-child {
 
 
 
+
+table.archive-list {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80% !important;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: 0.8em;
+}
+table.archive-list tr td, table.archive-list tr th {
+  border: 1px solid rgb(63, 63, 63);
+  border: 1px solid rgba(0, 0, 0, .4);
+  -webkit-background-clip: padding-box; /* for Safari */
+  background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
+  padding: 3px;
+}
+table.archive-list tr th {
+  font-weight: bold;
+  text-align: center;
+}
+table.archive-list tbody {
+  text-align: left;
+  vertical-align: top;
+  background: rgb(250, 250, 250);
+  color: black;
+}
+table.archive-list tbody tr td:first-child{
+  text-align: right;
+}
+table.archive-list tbody tr td:nth-child(3),
+table.archive-list tbody tr td:nth-child(4){
+  text-align: center;
+}
+.archiveForm {
+  margin-bottom: inherit !important;
+}
+
+
+
+
+
+
+
+
+
+
 table.mod.config-editor {
   font-size: 9pt;
   width: 100%;

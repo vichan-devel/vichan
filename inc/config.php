@@ -1352,6 +1352,25 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['dir']['thumb'] = 'thumb/';
 	$config['dir']['res'] = 'res/';
 
+
+	// Directory for archived threads
+	$config['dir']['archive'] = 'archive/';
+	// Directory for "Featured Threads" (threads makred for permanent storage)
+	$config['dir']['featured'] = 'featured/';
+
+	// Indicate if threads should be archived
+	$config['archive']['threads'] = true;
+	// Indicate if it is possible to mark threads as featured (stored forever)
+	$config['feature']['threads'] = true;
+
+	// Days to keep archived threads before deletion (if set to false all archived threads are kept forever)
+	$config['archive']['lifetime'] = 3;
+
+	// Number of chars in snippet
+	$config['archive']['snippet_len'] = 400;
+	
+
+
 	// For load balancing, having a seperate server (and domain/subdomain) for serving static content is
 	// possible. This can either be a directory or a URL. Defaults to $config['root'] . 'static/'.
 	// $config['dir']['static'] = 'http://static.example.org/';
@@ -1640,7 +1659,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 
 	/* Post Controls */					
     // View IP addresses
-    $config['mod']['show_ip'] = DEVELOPER;	
+    $config['mod']['show_ip'] = DEVELOPER;
     // Delete a post
     $config['mod']['delete'] = MOD;
     // Deliver Bantz to User and Post
@@ -1729,6 +1748,12 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 
 	// Create Announcements
 	$config['mod']['announcements'] = ADMIN;
+
+
+	// Feature Archived Threads
+	$config['mod']['feature_archived_threads'] = JANITOR;
+	// Delete Featured Archived Threads
+	$config['mod']['delete_featured_archived_threads'] = MOD;
 
 
 	// View list of bans
