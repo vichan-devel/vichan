@@ -33,6 +33,7 @@ switch($step)
 		$page['body'] = '<p style="text-align:center">Database have been updated.</p>';
 
 		$sql_errors = "";
+		$file_errors = "";
 
 		// Update posts_* table to archive function
 		// Get list of boards	
@@ -41,38 +42,42 @@ switch($step)
 			$query = Element('archive.sql', array('board' => $_board['uri']));
 			if (mysql_version() < 50503)
 				$query = preg_replace('/(CHARSET=|CHARACTER SET )utf8mb4/', '$1utf8', $query);
-			query($query) or error(db_error());
+			query($query) or $sql_errors .= sprintf("<li>Add Archive DB for %s<br/>", $_board['uri']) . db_error() . '</li>';
+
+			$_board['dir'] = sprintf($config['board_path'], $_board['uri']);
 
 			// Create Archive Folders
 			if (!file_exists($_board['dir'] . $config['dir']['archive']))
 				@mkdir($_board['dir'] . $config['dir']['archive'], 0777)
-					or error("Couldn't create " . $_board['dir'] . $config['dir']['archive'] . ". Check permissions.", true);
+					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['archive'] . ". Check permissions.<br/>";
 			if (!file_exists($_board['dir'] . $config['dir']['archive'] . $config['dir']['img']))
 				@mkdir($_board['dir'] . $config['dir']['archive'] . $config['dir']['img'], 0777)
-					or error("Couldn't create " . $_board['dir'] . $config['dir']['archive'] . $config['dir']['img'] . ". Check permissions.", true);
+					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['archive'] . $config['dir']['img'] . ". Check permissions.<br/>";
 			if (!file_exists($_board['dir'] . $config['dir']['archive'] . $config['dir']['thumb']))
 				@mkdir($_board['dir'] . $config['dir']['archive'] . $config['dir']['thumb'], 0777)
-					or error("Couldn't create " . $_board['dir'] . $config['dir']['archive'] . $config['dir']['img'] . ". Check permissions.", true);
+					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['archive'] . $config['dir']['img'] . ". Check permissions.<br/>";
 			if (!file_exists($_board['dir'] . $config['dir']['archive'] . $config['dir']['res']))
 				@mkdir($_board['dir'] . $config['dir']['archive'] . $config['dir']['res'], 0777)
-					or error("Couldn't create " . $_board['dir'] . $config['dir']['archive'] . $config['dir']['img'] . ". Check permissions.", true);
+					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['archive'] . $config['dir']['img'] . ". Check permissions.<br/>";
 			// Create Featured threads Folders
 			if (!file_exists($_board['dir'] . $config['dir']['featured']))
 				@mkdir($_board['dir'] . $config['dir']['featured'], 0777)
-					or error("Couldn't create " . $_board['dir'] . $config['dir']['featured'] . ". Check permissions.", true);
+					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['featured'] . ". Check permissions.<br/>";
 			if (!file_exists($_board['dir'] . $config['dir']['featured'] . $config['dir']['img']))
 				@mkdir($_board['dir'] . $config['dir']['featured'] . $config['dir']['img'], 0777)
-					or error("Couldn't create " . $_board['dir'] . $config['dir']['featured'] . $config['dir']['img'] . ". Check permissions.", true);
+					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['featured'] . $config['dir']['img'] . ". Check permissions.<br/>";
 			if (!file_exists($_board['dir'] . $config['dir']['featured'] . $config['dir']['thumb']))
 				@mkdir($_board['dir'] . $config['dir']['featured'] . $config['dir']['thumb'], 0777)
-					or error("Couldn't create " . $_board['dir'] . $config['dir']['featured'] . $config['dir']['img'] . ". Check permissions.", true);
+					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['featured'] . $config['dir']['img'] . ". Check permissions.<br/>";
 			if (!file_exists($_board['dir'] . $config['dir']['featured'] . $config['dir']['res']))
 				@mkdir($_board['dir'] . $config['dir']['featured'] . $config['dir']['res'], 0777)
-					or error("Couldn't create " . $_board['dir'] . $config['dir']['featured'] . $config['dir']['img'] . ". Check permissions.", true);
+					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['featured'] . $config['dir']['img'] . ". Check permissions.<br/>";
 		}
 
 		if (!empty($sql_errors))
-		    $page['body'] .= '<div class="ban"><h2>SQL errors</h2><p>SQL errors were encountered when trying to update the database and hashing ip addresses.</p><p>The errors encountered were:</p><ul>' . $sql_errors . '</ul></div>';
+		    $page['body'] .= '<div class="ban"><h2>SQL errors</h2><p>SQL errors were encountered when trying to update the database.</p><p>The errors encountered were:</p><ul>' . $sql_errors . '</ul></div>';
+		if (!empty($file_errors))
+		    $page['body'] .= '<div class="ban"><h2>File System errors</h2><p>File System errors were encountered when trying to create folders.</p><p>The errors encountered were:</p><ul>' . $file_errors . '</ul></div>';
 
 		break;
 }
