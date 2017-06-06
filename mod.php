@@ -69,7 +69,7 @@ $pages = array(
 
 	'/(\%b)/bantz/(\d+)'		=> 'secure_POST bantz_post', 	// issue bantz for post
 
-	'/(\%b)/warning/(\d+)'		=> 'secure_POST warning_post', 	// issue warning for post
+	'/(\%b)/warning(&delete)?/(\d+)'		=> 'secure_POST warning_post', 	// issue warning for post
 	'/(\%b)/nicenotice/(\d+)'		=> 'secure_POST nicenotice_post', 	// issue Nicenotice to poster for post
 
 	'/ban-cookie'			=> 'secure_POST ban_cookie',		// Ban Cookie
