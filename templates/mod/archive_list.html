@@ -1,5 +1,11 @@
 
 
+
+{% if config.feature.threads %}
+<p style="text-align: center">
+	<a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured Thread Archive{% endtrans %}]</a>
+</p>
+{% endif %}
 <p style="text-align: center">
 	<b>{% trans 'Displaying' %} {{ thread_count }} {% trans 'expired threads' %}{% if config.archive.lifetime %} {% trans 'from the past' %} {{  config.archive.lifetime }} {% trans 'days' %}{% endif %}</b>
 </p>

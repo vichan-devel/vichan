@@ -90,7 +90,7 @@ class Announcements {
                                 'body' => Element('mod/announcements_list.html', array(
                                     'mod' => false,
                                     'token_json' => false,
-                                    'uri_json' => $config['dir']['home'] . $config['announcements']['file_json'],
+                                    'uri_json' => $config['root'] . $config['announcements']['file_json'],
                                 ))
                         ));
             file_write($config['dir']['home'] . $config['announcements']['page_html'], $announcement_page);

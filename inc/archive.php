@@ -91,7 +91,8 @@ class Archive {
 
 
         // Purge Threads that have timed out
-        self::purgeArchive();
+        if(!$config['archive']['cron_job'])
+            self::purgeArchive();
 
         // Rebuild Archive Index
         self::buildArchiveIndex();
@@ -140,7 +141,7 @@ class Archive {
         if(!$config['feature']['threads'])
             return;
         
-        $query = query(sprintf("SELECT `id`, `files` FROM ``archive_%s`` WHERE `featured` = 0", $board['uri'])) or error(db_error());
+        $query = query(sprintf("SELECT `files` FROM ``archive_%s`` WHERE `id` = %d AND `featured` = 0", $board['uri'], (int)$thread_id)) or error(db_error());
         if(!$thread = $query->fetch(PDO::FETCH_ASSOC))
             error($config['error']['invalidpost']);
         
@@ -212,7 +213,8 @@ class Archive {
             return;
 
         // Purge Archive
-        self::purgeArchive();
+        if(!$config['archive']['cron_job']['purge'])
+            self::purgeArchive();
 
         // Rebuild Archive Index
         self::buildArchiveIndex();
@@ -248,6 +250,7 @@ class Archive {
             'body' => Element("mod/archive_list.html", array(
                 'config' => $config,
         		'thread_count' => $query->rowCount(),
+                'board' => $board,
                 'archive' => $archive
             ))
         ));

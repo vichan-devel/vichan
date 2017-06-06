@@ -1362,6 +1362,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['archive']['threads'] = true;
 	// Indicate if it is possible to mark threads as featured (stored forever)
 	$config['feature']['threads'] = true;
+	// Indicate if link to featured archive should be shown on post and thread page
+	$config['feature']['link_post_page'] = false;
 
 	// Days to keep archived threads before deletion (if set to false all archived threads are kept forever)
 	$config['archive']['lifetime'] = 3;
@@ -1369,6 +1371,11 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Number of chars in snippet
 	$config['archive']['snippet_len'] = 400;
 	
+	// If any is set to run in crom both will be run in cron regardless
+	// Archiving is run in cron job
+	$config['archive']['cron_job']['archiving'] = false;
+	// Purging of archive is run in cron job
+	$config['archive']['cron_job']['purge'] = false;
 
 
 	// For load balancing, having a seperate server (and domain/subdomain) for serving static content is

@@ -19,6 +19,8 @@
 
 	{% include 'post_form.html' %}
 
+	{% if config.announcements.show %}<table class="announcements" id="announcements"></table>{% endif %}
+
         <span>{% trans 'Sort by' %}: </span>
         <select id="sort_by" style="display: inline-block">
                 <option selected value="bump:desc">{% trans 'Bump order' %}</option>
@@ -33,6 +35,12 @@
                 <option selected value="small">{% trans 'Small' %}</option>
                 <option value="large">{% trans 'Large' %}</option>
         </select>
+
+	&nbsp; <a id="unimportant" href="./{{ config.catalog_link }}">[{% trans %}Reload{% endtrans %}]</a>
+
+	{% if config.archive.threads %} &nbsp; <a id="unimportant" href="{{ config.root }}{{ board.dir }}{{ config.dir.archive }}">[{% trans %}Archive{% endtrans %}]</a>{% endif %}
+	{% if config.feature.threads and config.feature.link_post_page %} &nbsp; <a id="unimportant" href="{{ config.root }}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured{% endtrans %}]</a>{% endif %}
+
         <div class="threads">
                 <div id="Grid">
                 {% for post in recent_posts %}
@@ -121,6 +129,7 @@
 	{% endraw %}</script>
 
 	<script type="text/javascript">{% raw %}
+		buildAnnouncementList(hideAnnouncements);	// Bugfix for bug I can't be bothered to hunt down right now
 		ready();
 	{% endraw %}</script>
 </body>
