@@ -3431,10 +3431,6 @@ function mod_view_archive($boardName) {
 		Archive::featureThread($_POST['id']);
 	}
 
-	// // Purge Threads that have timed out, and rebuild index if anyone was purged
-	// if(Archive::purgeArchive() != 0)
-    //     Archive::buildArchiveIndex();
-
 	$query = query(sprintf("SELECT `id`, `snippet`, `featured` FROM ``archive_%s`` WHERE `lifetime` > %d ORDER BY `lifetime` DESC", $board['uri'], time())) or error(db_error());
 	$archive = $query->fetchAll(PDO::FETCH_ASSOC);
 

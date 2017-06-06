@@ -91,7 +91,8 @@ class Archive {
 
 
         // Purge Threads that have timed out
-        self::purgeArchive();
+        if(!$config['archive']['cron_job'])
+            self::purgeArchive();
 
         // Rebuild Archive Index
         self::buildArchiveIndex();
@@ -212,7 +213,8 @@ class Archive {
             return;
 
         // Purge Archive
-        self::purgeArchive();
+        if(!$config['archive']['cron_job']['purge'])
+            self::purgeArchive();
 
         // Rebuild Archive Index
         self::buildArchiveIndex();

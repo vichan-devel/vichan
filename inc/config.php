@@ -1369,6 +1369,11 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Number of chars in snippet
 	$config['archive']['snippet_len'] = 400;
 	
+	// If any is set to run in crom both will be run in cron regardless
+	// Archiving is run in cron job
+	$config['archive']['cron_job']['archiving'] = false;
+	// Purging of archive is run in cron job
+	$config['archive']['cron_job']['purge'] = false;
 
 
 	// For load balancing, having a seperate server (and domain/subdomain) for serving static content is

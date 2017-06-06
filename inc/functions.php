@@ -1664,6 +1664,11 @@ function deletePost($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
 
 function clean($pid = false) {
 	global $board, $config;
+
+	// If we are doing the archiving in cron leave cleaning of overflow for now
+	if($config['archive']['cron_job']['archiving'])
+		return;
+
 	$offset = round($config['max_pages']*$config['threads_per_page']);
 
 	// I too wish there was an easier way of doing this...
@@ -1672,8 +1677,10 @@ function clean($pid = false) {
 
 	$query->execute() or error(db_error($query));
 	while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
-		Archive::archiveThread($post['id']);
-		if ($pid) modLog("Automatically archived thread #{$post['id']} due to new thread #{$pid}");
+		if($config['archive']['threads']) {
+			Archive::archiveThread($post['id']);
+			if ($pid) modLog("Automatically archived thread #{$post['id']} due to new thread #{$pid}");
+		}
 		deletePost($post['id'], false, false);
 		if ($pid) modLog("Automatically deleting thread #{$post['id']} due to new thread #{$pid}");
 	}
@@ -1695,6 +1702,10 @@ function clean($pid = false) {
 
 		while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
 			if ($post['reply_count'] < $page*$config['early_404_replies']) {
+				if($config['archive']['threads']) {
+					Archive::archiveThread($post['thread_id']);
+					if ($pid) modLog("Automatically archived thread #{$post['thread_id']} due to new thread #{$pid} (early 404 is set, #{$post['thread_id']} had {$post['reply_count']} replies)");
+				}
 				deletePost($post['thread_id'], false, false);
 				if ($pid) modLog("Automatically deleting thread #{$post['thread_id']} due to new thread #{$pid} (early 404 is set, #{$post['thread_id']} had {$post['reply_count']} replies)");
 			}
