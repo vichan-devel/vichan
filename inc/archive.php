@@ -141,7 +141,7 @@ class Archive {
         if(!$config['feature']['threads'])
             return;
         
-        $query = query(sprintf("SELECT `id`, `files` FROM ``archive_%s`` WHERE `featured` = 0", $board['uri'])) or error(db_error());
+        $query = query(sprintf("SELECT `files` FROM ``archive_%s`` WHERE `id` = %d AND `featured` = 0", $board['uri'], (int)$thread_id)) or error(db_error());
         if(!$thread = $query->fetch(PDO::FETCH_ASSOC))
             error($config['error']['invalidpost']);
         
