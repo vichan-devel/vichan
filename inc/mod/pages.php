@@ -1129,7 +1129,7 @@ function mod_nicenotice_post($board, $post, $token = false) {
 
 
 
-function mod_warning_post($board, $post, $token = false) {
+function mod_warning_post($board, $delete, $post, $token = false) {
 	global $config, $mod;
 	
 	if (!openBoard($board))
@@ -1174,7 +1174,19 @@ function mod_warning_post($board, $post, $token = false) {
 			modLog("Attached a public WARNING message to post #{$post}: " . utf8tohtml($_POST['message']));
 			buildThread($thread ? $thread : $post);
 			buildIndex();
+		} elseif (isset($_POST['delete']) && (int) $_POST['delete']) {
+			if (!hasPermission($config['mod']['delete'], $board))
+				error($config['error']['noaccess']);
+			
+			// Delete post
+			deletePost($post);
+			modLog("Deleted post #{$post}");
+			// Rebuild board
+			buildIndex();
+			// Rebuild themes
+			rebuildThemes('post-delete', $board);
 		}
+
 
 		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
 	}
@@ -1184,6 +1196,7 @@ function mod_warning_post($board, $post, $token = false) {
 		'hide_ip' => !hasPermission($config['mod']['show_ip'], $board),
 		'post' => $post,
 		'board' => $board,
+		'delete' => (bool)$delete,
 		'boards' => listBoards(),
 		'reasons' => $config['warning_reasons'],
 		'token' => $security_token
