@@ -250,6 +250,7 @@ class Archive {
             'body' => Element("mod/archive_list.html", array(
                 'config' => $config,
         		'thread_count' => $query->rowCount(),
+                'board' => $board,
                 'archive' => $archive
             ))
         ));

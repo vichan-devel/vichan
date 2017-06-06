@@ -377,7 +377,7 @@ function init() {
 		highlightReply(window.location.hash.substring(1));
 
 {% endraw %}{% if config.announcements.show %}{% raw %}
-    hideAnnouncements = get_cookie("hideAnnouncements");
+    var hideAnnouncements = get_cookie("hideAnnouncements");
     buildAnnouncementList(hideAnnouncements);
 
     $("#announcements").delegate("#toggleAnnouncements", "click", function(){
@@ -436,7 +436,7 @@ function buildAnnouncementList(hideAnnouncements)
     $("#announcements").empty();
 
     if(hideAnnouncements != "1") {
-        $.getJSON("/{{ config.announcements.file_json_small }}",
+        $.getJSON("{{ config.root }}{{ config.announcements.file_json_small }}",
         function (json) {
 
             var thead;
@@ -446,7 +446,7 @@ function buildAnnouncementList(hideAnnouncements)
 
             var tfoot;
             tfoot = $('<tfoot/>').append(
-                $('<tr/>').append('<td colspan="2">[<a id="toggleAnnouncements" href="#">Hide</a>]{% if config.announcements.page %} <span> [<a href="{{ config.dir.home }}{{ config.announcements.page_html }}" target="_blank">Show All</a>]</span>{% endif %}</td>')
+                $('<tr/>').append('<td colspan="2">[<a id="toggleAnnouncements" href="#">Hide</a>]{% if config.announcements.page %} <span> [<a href="{{ config.root }}{{ config.announcements.page_html }}" target="_blank">Show All</a>]</span>{% endif %}</td>')
             );
 
             var tbody;

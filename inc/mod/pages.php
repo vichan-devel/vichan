@@ -3440,6 +3440,7 @@ function mod_view_archive($boardName) {
 	mod_page(sprintf(_('Archived') . ' %s: ' . $config['board_abbreviation'], _('threads'), $board['uri']), 'mod/archive_list.html', array(
 		'archive' => $archive,
 		'thread_count' => $query->rowCount(),
+		'board' => $board,
 		'token' => make_secure_link_token($board['uri']. '/archive/')
 	));
 }
