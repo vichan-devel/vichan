@@ -567,6 +567,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 
 	// Allow users to delete their own posts?
 	$config['allow_delete'] = true;
+	// If thread have gotten given number of replies OP can't delete it anymore. (set to false to turn off this function)
+	$config['allow_delete_cutoff'] = 5;
 	// How long after posting should you have to wait before being able to delete that post? (In seconds.)
 	$config['delete_time'] = 10;
 	// Reply limit (stops bumping thread when this is reached).

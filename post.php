@@ -236,6 +236,14 @@ if (isset($_POST['delete'])) {
 				deleteFile($id);
 				modLog("User deleted file from his own post #$id");
 			} else {
+
+				// Check if thread and that the delete cutoff post count haven't been reached
+				if($config['allow_delete_cutoff'] && $post['thread'] === NULL) {
+					$count_query = query(sprintf("SELECT COUNT(*) FROM ``posts_%s`` WHERE `thread` = %d", $board['uri'], (int)$id));
+					if($count_query->fetchColumn(0) >= $config['allow_delete_cutoff'])
+						error(_('Deletion of this thread is not allowed!'));
+				}
+
 				// Delete entire post
 				deletePost($id);
 				modLog("User deleted his own post #$id");
