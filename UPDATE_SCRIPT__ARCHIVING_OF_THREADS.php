@@ -55,10 +55,10 @@ switch($step)
 					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['archive'] . $config['dir']['img'] . ". Check permissions.<br/>";
 			if (!file_exists($_board['dir'] . $config['dir']['archive'] . $config['dir']['thumb']))
 				@mkdir($_board['dir'] . $config['dir']['archive'] . $config['dir']['thumb'], 0777)
-					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['archive'] . $config['dir']['img'] . ". Check permissions.<br/>";
+					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['archive'] . $config['dir']['thumb'] . ". Check permissions.<br/>";
 			if (!file_exists($_board['dir'] . $config['dir']['archive'] . $config['dir']['res']))
 				@mkdir($_board['dir'] . $config['dir']['archive'] . $config['dir']['res'], 0777)
-					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['archive'] . $config['dir']['img'] . ". Check permissions.<br/>";
+					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['archive'] . $config['dir']['res'] . ". Check permissions.<br/>";
 			// Create Featured threads Folders
 			if (!file_exists($_board['dir'] . $config['dir']['featured']))
 				@mkdir($_board['dir'] . $config['dir']['featured'], 0777)
@@ -68,10 +68,10 @@ switch($step)
 					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['featured'] . $config['dir']['img'] . ". Check permissions.<br/>";
 			if (!file_exists($_board['dir'] . $config['dir']['featured'] . $config['dir']['thumb']))
 				@mkdir($_board['dir'] . $config['dir']['featured'] . $config['dir']['thumb'], 0777)
-					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['featured'] . $config['dir']['img'] . ". Check permissions.<br/>";
+					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['featured'] . $config['dir']['thumb'] . ". Check permissions.<br/>";
 			if (!file_exists($_board['dir'] . $config['dir']['featured'] . $config['dir']['res']))
 				@mkdir($_board['dir'] . $config['dir']['featured'] . $config['dir']['res'], 0777)
-					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['featured'] . $config['dir']['img'] . ". Check permissions.<br/>";
+					or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['featured'] . $config['dir']['res'] . ". Check permissions.<br/>";
 		}
 
 		if (!empty($sql_errors))

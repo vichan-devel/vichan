@@ -1360,25 +1360,6 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Directory for "Featured Threads" (threads makred for permanent storage)
 	$config['dir']['featured'] = 'featured/';
 
-	// Indicate if threads should be archived
-	$config['archive']['threads'] = true;
-	// Indicate if it is possible to mark threads as featured (stored forever)
-	$config['feature']['threads'] = true;
-	// Indicate if link to featured archive should be shown on post and thread page
-	$config['feature']['link_post_page'] = false;
-
-	// Days to keep archived threads before deletion (if set to false all archived threads are kept forever)
-	$config['archive']['lifetime'] = 3;
-
-	// Number of chars in snippet
-	$config['archive']['snippet_len'] = 400;
-	
-	// If any is set to run in crom both will be run in cron regardless
-	// Archiving is run in cron job
-	$config['archive']['cron_job']['archiving'] = false;
-	// Purging of archive is run in cron job
-	$config['archive']['cron_job']['purge'] = false;
-
 
 	// For load balancing, having a seperate server (and domain/subdomain) for serving static content is
 	// possible. This can either be a directory or a URL. Defaults to $config['root'] . 'static/'.
@@ -1418,6 +1399,35 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	
 	// Try not to build pages when we shouldn't have to.
 	$config['try_smarter'] = true;
+
+
+
+
+/*
+ * ====================
+ *  Archive settings
+ * ====================
+ */
+
+	// Indicate if threads should be archived
+	$config['archive']['threads'] = true;
+	// Indicate if it is possible to mark threads as featured (stored forever)
+	$config['feature']['threads'] = true;
+	// Indicate if link to featured archive should be shown on post and thread page
+	$config['feature']['link_post_page'] = false;
+
+	// Days to keep archived threads before deletion (ex. "60 minutes", "6 hours", "1 day", "1 week"), if set to false all archived threads are kept forever
+	$config['archive']['lifetime'] = "3 days";
+
+	// Number of chars in snippet
+	$config['archive']['snippet_len'] = 400;
+	
+	// If any is set to run in crom both will be run in cron regardless
+	// Archiving is run in cron job
+	$config['archive']['cron_job']['archiving'] = false;
+	// Purging of archive is run in cron job
+	$config['archive']['cron_job']['purge'] = false;
+
 
 /*
  * ====================

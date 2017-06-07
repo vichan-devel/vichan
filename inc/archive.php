@@ -114,7 +114,7 @@ class Archive {
 
         // Delete all static pages and files for archived threads that has timed out
         $query = prepare(sprintf("SELECT `id`, `files` FROM ``archive_%s`` WHERE `lifetime` < :lifetime AND `featured` = 0", $board['uri']));
-        $query->bindValue(':lifetime', strtotime("+".$config['archive']['lifetime']." days"), PDO::PARAM_INT);
+        $query->bindValue(':lifetime', strtotime("-" . $config['archive']['lifetime']), PDO::PARAM_INT);
         $query->execute() or error(db_error($query));
         while($thread = $query->fetch(PDO::FETCH_ASSOC)) {
             // Delete Files
@@ -128,8 +128,11 @@ class Archive {
         }
 
         // Delete Archive Entries
-        if($query->rowCount() != 0)
-    		$query = query(sprintf("DELETE FROM  ``archive_%s`` WHERE `lifetime` < %d AND `featured` = 0", $board['uri'], time())) or error(db_error());
+        if($query->rowCount() != 0) {
+    		$query = prepare(sprintf("DELETE FROM  ``archive_%s`` WHERE `lifetime` < %d AND `featured` = 0", $board['uri'], time())) or error(db_error());
+            $query->bindValue(':lifetime', strtotime("-" . $config['archive']['lifetime']), PDO::PARAM_INT);
+            $query->execute() or error(db_error($query));
+        }
 
         return $query->rowCount();
     }
