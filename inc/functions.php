@@ -1679,10 +1679,12 @@ function clean($pid = false) {
 	while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
 		if($config['archive']['threads']) {
 			Archive::archiveThread($post['id']);
+			deletePost($post['id'], false, false);
 			if ($pid) modLog("Automatically archived thread #{$post['id']} due to new thread #{$pid}");
+		} else {
+			deletePost($post['id'], false, false);
+			if ($pid) modLog("Automatically deleting thread #{$post['id']} due to new thread #{$pid}");
 		}
-		deletePost($post['id'], false, false);
-		if ($pid) modLog("Automatically deleting thread #{$post['id']} due to new thread #{$pid}");
 	}
 
 	// Bump off threads with X replies earlier, spam prevention method

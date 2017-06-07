@@ -82,16 +82,16 @@ class Archive {
         }
 
         // Insert Archive Data in Database
-        $query = prepare(sprintf("INSERT INTO ``archive_%s`` VALUES (:thread_id, :snippet, :time, :files, 0)", $board['uri']));
+        $query = prepare(sprintf("INSERT INTO ``archive_%s`` VALUES (:thread_id, :snippet, :lifetime, :files, 0)", $board['uri']));
         $query->bindValue(':thread_id', $thread_id, PDO::PARAM_INT);
         $query->bindValue(':snippet', $thread_data['snippet'], PDO::PARAM_STR);
-        $query->bindValue(':time', 	(!$config['archive']['lifetime'])?0:strtotime("+".$config['archive']['lifetime']." days"), PDO::PARAM_INT);
+        $query->bindValue(':lifetime', 	time(), PDO::PARAM_INT);
         $query->bindValue(':files', json_encode($file_list));
         $query->execute() or error(db_error($query));
 
 
         // Purge Threads that have timed out
-        if(!$config['archive']['cron_job'])
+        if(!$config['archive']['cron_job']['purge'])
             self::purgeArchive();
 
         // Rebuild Archive Index
@@ -108,8 +108,14 @@ class Archive {
     static public function purgeArchive() {
         global $config, $board;
 
+        // If archive is set to live forever return
+        if(!$config['archive']['lifetime'])
+            return;
+
         // Delete all static pages and files for archived threads that has timed out
-        $query = query(sprintf("SELECT `id`, `files` FROM ``archive_%s`` WHERE `lifetime` < %d AND `featured` = 0", $board['uri'], time())) or error(db_error());
+        $query = prepare(sprintf("SELECT `id`, `files` FROM ``archive_%s`` WHERE `lifetime` < :lifetime AND `featured` = 0", $board['uri']));
+        $query->bindValue(':lifetime', strtotime("+".$config['archive']['lifetime']." days"), PDO::PARAM_INT);
+        $query->execute() or error(db_error($query));
         while($thread = $query->fetch(PDO::FETCH_ASSOC)) {
             // Delete Files
             foreach (json_decode($thread['files']) as $f) {
