@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `shadow_deleted` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `board` varchar(58) NOT NULL,
   `post_id` int(10) NOT NULL,
-  `del_time` int(11) NOT NULL,
+  `deltime` int(11) NOT NULL,
   `files` text CHARACTER SET ascii NOT NULL,
   `ids` text CHARACTER SET armscii8 NOT NULL,
   PRIMARY KEY (`id`),
