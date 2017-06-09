@@ -73,10 +73,10 @@
 	{% endif %}
 {% else %}
 	{% if mod|hasPermission(config.mod.restore_shadow_post, board.uri) %}
-		<a title="{% trans %}Restore Shadow Deleted Post{% endtrans %}" href="?/{{ board.dir }}sd_restore/{{ post.id }}">{{ config.mod.link_sd_restore }}</a>&nbsp;
+		<a title="{% trans %}Restore Shadow Deleted Post{% endtrans %}" href="?/{{ board.dir }}shadow_restore/{{ post.id }}">{{ config.mod.link_shadow_restore }}</a>&nbsp;
 	{% endif %}
 	{% if mod|hasPermission(config.mod.delete_shadow_post, board.uri) %}
-		<a title="{% trans %}Permanent Delete Shadow Deleted Post{% endtrans %}" href="?/{{ board.dir }}sd_delete/{{ post.id }}">{{ config.mod.link_sd_delete }}</a>&nbsp;
+		<a title="{% trans %}Permanent Delete Shadow Deleted Post{% endtrans %}" href="?/{{ board.dir }}shadow_delete/{{ post.id }}">{{ config.mod.link_shadow_delete }}</a>&nbsp;
 	{% endif %}
 {% endif %}
 </span>
