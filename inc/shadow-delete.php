@@ -87,10 +87,10 @@ class ShadowDelete {
 
 
         // Insert data into temp table
-        $insert_query = prepare("INSERT INTO ``shadow_deleted`` VALUES(NULL, :board, :post_id, :deltime, :files, :cite_ids)");
+        $insert_query = prepare("INSERT INTO ``shadow_deleted`` VALUES(NULL, :board, :post_id, :del_time, :files, :cite_ids)");
         $insert_query->bindValue(':board', $board['uri'], PDO::PARAM_STR);
         $insert_query->bindValue(':post_id', $id, PDO::PARAM_INT);
-        $insert_query->bindValue(':deltime', time(), PDO::PARAM_INT);
+        $insert_query->bindValue(':del_time', time(), PDO::PARAM_INT);
         $insert_query->bindValue(':files', json_encode($files));
         $insert_query->bindValue(':cite_ids', json_encode($ids));
         $insert_query->execute() or error(db_error($insert_query));
@@ -394,8 +394,8 @@ class ShadowDelete {
         global $config;
 
         // Delete data from temp table
-        $query = prepare("SELECT * FROM ``shadow_deleted`` WHERE `deltime` < :deltime");
-        $query->bindValue(':deltime', strftime("-" . $config['shadow_del']['lifetime']), PDO::PARAM_INT);
+        $query = prepare("SELECT * FROM ``shadow_deleted`` WHERE `del_time` < :del_time");
+        $query->bindValue(':del_time', strtotime("-" . $config['shadow_del']['lifetime']), PDO::PARAM_INT);
         $query->execute() or error(db_error($query));
 
         // Temporarly Delete posts and maybe replies
@@ -435,13 +435,13 @@ class ShadowDelete {
 
             // Delete Temp Cites
             $delete_query = prepare("DELETE FROM ``cites`` WHERE (`target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ")) OR (`board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . "))");
-            $delete_query->bindValue(':board', $board['uri']);
+            $delete_query->bindValue(':board', $shadow_post['board']);
             $delete_query->execute() or error(db_error($delete_query));
        }
 
         // Delete data from temp table
-        $query = prepare("DELETE FROM ``shadow_deleted`` WHERE `deltime` < :deltime");
-        $query->bindValue(':deltime', strftime("-" . $config['shadow_del']['lifetime']), PDO::PARAM_INT);
+        $query = prepare("DELETE FROM ``shadow_deleted`` WHERE `del_time` < :del_time");
+        $query->bindValue(':del_time', strtotime("-" . $config['shadow_del']['lifetime']), PDO::PARAM_INT);
         $query->execute() or error(db_error($query));
        
         return true;

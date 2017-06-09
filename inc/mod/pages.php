@@ -503,6 +503,13 @@ function mod_new_board() {
 			$query = preg_replace('/(CHARSET=|CHARACTER SET )utf8mb4/', '$1utf8', $query);
 		
 		query($query) or error(db_error());
+
+		// Create Shaddow Copy Table
+		$query = Element('posts.sql', array('board' => $board['uri']));
+		$query = str_replace("``posts_", "``shadow_posts_", $query);
+		if (mysql_version() < 50503)
+			$query = preg_replace('/(CHARSET=|CHARACTER SET )utf8mb4/', '$1utf8', $query);
+		query($query) or error(db_error());
 		
 		// Create Archive Table in DB
 		$query = Element('archive.sql', array('board' => $board['uri']));
