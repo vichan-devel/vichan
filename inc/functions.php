@@ -24,6 +24,7 @@ require_once 'inc/queue.php';
 require_once 'inc/polyfill.php';
 require_once 'inc/announcements.php';
 require_once 'inc/archive.php';
+require_once 'inc/shadow-delete.php';
 @include_once 'inc/lib/parsedown/Parsedown.php'; // fail silently, this isn't a critical piece of code
 
 if (!extension_loaded('gettext')) {
@@ -252,6 +253,16 @@ function loadConfig() {
 			$config['uri_img'] = $config['root'] . $board['dir'] . $config['dir']['img'];
 		elseif (isset($board['dir']))
 			$config['uri_img'] = sprintf($config['uri_img'], $board['dir']);
+
+		if (!isset($config['uri_shadow_thumb']))
+			$config['uri_shadow_thumb'] = $config['root'] . $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'];
+		elseif (isset($board['dir']))
+			$config['uri_shadow_thumb'] = sprintf($config['uri_shadow_thumb'], $board['dir']);
+
+		if (!isset($config['uri_shadow_img']))
+			$config['uri_shadow_img'] = $config['root'] . $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'];
+		elseif (isset($board['dir']))
+			$config['uri_shadow_img'] = sprintf($config['uri_shadow_img'], $board['dir']);
 
 		if (!isset($config['uri_stylesheets']))
 			$config['uri_stylesheets'] = $config['root'] . 'stylesheets/';
@@ -1551,8 +1562,26 @@ function rebuildPost($id) {
 	return true;
 }
 
+
+
+
+
+
 // Delete a post (reply or thread)
-function deletePost($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
+function deletePostShadow($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
+	global $board, $config;
+
+	// If we are using non permanent delete run that function
+	if($config['shadow_del']['use'])
+		return ShadowDelete::deletePost($id, $error_if_doesnt_exist, $rebuild_after);
+	else
+		return deletePostPermanent($id, $error_if_doesnt_exist, $rebuild_after);
+}
+
+
+
+// Delete a post (reply or thread)
+function deletePostPermanent($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
 	global $board, $config;
 
 	// Select post and replies (if thread) in one query
@@ -1679,10 +1708,10 @@ function clean($pid = false) {
 	while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
 		if($config['archive']['threads']) {
 			Archive::archiveThread($post['id']);
-			deletePost($post['id'], false, false);
+			deletePostPermanent($post['id'], false, false);
 			if ($pid) modLog("Automatically archived thread #{$post['id']} due to new thread #{$pid}");
 		} else {
-			deletePost($post['id'], false, false);
+			deletePostPermanent($post['id'], false, false);
 			if ($pid) modLog("Automatically deleting thread #{$post['id']} due to new thread #{$pid}");
 		}
 	}
@@ -1706,10 +1735,12 @@ function clean($pid = false) {
 			if ($post['reply_count'] < $page*$config['early_404_replies']) {
 				if($config['archive']['threads']) {
 					Archive::archiveThread($post['thread_id']);
+					deletePostPermanent($post['thread_id'], false, false);
 					if ($pid) modLog("Automatically archived thread #{$post['thread_id']} due to new thread #{$pid} (early 404 is set, #{$post['thread_id']} had {$post['reply_count']} replies)");
+				} else {
+					deletePostPermanent($post['thread_id'], false, false);
+					if ($pid) modLog("Automatically deleting thread #{$post['thread_id']} due to new thread #{$pid} (early 404 is set, #{$post['thread_id']} had {$post['reply_count']} replies)");
 				}
-				deletePost($post['thread_id'], false, false);
-				if ($pid) modLog("Automatically deleting thread #{$post['thread_id']} due to new thread #{$pid} (early 404 is set, #{$post['thread_id']} had {$post['reply_count']} replies)");
 			}
 
 			if ($config['early_404_staged']) {
@@ -2647,7 +2678,7 @@ function strip_combining_chars($str) {
 	return $str;
 }
 
-function buildThread($id, $return = false, $mod = false) {
+function buildThread($id, $return = false, $mod = false, $shadow = false) {
 	global $board, $config, $build_pages;
 	$id = round($id);
 
@@ -2666,11 +2697,29 @@ function buildThread($id, $return = false, $mod = false) {
 	$action = generation_strategy('sb_thread', array($board['uri'], $id));
 
 	if ($action == 'rebuild' || $return || $mod) {
-		$query = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE (`thread` IS NULL AND `id` = :id) OR `thread` = :id ORDER BY `thread`,`id`", $board['uri']));
+		$query = prepare(
+			sprintf("SELECT ``posts_%s``.*, 0 AS `shadow` FROM ``posts_%s`` WHERE (`thread` IS NULL AND `id` = :id) OR `thread` = :id", $board['uri'], $board['uri']) .
+			($shadow?" UNION ALL " . sprintf("SELECT ``shadow_posts_%s``.*, 1 AS `shadow` FROM ``shadow_posts_%s`` WHERE `thread` = :id", $board['uri'], $board['uri']):"") .
+			" ORDER BY `thread`,`id`");
 		$query->bindValue(':id', $id, PDO::PARAM_INT);
 		$query->execute() or error(db_error($query));
 
 		while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
+			// Fix Filenames if shadow copy
+			if($post['shadow'] && $post['files']) {
+				$files_new = array();
+				// Move files to temp storage
+				foreach (json_decode($post['files']) as $i => $f) {
+					if ($f->file !== 'deleted') {
+						// Add file to array of all files
+						$f->file = ShadowDelete::hashShadowDelFilename($f->file);
+						$f->thumb = ShadowDelete::hashShadowDelFilename($f->thumb);
+						$files_new[] = $f;
+					}
+				}
+				$post['files'] = json_encode($files_new);
+			}
+
 			if (!isset($thread)) {
 				$thread = new Thread($post, $mod ? '?/' : $config['root'], $mod);
 			} else {

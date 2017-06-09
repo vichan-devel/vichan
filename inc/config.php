@@ -1355,6 +1355,18 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['dir']['res'] = 'res/';
 
 
+
+	// Shadow Del dir for files (non perm deleted)
+	$config['dir']['shadow_del'] = 'tempura/';
+	// Use shadow delete instead of immediate permanent delete
+	$config['shadow_del']['use'] = true;
+	// Hash Seed used to obscure filenames of shadow deleted files for posts
+	$config['shadow_del']['filename_seed'] = '5azs5co3wAN67tlqbINEmWuERtTX4FatsMVe446JbHVIJbZyjephDsdRtULw501';
+	// Lifetime for shadow deleted threads before permanent delete (ex. "60 minutes", "6 hours", "1 day", "1 week")
+	$config['shadow_del']['lifetime'] = "6 hours";
+
+
+
 	// Directory for archived threads
 	$config['dir']['archive'] = 'archive/';
 	// Directory for "Featured Threads" (threads makred for permanent storage)
@@ -1536,6 +1548,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['mod']['link_move'] = '[Move]';
 	$config['mod']['link_cycle'] = '[Cycle]';
 	$config['mod']['link_uncycle'] = '[-Cycle]';
+
+	$config['mod']['link_shadow_restore'] = '[SD Restore]';
+	$config['mod']['link_shadow_delete'] = '[SD Delete]';
 
 	// Moderator capcodes.
 	$config['capcode'] = ' <span class="capcode">## %s</span>';
@@ -1774,6 +1789,14 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['mod']['feature_archived_threads'] = JANITOR;
 	// Delete Featured Archived Threads
 	$config['mod']['delete_featured_archived_threads'] = MOD;
+
+
+	// View Shadow Deleted Posts and Threads
+	$config['mod']['view_shadow_posts'] = MOD;
+	// Restore Shadow Deleted Posts and Threads
+	$config['mod']['restore_shadow_post'] = MOD;
+	// Permanently Delete Shadow Deleted Posts and Threads
+	$config['mod']['delete_shadow_post'] = ADMIN;
 
 
 	// View list of bans

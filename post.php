@@ -245,7 +245,7 @@ if (isset($_POST['delete'])) {
 				}
 
 				// Delete entire post
-				deletePost($id);
+				deletePostPermanent($id);
 				modLog("User deleted his own post #$id");
 			}
 

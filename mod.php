@@ -90,6 +90,11 @@ $pages = array(
 	'/(\%b)/featured/'					=> 'secure_POST view_archive_featured', 		// View Featured Archive
 	
 
+	'/(\%b)/shadow_restore/(\d+)'			=> 'secure_POST shadow_restore_post',		// restore shadow deleted post
+	'/(\%b)/shadow_delete/(\d+)'			=> 'secure_POST shadow_delete_post',		// permanent delete shadow deleted post
+	'/(\%b)/shadow_purge/(\d+)'				=> 'secure_POST shadow_purge',				// permanent delete all shadow deleted post that have timed out
+
+
 	'/(\%b)/ban(&delete)?/(\d+)'		=> 'secure_POST ban_post', 	// ban poster
 	'/(\%b)/move/(\d+)'			=> 'secure_POST move',		// move thread
 	'/(\%b)/move_reply/(\d+)'			=> 'secure_POST move_reply',		// move reply
