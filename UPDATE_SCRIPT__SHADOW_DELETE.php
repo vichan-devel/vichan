@@ -38,13 +38,6 @@ switch($step)
 		$boards = listBoards();
 		foreach ($boards as &$_board) {
 
-			
-			// Create Temp Posts Table for Boards
-			$query = Element('../UPDATE_SQL__SHADOW_DELETE.sql');
-			if (mysql_version() < 50503)
-				$query = preg_replace('/(CHARSET=|CHARACTER SET )utf8mb4/', '$1utf8', $query);
-			query($query) or $sql_errors .= "<li>Add Shared Shadow Post DB Tables<br/>" . db_error() . '</li>';
-
 			// Create Temp Posts Table for Boards
 			$query = Element('posts.sql', array('board' => $_board['uri']));
 			$query = str_replace("``posts_", "``shadow_posts_", $query);
