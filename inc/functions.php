@@ -610,6 +610,17 @@ function setupBoard($array) {
 	if (!file_exists($board['dir'] . $config['dir']['featured'] . $config['dir']['res']))
 		@mkdir($board['dir'] . $config['dir']['featured'] . $config['dir']['res'], 0777)
 			or error("Couldn't create " . $board['dir'] . $config['dir']['featured'] . $config['dir']['img'] . ". Check permissions.", true);
+
+	// Create TEMP Folders to save files in
+	if (!file_exists($_board['dir'] . $config['dir']['shadow_del']))
+		@mkdir($_board['dir'] . $config['dir']['shadow_del'], 0777)
+			or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['shadow_del'] . ". Check permissions.<br/>";
+	if (!file_exists($_board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img']))
+		@mkdir($_board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'], 0777)
+			or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'] . ". Check permissions.<br/>";
+	if (!file_exists($_board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb']))
+		@mkdir($_board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'], 0777)
+			or $file_errors .= "Couldn't create " . $_board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'] . ". Check permissions.<br/>";
 }
 
 function openBoard($uri) {
