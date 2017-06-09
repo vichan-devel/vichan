@@ -17,6 +17,22 @@ class ShadowDelete {
 
 
 
+    static public function hashShadowDelFilenamesDBJSON($files_db_json)
+    {
+        // Fix Filenames if shadow copy
+        $files_new = array();
+        foreach (json_decode($files_db_json) as $i => $f) {
+            if ($f->file !== 'deleted') {
+                // Add file to array of all files
+                $f->file = self::hashShadowDelFilename($f->file);
+                $f->thumb = self::hashShadowDelFilename($f->thumb);
+                $files_new[] = $f;
+            }
+        }
+        return json_encode($files_new);
+    }
+
+
     // Delete a post (reply or thread)
     static public function deletePost($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
         global $board, $config;

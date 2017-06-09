@@ -72,11 +72,13 @@
 		<a title="{% trans %}Edit post{% endtrans %}" href="?/{{ board.dir }}edit{% if config.mod.raw_html_default %}_raw{% endif %}/{{ post.id }}">{{ config.mod.link_editpost }}</a>&nbsp;
 	{% endif %}
 {% else %}
-	{% if mod|hasPermission(config.mod.restore_shadow_post, board.uri) %}
-		<a title="{% trans %}Restore Shadow Deleted Post{% endtrans %}" href="?/{{ board.dir }}shadow_restore/{{ post.id }}">{{ config.mod.link_shadow_restore }}</a>&nbsp;
-	{% endif %}
-	{% if mod|hasPermission(config.mod.delete_shadow_post, board.uri) %}
-		<a title="{% trans %}Permanent Delete Shadow Deleted Post{% endtrans %}" href="?/{{ board.dir }}shadow_delete/{{ post.id }}">{{ config.mod.link_shadow_delete }}</a>&nbsp;
+	{% if not post.no_shadow_restore %}
+		{% if mod|hasPermission(config.mod.restore_shadow_post, board.uri) %}
+			<a title="{% trans %}Restore Shadow Deleted Post{% endtrans %}" href="?/{{ board.dir }}shadow_restore/{{ post.id }}">{{ config.mod.link_shadow_restore }}</a>&nbsp;
+		{% endif %}
+		{% if mod|hasPermission(config.mod.delete_shadow_post, board.uri) %}
+			<a title="{% trans %}Permanent Delete Shadow Deleted Post{% endtrans %}" href="?/{{ board.dir }}shadow_delete/{{ post.id }}">{{ config.mod.link_shadow_delete }}</a>&nbsp;
+		{% endif %}
 	{% endif %}
 {% endif %}
 </span>

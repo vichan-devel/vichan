@@ -2710,30 +2710,20 @@ function buildThread($id, $return = false, $mod = false, $shadow = false) {
 	if ($action == 'rebuild' || $return || $mod) {
 		$query = prepare(
 			sprintf("SELECT ``posts_%s``.*, 0 AS `shadow` FROM ``posts_%s`` WHERE (`thread` IS NULL AND `id` = :id) OR `thread` = :id", $board['uri'], $board['uri']) .
-			($shadow?" UNION ALL " . sprintf("SELECT ``shadow_posts_%s``.*, 1 AS `shadow` FROM ``shadow_posts_%s`` WHERE `thread` = :id", $board['uri'], $board['uri']):"") .
+			($shadow?" UNION ALL " . sprintf("SELECT ``shadow_posts_%s``.*, 1 AS `shadow` FROM ``shadow_posts_%s`` WHERE (`thread` IS NULL AND `id` = :id) OR `thread` = :id", $board['uri'], $board['uri']):"") .
 			" ORDER BY `thread`,`id`");
 		$query->bindValue(':id', $id, PDO::PARAM_INT);
 		$query->execute() or error(db_error($query));
 
 		while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
 			// Fix Filenames if shadow copy
-			if($post['shadow'] && $post['files']) {
-				$files_new = array();
-				// Move files to temp storage
-				foreach (json_decode($post['files']) as $i => $f) {
-					if ($f->file !== 'deleted') {
-						// Add file to array of all files
-						$f->file = ShadowDelete::hashShadowDelFilename($f->file);
-						$f->thumb = ShadowDelete::hashShadowDelFilename($f->thumb);
-						$files_new[] = $f;
-					}
-				}
-				$post['files'] = json_encode($files_new);
-			}
+			if($post['shadow'] && $post['files'])
+				$post['files'] = Shadowdelete::hashShadowDelFilenamesDBJSON($post['files']);
 
 			if (!isset($thread)) {
 				$thread = new Thread($post, $mod ? '?/' : $config['root'], $mod);
 			} else {
+				$post['no_shadow_restore'] = true;
 				$thread->add(new Post($post, $mod ? '?/' : $config['root'], $mod));
 			}
 		}

@@ -3,7 +3,7 @@
 <div class="post reply {% if post.shadow %}shadow-post{% endif %}" id="reply_{{ post.id }}">
 <p class="intro">
 	{% if not index %}<a id="{{ post.id }}" class="post_anchor"></a>{% endif %}
-	<input type="checkbox" class="delete" name="delete_{{ post.id }}" id="delete_{{ post.id }}" />
+	{% if not post.shadow %}<input type="checkbox" class="delete" name="delete_{{ post.id }}" id="delete_{{ post.id }}" />{% endif %}
 	<label for="delete_{{ post.id }}">
 		{% include 'post/subject.html' %}
 		{% include 'post/name.html' %}

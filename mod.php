@@ -90,6 +90,8 @@ $pages = array(
 	'/(\%b)/featured/'					=> 'secure_POST view_archive_featured', 		// View Featured Archive
 	
 
+	'/shadow_recent_post/(\d+)'				=> 'recent_shadow_posts',					// view recent posts shadow deleted
+	'/(\%b)/shadow_view/(\d+)'				=> 'view_shadow_thread',					// view shadow deleted thread
 	'/(\%b)/shadow_restore/(\d+)'			=> 'secure_POST shadow_restore_post',		// restore shadow deleted post
 	'/(\%b)/shadow_delete/(\d+)'			=> 'secure_POST shadow_delete_post',		// permanent delete shadow deleted post
 	'/(\%b)/shadow_purge/(\d+)'				=> 'secure_POST shadow_purge',				// permanent delete all shadow deleted post that have timed out

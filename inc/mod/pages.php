@@ -2060,6 +2060,85 @@ function mod_edit_post($board, $edit_raw_html, $postID) {
 
 
 
+function mod_recent_shadow_posts($lim) {
+	global $config, $mod, $pdo;
+
+	if (!hasPermission($config['mod']['view_shadow_posts']))
+		error($config['error']['noaccess']);
+
+	$limit = (is_numeric($lim))? $lim : 25;
+	$last_time = (isset($_GET['last']) && is_numeric($_GET['last'])) ? $_GET['last'] : 0;
+
+	$mod_boards = array();
+	$boards = listBoards();
+
+	//if not all boards
+	if ($mod['boards'][0]!='*') {
+		foreach ($boards as $board) {
+			if (in_array($board['uri'], $mod['boards']))
+				$mod_boards[] = $board;
+		}
+	} else {
+		$mod_boards = $boards;
+	}
+
+	// Manually build an SQL query
+	$query = 'SELECT * FROM (';
+	foreach ($mod_boards as $board) {
+		$query .= sprintf('SELECT *, %s AS `board`, 1 AS `shadow` FROM ``shadow_posts_%s`` UNION ALL ', $pdo->quote($board['uri']), $board['uri']);
+	}
+	// Remove the last "UNION ALL" seperator and complete the query
+	$query = preg_replace('/UNION ALL $/', ') AS `all_posts` WHERE (`time` < :last_time OR NOT :last_time) ORDER BY `thread` IS NULL DESC, `time` DESC LIMIT ' . $limit, $query);
+	$query = prepare($query);
+	$query->bindValue(':last_time', $last_time);
+	$query->execute() or error(db_error($query));
+	$posts = $query->fetchAll(PDO::FETCH_ASSOC);
+
+	// List of threads
+	$thread_ids = array();
+	// List of posts in thread
+	$posts_in_thread_ids = array();
+
+	foreach ($posts as $key => &$post) {
+		openBoard($post['board']);
+
+		// Fix Filenames if shadow copy
+		if($post['shadow'] && $post['files'])
+			$post['files'] = Shadowdelete::hashShadowDelFilenamesDBJSON($post['files']);
+
+		if (!$post['thread']) {
+			// Still need to fix this:
+			$po = new Thread($post, '?/', $mod, false);
+			$post['built'] = $po->build(true);
+
+			// Add to list of threads
+			$thread_ids[] = $post['id']; 
+		} else {
+			// If post belong to deleted thread don't list it
+			if(in_array($post['thread'], $thread_ids)) {
+				$posts_in_thread_ids[] = $key;
+			} else {
+				$po = new Post($post, '?/', $mod);
+				$post['built'] = $po->build(true);
+			}
+		}
+		$last_time = $post['time'];
+	}
+
+	foreach($posts_in_thread_ids as $id)
+		unset($posts[$id]);
+
+	echo mod_page(_('Shadow Deleted Posts'), 'mod/shadow_recent_posts.html',  array(
+			'posts' => $posts,
+			'limit' => $limit,
+			'last_time' => $last_time
+		)
+	);
+
+}
+
+
+
 
 function mod_shadow_restore_post($board, $post) {
 	global $config, $mod;
@@ -2077,8 +2156,6 @@ function mod_shadow_restore_post($board, $post) {
 	modLog("Restored Shadow Deleted post #{$post}");
 	// Rebuild board
 	buildIndex();
-	// Rebuild thread
-	buildThread($thread_id ? $thread_id : $post);
 	// Rebuild themes
 	rebuildThemes('post-delete', $board);
 
@@ -2087,10 +2164,43 @@ function mod_shadow_restore_post($board, $post) {
 		// If we got a thread id number as response reload to thread
 		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['dir']['res'] . sprintf($config['file_page'], $thread_id), true, $config['redirect_http']);
 	} else {
-		// Reload to board index
-		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
+		// We restored a thread so we reload to it
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['dir']['res'] . sprintf($config['file_page'], $post), true, $config['redirect_http']);
 	}
 }
+
+
+
+
+function mod_view_shadow_thread($board, $thread_id) {
+	global $config, $mod;
+
+	if (!openBoard($board))
+		error($config['error']['noboard']);
+	
+	if (!hasPermission($config['mod']['restore_shadow_post'], $board))
+		error($config['error']['noaccess']);
+
+	// Restore Post
+	$thread_id = ShadowDelete::restorePost($post);
+
+	// Record the action
+	modLog("Restored Shadow Deleted post #{$post}");
+	// Rebuild board
+	buildIndex();
+	// Rebuild themes
+	rebuildThemes('post-delete', $board);
+
+	// Redirect
+	if($thread_id !== true) {
+		// If we got a thread id number as response reload to thread
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['dir']['res'] . sprintf($config['file_page'], $thread_id), true, $config['redirect_http']);
+	} else {
+		// We restored a thread so we reload to it
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['dir']['res'] . sprintf($config['file_page'], $post), true, $config['redirect_http']);
+	}
+}
+
 
 
 
