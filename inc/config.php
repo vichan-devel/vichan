@@ -1355,29 +1355,22 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['dir']['res'] = 'res/';
 
 
+
+	// Shadow Del dir for files (non perm deleted)
+	$config['dir']['shadow_del'] = 'tempura/';
+	// Use shadow delete instead of immediate permanent delete
+	$config['shadow_del']['use'] = true;
+	// Hash Seed used to obscure filenames of shadow deleted files for posts
+	$config['shadow_del']['filename_seed'] = '5azs5co3wAN67tlqbINEmWuERtTX4FatsMVe446JbHVIJbZyjephDsdRtULw501';
+	// Lifetime for shadow deleted threads before permanent delete (ex. "60 minutes", "6 hours", "1 day", "1 week")
+	$config['shadow_del']['lifetime'] = "6 hours";
+
+
+
 	// Directory for archived threads
 	$config['dir']['archive'] = 'archive/';
 	// Directory for "Featured Threads" (threads makred for permanent storage)
 	$config['dir']['featured'] = 'featured/';
-
-	// Indicate if threads should be archived
-	$config['archive']['threads'] = true;
-	// Indicate if it is possible to mark threads as featured (stored forever)
-	$config['feature']['threads'] = true;
-	// Indicate if link to featured archive should be shown on post and thread page
-	$config['feature']['link_post_page'] = false;
-
-	// Days to keep archived threads before deletion (if set to false all archived threads are kept forever)
-	$config['archive']['lifetime'] = 3;
-
-	// Number of chars in snippet
-	$config['archive']['snippet_len'] = 400;
-	
-	// If any is set to run in crom both will be run in cron regardless
-	// Archiving is run in cron job
-	$config['archive']['cron_job']['archiving'] = false;
-	// Purging of archive is run in cron job
-	$config['archive']['cron_job']['purge'] = false;
 
 
 	// For load balancing, having a seperate server (and domain/subdomain) for serving static content is
@@ -1418,6 +1411,35 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	
 	// Try not to build pages when we shouldn't have to.
 	$config['try_smarter'] = true;
+
+
+
+
+/*
+ * ====================
+ *  Archive settings
+ * ====================
+ */
+
+	// Indicate if threads should be archived
+	$config['archive']['threads'] = true;
+	// Indicate if it is possible to mark threads as featured (stored forever)
+	$config['feature']['threads'] = true;
+	// Indicate if link to featured archive should be shown on post and thread page
+	$config['feature']['link_post_page'] = false;
+
+	// Days to keep archived threads before deletion (ex. "60 minutes", "6 hours", "1 day", "1 week"), if set to false all archived threads are kept forever
+	$config['archive']['lifetime'] = "3 days";
+
+	// Number of chars in snippet
+	$config['archive']['snippet_len'] = 400;
+	
+	// If any is set to run in crom both will be run in cron regardless
+	// Archiving is run in cron job
+	$config['archive']['cron_job']['archiving'] = false;
+	// Purging of archive is run in cron job
+	$config['archive']['cron_job']['purge'] = false;
+
 
 /*
  * ====================
@@ -1526,6 +1548,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['mod']['link_move'] = '[Move]';
 	$config['mod']['link_cycle'] = '[Cycle]';
 	$config['mod']['link_uncycle'] = '[-Cycle]';
+
+	$config['mod']['link_shadow_restore'] = '[SD Restore]';
+	$config['mod']['link_shadow_delete'] = '[SD Delete]';
 
 	// Moderator capcodes.
 	$config['capcode'] = ' <span class="capcode">## %s</span>';
@@ -1764,6 +1789,14 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['mod']['feature_archived_threads'] = JANITOR;
 	// Delete Featured Archived Threads
 	$config['mod']['delete_featured_archived_threads'] = MOD;
+
+
+	// View Shadow Deleted Posts and Threads
+	$config['mod']['view_shadow_posts'] = MOD;
+	// Restore Shadow Deleted Posts and Threads
+	$config['mod']['restore_shadow_post'] = MOD;
+	// Permanently Delete Shadow Deleted Posts and Threads
+	$config['mod']['delete_shadow_post'] = ADMIN;
 
 
 	// View list of bans

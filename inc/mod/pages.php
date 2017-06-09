@@ -503,6 +503,13 @@ function mod_new_board() {
 			$query = preg_replace('/(CHARSET=|CHARACTER SET )utf8mb4/', '$1utf8', $query);
 		
 		query($query) or error(db_error());
+
+		// Create Shaddow Copy Table
+		$query = Element('posts.sql', array('board' => $board['uri']));
+		$query = str_replace("``posts_", "``shadow_posts_", $query);
+		if (mysql_version() < 50503)
+			$query = preg_replace('/(CHARSET=|CHARACTER SET )utf8mb4/', '$1utf8', $query);
+		query($query) or error(db_error());
 		
 		// Create Archive Table in DB
 		$query = Element('archive.sql', array('board' => $board['uri']));
@@ -773,7 +780,11 @@ function mod_view_thread($boardName, $thread) {
 	if (!openBoard($boardName))
 		error($config['error']['noboard']);
 	
-	$page = buildThread($thread, true, $mod);
+	// Purge shadow posts that have timed out
+	if($config['shadow_del']['use'])
+		ShadowDelete::purge();
+
+	$page = buildThread($thread, true, $mod, hasPermission($config['mod']['view_shadow_posts']));
 	echo $page;
 }
 
@@ -1179,7 +1190,7 @@ function mod_warning_post($board, $delete, $post, $token = false) {
 				error($config['error']['noaccess']);
 			
 			// Delete post
-			deletePost($post);
+			deletePostShadow($post);
 			modLog("Deleted post #{$post}");
 			// Rebuild board
 			buildIndex();
@@ -1617,7 +1628,7 @@ function mod_move_reply($originBoard, $postID) {
 		openBoard($originBoard);
 
 		// delete original post
-		deletePost($postID);
+		deletePostPermanent($postID);
 		buildIndex();
 
 		// open target board for redirect
@@ -1876,7 +1887,7 @@ function mod_move($originBoard, $postID) {
 			header('Location: ?/' . sprintf($config['board_path'], $newboard['uri']) . $config['dir']['res'] . link_for($op, false, $newboard) .
 				'#' . $botID, true, $config['redirect_http']);
 		} else {
-			deletePost($postID);
+			deletePostPermanent($postID);
 			buildIndex();
 			
 			openBoard($targetBoard);
@@ -1943,7 +1954,7 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 			buildIndex();
 		} elseif (isset($_POST['delete']) && (int) $_POST['delete']) {
 			// Delete post
-			deletePost($post);
+			deletePostShadow($post);
 			modLog("Deleted post #{$post}");
 			// Rebuild board
 			buildIndex();
@@ -2046,6 +2057,208 @@ function mod_edit_post($board, $edit_raw_html, $postID) {
 	}
 }
 
+
+
+
+function mod_recent_shadow_posts($lim) {
+	global $config, $mod, $pdo;
+
+	if (!hasPermission($config['mod']['view_shadow_posts']))
+		error($config['error']['noaccess']);
+
+	$limit = (is_numeric($lim))? $lim : 25;
+	$last_time = (isset($_GET['last']) && is_numeric($_GET['last'])) ? $_GET['last'] : 0;
+
+	$mod_boards = array();
+	$boards = listBoards();
+
+	//if not all boards
+	if ($mod['boards'][0]!='*') {
+		foreach ($boards as $board) {
+			if (in_array($board['uri'], $mod['boards']))
+				$mod_boards[] = $board;
+		}
+	} else {
+		$mod_boards = $boards;
+	}
+
+	// Manually build an SQL query
+	$query = 'SELECT * FROM (';
+	foreach ($mod_boards as $board) {
+		$query .= sprintf('SELECT *, %s AS `board`, 1 AS `shadow` FROM ``shadow_posts_%s`` UNION ALL ', $pdo->quote($board['uri']), $board['uri']);
+	}
+	// Remove the last "UNION ALL" seperator and complete the query
+	$query = preg_replace('/UNION ALL $/', ') AS `all_posts` WHERE (`time` < :last_time OR NOT :last_time) ORDER BY `thread` IS NULL DESC, `time` DESC LIMIT ' . $limit, $query);
+	$query = prepare($query);
+	$query->bindValue(':last_time', $last_time);
+	$query->execute() or error(db_error($query));
+	$posts = $query->fetchAll(PDO::FETCH_ASSOC);
+
+	// List of threads
+	$thread_ids = array();
+	// List of posts in thread
+	$posts_in_thread_ids = array();
+
+	foreach ($posts as $key => &$post) {
+		openBoard($post['board']);
+
+		// Fix Filenames if shadow copy
+		if($post['shadow'] && $post['files'])
+			$post['files'] = Shadowdelete::hashShadowDelFilenamesDBJSON($post['files']);
+
+		if (!$post['thread']) {
+			// Still need to fix this:
+			$po = new Thread($post, '?/', $mod, false);
+			$post['built'] = $po->build(true);
+
+			// Add to list of threads
+			$thread_ids[] = $post['id']; 
+		} else {
+			// If post belong to deleted thread don't list it
+			if(in_array($post['thread'], $thread_ids)) {
+				$posts_in_thread_ids[] = $key;
+			} else {
+				$po = new Post($post, '?/', $mod);
+				$post['built'] = $po->build(true);
+			}
+		}
+		$last_time = $post['time'];
+	}
+
+	foreach($posts_in_thread_ids as $id)
+		unset($posts[$id]);
+
+	echo mod_page(_('Shadow Deleted Posts'), 'mod/shadow_recent_posts.html',  array(
+			'posts' => $posts,
+			'limit' => $limit,
+			'last_time' => $last_time
+		)
+	);
+
+}
+
+
+
+
+function mod_shadow_restore_post($board, $post) {
+	global $config, $mod;
+
+	if (!openBoard($board))
+		error($config['error']['noboard']);
+	
+	if (!hasPermission($config['mod']['restore_shadow_post'], $board))
+		error($config['error']['noaccess']);
+
+	// Restore Post
+	$thread_id = ShadowDelete::restorePost($post);
+
+	// Record the action
+	modLog("Restored Shadow Deleted post #{$post}");
+	// Rebuild board
+	buildIndex();
+	// Rebuild themes
+	rebuildThemes('post-delete', $board);
+
+	// Redirect
+	if($thread_id !== true) {
+		// If we got a thread id number as response reload to thread
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['dir']['res'] . sprintf($config['file_page'], $thread_id), true, $config['redirect_http']);
+	} else {
+		// We restored a thread so we reload to it
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['dir']['res'] . sprintf($config['file_page'], $post), true, $config['redirect_http']);
+	}
+}
+
+
+
+
+function mod_view_shadow_thread($board, $thread_id) {
+	global $config, $mod;
+
+	if (!openBoard($board))
+		error($config['error']['noboard']);
+	
+	if (!hasPermission($config['mod']['restore_shadow_post'], $board))
+		error($config['error']['noaccess']);
+
+	// Restore Post
+	$thread_id = ShadowDelete::restorePost($post);
+
+	// Record the action
+	modLog("Restored Shadow Deleted post #{$post}");
+	// Rebuild board
+	buildIndex();
+	// Rebuild themes
+	rebuildThemes('post-delete', $board);
+
+	// Redirect
+	if($thread_id !== true) {
+		// If we got a thread id number as response reload to thread
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['dir']['res'] . sprintf($config['file_page'], $thread_id), true, $config['redirect_http']);
+	} else {
+		// We restored a thread so we reload to it
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['dir']['res'] . sprintf($config['file_page'], $post), true, $config['redirect_http']);
+	}
+}
+
+
+
+
+
+
+function mod_shadow_delete_post($board, $post) {
+	global $config, $mod;
+
+	if (!openBoard($board))
+		error($config['error']['noboard']);
+	
+	if (!hasPermission($config['mod']['delete_shadow_post'], $board))
+		error($config['error']['noaccess']);
+
+	// Restore Post
+	$thread_id = ShadowDelete::purgePost($post);
+
+	// Record the action
+	modLog("Permanently Deleted Shadow Deleted post #{$post}");
+
+	// Redirect
+	if($thread_id !== true) {
+		// If we got a thread id number as response reload to thread
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['dir']['res'] . sprintf($config['file_page'], $thread_id), true, $config['redirect_http']);
+	} else {
+		// Reload to board index
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
+	}
+}
+
+
+function mod_shadow_purge() {
+	global $config, $mod;
+
+	if (!hasPermission($config['mod']['purge_shadow_posts'], $board))
+		error($config['error']['noaccess']);
+
+	// Restore Post
+	$thread_id = ShadowDelete::purgePost($post);
+
+	// Record the action
+	modLog("Permanently Deleted Shadow Deleted post #{$post}");
+
+	// Redirect
+	if($thread_id !== true) {
+		// If we got a thread id number as response reload to thread
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['dir']['res'] . sprintf($config['file_page'], $thread_id), true, $config['redirect_http']);
+	} else {
+		// Reload to board index
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
+	}
+}
+
+
+
+
+
+
 function mod_delete($board, $post) {
 	global $config, $mod;
 	
@@ -2056,7 +2269,7 @@ function mod_delete($board, $post) {
 		error($config['error']['noaccess']);
 
 	// Delete post (get thread id)
-	$thread_id = deletePost($post);
+	$thread_id = deletePostShadow($post);
 	// Record the action
 	modLog("Deleted post #{$post}");
 	// Rebuild board
@@ -2210,7 +2423,7 @@ function mod_deletebyip($boardName, $post, $global = false) {
 	while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
 		openBoard($post['board']);
 		
-		deletePost($post['id'], false, false);
+		deletePostShadow($post['id'], false, false);
 
 		rebuildThemes('post-delete', $board['uri']);
 		
