@@ -1696,7 +1696,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
     // View IP addresses
     $config['mod']['show_ip'] = DEVELOPER;
     // Delete a post
-    $config['mod']['delete'] = MOD;
+    $config['mod']['delete'] = JANITOR;
     // Deliver Bantz to User and Post
     $config['mod']['bantz'] = MOD;
 
@@ -1791,6 +1791,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['mod']['delete_featured_archived_threads'] = MOD;
 
 
+	// Automatically Permanently Delete Posts and Threads (set to false if you want to keep for all)
+	$config['mod']['auto_delete_shadow_post'] = MOD;
 	// View Shadow Deleted Posts and Threads
 	$config['mod']['view_shadow_posts'] = MOD;
 	// Restore Shadow Deleted Posts and Threads
