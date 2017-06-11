@@ -3657,15 +3657,15 @@ function mod_view_archive($boardName) {
 		Archive::featureThread($_POST['id']);
 	}
 
-	$query = query(sprintf("SELECT `id`, `snippet`, `featured` FROM ``archive_%s`` WHERE `lifetime` > %d ORDER BY `lifetime` DESC", $board['uri'], time())) or error(db_error());
-	$archive = $query->fetchAll(PDO::FETCH_ASSOC);
+	// Get Archive List
+	$archive = Archive::getArchiveList();
 
 	foreach($archive as &$thread)
 		$thread['archived_url'] = sprintf($config['board_path'], $board['uri']) . $config['dir']['archive'] . $config['dir']['res'] . sprintf($config['file_page'], $thread['id']);
 
 	mod_page(sprintf(_('Archived') . ' %s: ' . $config['board_abbreviation'], _('threads'), $board['uri']), 'mod/archive_list.html', array(
 		'archive' => $archive,
-		'thread_count' => $query->rowCount(),
+		'thread_count' => count($archive),
 		'board' => $board,
 		'token' => make_secure_link_token($board['uri']. '/archive/')
 	));

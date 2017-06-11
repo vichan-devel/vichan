@@ -52,6 +52,9 @@ class Archive {
                 // Remove Post Form from HTML (First Form)
                 $thread_file_content = preg_replace("/<form name=\"post\"(.*?)<\/form>/i", "", $thread_file_content);
 
+                // Refix archive link that will be wrong
+                $thread_file_content = str_replace(sprintf('href="/' . $config['board_path'] . $config['dir']['archive'] . $config['dir']['archive'], $board['uri']), sprintf('href="/' . $config['board_path'] . $config['dir']['archive'], $board['uri']), $thread_file_content);
+
                 // Remove Form from HTML
                 $thread_file_content = preg_replace("/<form(.*?)>/i", "", $thread_file_content);
                 $thread_file_content = preg_replace("/<\/form>/i", "", $thread_file_content);
@@ -129,9 +132,11 @@ class Archive {
 
         // Delete Archive Entries
         if($query->rowCount() != 0) {
-    		$query = prepare(sprintf("DELETE FROM  ``archive_%s`` WHERE `lifetime` < %d AND `featured` = 0", $board['uri'], time())) or error(db_error());
+    		$query = prepare(sprintf("DELETE FROM  ``archive_%s`` WHERE `lifetime` < :lifetime AND `featured` = 0", $board['uri'])) or error(db_error());
             $query->bindValue(':lifetime', strtotime("-" . $config['archive']['lifetime']), PDO::PARAM_INT);
             $query->execute() or error(db_error($query));
+
+            modLog(sprintf("Purged %i archived threads due to expiration date", $query->rowCount()));
         }
 
         return $query->rowCount();
@@ -203,7 +208,7 @@ class Archive {
         @unlink($board['dir'] . $config['dir']['featured'] . $config['dir']['res'] . sprintf($config['file_page'], $thread_id));
 
         // Delete Entry in DB if it has timed out
-        if($thread['lifetime'] != 0 && $thread['lifetime'] < time())
+        if($thread['lifetime'] != 0 && $thread['lifetime'] < strtotime("-" . $config['archive']['lifetime']))
             query(sprintf("DELETE FROM ``archive_%s`` WHERE `id` = %d", $board['uri'], (int)$thread_id)) or error(db_error());
         else
             query(sprintf("UPDATE ``archive_%s`` SET `featured` = 0 WHERE `id` = %d", $board['uri'], (int)$thread_id)) or error(db_error());
@@ -241,8 +246,8 @@ class Archive {
         if(!$config['archive']['threads'])
             return;
         
-        $query = query(sprintf("SELECT `id`, `snippet`, `featured` FROM ``archive_%s`` WHERE `lifetime` > %d ORDER BY `lifetime` DESC", $board['uri'], time())) or error(db_error());
-        $archive = $query->fetchAll(PDO::FETCH_ASSOC);
+        // Get archive List
+        $archive = self::getArchiveList();
 
         foreach($archive as &$thread)
             $thread['archived_url'] = $config['dir']['res'] . sprintf($config['file_page'], $thread['id']);
@@ -258,7 +263,7 @@ class Archive {
             'boardlist' => createBoardlist(),
             'body' => Element("mod/archive_list.html", array(
                 'config' => $config,
-        		'thread_count' => $query->rowCount(),
+        		'thread_count' => count($archive),
                 'board' => $board,
                 'archive' => $archive
             ))
@@ -267,6 +272,27 @@ class Archive {
         file_write($config['dir']['home'] . $board['dir'] . $config['dir']['archive'] . $config['file_index'], $archive_page);
     }
 
+
+
+    static public function getArchiveList($featured = false) {
+        global $config, $board;
+
+        $archive = false;
+        if($featured) {
+            $query = query(sprintf("SELECT `id`, `snippet`, `featured` FROM ``archive_%s`` WHERE `featured` = 1 ORDER BY `lifetime` DESC", $board['uri'])) or error(db_error());
+            $archive = $query->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            $query = prepare(sprintf("SELECT `id`, `snippet`, `featured` FROM ``archive_%s`` WHERE `lifetime` > :lifetime ORDER BY `lifetime` DESC", $board['uri']));
+            $query->bindValue(':lifetime', strtotime("-" . $config['archive']['lifetime']), PDO::PARAM_INT);
+            $query->execute() or error(db_error());
+            $archive = $query->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        return $archive;
+    }
+
+
+
     static public function buildFeaturedIndex() {
         global $config, $board;
 
@@ -274,8 +300,8 @@ class Archive {
         if(!$config['feature']['threads'])
             return;
         
-        $query = query(sprintf("SELECT `id`, `snippet`, `featured` FROM ``archive_%s`` WHERE `featured` = 1 ORDER BY `lifetime` DESC", $board['uri'])) or error(db_error());
-        $archive = $query->fetchAll(PDO::FETCH_ASSOC);
+        // Get featured archived threads
+        $archive = self::getArchiveList(true);
 
         foreach($archive as &$thread)
             $thread['featured_url'] = $config['dir']['res'] . sprintf($config['file_page'], $thread['id']);
