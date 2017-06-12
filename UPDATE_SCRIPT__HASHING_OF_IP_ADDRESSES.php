@@ -16,6 +16,9 @@ if (!$mod || $mod['type'] != ADMIN)
 
 
 
+// Set timelimit to what it is for rebuild
+@set_time_limit($config['mod']['rebuild_timelimit']);
+
 
 $page['title'] = 'Updating Database Hashing IP';
 

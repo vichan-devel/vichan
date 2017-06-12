@@ -2867,6 +2867,7 @@ function mod_rebuild() {
 			$config['try_smarter'] = false;
 			
 			if (isset($_POST['rebuild_index'])) {
+				clean("Rebuild");
 				buildIndex();
 				$log[] = '<strong>' . sprintf($config['board_abbreviation'], $board['uri']) . '</strong>: Creating index pages';
 			}

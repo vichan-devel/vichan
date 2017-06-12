@@ -15,6 +15,10 @@ if (!$mod || $mod['type'] != ADMIN)
     die("You need to be logged in as admin");
 
 
+// Set timelimit to what it is for rebuild
+@set_time_limit($config['mod']['rebuild_timelimit']);
+
+
 $page['title'] = 'Updating Database - Temporarly Deletion of Threads';
 
 
