@@ -676,7 +676,7 @@ if (file_exists($config['has_installed'])) {
 					UNIQUE KEY `id` (`id`),
 					KEY `lifetime` (`lifetime`)
 					) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-				") or error(db_error());
+				", $_board['uri']) or error(db_error()));
 				query(sprintf("CREATE TABLE IF NOT EXISTS ``shadow_posts_archive_%s`` (
 					`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 					`thread` int(11) DEFAULT NULL,
@@ -708,7 +708,7 @@ if (file_exists($config['has_installed'])) {
 					KEY `ip` (`ip`),
 					KEY `list_threads` (`thread`,`sticky`,`bump`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-				") or error(db_error());
+				", $_board['uri']) or error(db_error()));
 			}
 			query('CREATE TABLE IF NOT EXISTS ``shadow_antispam`` (
 				`board` varchar(58) NOT NULL,
