@@ -655,6 +655,12 @@ table.archive-list tbody {
 table.archive-list tbody tr td:first-child{
   text-align: right;
 }
+table.archive-list tbody tr td:nth-child(2){
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 table.archive-list tbody tr td:nth-child(3),
 table.archive-list tbody tr td:nth-child(4){
   text-align: center;
