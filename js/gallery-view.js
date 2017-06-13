@@ -116,7 +116,7 @@ $(function(){
     if (img.match(/\.webm$|\.mp4$|\.ogv$/i)) { // We are handling video nao
       i = $('<video>');
       i.attr('src', img);
-      i.attr('autoplay', true);
+      i.attr('autoplay', false);
       i.attr('controls', true);
       i.appendTo(active);
       i.hide();
