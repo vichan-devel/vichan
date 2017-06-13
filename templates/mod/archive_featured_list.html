@@ -1,4 +1,18 @@
 
+{% if config.archive.threads %}
+<p style="text-align: center">
+	<a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.dir.archive }}">[{% trans %}Thread Archive{% endtrans %}]</a>
+</p>
+{% endif %}
+
+{% if is_mod_archive %}
+{% if mod and mod|hasPermission(config.mod.remove_from_mod_archive) %}
+	<p style="text-align: center">
+		<b>Please be curtious and don't delete the threads archived here as they were archived for a reason.</b>
+	</p>
+{% endif %}
+{% endif %}
+
 
 <table id="archive-list" class="archive-list modlog">
 	<thead>
@@ -17,15 +31,28 @@
 				<td>{{ thread.id }}</td>
 				<td>{{ thread.snippet }}</td>
 				<td><a href="{{ thread.featured_url }}">[{% trans 'View' %}]</a></td>
-				{% if mod and mod|hasPermission(config.mod.delete_featured_archived_threads, board.uri) %}
-					<td>
-						<form action="" method="post" class="archiveForm">
-							<input type="hidden" name="token" value="{{ token }}">
-							<input type="hidden" name="id" value="{{ thread.id }}">
-							<input type="hidden" name="delete" value="1">
-							<a href="#"  onclick="return confirm('Are you sure you want to permanently delete this thread from featured archive?')?this.parentNode.submit():false;">[{% trans 'Delete' %}]</a>
-						</form>
-					</td>
+				{% if is_mod_archive %}
+					{% if mod and mod|hasPermission(config.mod.remove_from_mod_archive, board.uri) %}
+						<td>
+							<form action="" method="post" class="archiveForm">
+								<input type="hidden" name="token" value="{{ token }}">
+								<input type="hidden" name="id" value="{{ thread.id }}">
+								<input type="hidden" name="delete" value="1">
+								<a href="#"  onclick="return confirm('Are you sure you want to permanently delete this thread from featured archive?')?this.parentNode.submit():false;">[{% trans 'Delete' %}]</a>
+							</form>
+						</td>
+					{% endif %}
+				{% else %}
+					{% if mod and mod|hasPermission(config.mod.delete_featured_archived_threads, board.uri) %}
+						<td>
+							<form action="" method="post" class="archiveForm">
+								<input type="hidden" name="token" value="{{ token }}">
+								<input type="hidden" name="id" value="{{ thread.id }}">
+								<input type="hidden" name="delete" value="1">
+								<a href="#"  onclick="return confirm('Are you sure you want to permanently delete this thread from featured archive?')?this.parentNode.submit():false;">[{% trans 'Delete' %}]</a>
+							</form>
+						</td>
+					{% endif %}
 				{% endif %}
 			</tr>
 		{% endfor %}

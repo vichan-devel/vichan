@@ -1,6 +1,11 @@
 
 
 
+{% if config.mod_archive.threads and mod and mod|hasPermission(config.view_mod_archive) %}
+<p style="text-align: center">
+	<a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.dir.mod_archive }}">[{% trans %}View Mod Archive{% endtrans %}]</a>
+</p>
+{% endif %}
 {% if config.feature.threads %}
 <p style="text-align: center">
 	<a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured Thread Archive{% endtrans %}]</a>
@@ -17,6 +22,9 @@
 			<th>Snippet</th>
 			<th width='50px'>&nbsp;</th>
 			{% if mod and mod|hasPermission(config.mod.feature_archived_threads, board.uri) %}
+				<th width='80px'>&nbsp;</th>
+			{% endif %}
+			{% if mod and mod|hasPermission(config.mod.add_to_mod_archive, board.uri) %}
 				<th width='80px'>&nbsp;</th>
 			{% endif %}
 		</tr>
@@ -38,6 +46,20 @@
 							</form>
 						{% else %}
 							<b>{% trans 'Featured' %}</b>
+						{% endif %}
+					</td>
+				{% endif %}
+				{% if mod and mod|hasPermission(config.mod.add_to_mod_archive, board.uri) %}
+					<td>
+						{% if not thread.mod_archived %}
+							<form action="" method="post" class="archiveForm">
+								<input type="hidden" name="token" value="{{ token }}">
+								<input type="hidden" name="id" value="{{ thread.id }}">
+								<input type="hidden" name="mod_archive" value="1">
+								<a href="#" onclick="confirm('Are you sure you want to add thread to mod archive?')?this.parentNode.submit():false;">[{% trans 'Mod Archive' %}]</a>
+							</form>
+						{% else %}
+							<b>{% trans 'Mod Archived' %}</b>
 						{% endif %}
 					</td>
 				{% endif %}

@@ -610,8 +610,22 @@ function setupBoard($array) {
 	if (!file_exists($board['dir'] . $config['dir']['featured'] . $config['dir']['res']))
 		@mkdir($board['dir'] . $config['dir']['featured'] . $config['dir']['res'], 0777)
 			or error("Couldn't create " . $board['dir'] . $config['dir']['featured'] . $config['dir']['img'] . ". Check permissions.", true);
+	// Create Mod Archive threads Folders
+	if (!file_exists($board['dir'] . $config['dir']['mod_archive']))
+		@mkdir($board['dir'] . $config['dir']['mod_archive'], 0777)
+			or $file_errors .= "Couldn't create " . $board['dir'] . $config['dir']['mod_archive'] . ". Check permissions.<br/>";
+	if (!file_exists($board['dir'] . $config['dir']['mod_archive'] . $config['dir']['img']))
+		@mkdir($board['dir'] . $config['dir']['mod_archive'] . $config['dir']['img'], 0777)
+			or $file_errors .= "Couldn't create " . $board['dir'] . $config['dir']['feamod_archivetured'] . $config['dir']['img'] . ". Check permissions.<br/>";
+	if (!file_exists($board['dir'] . $config['dir']['mod_archive'] . $config['dir']['thumb']))
+		@mkdir($board['dir'] . $config['dir']['mod_archive'] . $config['dir']['thumb'], 0777)
+			or $file_errors .= "Couldn't create " . $board['dir'] . $config['dir']['mod_archive'] . $config['dir']['thumb'] . ". Check permissions.<br/>";
+	if (!file_exists($board['dir'] . $config['dir']['mod_archive'] . $config['dir']['res']))
+		@mkdir($board['dir'] . $config['dir']['mod_archive'] . $config['dir']['res'], 0777)
+			or $file_errors .= "Couldn't create " . $board['dir'] . $config['dir']['mod_archive'] . $config['dir']['res'] . ". Check permissions.<br/>";
 
-	// Create TEMP Folders to save files in
+
+	// Create Shadow Delete Folders to save files in
 	if (!file_exists($board['dir'] . $config['dir']['shadow_del']))
 		@mkdir($board['dir'] . $config['dir']['shadow_del'], 0777)
 			or $file_errors .= "Couldn't create " . $board['dir'] . $config['dir']['shadow_del'] . ". Check permissions.<br/>";

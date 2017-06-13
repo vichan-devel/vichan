@@ -656,7 +656,8 @@ table.archive-list tbody tr td:first-child{
   text-align: right;
 }
 table.archive-list tbody tr td:nth-child(3),
-table.archive-list tbody tr td:nth-child(4){
+table.archive-list tbody tr td:nth-child(4),
+table.archive-list tbody tr td:nth-child(5){
   text-align: center;
 }
 .archiveForm {
