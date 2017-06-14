@@ -1,6 +1,6 @@
 <script src="{{ config.additional_javascript_url }}js/mod/recent_posts.js"></script>
 {% if not posts|count %}
-	<p style="text-align:center" class="unimportant">({% trans 'There are no active posts.' %})</p>
+	<p style="text-align:center" class="unimportant">({% trans 'There are no posts pending moderation.' %})</p>
 {% else %}
 	<h4>Viewing last {{ limit|e }} posts</h4>
 	<p>View <a href="?/shadow_list_recent_post/25"> 25 </a>|<a href="?/shadow_list_recent_post/50"> 50 </a>|<a href="?/shadow_list_recent_post/100"> 100 </a></p>
