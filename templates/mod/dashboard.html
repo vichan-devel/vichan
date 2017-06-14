@@ -109,12 +109,12 @@
 		{% if mod|hasPermission(config.mod.edit_pages) %}
 			<li><a href="?/edit_pages">{% trans 'Global static pages' %}</a></li>
 		{% endif %}
-		{% if mod|hasPermission(config.mod.view_shadow_posts) %}
-			<li><a href="?/recent/25">{% trans 'Recent posts' %}</a></li>
-		{% endif %}
 		{% if mod|hasPermission(config.mod.recent) %}
-			<li><a href="?/shadow_recent_post/25">{% trans 'Recent shadow deleted posts' %}</a></li>
-		{% endif %}
+            		<li><a href="?/recent/25">{% trans 'Recent posts' %}</a></li>
+        	{% endif %}
+        	{% if mod|hasPermission(config.mod.view_shadow_posts) %}
+            		<li><a href="?/shadow_recent_post/25">{% trans 'Recent shadow deleted posts' %}</a></li>
+        	{% endif %}
 		{% if mod|hasPermission(config.mod.rebuild) %}
 			<li><a href="?/rebuild">{% trans 'Rebuild' %}</a></li>
 		{% endif %}

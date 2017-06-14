@@ -1,7 +1,7 @@
 <?php
 
 // Installation/upgrade file	
-define('VERSION', '6.0.3');
+define('VERSION', '6.0.4');
 
 require 'inc/functions.php';
 
@@ -665,7 +665,96 @@ if (file_exists($config['has_installed'])) {
 				PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 			') or error(db_error());
-
+		case '6.0.3':
+			foreach ($boards as &$_board) {
+				query(sprintf("CREATE TABLE IF NOT EXISTS ``archive_%s`` (
+					`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+					`snippet` text NOT NULL,
+					`lifetime` int(11) NOT NULL,
+					`files` text NOT NULL,
+					`featured` int(1) NOT NULL,
+					UNIQUE KEY `id` (`id`),
+					KEY `lifetime` (`lifetime`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+				", $_board['uri']) or error(db_error()));
+				query(sprintf("CREATE TABLE IF NOT EXISTS ``shadow_posts_archive_%s`` (
+					`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+					`thread` int(11) DEFAULT NULL,
+					`subject` varchar(100) DEFAULT NULL,
+					`email` varchar(30) DEFAULT NULL,
+					`name` varchar(35) DEFAULT NULL,
+					`trip` varchar(15) DEFAULT NULL,
+					`capcode` varchar(50) DEFAULT NULL,
+					`body` text NOT NULL,
+					`body_nomarkup` text,
+					`time` int(11) NOT NULL,
+					`bump` int(11) DEFAULT NULL,
+					`files` text,
+					`num_files` int(11) DEFAULT '0',
+					`filehash` text CHARACTER SET ascii,
+					`password` varchar(20) DEFAULT NULL,
+					`ip` varchar(61) CHARACTER SET ascii NOT NULL,
+					`cookie` varchar(40) CHARACTER SET ascii NOT NULL,
+					`sticky` int(1) NOT NULL,
+					`locked` int(1) NOT NULL,
+					`cycle` int(1) NOT NULL,
+					`sage` int(1) NOT NULL,
+					`embed` text,
+					`slug` varchar(256) DEFAULT NULL,
+					UNIQUE KEY `id` (`id`),
+					KEY `thread_id` (`thread`,`id`),
+					KEY `filehash` (`filehash`(40)),
+					KEY `time` (`time`),
+					KEY `ip` (`ip`),
+					KEY `list_threads` (`thread`,`sticky`,`bump`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+				", $_board['uri']) or error(db_error()));
+			}
+			query('CREATE TABLE IF NOT EXISTS ``shadow_antispam`` (
+				`board` varchar(58) NOT NULL,
+				`thread` int(11) DEFAULT NULL,
+				`hash` char(40) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+				`created` int(11) NOT NULL,
+				`expires` int(11) DEFAULT NULL,
+				`passed` smallint(6) NOT NULL,
+				PRIMARY KEY (`hash`),
+				KEY `board` (`board`,`thread`),
+				KEY `expires` (`expires`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+			') or error(db_error());
+			query('CREATE TABLE IF NOT EXISTS ``shadow_cites`` (
+				`board` varchar(58) NOT NULL,
+				`post` int(11) NOT NULL,
+				`target_board` varchar(58) NOT NULL,
+				`target` int(11) NOT NULL,
+				KEY `target` (`target_board`,`target`),
+				KEY `post` (`board`,`post`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+			') or error(db_error());
+			query('CREATE TABLE IF NOT EXISTS ``shadow_deleted`` (
+				`id` int(10) NOT NULL AUTO_INCREMENT,
+				`board` varchar(58) NOT NULL,
+				`post_id` int(10) NOT NULL,
+				`del_time` int(11) NOT NULL,
+				`files` text CHARACTER SET ascii NOT NULL,
+				`cite_ids` text CHARACTER SET armscii8 NOT NULL,
+				PRIMARY KEY (`id`),
+				KEY `board` (`board`),
+				KEY `post_id` (`post_id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+			') or error(db_error());
+			query('CREATE TABLE IF NOT EXISTS ``shadow_filehashes`` (
+				`id` int(11) NOT NULL AUTO_INCREMENT,
+				`board` varchar(58) NOT NULL,
+				`thread` int(11) NOT NULL,
+				`post` int(11) NOT NULL,
+				`filehash` text CHARACTER SET ascii NOT NULL,
+				PRIMARY KEY (`id`),
+				KEY `thread_id` (`thread`),
+				KEY `post_id` (`post`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+			') or error(db_error());
+			
 		case false:
 			// TODO: enhance Tinyboard -> vichan upgrade path.
 			query("CREATE TABLE IF NOT EXISTS ``search_queries`` (  `ip` varchar(39) NOT NULL,  `time` int(11) NOT NULL,  `query` text NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;") or error(db_error());

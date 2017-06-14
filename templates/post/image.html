@@ -43,3 +43,49 @@
 		/>
 	{% endif %}
 </a>
+=======
+<a href="
+	{% if post.file|extension == 'webm' or post.file|extension == 'mp4' %}
+		{{ config.root }}player.php?v={% if shadow %}{{ config.uri_shadow_img }}{% else %}{{ config.uri_img }}{% endif %}{{ post.file }}&amp;t={{ post.filename|e('url') }}&amp;loop=1
+	{% else %}
+		{% if shadow %}{{ config.uri_shadow_img }}{% else %}{{ config.uri_img }}{% endif %}{{ post.file }}
+	{% endif %}
+	"
+	 target="_blank"
+	{% if post.thumb == 'file' or post.modifiers['is_file'] == '1' or post.filename|extension == 'webm' or post.file|extension == 'mp4' %}
+		 class="file"
+	{% endif %}
+>
+	{% if post.thumb|extension == 'webm' or post.thumb|extension == 'mp4' %}
+		<video class="post-image" src="{% if shadow %}{{ config.uri_shadow_img }}{% else %}{{ config.uri_img }}{% endif %}{{ post.thumb }}"
+			 poster="
+				{{ config.root }}
+				{% if config.file_icons[post.filename|extension] %}
+					{{ config.file_thumb|sprintf(config.file_icons[post.filename|extension]) }}
+				{% else %}
+					{{ config.file_thumb|sprintf(config.file_icons.default) }}
+				{% endif %}
+			"
+			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px"
+		>
+		</video>
+	{% else %}
+		<img class="post-image" 
+			src="
+				{% if post.thumb == 'file' %}
+					{{ config.root }}
+					{% if config.file_icons[post.filename|extension] %}
+						{{ config.file_thumb|sprintf(config.file_icons[post.filename|extension]) }}
+					{% else %}
+						{{ config.file_thumb|sprintf(config.file_icons.default) }}
+					{% endif %}
+				{% elseif post.thumb == 'spoiler' %}
+					{{ config.spoiler_image }}
+				{% else %}
+					{% if shadow %}{{ config.uri_shadow_thumb }}{% else %}{{ config.uri_thumb }}{% endif %}{{ post.thumb }}
+				{% endif %}
+			"
+			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px" alt="" 
+		/>
+	{% endif %}
+</a>
