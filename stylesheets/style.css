@@ -194,6 +194,8 @@ img.banner,img.board_image {
   display: block;
   border: 1px solid #a9a9a9;
   margin: 12px auto 0 auto;
+  width: 300px;
+  height: 100px;
 }
 
 .post-image {
@@ -1371,7 +1373,7 @@ div.mix {
 	display: none;
 }
 #PostAreaToggle:checked + span + div {
-	display: block;
+	display: inline-block;
 }
 form[name="post"] {
   margin-bottom: 0em;
