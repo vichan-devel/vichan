@@ -1154,32 +1154,13 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// jQuery, you should first empty the array so that "js/query.min.js" can be the first, and then re-add
 	// "js/inline-expanding.js" or else the inline-expanding script might not interact properly with other
 	// scripts.
+	// See the wiki for example configuration.
 
-
-	// We'll enable some reasonable defaults here that most imageboards would want / need.
 	// $config['additional_javascript'] = array();
-	$config['additional_javascript'][] = 'js/jquery.min.js';
-	$config['additional_javascript'][] = 'js/jquery-ui.custom.min.js';
-	$config['additional_javascript'][] = 'js/ajax.js';
-	$config['additional_javascript'][] = 'js/show-own-posts.js';
-	$config['additional_javascript'][] = 'js/hide-images.js';
-	$config['additional_javascript'][] = 'js/hide-threads.js';
-	$config['additional_javascript'][] = 'js/download-original.js';
-	$config['additional_javascript'][] = 'js/quick-reply.js';
-	$config['additional_javascript'][] = 'js/inline-expanding.js';
-	$config['additional_javascript'][] = 'js/expand-all-images.js';
-	$config['additional_javascript'][] = 'js/auto-reload.js';
-	$config['additional_javascript'][] = 'js/post-hover.js';
-	$config['additional_javascript'][] = 'js/style-select.js';
-	$config['additional_javascript'][] = 'js/options.js';
-	$config['additional_javascript'][] = 'js/options/general.js';
-	$config['additional_javascript'][] = 'js/options/user-css.js';
-	$config['additional_javascript'][] = 'js/options/user-js.js';
-	$config['additional_javascript'][] = 'js/options/fav.js';
-	$config['additional_javascript'][] = 'js/id_colors.js';
-	$config['additional_javascript'][] = 'js/id_highlighter.js';
-	$config['additional_javascript'][] = 'js/quote-selection.js';
-	$config['additional_javascript'][] = 'js/forced-anon.js';
+	// $config['additional_javascript'][] = 'js/jquery.min.js';
+	// $config['additional_javascript'][] = 'js/jquery-ui.custom.min.js';
+	// $config['additional_javascript'][] = 'js/ajax.js';
+
 
 	// Where these script files are located on the web. Defaults to $config['root'].
 	// $config['additional_javascript_url'] = 'http://static.example.org/tinyboard-javascript-stuff/';
@@ -1371,6 +1352,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['dir']['archive'] = 'archive/';
 	// Directory for "Featured Threads" (threads makred for permanent storage)
 	$config['dir']['featured'] = 'featured/';
+	// Directory for "Featured Threads" (threads makred for permanent storage)
+	$config['dir']['mod_archive'] = 'mod_archive/';
 
 
 	// For load balancing, having a seperate server (and domain/subdomain) for serving static content is
@@ -1427,6 +1410,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['feature']['threads'] = true;
 	// Indicate if link to featured archive should be shown on post and thread page
 	$config['feature']['link_post_page'] = false;
+
+	// Indicate if it is possible to mark threads as nostalgic (stored forever but will only be accessable to mods)
+	$config['mod_archive']['threads'] = true;
 
 	// Days to keep archived threads before deletion (ex. "60 minutes", "6 hours", "1 day", "1 week"), if set to false all archived threads are kept forever
 	$config['archive']['lifetime'] = "3 days";
@@ -1527,8 +1513,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 
 	// Mod links (full HTML).
 	$config['mod']['link_delete'] = '[D]';
+	$config['mod']['link_force_shadow_delete'] = '[ShD]';
 	$config['mod']['link_bantz'] = '[Bantz]';
-	$config['mod']['link_nicenotice'] = '[NiceNotice]';
+	$config['mod']['link_nicenotice'] = '[NN]';
 	$config['mod']['link_warning'] = '[W]';
 	$config['mod']['link_warningdelete'] = '[W&amp;D]';
 	$config['mod']['link_ban'] = '[B]';
@@ -1789,6 +1776,13 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['mod']['feature_archived_threads'] = JANITOR;
 	// Delete Featured Archived Threads
 	$config['mod']['delete_featured_archived_threads'] = MOD;
+
+	// View Mod Archive
+	$config['mod']['view_mod_archive'] = MOD;
+	// Archive Threads for Mods
+	$config['mod']['add_to_mod_archive'] = MOD;
+	// Archive Threads for Mods
+	$config['mod']['remove_from_mod_archive'] = MOD;
 
 
 	// Automatically Permanently Delete Posts and Threads (set to false if you want to keep for all)

@@ -610,8 +610,22 @@ function setupBoard($array) {
 	if (!file_exists($board['dir'] . $config['dir']['featured'] . $config['dir']['res']))
 		@mkdir($board['dir'] . $config['dir']['featured'] . $config['dir']['res'], 0777)
 			or error("Couldn't create " . $board['dir'] . $config['dir']['featured'] . $config['dir']['img'] . ". Check permissions.", true);
+	// Create Mod Archive threads Folders
+	if (!file_exists($board['dir'] . $config['dir']['mod_archive']))
+		@mkdir($board['dir'] . $config['dir']['mod_archive'], 0777)
+			or $file_errors .= "Couldn't create " . $board['dir'] . $config['dir']['mod_archive'] . ". Check permissions.<br/>";
+	if (!file_exists($board['dir'] . $config['dir']['mod_archive'] . $config['dir']['img']))
+		@mkdir($board['dir'] . $config['dir']['mod_archive'] . $config['dir']['img'], 0777)
+			or $file_errors .= "Couldn't create " . $board['dir'] . $config['dir']['feamod_archivetured'] . $config['dir']['img'] . ". Check permissions.<br/>";
+	if (!file_exists($board['dir'] . $config['dir']['mod_archive'] . $config['dir']['thumb']))
+		@mkdir($board['dir'] . $config['dir']['mod_archive'] . $config['dir']['thumb'], 0777)
+			or $file_errors .= "Couldn't create " . $board['dir'] . $config['dir']['mod_archive'] . $config['dir']['thumb'] . ". Check permissions.<br/>";
+	if (!file_exists($board['dir'] . $config['dir']['mod_archive'] . $config['dir']['res']))
+		@mkdir($board['dir'] . $config['dir']['mod_archive'] . $config['dir']['res'], 0777)
+			or $file_errors .= "Couldn't create " . $board['dir'] . $config['dir']['mod_archive'] . $config['dir']['res'] . ". Check permissions.<br/>";
 
-	// Create TEMP Folders to save files in
+
+	// Create Shadow Delete Folders to save files in
 	if (!file_exists($board['dir'] . $config['dir']['shadow_del']))
 		@mkdir($board['dir'] . $config['dir']['shadow_del'], 0777)
 			or $file_errors .= "Couldn't create " . $board['dir'] . $config['dir']['shadow_del'] . ". Check permissions.<br/>";
@@ -1579,11 +1593,11 @@ function rebuildPost($id) {
 
 
 // Delete a post (reply or thread)
-function deletePostShadow($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
+function deletePostShadow($id, $error_if_doesnt_exist=true, $rebuild_after=true, $force_shadow_delete = false) {
 	global $board, $config;
 
 	// If we are using non permanent delete run that function
-	if($config['shadow_del']['use'] && ($config['mod']['auto_delete_shadow_post'] === false || !hasPermission($config['mod']['auto_delete_shadow_post'])))
+	if($force_shadow_delete || ($config['shadow_del']['use'] && ($config['mod']['auto_delete_shadow_post'] === false || !hasPermission($config['mod']['auto_delete_shadow_post']))))
 		return ShadowDelete::deletePost($id, $error_if_doesnt_exist, $rebuild_after);
 	else
 		return deletePostPermanent($id, $error_if_doesnt_exist, $rebuild_after);
@@ -2723,7 +2737,7 @@ function buildThread($id, $return = false, $mod = false, $shadow = false) {
 			if (!isset($thread)) {
 				$thread = new Thread($post, $mod ? '?/' : $config['root'], $mod);
 			} else {
-				$post['no_shadow_restore'] = true;
+				$post['no_shadow_restore'] = false;
 				$thread->add(new Post($post, $mod ? '?/' : $config['root'], $mod));
 			}
 		}

@@ -375,6 +375,9 @@ function mod_edit_board($boardName) {
 			// Delete archive table
 			$query = query(sprintf('DROP TABLE IF EXISTS ``archive_%s``', $board['uri'])) or error(db_error());
 			
+			// Delete shadow delete table
+			$query = query(sprintf('DROP TABLE IF EXISTS ``shadow_posts_%s``', $board['uri'])) or error(db_error());
+			
 			// Clear reports
 			$query = prepare('DELETE FROM ``reports`` WHERE `board` = :id');
 			$query->bindValue(':id', $board['uri'], PDO::PARAM_INT);
@@ -2259,7 +2262,7 @@ function mod_shadow_purge() {
 
 
 
-function mod_delete($board, $post) {
+function mod_delete($board, $force_shadow_delete, $post) {
 	global $config, $mod;
 	
 	if (!openBoard($board))
@@ -2269,7 +2272,7 @@ function mod_delete($board, $post) {
 		error($config['error']['noaccess']);
 
 	// Delete post (get thread id)
-	$thread_id = deletePostShadow($post);
+	$thread_id = deletePostShadow($post, true, true, $force_shadow_delete);
 	// Record the action
 	modLog("Deleted post #{$post}");
 	// Rebuild board
@@ -3657,6 +3660,12 @@ function mod_view_archive($boardName) {
 		
 		Archive::featureThread($_POST['id']);
 	}
+	else if(isset($_POST['mod_archive'], $_POST['id'])) {
+		if(!hasPermission($config['mod']['add_to_mod_archive'], $board['uri']))
+			error($config['error']['noaccess']);
+		
+		Archive::featureThread($_POST['id'], true);
+	}
 
 	// Get Archive List
 	$archive = Archive::getArchiveList();
@@ -3699,7 +3708,45 @@ function mod_view_archive_featured($boardName) {
 
 	mod_page(sprintf(_('Featured') . ' %s: ' . $config['board_abbreviation'], _('threads'), $board['uri']), 'mod/archive_featured_list.html', array(
 		'archive' => $archive,
+		'board' => $board,
 		'token' => make_secure_link_token($board['uri']. '/featured/')
+	));
+}
+
+
+
+
+function mod_view_archive_mod_archive($boardName) {
+	global $board, $config;
+	
+	// If archiving is turned off return
+	if(!$config['mod_archive']['threads'])
+		return;
+	
+	if(!hasPermission($config['mod']['view_mod_archive'], $board['uri']))
+		error($config['error']['noaccess']);
+	
+	if (!openBoard($boardName))
+		error($config['error']['noboard']);
+
+	if(isset($_POST['delete'], $_POST['id'])) {
+		if(!hasPermission($config['mod']['remove_from_mod_archive'], $board['uri']))
+			error($config['error']['noaccess']);
+		
+		Archive::deleteFeatured($_POST['id'], true);
+	}
+
+	$query = query(sprintf("SELECT `id`, `snippet` FROM ``archive_%s`` WHERE `mod_archived` = 1 ORDER BY `lifetime` DESC", $board['uri'])) or error(db_error());
+	$archive = $query->fetchAll(PDO::FETCH_ASSOC);
+
+	foreach($archive as &$thread)
+		$thread['featured_url'] = sprintf($config['board_path'], $board['uri']) . $config['dir']['mod_archive'] . $config['dir']['res'] . sprintf($config['file_page'], $thread['id']);
+
+	mod_page(sprintf(_('Mod Archive') . ' %s: ' . $config['board_abbreviation'], _('threads'), $board['uri']), 'mod/archive_featured_list.html', array(
+		'archive' => $archive,
+		'is_mod_archive' => true,
+		'board' => $board,
+		'token' => make_secure_link_token($board['uri']. '/mod_archive/')
 	));
 }
 
