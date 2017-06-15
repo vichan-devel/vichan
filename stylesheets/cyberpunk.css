@@ -1,15 +1,16 @@
 /* hello world */
     /*boardwide font stuff goes here also background image*/
-    body {
-        max-width:100%;
-        padding: 0;
-        font-family: "Lucida Console", Monaco, monospace;
-        font-size: 14px;
-        background: url("https://i.imgur.com/rRLs7q4.png") fixed repeat top #000000;
-float: left;
-margin-left: 10px;
-margin-right: 35px;
-    }
+body {
+   max-width:100%;
+   padding: 0;
+   font-family: "Lucida Console", Monaco, monospace;
+   font-size: 14px;
+   background: url("https://i.imgur.com/rRLs7q4.png") fixed repeat top #000000;
+   float: left;
+   margin-left: 10px;
+   margin-right: 35px;
+   color: #cc0000;
+}
 
 div#thread_39085 {
 background-color:red!important;
@@ -149,11 +150,6 @@ background-color: #2b2b2b;
     .input[type="text"], textarea {
         min-height: 117px;
         min-width: 240px;
-    }
-     
-    /*saves one pixel of space*/
-    header {
-        margin-bottom: 0px;
     }
      
     /*gives posting table its border/shadow*/
@@ -442,7 +438,6 @@ p.intro span.capcode {color: #FBDE2D}
 p.intro span.capcode:before {font-family: MS PGothic; content: "（　´∀｀） 🔰"}
 
 
-label {display:none}
 
 div.post-menu {color: #ffffff}
 
