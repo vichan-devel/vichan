@@ -1513,7 +1513,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 
 	// Mod links (full HTML).
 	$config['mod']['link_delete'] = '[D]';
-	$config['mod']['link_shadow_delete'] = '[ShD]';
+	$config['mod']['link_force_shadow_delete'] = '[ShD]';
 	$config['mod']['link_bantz'] = '[Bantz]';
 	$config['mod']['link_nicenotice'] = '[NN]';
 	$config['mod']['link_warning'] = '[W]';
