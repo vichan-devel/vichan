@@ -88,6 +88,7 @@ $pages = array(
 
 	'/(\%b)/archive/'					=> 'secure_POST view_archive', 					// View Archive
 	'/(\%b)/featured/'					=> 'secure_POST view_archive_featured', 		// View Featured Archive
+	'/(\%b)/mod_archive/'				=> 'secure_POST view_archive_mod_archive', 		// View Mod Archive
 	
 
 	'/shadow_recent_post/(\d+)'				=> 'recent_shadow_posts',					// view recent posts shadow deleted
