@@ -1593,11 +1593,11 @@ function rebuildPost($id) {
 
 
 // Delete a post (reply or thread)
-function deletePostShadow($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
+function deletePostShadow($id, $error_if_doesnt_exist=true, $rebuild_after=true, $force_shadow_delete = false) {
 	global $board, $config;
 
 	// If we are using non permanent delete run that function
-	if($config['shadow_del']['use'] && ($config['mod']['auto_delete_shadow_post'] === false || !hasPermission($config['mod']['auto_delete_shadow_post'])))
+	if($force_shadow_delete || ($config['shadow_del']['use'] && ($config['mod']['auto_delete_shadow_post'] === false || !hasPermission($config['mod']['auto_delete_shadow_post']))))
 		return ShadowDelete::deletePost($id, $error_if_doesnt_exist, $rebuild_after);
 	else
 		return deletePostPermanent($id, $error_if_doesnt_exist, $rebuild_after);

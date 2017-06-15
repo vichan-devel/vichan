@@ -2262,7 +2262,7 @@ function mod_shadow_purge() {
 
 
 
-function mod_delete($board, $post) {
+function mod_delete($board, $force_shadow_delete, $post) {
 	global $config, $mod;
 	
 	if (!openBoard($board))
@@ -2272,7 +2272,7 @@ function mod_delete($board, $post) {
 		error($config['error']['noaccess']);
 
 	// Delete post (get thread id)
-	$thread_id = deletePostShadow($post);
+	$thread_id = deletePostShadow($post, true, true, $force_shadow_delete);
 	// Record the action
 	modLog("Deleted post #{$post}");
 	// Rebuild board
