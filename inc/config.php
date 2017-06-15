@@ -1154,32 +1154,13 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// jQuery, you should first empty the array so that "js/query.min.js" can be the first, and then re-add
 	// "js/inline-expanding.js" or else the inline-expanding script might not interact properly with other
 	// scripts.
+	// See the wiki for example configuration.
 
-
-	// We'll enable some reasonable defaults here that most imageboards would want / need.
 	// $config['additional_javascript'] = array();
-	$config['additional_javascript'][] = 'js/jquery.min.js';
-	$config['additional_javascript'][] = 'js/jquery-ui.custom.min.js';
-	$config['additional_javascript'][] = 'js/ajax.js';
-	$config['additional_javascript'][] = 'js/show-own-posts.js';
-	$config['additional_javascript'][] = 'js/hide-images.js';
-	$config['additional_javascript'][] = 'js/hide-threads.js';
-	$config['additional_javascript'][] = 'js/download-original.js';
-	$config['additional_javascript'][] = 'js/quick-reply.js';
-	$config['additional_javascript'][] = 'js/inline-expanding.js';
-	$config['additional_javascript'][] = 'js/expand-all-images.js';
-	$config['additional_javascript'][] = 'js/auto-reload.js';
-	$config['additional_javascript'][] = 'js/post-hover.js';
-	$config['additional_javascript'][] = 'js/style-select.js';
-	$config['additional_javascript'][] = 'js/options.js';
-	$config['additional_javascript'][] = 'js/options/general.js';
-	$config['additional_javascript'][] = 'js/options/user-css.js';
-	$config['additional_javascript'][] = 'js/options/user-js.js';
-	$config['additional_javascript'][] = 'js/options/fav.js';
-	$config['additional_javascript'][] = 'js/id_colors.js';
-	$config['additional_javascript'][] = 'js/id_highlighter.js';
-	$config['additional_javascript'][] = 'js/quote-selection.js';
-	$config['additional_javascript'][] = 'js/forced-anon.js';
+	// $config['additional_javascript'][] = 'js/jquery.min.js';
+	// $config['additional_javascript'][] = 'js/jquery-ui.custom.min.js';
+	// $config['additional_javascript'][] = 'js/ajax.js';
+
 
 	// Where these script files are located on the web. Defaults to $config['root'].
 	// $config['additional_javascript_url'] = 'http://static.example.org/tinyboard-javascript-stuff/';
