@@ -8,7 +8,7 @@ h1 {
 a:link, a:visited, .intro a.email span.name {
 	color: #0000ff;
 }
-a:link:hover {
+a:hover {
 	color: #d00;
 }
 a.post_no {
