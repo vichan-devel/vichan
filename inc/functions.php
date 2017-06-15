@@ -2737,7 +2737,7 @@ function buildThread($id, $return = false, $mod = false, $shadow = false) {
 			if (!isset($thread)) {
 				$thread = new Thread($post, $mod ? '?/' : $config['root'], $mod);
 			} else {
-				$post['no_shadow_restore'] = true;
+				$post['no_shadow_restore'] = false;
 				$thread->add(new Post($post, $mod ? '?/' : $config['root'], $mod));
 			}
 		}
