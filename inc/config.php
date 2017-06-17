@@ -573,7 +573,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['delete_time'] = 10;
 	// How long after posting should you have to wait before being able to delete that reply post? (In seconds.)
 	$config['delete_time_reply'] = 0;
-	// Max number of threads per hour 
+	// Max number of threads per hour set to allow limitless
 	$config['threads_per_hour'] = 5;
 	// Reply limit (stops bumping thread when this is reached).
 	$config['reply_limit'] = 250;

@@ -474,7 +474,7 @@ if (isset($_POST['delete'])) {
 
 
 	// Check number of threads in the last hour
-	if($thread == false) {
+	if($thread == false && $config['threads_per_hour'] != false) {
 		$per_hour_query = query(sprintf("SELECT COUNT(*) FROM ``posts_%s`` WHERE `thread` = NULL AND `time` >= UNIX_TIMESTAMP(DATE_SUB(NOW(),INTERVAL 1 HOUR))", $board['uri']));
 		$per_hour_count = $per_hour_query->fetch(PDO::FETCH_ASSOC)[0];
 		if($per_hour_count >= $config['threads_per_hour'])
