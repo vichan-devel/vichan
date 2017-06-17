@@ -569,8 +569,12 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['allow_delete'] = true;
 	// If thread have gotten given number of replies OP can't delete it anymore. (set to false to turn off this function)
 	$config['allow_delete_cutoff'] = 5;
-	// How long after posting should you have to wait before being able to delete that post? (In seconds.)
+	// How long after posting should you have to wait before being able to delete that OP thread? (In seconds.)
 	$config['delete_time'] = 10;
+	// How long after posting should you have to wait before being able to delete that reply post? (In seconds.)
+	$config['delete_time_reply'] = 0;
+	// Max number of threads per hour set to allow limitless
+	$config['threads_per_hour'] = 5;
 	// Reply limit (stops bumping thread when this is reached).
 	$config['reply_limit'] = 250;
 
@@ -1269,6 +1273,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['error']['mime_exploit']	= _('MIME type detection XSS exploit (IE) detected; post discarded.');
 	$config['error']['invalid_embed']	= _('Couldn\'t make sense of the URL of the video you tried to embed.');
 	$config['error']['captcha']		= _('You seem to have mistyped the verification.');
+	$config['error']['too_many_threads']		= _('To prevent raids, the maximum number of threads has been limited per hour. Please check back later or post in an existing thread.');
 
 
 	// Moderator errors
