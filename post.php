@@ -227,10 +227,17 @@ if (isset($_POST['delete'])) {
 			if ($password != '' && $post['password'] != $password && (!$thread || $thread['password'] != $password))
 				error($config['error']['invalidpassword']);
 			
-			if ($post['time'] > time() - $config['delete_time'] && (!$thread || $thread['password'] != $password)) {
-				error(sprintf($config['error']['delete_too_soon'], until($post['time'] + $config['delete_time'])));
+			if ($post['thread'] == NULL) {
+				if ($post['time'] > time() - $config['delete_time'] && (!$thread || $thread['password'] != $password)) {
+					error(sprintf($config['error']['delete_too_soon'], until($post['time'] + $config['delete_time'])));
+				}
 			}
-			
+			else {
+				if ($post['time'] > time() - $config['delete_time_reply'] && (!$thread || $thread['password'] != $password)) {
+					error(sprintf($config['error']['delete_too_soon'], until($post['time'] + $config['delete_time'])));
+				}
+			}
+
 			if (isset($_POST['file'])) {
 				// Delete just the file
 				deleteFile($id);
@@ -400,7 +407,7 @@ if (isset($_POST['delete'])) {
 			if (!$resp->is_valid) {
 				error($config['error']['captcha']);
 			}
-				}
+		}
 
 		if (!(($post['op'] && $_POST['post'] == $config['button_newtopic']) ||
 			(!$post['op'] && $_POST['post'] == $config['button_reply'])))
@@ -464,7 +471,15 @@ if (isset($_POST['delete'])) {
 	else {
 		$thread = false;
 	}
-		
+
+
+	// Check number of threads in the last hour
+	if($thread == false) {
+		$per_hour_query = query(sprintf("SELECT COUNT(*) FROM ``posts_%s`` WHERE `thread` = NULL AND `time` >= UNIX_TIMESTAMP(DATE_SUB(NOW(),INTERVAL 1 HOUR))", $board['uri']));
+		$per_hour_count = $per_hour_query->fetch(PDO::FETCH_ASSOC)[0];
+		if($per_hour_count >= $config['threads_per_hour'])
+			error($config['error']['too_many_threads']);
+	}
 	
 	// Check for an embed field
 	if ($config['enable_embedding'] && isset($_POST['embed']) && !empty($_POST['embed'])) {
