@@ -176,6 +176,7 @@ div.post p.fileinfo {
 }
 
 div.banner {
+  display: none;
   background-color: #E04000;
   font-size: 12pt;
   font-weight: bold;
