@@ -125,6 +125,7 @@ form table.mod tr td {
 }
 
 form table tr th {
+  border: 1px solid #000;
   text-align: left;
   padding: 4px;
 }
@@ -175,6 +176,7 @@ div.post p.fileinfo {
 }
 
 div.banner {
+  display: none;
   background-color: #E04000;
   font-size: 12pt;
   font-weight: bold;
@@ -299,7 +301,7 @@ div.post div.body {
 
 div.post.reply {
   background: #D6DAF0;
-  margin: 0.2em 4px;
+  margin: 0.15em 4px;
   padding: 0.2em 0.3em 0.5em 0.6em;
   border-width: 1px;
   border-style: none solid solid none;
