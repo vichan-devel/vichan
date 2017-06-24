@@ -1397,13 +1397,16 @@ form[name="post"] > div {
 
 .ReasonTableForm tr:first-child td {
   text-decoration: bold;
-  background: #7B0;
+  background: #9988EE;
+  font-weight: bold;
 }
 .ReasonTableForm tr td:first-child {
   text-align: right;
   padding-right: 10px;
+  font-weight: bold;
 }
 .ReasonTableForm tr:hover td {
   cursor: pointer;
-  background: #890;
+  background: #D6BAD0;
+  font-weight: bold;
 }
