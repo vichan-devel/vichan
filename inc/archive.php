@@ -85,7 +85,7 @@ class Archive {
         }
 
         // Insert Archive Data in Database
-        $query = prepare(sprintf("INSERT INTO ``archive_%s`` VALUES (:thread_id, :snippet, :lifetime, :files, 0, 0)", $board['uri']));
+        $query = prepare(sprintf("INSERT INTO ``archive_%s`` VALUES (:thread_id, :snippet, :lifetime, :files, 0, 0, 0)", $board['uri']));
         $query->bindValue(':thread_id', $thread_id, PDO::PARAM_INT);
         $query->bindValue(':snippet', $thread_data['snippet'], PDO::PARAM_STR);
         $query->bindValue(':lifetime', 	time(), PDO::PARAM_INT);
@@ -128,6 +128,12 @@ class Archive {
 
             // Delete Thread
             @unlink($board['dir'] . $config['dir']['archive'] . $config['dir']['res'] . sprintf($config['file_page'], $thread['id']));
+
+            // Delete Vote Data
+            $del_query = prepare("DELETE FROM ``votes_archive`` WHERE `board` = :board AND `thread_id` = :thread_id");
+            $del_query->bindValue(':board', $board['uri']);
+            $del_query->bindValue(':thread_id', $thread['id'], PDO::PARAM_INT);
+            $del_query->execute() or error(db_error($del_query));
         }
 
         // Delete Archive Entries
@@ -187,6 +193,8 @@ class Archive {
 
         // Rebuild Featured Index
         self::buildFeaturedIndex();
+        // Rebuild Archive Index
+        self::buildArchiveIndex();
 
         return true;
     }
@@ -225,6 +233,8 @@ class Archive {
 
         // Rebuild Featured Index
         self::buildFeaturedIndex();
+        // Rebuild Archive Index
+        self::buildArchiveIndex();
     }
 
 
@@ -267,10 +277,10 @@ class Archive {
             'config' => $config,
             'mod' => false,
             'hide_dashboard_link' => true,
+            'board' => $board,
             'boardlist' => createBoardList(false),
             'title' => $title,
             'subtitle' => "",
-            'boardlist' => createBoardlist(),
             'body' => Element("mod/archive_list.html", array(
                 'config' => $config,
         		'thread_count' => count($archive),
@@ -295,7 +305,7 @@ class Archive {
             $query = query(sprintf("SELECT `id`, `snippet`, `featured`, `mod_archived` FROM ``archive_%s`` WHERE `mod_archived` = 1 ORDER BY `lifetime` DESC", $board['uri'])) or error(db_error());
             $archive = $query->fetchAll(PDO::FETCH_ASSOC);
         } else {
-            $query = prepare(sprintf("SELECT `id`, `snippet`, `featured`, `mod_archived`  FROM ``archive_%s`` WHERE `lifetime` > :lifetime ORDER BY `lifetime` DESC", $board['uri']));
+            $query = prepare(sprintf("SELECT `id`, `snippet`, `featured`, `mod_archived`, `votes`  FROM ``archive_%s`` WHERE `lifetime` > :lifetime ORDER BY `lifetime` DESC", $board['uri']));
             $query->bindValue(':lifetime', strtotime("-" . $config['archive']['lifetime']), PDO::PARAM_INT);
             $query->execute() or error(db_error());
             $archive = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -336,6 +346,48 @@ class Archive {
 
         file_write($config['dir']['home'] . $board['dir'] . $config['dir']['featured'] . $config['file_index'], $archive_page);
     }
+
+
+
+
+
+
+    static public function addVote($board, $thread_id) {
+        global $config;
+
+        // Check if thread exist in archive
+        $query = prepare(sprintf("SELECT COUNT(*) FROM ``archive_%s`` WHERE `id` = %d", $board, $thread_id));
+        $query->execute() or error(db_error($query));
+	    if ($query->fetchColumn(0) == 0)
+            error($config['error']['nonexistant']);
+
+        // Check if ip has voted
+        $query = prepare("SELECT COUNT(*) FROM ``votes_archive`` WHERE `board` = :board AND `thread_id` = :thread_id AND `ip` = :ip");
+	    $query->bindValue(':board', $board, PDO::PARAM_STR);
+	    $query->bindValue(':thread_id', $thread_id, PDO::PARAM_INT);
+		$query->bindValue(':ip', ($config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']), PDO::PARAM_STR);
+    	
+        // Error if already voted
+        $query->execute() or error(db_error($query));
+	    if ($query->fetchColumn(0) != 0)
+            error($config['error']['already_voted']);
+        
+        // Increase vote count for thread
+        query(sprintf("UPDATE ``archive_%s`` SET `votes` = `votes`+1 WHERE `id` = %d", $board, (int)$thread_id)) or error(db_error());
+
+        // Add ip to voted db
+        $query = prepare("INSERT INTO ``votes_archive`` VALUES (NULL, :board, :thread_id, :ip)");
+	    $query->bindValue(':board', $board, PDO::PARAM_STR);
+	    $query->bindValue(':thread_id', $thread_id, PDO::PARAM_INT);
+		$query->bindValue(':ip', ($config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']), PDO::PARAM_STR);
+        $query->execute() or error(db_error($query));
+
+        // Rebuild Archive Index
+        self::buildArchiveIndex();
+    }
+
+
+
 
 }
 

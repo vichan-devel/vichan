@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS ``archive_{{ board }}`` (
   `files` mediumtext NOT NULL,
   `featured` int(1) NOT NULL,
   `mod_archived` int(1) NOT NULL,
+  `votes` INT UNSIGNED NOT NULL,
   UNIQUE KEY `id` (`id`),
   KEY `lifetime` (`lifetime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

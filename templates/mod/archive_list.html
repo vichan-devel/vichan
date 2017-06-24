@@ -20,6 +20,7 @@
 			<th width='80px'>Post #</th>
 			<th>Snippet</th>
 			<th width='50px'>&nbsp;</th>
+			<th width='50px'>Votes</th>
 			{% if mod and mod|hasPermission(config.mod.feature_archived_threads, board.uri) %}
 				<th width='80px'>&nbsp;</th>
 			{% endif %}
@@ -34,6 +35,22 @@
 				<td>{{ thread.id }}</td>
 				<td>{{ thread.snippet }}</td>
 				<td><a href="{{ thread.archived_url }}">[{% trans 'View' %}]</a></td>
+				<td>{% if not mod %}
+						{% if not thread.featured %}
+							{{ thread.votes }}
+							<form action="{{ config.post_url }}" method="post" class="archiveForm" style="float: right">
+								<input type="hidden" name="board" value="{{ board.uri }}" />
+								<input type="hidden" name="thread_id" value="{{ thread.id }}">
+								<input type="hidden" name="archive_vote" value="1">
+								<a href="#" onclick="confirm('Press OK to vote for this thread to be added to featured archive.')?this.parentNode.submit():false;">[+]</a>
+							</form>
+						{% else %}
+							<strong>Featured</strong>
+						{% endif %}
+					{% else %}
+						{{ thread.votes }}
+					{% endif %}
+				</td>
 				{% if mod and mod|hasPermission(config.mod.feature_archived_threads, board.uri) %}
 					<td>
 						{% if not thread.featured %}
