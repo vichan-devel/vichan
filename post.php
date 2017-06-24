@@ -1292,6 +1292,20 @@ if (isset($_POST['delete'])) {
 	$query->execute() or error(db_error($query));
 	
 	displayBan($ban);
+} elseif (isset($_POST['archive_vote'])) {
+	if (!isset($_POST['board'], $_POST['thread_id']))
+		error($config['error']['bot']);
+	
+	// Check if board exists
+	if (!openBoard($_POST['board']))
+		error($config['error']['noboard']);
+
+	// Add Vote
+	Archive::addVote($_POST['board'], $_POST['thread_id']);
+
+	// Return user to archive
+	header('Location: ' . $config['root'] . sprintf($config['board_path'], $_POST['board']) . $config['dir']['archive'], true, $config['redirect_http']);
+
 } else {
 	if (!file_exists($config['has_installed'])) {
 		header('Location: install.php', true, $config['redirect_http']);
