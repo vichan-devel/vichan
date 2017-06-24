@@ -101,3 +101,12 @@ table.modlog tr th {
   border-color: #d9bfb7;
   border-width: 1px 0px 0px 1px;
 }
+
+/* Predefined reasons */
+.ReasonTableForm tr:first-child td {
+  background: #EEAA88;
+}
+.ReasonTableForm tr:hover td {
+  background: #F0C0B0;
+}
+

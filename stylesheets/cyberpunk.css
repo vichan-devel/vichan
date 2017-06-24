@@ -448,3 +448,18 @@ div.post-menu {color: #ffffff}
 div.boardlist:not(.bottom) {position: static;}
 body { min-width: 100%;}
 }
+
+/* Predefined reasons */
+/* TODO: General fixing for vichan */
+.ReasonTableForm tr:first-child td {
+  background: #2E8B57;
+}
+.ReasonTableForm tr:hover td {
+  background: #1A1A1A;
+}
+
+.ReasonTableForm tr td {
+  background: #2B2B2B;
+  color: #60CD3C;
+}
+
