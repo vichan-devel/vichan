@@ -207,3 +207,12 @@ div.boardlist.bottom {
 span.quote {
     color: #a8c952;
 }
+
+/* Predefined reasons */
+.ReasonTableForm tr:first-child td {
+  background: #282828;
+}
+.ReasonTableForm tr:hover td {
+  background: #000000;
+}
+

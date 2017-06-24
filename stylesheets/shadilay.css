@@ -388,3 +388,12 @@ p.fileinfo {
 }*/
 
 
+/* Predefined reasons */
+.ReasonTableForm tr:first-child td {
+  background: #282A2E;
+}
+.ReasonTableForm tr:hover td {
+  background: #789646;
+}
+
+

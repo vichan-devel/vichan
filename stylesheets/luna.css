@@ -461,3 +461,12 @@ table.mod.config-editor input[type="text"] {
 .desktop-style .sub {
   background: none;
 }
+
+/* Predefined reasons */
+.ReasonTableForm tr:first-child td {
+  background: #000000;
+}
+.ReasonTableForm tr:hover td {
+  background: #282C5D;
+}
+

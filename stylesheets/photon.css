@@ -1,4 +1,4 @@
-/*https://github.com/turanga/Tinyboard/blob/efe78b81c1ffca32bcf9601d0e3877bb65c70df1/stylesheets/photon.css*/
+/* https://github.com/turanga/Tinyboard/blob/efe78b81c1ffca32bcf9601d0e3877bb65c70df1/stylesheets/photon.css */
 
 
 .floatiframe{
@@ -329,3 +329,12 @@ form table tr td div {
 .desktop-style div.boardlist:not(.bottom) {
     background-color: #DDDDDD;
 }
+
+/* Predefined reasons */
+.ReasonTableForm tr:first-child td {
+  background: #EEEEEE;
+}
+.ReasonTableForm tr:hover td {
+  background: #D6BAD0;
+}
+

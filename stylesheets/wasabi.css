@@ -412,3 +412,12 @@ div.blotter {
 .desktop-style div.boardlist:not(.bottom):hover, .desktop-style div.boardlist:not(.bottom).cb-menu {
   background-color: rgba(100%, 100%, 30%, 0.35);
 }
+
+/* Predefined reasons */
+.ReasonTableForm tr:first-child td {
+  background: #D7FE85;
+}
+.ReasonTableForm tr:hover td {
+  background: #FFFFFF;
+}
+
