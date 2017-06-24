@@ -11,7 +11,8 @@
 </p>
 {% endif %}
 <p style="text-align: center">
-	<b>{% trans 'Displaying' %} {{ thread_count }} {% trans 'expired threads' %}{% if config.archive.lifetime %} {% trans 'from the past' %} {{  config.archive.lifetime }} {% trans 'days' %}{% endif %}</b>
+	<b>{% trans 'Displaying' %} {{ thread_count }} {% trans 'expired threads' %}{% if config.archive.lifetime %} {% trans 'from the past' %} {{  config.archive.lifetime }}{% endif %}</b><br/>
+	<small>Vote for a thread to be added to the featured archive</small>
 </p>
 
 <table id="archive-list" class="archive-list modlog">

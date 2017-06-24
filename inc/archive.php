@@ -277,7 +277,6 @@ class Archive {
             'config' => $config,
             'mod' => false,
             'hide_dashboard_link' => true,
-            'board' => $board,
             'boardlist' => createBoardList(false),
             'title' => $title,
             'subtitle' => "",
@@ -322,7 +321,7 @@ class Archive {
         // If featuring of threads is turned off return
         if(!$config['feature']['threads'])
             return;
-        
+
         // Get featured archived threads
         $archive = self::getArchiveList(true);
 
@@ -337,9 +336,9 @@ class Archive {
             'boardlist' => createBoardList(false),
             'title' => $title,
             'subtitle' => "",
-            'boardlist' => createBoardlist(),
             'body' => Element("mod/archive_featured_list.html", array(
                 'config' => $config,
+                'board' => $board,
                 'archive' => $archive
             ))
         ));
