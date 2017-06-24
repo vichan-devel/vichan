@@ -82,8 +82,14 @@ table.modlog tr th {
 
 
 .desktop-style div.boardlist:nth-child(1):hover, .desktop-style div.boardlist:nth-child(1).cb-menu {
-  background-color: rgba(90%, 90%, 90%, 0.55);
+  background-color: #F0E0D6;
 }
+
+
+.desktop-style div.boardlist:nth-child(1), .desktop-style div.boardlist:nth-child(1).cb-menu {
+  background-color: #F0E0D6;
+}
+
 
 /* options.js */
 #options_div, #alert_div {
