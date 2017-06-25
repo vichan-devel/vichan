@@ -216,3 +216,7 @@ span.quote {
   background: #000000;
 }
 
+/* Archive hover */
+table.archive-list tr:hover td {
+   background-color: #FFC000;
+}

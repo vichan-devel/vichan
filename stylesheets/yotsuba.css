@@ -78,3 +78,8 @@ table.modlog tr th {
   background: #F0C0B0;
 }
 
+
+/* Archive hover */
+table.archive-list tr:hover td {
+   background-color: #FFEED4;
+}

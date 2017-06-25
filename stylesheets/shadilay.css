@@ -397,3 +397,8 @@ p.fileinfo {
 }
 
 
+/* Archive hover */
+table.archive-list tr:hover td {
+   background-color: #C5C8C6;
+}
+

@@ -101,3 +101,8 @@ hr {
   background: #A9D8FF;
 }
 
+/* Archive hover */
+table.archive-list tr:hover td {
+   background-color: #AAE6E5;
+}
+
