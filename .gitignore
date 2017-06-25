@@ -37,6 +37,10 @@ Thumbs.db
 *.rej
 *.orig
 *~
+*.rss
+/index.html
+/recent.css
+*.json 
 
 # tmp filesystem
 /tmp/cache/*
