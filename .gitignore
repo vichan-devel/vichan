@@ -50,3 +50,4 @@ favicon.ico
 
 # Banners
 /static/banners/*
+/static/banners_priority/*
