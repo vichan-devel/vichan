@@ -1,7 +1,7 @@
 <?php
 
 // Installation/upgrade file	
-define('VERSION', '6.0.4');
+define('VERSION', '6.0.5');
 
 require 'inc/functions.php';
 
@@ -754,6 +754,14 @@ if (file_exists($config['has_installed'])) {
 				KEY `post_id` (`post`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 			') or error(db_error());
+		case '6.0.4':
+			query('CREATE TABLE IF NOT EXISTS ``captchas`` (
+ 			  	`cookie` varchar(50),
+ 			  	`extra` varchar(200),
+ 			  	`text` varchar(255),
+ 			  	`created_at` int(11),
+ 			  	PRIMARY KEY (`cookie`,`extra`)
+ 				) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;') or error(db_error());
 			
 		case false:
 			// TODO: enhance Tinyboard -> vichan upgrade path.

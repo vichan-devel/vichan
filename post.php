@@ -409,6 +409,20 @@ if (isset($_POST['delete'])) {
 			}
 		}
 
+		if ($config['captcha']['post_captcha'] || ($post['op'] && $config['captcha']['thread_captcha'])) {
+			$resp = file_get_contents($config['captcha']['provider_check'] . "?" . http_build_query([
+				'mode' => 'check',
+				'text' => $_POST['captcha_text'],
+				'extra' => $config['captcha']['extra'],
+				'cookie' => $_POST['captcha_cookie']
+			]));
+
+			if ($resp !== '1') {
+				error($config['error']['captcha'] .
+	'<script>if (actually_load_captcha !== undefined) actually_load_captcha("'.$config['captcha']['provider_get'].'", "'.$config['captcha']['extra'].'");</script>');
+			}
+		}
+
 		if (!(($post['op'] && $_POST['post'] == $config['button_newtopic']) ||
 			(!$post['op'] && $_POST['post'] == $config['button_reply'])))
 			error($config['error']['bot']);

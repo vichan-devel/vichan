@@ -369,6 +369,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 		'embed',
 		'recaptcha_challenge_field',
 		'recaptcha_response_field',
+		'captcha_cookie',
+		'captcha_text',
 		'spoiler',
 		'page',
 		'file_url',
@@ -384,6 +386,23 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Public and private key pair from https://www.google.com/recaptcha/admin/create
 	$config['recaptcha_public'] = '6LcXTcUSAAAAAKBxyFWIt2SO8jwx4W7wcSMRoN3f';
 	$config['recaptcha_private'] = '6LcXTcUSAAAAAOGVbVdhmEM1_SyRF4xTKe8jbzf_';
+
+	// Enable custom captcha provider for all posts.
+	$config['captcha']['post_captcha'] = false;
+
+	// Require solving a captcha when creating a new thread.
+	$config['captcha']['thread_captcha'] = false;
+
+	// Custom captcha get provider path (if not working get the absolute path aka your url.)
+	$config['captcha']['provider_get'] = '/inc/captcha/entrypoint.php';
+	// Custom captcha check provider path
+	$config['captcha']['provider_check'] = 'http://localhost/inc/captcha/entrypoint.php';
+
+	// How long the captcha should be valid (in seconds).
+	$config['captcha']['expires_in'] = 300;
+
+	// Custom captcha extra field (eg. charset)
+	$config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
 
 	// Ability to lock a board for normal users and still allow mods to post.  Could also be useful for making an archive board
 	$config['board_locked'] = false;
