@@ -129,7 +129,7 @@ form#quick-reply {
   border: 1px solid #111
 }
 span.capcode {
-  background-color: #000;
+  background-color: #122;
   padding:2px 5px;
   border-radius: 10px
 }
@@ -154,10 +154,25 @@ div#watchlist a:hover,a.watchThread:hover {
   max-width:160px
 }
 
+/*
 .modlog tr:nth-child(even), .modlog th {
 	background-color: #282A2E;
 }
-
+*/
+table.modlog {
+  color: #FFF;
+    background-color: #282A2E;
+}
+table.modlog tbody {
+  color: #FFF;
+}
+table.modlog tr th,
+table.modlog tr td {
+    background-color: #282A2E;
+}
+table.modlog tr:hover td {
+    background-color: #383A3E;
+}
 
 
 .box {
