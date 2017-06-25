@@ -1392,6 +1392,7 @@ form[name="post"] > div {
 	margin-bottom: 1em;
 }
 
+/* Predefined reasons */
 .ReasonTableForm tr:first-child td {
   text-decoration: bold;
   background: #9988EE;
@@ -1405,4 +1406,10 @@ form[name="post"] > div {
 .ReasonTableForm tr:hover td {
   cursor: pointer;
   background: #D6BAD0;
+}
+
+
+/* Archive hover */
+table.archive-list tr:hover td {
+   background-color: #D4D8EE;
 }

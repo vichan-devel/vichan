@@ -338,3 +338,8 @@ form table tr td div {
   background: #D6BAD0;
 }
 
+/* Archive hover */
+table.archive-list tr:hover td {
+   background-color: #DDDDDD;
+}
+
