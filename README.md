@@ -50,7 +50,7 @@ Installation
 
 Please remember to change the administrator account password.
 
-See also: [Configuration Basics](https://web.archive.org/web/20121003095922/http://tinyboard.org/docs/?p=Config).
+See also: [Configuration Basics](https://github.com/fallenPineapple/NPFchan/wiki/Configuration).
 
 Upgrade
 -------
