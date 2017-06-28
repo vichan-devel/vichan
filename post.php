@@ -443,7 +443,7 @@ if (isset($_POST['delete'])) {
 				error($config['error']['noaccess']);
 		}
 		
-		if (!$post['mod']) {
+		if (!$post['mod'] && !$config['turn_off_antispam']) {
 			$post['antispam_hash'] = checkSpam(array($board['uri'], isset($post['thread']) ? $post['thread'] : ($config['try_smarter'] && isset($_POST['page']) ? 0 - (int)$_POST['page'] : null)));
 			if ($post['antispam_hash'] === true)
 				error($config['error']['spam']);

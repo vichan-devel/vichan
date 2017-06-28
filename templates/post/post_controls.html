@@ -2,6 +2,9 @@
 
 <span class="controls {% if not post.thread %}op{% endif %}">
 {% if not post.shadow %}
+
+	<br/>
+
 	{% if mod|hasPermission(config.mod.delete, board.uri) %}
 		{{ secure_link_confirm(config.mod.link_delete, 'Delete'|trans, 'Are you sure you want to delete this?'|trans, board.dir ~ 'delete/' ~ post.id) }}&nbsp;
 		{% if mod|hasPermission(config.mod.auto_delete_shadow_post, board.uri) %}
@@ -33,30 +36,32 @@
 		<a title="{% trans %}Ban & Delete{% endtrans %}" href="?/{{ board.dir }}ban&amp;delete/{{ post.id }}">{{ config.mod.link_bandelete }}</a>&nbsp;
 	{% endif %}
 
+	<br/>
+
 	{% if not post.thread %}
-	{% if mod|hasPermission(config.mod.sticky, board.uri) %}
-		{% if post.sticky %}
-		<a title="{% trans %}Make thread not sticky{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'unsticky/' ~ post.id) }}">{{ config.mod.link_desticky }}</a>&nbsp;
-		{% else %}
-		<a title="{% trans %}Make thread sticky{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'sticky/' ~ post.id) }}">{{ config.mod.link_sticky }}</a>&nbsp;
+		{% if mod|hasPermission(config.mod.sticky, board.uri) %}
+			{% if post.sticky %}
+			<a title="{% trans %}Make thread not sticky{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'unsticky/' ~ post.id) }}">{{ config.mod.link_desticky }}</a>&nbsp;
+			{% else %}
+			<a title="{% trans %}Make thread sticky{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'sticky/' ~ post.id) }}">{{ config.mod.link_sticky }}</a>&nbsp;
+			{% endif %}
 		{% endif %}
-	{% endif %}
-	{% if mod|hasPermission(config.mod.bumplock, board.uri) %}
-		{% if post.sage %}
-		<a title="{% trans %}Allow thread to be bumped{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'bumpunlock/' ~ post.id) }}">{{ config.mod.link_bumpunlock }}</a>&nbsp;
-		{% else %}
-		<a title="{% trans %}Prevent thread from being bumped{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'bumplock/' ~ post.id) }}">{{ config.mod.link_bumplock }}</a>&nbsp;
+		{% if mod|hasPermission(config.mod.bumplock, board.uri) %}
+			{% if post.sage %}
+			<a title="{% trans %}Allow thread to be bumped{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'bumpunlock/' ~ post.id) }}">{{ config.mod.link_bumpunlock }}</a>&nbsp;
+			{% else %}
+			<a title="{% trans %}Prevent thread from being bumped{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'bumplock/' ~ post.id) }}">{{ config.mod.link_bumplock }}</a>&nbsp;
+			{% endif %}
 		{% endif %}
-	{% endif %}
-	{% if mod|hasPermission(config.mod.lock, board.uri) %}
-		{% if post.locked %}
-		<a title="{% trans %}Unlock thread{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'unlock/' ~ post.id) }}">{{ config.mod.link_unlock }}</a>&nbsp;
-		{% else %}
-		<a title="{% trans %}Lock thread{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'lock/' ~ post.id) }}">{{ config.mod.link_lock }}</a>&nbsp;
+		{% if mod|hasPermission(config.mod.lock, board.uri) %}
+			{% if post.locked %}
+			<a title="{% trans %}Unlock thread{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'unlock/' ~ post.id) }}">{{ config.mod.link_unlock }}</a>&nbsp;
+			{% else %}
+			<a title="{% trans %}Lock thread{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'lock/' ~ post.id) }}">{{ config.mod.link_lock }}</a>&nbsp;
+			{% endif %}
 		{% endif %}
 	{% endif %}
 
-	{% endif %}
 	{% if mod|hasPermission(config.mod.move, board.uri) %}
 		{% if not post.thread %}
 			<a title="{% trans %}Move thread to another board{% endtrans %}" href="?/{{ board.dir }}move/{{ post.id }}">{{ config.mod.link_move }}</a>&nbsp;
@@ -65,10 +70,12 @@
 		{% endif %}
 	{% endif %}
 	{% if mod|hasPermission(config.mod.cycle, board.uri) %}
-		{% if post.cycle %}
-		<a title="{% trans %}Make thread not cycle{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'uncycle/' ~ post.id) }}">{{ config.mod.link_uncycle }}</a>&nbsp;
-		{% else %}
-		<a title="{% trans %}Make thread cycle{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'cycle/' ~ post.id) }}">{{ config.mod.link_cycle }}</a>&nbsp;
+		{% if not post.thread %}
+			{% if post.cycle %}
+			<a title="{% trans %}Make thread not cycle{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'uncycle/' ~ post.id) }}">{{ config.mod.link_uncycle }}</a>&nbsp;
+			{% else %}
+			<a title="{% trans %}Make thread cycle{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'cycle/' ~ post.id) }}">{{ config.mod.link_cycle }}</a>&nbsp;
+			{% endif %}
 		{% endif %}
 	{% endif %}
 	{% if mod|hasPermission(config.mod.editpost, board.uri) %}
