@@ -157,7 +157,7 @@ class GeoIP {
 	    "BL","MF", "BQ", "SS", "O1", "GX", "GAY", "IRO", "SUR",
 		"COM", "ROH", "CRU", "REI", "CFN", "GAD", "TEX",
 		"CFF", "EUU", "ANC", "TRP", "TEO", "DBR", "PAG",
-		"EQU", "KEK", KAL" );
+		"EQU", "KEK", "KAL" );
     var $GEOIP_COUNTRY_CODES3 = array(
 	    "","AP","EU","AND","ARE","AFG","ATG","AIA","ALB","ARM","CUW",
 	    "AGO","ATA","ARG","ASM","AUT","AUS","ABW","AZE","BIH","BRB",

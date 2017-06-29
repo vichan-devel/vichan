@@ -25,6 +25,7 @@ require_once 'inc/polyfill.php';
 require_once 'inc/announcements.php';
 require_once 'inc/archive.php';
 require_once 'inc/shadow-delete.php';
+require_once 'inc/mod/statistics.php';
 @include_once 'inc/lib/parsedown/Parsedown.php'; // fail silently, this isn't a critical piece of code
 
 if (!extension_loaded('gettext')) {

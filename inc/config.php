@@ -1787,7 +1787,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 		271 	=>	'Teutonic Order',
 		272 	=>	'Denver Broncos',
 		273 	=>	'Princevlag',
-		274 	=>	'Equestria'
+		274 	=>	'Equestria',
 		275 	=>	'Kekistan',
 		276 	=>	'Kalmar Union'
 	);
@@ -1799,6 +1799,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Dismiss all abuse reports by an IP
 	$config['mod']['report_dismiss_ip'] = JANITOR;
 
+	// View Site Statistics
+	$config['mod']['view_statistics'] = DEVELOPER;
 
 	// Create Announcements
 	$config['mod']['announcements'] = ADMIN;
