@@ -324,6 +324,10 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	 *
 	 */
 
+	// Turn off antispam
+	$config['turn_off_antispam'] = false;
+
+
 	// Number of hidden fields to generate.
 	$config['spam']['hidden_inputs_min'] = 4;
 	$config['spam']['hidden_inputs_max'] = 12;
@@ -1791,7 +1795,20 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
         260     =>  'Communist',
         261     =>  'Rhodesia',
         262     =>  'Crusader',
-        263     =>  'Reich'
+        263     =>  'Reich',
+		264 	=>	'Confederacy (Confederate National)',
+		265 	=>	'Gadsen',
+		266 	=>	'Texas',
+		267 	=>	'Confederate',
+		268 	=>	'Euro Cuck',
+		269 	=>	'AnCap',
+		270 	=>	'Two Right Paths',
+		271 	=>	'Teutonic Order',
+		272 	=>	'Denver Broncos',
+		273 	=>	'Princevlag',
+		274 	=>	'Equestria',
+		275 	=>	'Kekistan',
+		276 	=>	'Kalmar Union'
 	);
 	/* Administration */
 	// View the report queue
@@ -1801,6 +1818,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Dismiss all abuse reports by an IP
 	$config['mod']['report_dismiss_ip'] = JANITOR;
 
+	// View Site Statistics
+	$config['mod']['view_statistics'] = DEVELOPER;
 
 	// Create Announcements
 	$config['mod']['announcements'] = ADMIN;

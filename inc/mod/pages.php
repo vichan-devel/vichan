@@ -377,7 +377,7 @@ function mod_edit_board($boardName) {
 			
 			// Delete shadow delete table
 			$query = query(sprintf('DROP TABLE IF EXISTS ``shadow_posts_%s``', $board['uri'])) or error(db_error());
-			
+						
 			// Clear reports
 			$query = prepare('DELETE FROM ``reports`` WHERE `board` = :id');
 			$query->bindValue(':id', $board['uri'], PDO::PARAM_INT);
@@ -3750,5 +3750,51 @@ function mod_view_archive_mod_archive($boardName) {
 	));
 }
 
+
+
+
+function mod_view_statistics() {
+	global $config, $pdo;
+
+	if(!hasPermission($config['mod']['view_statistics']))
+			error($config['error']['noaccess']);
+
+	// Get Statistic from db
+	$statistics_hour = Statistic::get_stat_24h();
+	$this_week = Statistic::get_stat_week();
+	$prev_week = Statistic::get_stat_week(true);
+
+	mod_page(_('Statistics'), 'mod/statistics.html', array(
+		'boards' => listBoards(false),
+		'statistics_24h' => $statistics_hour,
+		'statistics_week_labels' => Statistic::get_stat_week_labels($this_week),
+		'statistics_week' => Statistic::get_stat_week_jsdata($this_week),
+		'statistics_week_past' => Statistic::get_stat_week_jsdata($prev_week)
+	));
+}
+
+
+function mod_view_board_statistics($boardName) {
+	global $config, $pdo;
+
+	if(!hasPermission($config['mod']['view_statistics']))
+			error($config['error']['noaccess']);
+
+	if (!openBoard($boardName))
+		error($config['error']['noboard']);
+	
+	// Get Statistic from db
+	$statistics_hour = Statistic::get_stat_24h($boardName);
+	$this_week = Statistic::get_stat_week(false, $boardName);
+	$prev_week = Statistic::get_stat_week(true, $boardName);
+
+	mod_page(_('Statistics for ') . $boardName, 'mod/statistics.html', array(
+		'boards' => listBoards(false),
+		'statistics_24h' => $statistics_hour,
+		'statistics_week_labels' => Statistic::get_stat_week_labels($this_week),
+		'statistics_week' => Statistic::get_stat_week_jsdata($this_week),
+		'statistics_week_past' => Statistic::get_stat_week_jsdata($prev_week)
+	));
+}
 
 

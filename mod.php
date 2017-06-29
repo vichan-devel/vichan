@@ -85,6 +85,8 @@ $pages = array(
 	'/search/(posts|IP_notes|bans|log)/(.+)/(\d+)'	=> 'search',		// search
 	'/search/(posts|IP_notes|bans|log)/(.+)'	=> 'search',		// search
 
+	'/statistics'				=>		'view_statistics',						// View Site Post Statistics
+	'/(\%b)/statistics'			=>		'view_board_statistics',				// View Site Post Statistics for given board
 
 	'/(\%b)/archive/'					=> 'secure_POST view_archive', 					// View Archive
 	'/(\%b)/featured/'					=> 'secure_POST view_archive_featured', 		// View Featured Archive
