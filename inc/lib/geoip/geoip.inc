@@ -125,7 +125,8 @@ class GeoIP {
 	    "O1" => 246, "AX" => 247, "GG" => 248, "IM" => 249, "JE" => 250, "BL" => 251,
 	    "MF" => 252, "BQ" => 253, "SS" => 254, "GX" => 255, "GAY" => 256, "IRO" => 257, "SUR" => 258,
 		"COM" => 259, "ROH" => 260, "CRU" => 261, "REI" => 262, "CFN" => 263, "GAD" => 264, "TEX" => 265,
-		"CFF" => 266, "EUU" => 267, "ANC" => 268, "TRP" => 269, "TEO" => 270, "DBR" => 271
+		"CFF" => 266, "EUU" => 267, "ANC" => 268, "TRP" => 269, "TEO" => 270, "DBR" => 271, "PAG" => 272,
+		"EQU" => 273, "KEK" => 274, "KAL" => 275
 		);
     var $GEOIP_COUNTRY_CODES = array(
 	    "","AP","EU","AD","AE","AF","AG","AI","AL","AM","CW",
@@ -155,7 +156,8 @@ class GeoIP {
 	    "ZM","ME","ZW","A1","A2","O1","AX","GG","IM","JE",
 	    "BL","MF", "BQ", "SS", "O1", "GX", "GAY", "IRO", "SUR",
 		"COM", "ROH", "CRU", "REI", "CFN", "GAD", "TEX",
-		"CFF", "EUU", "ANC", "TRP", "TEO", "DBR" );
+		"CFF", "EUU", "ANC", "TRP", "TEO", "DBR", "PAG",
+		"EQU", "KEK", KAL" );
     var $GEOIP_COUNTRY_CODES3 = array(
 	    "","AP","EU","AND","ARE","AFG","ATG","AIA","ALB","ARM","CUW",
 	    "AGO","ATA","ARG","ASM","AUT","AUS","ABW","AZE","BIH","BRB",
@@ -184,7 +186,8 @@ class GeoIP {
 	    "ZMB","MNE","ZWE","A1","A2","O1","ALA","GGY","IMN","JEY",
 	    "BLM","MAF", "BES", "SSD", "O1", "GYP", "GAY", "IRO", "SUR",
 		"COM", "ROH", "CRU", "REI", "CFN", "GAD", "TEX",
-		"CFF", "EUU", "ANC", "TRP", "TEO", "DBR"
+		"CFF", "EUU", "ANC", "TRP", "TEO", "DBR", "PAG",
+		"EQU", "KEK", "KAL"
 		);
     var $GEOIP_COUNTRY_NAMES = array(
 	    "","Asia/Pacific Region","Europe","Andorra","United Arab Emirates","Afghanistan","Antigua and Barbuda","Anguilla","Albania","Armenia","Curacao",
@@ -215,7 +218,8 @@ class GeoIP {
 	    "Saint Barthelemy","Saint Martin", "Bonaire, Saint Eustatius and Saba",
 	    "South Sudan", "Other", "Gypsy", "Gay", "Iron Guard", "Surrender Monkey", 
 		"Fucking Commie", "Rhodesia", "Crusader", "Reich", "Confederacy", "Gadsen", "Texas",
-		"Confederate", "Euro Cuck", "AnCap", "Two Right Paths", "Teutonic Order", "Denver Broncos"
+		"Confederate", "Euro Cuck", "AnCap", "Two Right Paths", "Teutonic Order", "Denver Broncos", "Princevlag", 
+		"Equestria", "Kekistan", "Kalmar Union"
 		);
 
     var $GEOIP_CONTINENT_CODES = array(
@@ -246,7 +250,8 @@ class GeoIP {
 	    "AF","EU","AF","--","--","--","EU","EU","EU","EU",
 	    "NA","NA","NA", "AF", "--", "EU", "--", "--", "EU",
 		"--", "AS", "--", "--", "NA", "NA", "NA",
-		"NA", "EU", "--", "--", "--", "NA"
+		"NA", "EU", "--", "--", "--", "NA", "EU",
+		"--", "--", "EU"
 		);
 
 }

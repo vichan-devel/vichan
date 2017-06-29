@@ -1785,7 +1785,11 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 		269 	=>	'AnCap',
 		270 	=>	'Two Right Paths',
 		271 	=>	'Teutonic Order',
-		272 	=>	'Denver Broncos'
+		272 	=>	'Denver Broncos',
+		273 	=>	'Princevlag',
+		274 	=>	'Equestria'
+		275 	=>	'Kekistan',
+		276 	=>	'Kalmar Union'
 	);
 	/* Administration */
 	// View the report queue
