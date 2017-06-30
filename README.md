@@ -13,7 +13,7 @@ improvements.
 Requirements
 ------------
 1.	PHP >= 5.6
-2.	MySQL >= 5.6 (MariaDB Untested)
+2.	MySQL >= 5.6 or MariaDB
 3.	[mbstring](http://www.php.net/manual/en/mbstring.installation.php) 
 4.	[PHP GD](http://www.php.net/manual/en/intro.image.php)
 5.	[PHP PDO](http://www.php.net/manual/en/intro.pdo.php)
