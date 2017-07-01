@@ -1952,7 +1952,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	
 	$config['mod']['config'][MOD] = array(
 		'!', // Allow editing ONLY the variables listed (plus that in $config['mod']['config'][JANITOR]).
-		'global_message',
+		//'global_message',
 	);
 	
 	// Example: Disallow ADMIN from editing (and viewing) $config['db']['password'].
@@ -1962,9 +1962,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	
 	// Example: Allow ADMIN to edit anything other than $config['db']
 	// (and $config['mod']['config'][DISABLED]).
-	// $config['mod']['config'][ADMIN] = array(
-	// 	'db',
-	// );
+	$config['mod']['config'][ADMIN] = array(
+		'db',
+	);
 
 	// Allow OP to remove arbitrary posts in his thread
 	$config['user_moderation'] = false;
