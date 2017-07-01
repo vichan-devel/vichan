@@ -54,7 +54,7 @@ var update_textarea = function() {
     textarea.text("/* "+_("Enter here your own Javascript code...")+" */\n" +
                   "/* "+_("Have a backup of your storage somewhere, as messing here\nmay render you this website unusable.")+" */\n" +
                   "/* "+_("You can include JS files from remote servers, for example:")+" */\n" +
-                  'load_js("http://example.com/script.js");');
+                  '/* load_js("http://example.com/script.js"); */');
   }
   else {
     textarea.text(localStorage.user_js);
