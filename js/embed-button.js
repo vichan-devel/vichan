@@ -58,17 +58,15 @@ function toggleEmbed(node) {
 		var embeddedElement = $(embedCode).insertAfter($(node).parent());
 		embeddedElement.attr('id', 'embed_frame_' + embedId);
 		embeddedElement.addClass('embed_container');
+
+		node.textContent = 'Remove';
 	}
 	else {
 		var embedId = node.getAttribute('data-embed-id');
-
 		$('#embed_frame_' + embedId).remove();
-	}
 
-	if (node.textContent == 'Embed')
-		node.textContent = 'Remove';
-	else
 		node.textContent = 'Embed';
+	}
 }
 
 function getEmbedHTML(type) {
