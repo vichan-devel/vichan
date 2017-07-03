@@ -1416,3 +1416,7 @@ form[name="post"] > div {
 table.archive-list tr:hover td {
    background-color: #D4D8EE;
 }
+
+.embed_container {
+    display: block;
+}
