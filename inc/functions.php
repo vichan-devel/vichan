@@ -2343,7 +2343,7 @@ function markup_url($matches) {
 	{
 		if (preg_match($pattern[1], $url, $embed_matches))
 		{
-			$link['class'] = 'embed-link';
+			$link['class'] = 'embed-link uninitialized';
 			$link['data-embed-type'] = $pattern[0];
 			$link['data-embed-data'] = $embed_matches[1];
 			break;
