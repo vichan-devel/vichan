@@ -13,7 +13,7 @@ improvements.
 Requirements
 ------------
 1.	PHP >= 5.6
-2.	MySQL >= 5.6 (MariaDB Untested)
+2.	MySQL >= 5.6 or MariaDB
 3.	[mbstring](http://www.php.net/manual/en/mbstring.installation.php) 
 4.	[PHP GD](http://www.php.net/manual/en/intro.image.php)
 5.	[PHP PDO](http://www.php.net/manual/en/intro.pdo.php)
@@ -38,19 +38,11 @@ You can contribute to NPFchan by:
 
 Installation
 -------------
-1.	Download and extract NPFchan to your web directory or get the latest
-	development version with:
-
-        git clone git://github.com/fallenPineapple/NPFchan.git
-	
-2.	Navigate to ```install.php``` in your web browser and follow the
-	prompts.
-3.	NPFchan should now be installed. Log in to ```mod.php``` with the
-	default username and password combination: **admin / password**.
+See the [Installation Guide](https://github.com/fallenPineapple/NPFchan/wiki/Installation-Guide)
 
 Please remember to change the administrator account password.
 
-See also: [Configuration Basics](https://web.archive.org/web/20121003095922/http://tinyboard.org/docs/?p=Config).
+See also: [Configuration Basics](https://github.com/fallenPineapple/NPFchan/wiki/Configuration).
 
 Upgrade
 -------

@@ -373,6 +373,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 		'embed',
 		'recaptcha_challenge_field',
 		'recaptcha_response_field',
+		'captcha_cookie',
+		'captcha_text',
 		'spoiler',
 		'page',
 		'file_url',
@@ -388,6 +390,23 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Public and private key pair from https://www.google.com/recaptcha/admin/create
 	$config['recaptcha_public'] = '6LcXTcUSAAAAAKBxyFWIt2SO8jwx4W7wcSMRoN3f';
 	$config['recaptcha_private'] = '6LcXTcUSAAAAAOGVbVdhmEM1_SyRF4xTKe8jbzf_';
+
+	// Enable custom captcha provider for all posts.
+	$config['captcha']['post_captcha'] = false;
+
+	// Require solving a captcha when creating a new thread.
+	$config['captcha']['thread_captcha'] = false;
+
+	// Custom captcha get provider path (if not working get the absolute path aka your url.)
+	$config['captcha']['provider_get'] = '/inc/captcha/entrypoint.php';
+	// Custom captcha check provider path
+	$config['captcha']['provider_check'] = 'http://localhost/inc/captcha/entrypoint.php';
+
+	// How long the captcha should be valid (in seconds).
+	$config['captcha']['expires_in'] = 300;
+
+	// Custom captcha extra field (eg. charset)
+	$config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
 
 	// Ability to lock a board for normal users and still allow mods to post.  Could also be useful for making an archive board
 	$config['board_locked'] = false;
@@ -615,7 +634,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['markup_urls'] = true;
 
 	// Optional URL prefix for links (eg. "http://anonym.to/?").
-	$config['link_prefix'] = ''; 
+	$config['link_prefix'] = 'https://href.li/?'; 
 	$config['url_ads'] = &$config['link_prefix'];	 // leave alias
 	
 	// Allow "uploading" images via URL as well. Users can enter the URL of the image and then Tinyboard will
@@ -1234,6 +1253,17 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['embed_width'] = 300;
 	$config['embed_height'] = 246;
 
+	$config['embed_url_regex'] = array(
+		array('youtube', '/(?:youtu\.be\/|youtube\.com\/(?:embed\/|watch\?v=|watch\?.+?&v=))([^\s?&#\/]+)/i'),
+		array('vimeo', '/vimeo\.com\/(\d{2,10})/i'),
+		array('dailymotion', '/dailymotion\.com\/video\/([a-zA-Z0-9]{2,10})/i'),
+		array('vidme', '/vid\.me\/([^\s?&#\/]+)/i'),
+		//array('liveleak', '/liveleak\.com\/view\?i=([^\s?&#\/]+)/i'), // Youtube videos on liveleak will currently give a misleading "File not found or deleted!" error
+		array('metacafe', '/metacafe\.com\/watch\/(\d+)/i'),
+		array('vocaroo', '/vocaroo\.com\/i\/([^\s?&#\/]+)/i'),
+		array('soundcloud', '/soundcloud\.com\/([^\s?&#]+)/i')
+	);
+	
 /*
  * ====================
  *  Error messages
@@ -1942,7 +1972,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	
 	$config['mod']['config'][MOD] = array(
 		'!', // Allow editing ONLY the variables listed (plus that in $config['mod']['config'][JANITOR]).
-//		'global_message',
+		//'global_message',
 	);
 	
 	// Example: Disallow ADMIN from editing (and viewing) $config['db']['password'].

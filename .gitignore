@@ -37,6 +37,10 @@ Thumbs.db
 *.rej
 *.orig
 *~
+*.rss
+/index.html
+/recent.css
+*.json 
 
 # tmp filesystem
 /tmp/cache/*
@@ -51,3 +55,6 @@ favicon.ico
 # Banners
 /static/banners/*
 /static/banners_priority/*
+
+# Images from twemoji
+js/twemoji/16x16/

@@ -2326,19 +2326,30 @@ function markup_url($matches) {
 
 	$markup_urls[] = $url;
 
-	$link = (object) array(
-		'href' => $config['link_prefix'] . $url,
+	$link = array(
+		'href' => $url,
 		'text' => $url,
 		'rel' => 'nofollow noreferrer',
 		'target' => '_blank',
 	);
+	event('markup-url', (object)$link);
 	
-	event('markup-url', $link);
-	$link = (array)$link;
 	if (strncasecmp($link['href'], 'http', 4) === 0)
 	{
-		$link['href'] = 'https://href.li/?' . $link['href'];
+		$link['href'] = $config['link_prefix'] . $link['href'];
 	}
+
+	foreach ($config['embed_url_regex'] as $pattern)
+	{
+		if (preg_match($pattern[1], $url, $embed_matches))
+		{
+			$link['class'] = 'embed-link uninitialized';
+			$link['data-embed-type'] = $pattern[0];
+			$link['data-embed-data'] = $embed_matches[1];
+			break;
+		}
+	}
+
 	$parts = array();
 	foreach ($link as $attr => $value) {
 		if ($attr == 'text' || $attr == 'after')

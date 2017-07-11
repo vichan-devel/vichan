@@ -45,7 +45,7 @@ var update_textarea = function() {
     textarea.text("/* "+_("Enter here your own CSS rules...")+" */\n" +
                   "/* "+_("If you want to make a redistributable style, be sure to\nhave a Yotsuba B theme selected.")+" */\n" +
                   "/* "+_("You can include CSS files from remote servers, for example:")+" */\n" +
-                  '@import "http://example.com/style.css";');
+                  '/* @import "http://example.com/style.css"; */');
   }
   else {
     textarea.text(localStorage.user_css);
