@@ -120,8 +120,8 @@ $pages = array(
 	'/themes/(\w+)/uninstall'		=> 'secure theme_uninstall',		// uninstall theme
 	
 	// Disabled for security reasons
-	//'/config'				=> 'secure_POST config',	// config editor
-	//'/config/(\%b)'				=> 'secure_POST config',	// config editor
+	'/config'				=> 'secure_POST config',	// config editor
+	'/config/(\%b)'				=> 'secure_POST config',	// config editor
 	
 	// these pages aren't listed in the dashboard without $config['debug']
 	//'/debug/antispam'			=> 'debug_antispam',
