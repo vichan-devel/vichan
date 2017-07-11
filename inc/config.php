@@ -1819,7 +1819,16 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 		273 	=>	'Princevlag',
 		274 	=>	'Equestria',
 		275 	=>	'Kekistan',
-		276 	=>	'Kalmar Union'
+		276 	=>	'Kalmar Union',
+		277 	=>	'Oldest Glory',
+		278 	=>	'NATO',
+		279 	=>	'American Occupied Japan',
+		280 	=>	'ANZUS',
+		281 	=>	'Daesh',
+		282 	=>	'Allied Occupied Germany',
+		283 	=>	'Hezbollah',
+		284 	=>	'Waifu Thief',
+		285 	=>	'Heil Hoofler'
 	);
 	/* Administration */
 	// View the report queue
@@ -1830,7 +1839,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['mod']['report_dismiss_ip'] = JANITOR;
 
 	// View Site Statistics
-	$config['mod']['view_statistics'] = DEVELOPER;
+	$config['mod']['view_statistics'] = JANITOR;
 
 	// Create Announcements
 	$config['mod']['announcements'] = ADMIN;
@@ -1839,14 +1848,14 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Feature Archived Threads
 	$config['mod']['feature_archived_threads'] = JANITOR;
 	// Delete Featured Archived Threads
-	$config['mod']['delete_featured_archived_threads'] = MOD;
+	$config['mod']['delete_featured_archived_threads'] = ADMIN;
 
 	// View Mod Archive
-	$config['mod']['view_mod_archive'] = MOD;
+	$config['mod']['view_mod_archive'] = DEVELOPER;
 	// Archive Threads for Mods
-	$config['mod']['add_to_mod_archive'] = MOD;
+	$config['mod']['add_to_mod_archive'] = DEVELOPER;
 	// Archive Threads for Mods
-	$config['mod']['remove_from_mod_archive'] = MOD;
+	$config['mod']['remove_from_mod_archive'] = ADMIN;
 
 
 	// Automatically Permanently Delete Posts and Threads (set to false if you want to keep for all)
@@ -1895,12 +1904,12 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Create a user
 	$config['mod']['createusers'] = ADMIN;
 	// View the moderation log
-	$config['mod']['modlog'] = ADMIN;
+	$config['mod']['modlog'] = DEVELOPER;
 	// View IP addresses of other mods in ?/log
-	$config['mod']['show_ip_modlog'] = ADMIN;
+	$config['mod']['show_ip_modlog'] = DEVELOPER;
 	// View relevant moderation log entries on IP address pages (ie. ban history, etc.) Warning: Can be
 	// pretty resource intensive if your mod logs are huge.
-	$config['mod']['modlog_ip'] = MOD;
+	$config['mod']['modlog_ip'] = DEVELOPER;
 	// Create a PM (viewing mod usernames)
 	$config['mod']['create_pm'] = JANITOR;
 	// Read any PM, sent to or from anybody

@@ -126,7 +126,8 @@ class GeoIP {
 	    "MF" => 252, "BQ" => 253, "SS" => 254, "GX" => 255, "GAY" => 256, "IRO" => 257, "SUR" => 258,
 		"COM" => 259, "ROH" => 260, "CRU" => 261, "REI" => 262, "CFN" => 263, "GAD" => 264, "TEX" => 265,
 		"CFF" => 266, "EUU" => 267, "ANC" => 268, "TRP" => 269, "TEO" => 270, "DBR" => 271, "PAG" => 272,
-		"EQU" => 273, "KEK" => 274, "KAL" => 275
+		"EQU" => 273, "KEK" => 274, "KAL" => 275, "OLG" => 276, "NAT" => 277, "AOJ" => 278, "ANZ" => 279,
+		"ISI" => 280, "AOG" => 281, "HEZ" => 282, "WAT" => 283, "HOF" => 284
 		);
     var $GEOIP_COUNTRY_CODES = array(
 	    "","AP","EU","AD","AE","AF","AG","AI","AL","AM","CW",
@@ -157,7 +158,8 @@ class GeoIP {
 	    "BL","MF", "BQ", "SS", "O1", "GX", "GAY", "IRO", "SUR",
 		"COM", "ROH", "CRU", "REI", "CFN", "GAD", "TEX",
 		"CFF", "EUU", "ANC", "TRP", "TEO", "DBR", "PAG",
-		"EQU", "KEK", "KAL" );
+		"EQU", "KEK", "KAL", "OLG", "NAT", "AOJ", "ANZ",
+		"ISI", "AOG", "HEZ", "WAT", "HOF" );
     var $GEOIP_COUNTRY_CODES3 = array(
 	    "","AP","EU","AND","ARE","AFG","ATG","AIA","ALB","ARM","CUW",
 	    "AGO","ATA","ARG","ASM","AUT","AUS","ABW","AZE","BIH","BRB",
@@ -187,7 +189,8 @@ class GeoIP {
 	    "BLM","MAF", "BES", "SSD", "O1", "GYP", "GAY", "IRO", "SUR",
 		"COM", "ROH", "CRU", "REI", "CFN", "GAD", "TEX",
 		"CFF", "EUU", "ANC", "TRP", "TEO", "DBR", "PAG",
-		"EQU", "KEK", "KAL"
+		"EQU", "KEK", "KAL", "OLG", "NAT", "AOJ", "ANZ",
+		"ISI", "AOG", "HEZ", "WAT", "HOF"
 		);
     var $GEOIP_COUNTRY_NAMES = array(
 	    "","Asia/Pacific Region","Europe","Andorra","United Arab Emirates","Afghanistan","Antigua and Barbuda","Anguilla","Albania","Armenia","Curacao",
@@ -219,7 +222,8 @@ class GeoIP {
 	    "South Sudan", "Other", "Gypsy", "Gay", "Iron Guard", "Surrender Monkey", 
 		"Fucking Commie", "Rhodesia", "Crusader", "Reich", "Confederacy", "Gadsen", "Texas",
 		"Confederate", "Euro Cuck", "AnCap", "Two Right Paths", "Teutonic Order", "Denver Broncos", "Princevlag", 
-		"Equestria", "Kekistan", "Kalmar Union"
+		"Equestria", "Kekistan", "Kalmar Union", "Oldest Glory", "NATO", "American Occupied Japan", "ANZUS",
+		"Daesh", "Allied Occupied Germany", "Hezbollah", "Waifu Thief", "Heil Hoofler"
 		);
 
     var $GEOIP_CONTINENT_CODES = array(
@@ -251,7 +255,8 @@ class GeoIP {
 	    "NA","NA","NA", "AF", "--", "EU", "--", "--", "EU",
 		"--", "AS", "--", "--", "NA", "NA", "NA",
 		"NA", "EU", "--", "--", "--", "NA", "EU",
-		"--", "--", "EU"
+		"--", "--", "EU", "NA", "--", "AS", "OC",
+		"AF", "EU", "AF", "--", "--"
 		);
 
 }
