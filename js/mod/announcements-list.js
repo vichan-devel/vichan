@@ -1,7 +1,7 @@
 var announcementlist_init = function(token, inMod) {
   inMod = !inMod;
 
-  $.getJSON(inMod ? ("?/announcements.json/"+token) : ("/" + token), function(json) {
+  $.getJSON(inMod ? ("?/announcements.json/"+token) : (token), function(json) {
     var tr;
 
     var thead = $("<thead/>");
