@@ -14,7 +14,7 @@ $(document).ready(function(){
 	// every time an event is fired.
 	var $inputArea = $('#body');
 	var $coundownField = $('#countchar');
-	var $maxChars = 3601;
+	var $maxChars = 6001;
         
 	// Preset countdown field to max initial content length
 	$coundownField.text($maxChars - $inputArea.length);
