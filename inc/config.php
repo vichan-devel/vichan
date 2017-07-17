@@ -577,7 +577,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Minimum post body length for OP.
 	$config['min_body'] = 0;
 	// Maximum post body length.
-	$config['max_body'] = 3600;
+	$config['max_body'] = 6000;
 	// Maximum number of post body lines to show on the index page.
 	$config['body_truncate'] = 15;
 	// Maximum number of characters to show on the index page.
@@ -1474,6 +1474,11 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['archive']['cron_job']['archiving'] = false;
 	// Purging of archive is run in cron job
 	$config['archive']['cron_job']['purge'] = false;
+
+
+	// Automatically send threads with thiese trips to Featured Archive
+	// $config['archive']['auto_feature'] = array("!!securetrip", "!trip");
+	$config['archive']['auto_feature'] = array();
 
 
 /*

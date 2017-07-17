@@ -16,7 +16,7 @@ class Archive {
             return;
 
         // Check if it is a thread
-        $thread_query = prepare(sprintf("SELECT `thread`, `subject`, `body_nomarkup` FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
+        $thread_query = prepare(sprintf("SELECT `thread`, `subject`, `body_nomarkup`, `trip` FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
         $thread_query->bindValue(':id', $thread_id, PDO::PARAM_INT);
         $thread_query->execute() or error(db_error($thread_query));
         $thread_data = $thread_query->fetch(PDO::FETCH_ASSOC);
@@ -92,6 +92,11 @@ class Archive {
         $query->bindValue(':files', json_encode($file_list));
         $query->execute() or error(db_error($query));
 
+
+        // Check if Thread should be Auto Featured based on OP Trip
+        if(in_array($thread_data['trip'], $config['archive']['auto_feature_trips']))
+            self::featureThread($thread_id);
+        
 
         // Purge Threads that have timed out
         if(!$config['archive']['cron_job']['purge'])
