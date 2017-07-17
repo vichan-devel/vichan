@@ -1477,8 +1477,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 
 
 	// Automatically send threads with thiese trips to Featured Archive
-	// $config['archive']['auto_feature'] = array("!!securetrip", "!trip");
-	$config['archive']['auto_feature'] = array();
+	// $config['archive']['auto_feature_trips'] = array("!!securetrip", "!trip");
+	$config['archive']['auto_feature_trips'] = array();
 
 
 /*
