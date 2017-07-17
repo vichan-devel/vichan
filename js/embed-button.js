@@ -83,7 +83,7 @@ function generateEmbedId() {
 function getEmbedHTML(type) {
 	switch (type) {
 		case 'youtube':
-			return '<iframe width="%video_width%" height="%video_height%" src="https://href.li/?https://youtube.com/embed/%embed_data%?autoplay=1&modestbranding=1" frameborder="0" allowfullscreen></iframe>';
+			return '<iframe width="%video_width%" height="%video_height%" src="https://href.li/?https://hooktube.com/embed/%embed_data%?autoplay=1" frameborder="0" allowfullscreen scrolling="no"></iframe>';
 		case 'dailymotion':
 			return '<iframe width="%video_width%" height="%video_height%" src="https://href.li/?https://www.dailymotion.com/embed/video/%embed_data%?autoplay=1" frameborder="0" allowfullscreen></iframe>';
 		case 'vimeo':
@@ -94,8 +94,6 @@ function getEmbedHTML(type) {
 			return '<iframe width="%video_width%" height="%video_height%" src="https://href.li/?https://www.liveleak.com/ll_embed?i=%embed_data%" frameborder="0" allowfullscreen></iframe>';
 		case 'metacafe':
 			return '<iframe width="%video_width%" height="%video_height%" src="https://href.li/?https://www.metacafe.com/embed/%embed_data%/" frameborder="0" allowfullscreen></iframe>';
-		case 'vocaroo':
-			return '<object width="148" height="44"><param name="wmode" value="transparent"></param><embed src="http://vocaroo.com/player.swf?playMediaID=%embed_data%&autoplay=1" width="148" height="44" wmode="transparent" type="application/x-shockwave-flash"></embed></object>';
 		case 'soundcloud':
 			return '<iframe width="640" height="166" scrolling="no" frameborder="no" src="https://href.li/?https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/%embed_data%&amp;color=ff5500&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>';
 

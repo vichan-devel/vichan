@@ -1254,13 +1254,12 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['embed_height'] = 246;
 
 	$config['embed_url_regex'] = array(
-		array('youtube', '/(?:youtu\.be\/|youtube\.com\/(?:embed\/|watch\?v=|watch\?.+?&v=))([^\s?&#\/]+)/i'),
+		array('youtube', '/(?:youtu\.be\/|(?:youtube\.com\/|hooktube\.com\/)(?:embed\/|watch\?v=|watch\?.+?&v=))([^\s?&#\/]+)/i'),
 		array('vimeo', '/vimeo\.com\/(\d{2,10})/i'),
 		array('dailymotion', '/dailymotion\.com\/video\/([a-zA-Z0-9]{2,10})/i'),
 		array('vidme', '/vid\.me\/([^\s?&#\/]+)/i'),
 		//array('liveleak', '/liveleak\.com\/view\?i=([^\s?&#\/]+)/i'), // Youtube videos on liveleak will currently give a misleading "File not found or deleted!" error
 		array('metacafe', '/metacafe\.com\/watch\/(\d+)/i'),
-		array('vocaroo', '/vocaroo\.com\/i\/([^\s?&#\/]+)/i'),
 		array('soundcloud', '/soundcloud\.com\/([^\s?&#]+)/i')
 	);
 	
