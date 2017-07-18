@@ -1701,8 +1701,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// new ones.
 	$config['mod']['groups'] = array(
 		10	=> 'Janitor',
-		15  => 'Developer',
+		15	=> 'Developer',
 		20	=> 'Mod',
+		25	=> 'SysOp',
 		30	=> 'Admin',
 		// 98	=> 'God',
 		99	=> 'Disabled'
@@ -1919,7 +1920,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Read any PM, sent to or from anybody
 	$config['mod']['master_pm'] = ADMIN;
 	// Rebuild everything
-	$config['mod']['rebuild'] = ADMIN;
+	$config['mod']['rebuild'] = SYSOP;
 	// Search through posts, IP address notes and bans
 	$config['mod']['search'] = JANITOR;
 	// Allow searching posts (can be used with board configuration file to disallow searching through a
