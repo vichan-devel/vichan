@@ -476,10 +476,22 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 
 	$config['filters'][] = array(
 		'condition' => array(
-			'custom' => 'max_threads_per_hour'
+			'custom' => 'check_thread_limit'
 		),
 		'action' => 'reject',
 		'message' => &$config['error']['too_many_threads']
+	);
+
+	// Maximum numbers of posts that can be created every X minutes on a board. Set to false to disable
+	$config['post_limit'] = 30;
+	$config['post_limit_interval'] = 5;
+
+	$config['filters'][] = array(
+		'condition' => array(
+			'custom' => 'check_post_limit'
+		),
+		'action' => 'reject',
+		'message' => &$config['error']['too_many_posts']
 	);
 
 	// Example: Minimum time between posts with the same file hash.
@@ -1316,6 +1328,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['error']['invalid_embed']	= _('Couldn\'t make sense of the URL of the video you tried to embed.');
 	$config['error']['captcha']		= _('You seem to have mistyped the verification.');
 	$config['error']['too_many_threads']		= _('To prevent raids, the maximum number of threads has been limited per hour. Please check back later or post in an existing thread.');
+	$config['error']['too_many_posts']		= _('To prevent raids, the maximum number of posts has been limited per hour. Please check back later or post in an existing thread.');
 	$config['error']['already_voted']		= _('You have already voted for this thread to be featured.');
 
 
