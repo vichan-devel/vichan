@@ -27,10 +27,7 @@
 
 
 
-/*
- * https://getwatcher.net/
- * Scrambler
- */
+// Json File Scrambler
 // Indicate if json filenames should be scrambled 
 $config['json_scrambler']['scramble'] = true;
 // Salt for hashing json filenames
