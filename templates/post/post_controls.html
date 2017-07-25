@@ -35,6 +35,9 @@
 	{% if mod|hasPermission(config.mod.bandelete, board.uri) %}
 		<a title="{% trans %}Ban & Delete{% endtrans %}" href="?/{{ board.dir }}ban&amp;delete/{{ post.id }}">{{ config.mod.link_bandelete }}</a>&nbsp;
 	{% endif %}
+	{% if mod|hasPermission(config.mod.bandeletebyip, board.uri) %}
+		<a title="{% trans %}Ban & Delete all post by IP{% endtrans %}" href="?/{{ board.dir }}ban&amp;deletebyip/{{ post.id }}">{{ config.mod.link_bandeletebyip }}</a>&nbsp;
+	{% endif %}
 
 	<br/>
 

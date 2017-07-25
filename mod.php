@@ -100,7 +100,7 @@ $pages = array(
 	'/(\%b)/shadow_purge/(\d+)'				=> 'secure_POST shadow_purge',				// permanent delete all shadow deleted post that have timed out
 
 
-	'/(\%b)/ban(&delete)?/(\d+)'		=> 'secure_POST ban_post', 	// ban poster
+	'/(\%b)/ban(&delete|&deletebyip)?/(\d+)'		=> 'secure_POST ban_post', 	// ban poster
 	'/(\%b)/move/(\d+)'			=> 'secure_POST move',		// move thread
 	'/(\%b)/move_reply/(\d+)'			=> 'secure_POST move_reply',		// move reply
 	'/(\%b)/edit(_raw)?/(\d+)'		=> 'secure_POST edit_post',	// edit post
