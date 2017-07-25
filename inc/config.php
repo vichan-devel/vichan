@@ -27,6 +27,15 @@
 
 
 
+// Json File Scrambler
+// Indicate if json filenames should be scrambled 
+$config['json_scrambler']['scramble'] = true;
+// Salt for hashing json filenames
+$config['json_scrambler']['salt'] = '0123456789012345678901';
+
+
+
+
 
 /*
  * =======================
@@ -797,6 +806,11 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['markup'][] = array("/\[s\]/s", "<span class=\"spoiler\">");
 	$config['markup'][] = array("/\[g\]/s", "<span class=\"quote\">");
 	$config['markup'][] = array("/\[\/\]/s", "</span>");
+
+
+	// // Dice Roll Markup
+	// $config['markup'][] = array("/\[diceroll\](.+?)\[\/diceroll\]/s", "<img src='" . $config['root'] . "static/icons/dice.png' width=16 height=16/><b>\$1</b>");
+
 
 	// "Wiki" markup syntax ($config['wiki_markup'] in pervious versions):
 	// $config['markup'][] = array("/'''(.+?)'''/", "<strong>\$1</strong>");
@@ -1846,7 +1860,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 		282 	=>	'Allied Occupied Germany',
 		283 	=>	'Hezbollah',
 		284 	=>	'Waifu Thief',
-		285 	=>	'Heil Hoofler'
+		285 	=>	'Heil Hoofler',
+		286 	=>	'Vril Society'
 	);
 	/* Administration */
 	// View the report queue
@@ -2216,3 +2231,10 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 
 	// Allowed HTML tags in ?/edit_pages.
 	$config['allowed_html'] = 'a[href|title],p,br,li,ol,ul,strong,em,u,h2,b,i,tt,div,img[src|alt|title],hr';
+
+
+
+	// Dice Roll Markup
+	$config['markup'][] = array("/\[diceroll\](.+?)\[\/diceroll\]/s", "<img src='" . $config['root'] . "static/icons/dice.png' width=16 height=16/><b>\$1</b>");
+
+

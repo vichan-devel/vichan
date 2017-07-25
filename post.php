@@ -727,6 +727,9 @@ if (isset($_POST['delete'])) {
 			error(sprintf($config['error']['toolong'], 'password'));
 	}
 	wordfilters($post['body']);
+
+	// Roll Dices
+	inlineDiceRoller($post['body']);
 	
 	$post['body'] = escape_markup_modifiers($post['body']);
 	

@@ -1631,7 +1631,7 @@ function deletePostPermanent($id, $error_if_doesnt_exist=true, $rebuild_after=tr
 			// Delete thread HTML page
 			file_unlink($board['dir'] . $config['dir']['res'] . link_for($post) );
 			file_unlink($board['dir'] . $config['dir']['res'] . link_for($post, true) ); // noko50
-			file_unlink($board['dir'] . $config['dir']['res'] . sprintf('%d.json', $post['id']));
+			file_unlink($board['dir'] . $config['dir']['res'] . json_scrambler($post['id'], true));
 
 			$antispam_query = prepare('DELETE FROM ``antispam`` WHERE `board` = :board AND `thread` = :thread');
 			$antispam_query->bindValue(':board', $board['uri']);
@@ -2101,7 +2101,7 @@ function buildIndex($global_api = "yes") {
 
 	for ($page = 1; $page <= $config['max_pages']; $page++) {
 		$filename = $board['dir'] . ($page == 1 ? $config['file_index'] : sprintf($config['file_page'], $page));
-		$jsonFilename = $board['dir'] . ($page - 1) . '.json'; // pages should start from 0
+		$jsonFilename = $board['dir'] . json_scrambler($page - 1) . '.json'; // pages should start from 0
 
 		$wont_build_this_page = $config['try_smarter'] && isset($build_pages) && !empty($build_pages) && !in_array($page, $build_pages);
 
@@ -2156,7 +2156,7 @@ function buildIndex($global_api = "yes") {
 			file_unlink($filename);
 
 			if ($config['api']['enabled']) {
-				$jsonFilename = $board['dir'] . ($page - 1) . '.json';
+				$jsonFilename = $board['dir'] . json_scrambler($page - 1) . '.json';
 				file_unlink($jsonFilename);
 			}
 		}
@@ -2165,18 +2165,18 @@ function buildIndex($global_api = "yes") {
 	// json api catalog
 	if ($config['api']['enabled'] && $global_api != "skip") {
 		if ($catalog_api_action == 'delete') {
-			$jsonFilename = $board['dir'] . 'catalog.json';
+			$jsonFilename = $board['dir'] . json_scrambler('catalog') . '.json';
 			file_unlink($jsonFilename);
-			$jsonFilename = $board['dir'] . 'threads.json';
+			$jsonFilename = $board['dir'] . json_scrambler('threads') . '.json';
 			file_unlink($jsonFilename);
 		}
 		elseif ($catalog_api_action == 'rebuild') {
 			$json = json_encode($api->translateCatalog($catalog));
-			$jsonFilename = $board['dir'] . 'catalog.json';
+			$jsonFilename = $board['dir'] . json_scrambler('catalog') . '.json';
 			file_write($jsonFilename, $json);
 
 			$json = json_encode($api->translateCatalog($catalog, true));
-			$jsonFilename = $board['dir'] . 'threads.json';
+			$jsonFilename = $board['dir'] . json_scrambler('threads') . '.json';
 			file_write($jsonFilename, $json);
 		}
 	}
@@ -2779,12 +2779,12 @@ function buildThread($id, $return = false, $mod = false, $shadow = false) {
 		if ($config['api']['enabled'] && !$mod) {
 			$api = new Api();
 			$json = json_encode($api->translateThread($thread));
-			$jsonFilename = $board['dir'] . $config['dir']['res'] . $id . '.json';
+			$jsonFilename = $board['dir'] . $config['dir']['res'] . json_scrambler($id) . '.json';
 			file_write($jsonFilename, $json);
 		}
 	}
 	elseif($action == 'delete') {
-		$jsonFilename = $board['dir'] . $config['dir']['res'] . $id . '.json';
+		$jsonFilename = $board['dir'] . $config['dir']['res'] . json_scrambler($id) . '.json';
 		file_unlink($jsonFilename);
 	}
 
@@ -3224,6 +3224,107 @@ function diceRoller($post) {
 	}
 }
 
+
+
+/* Die rolling:
+ * If "dice XdY+/-Z" is in the email field (where X or +/-Z may be
+ * missing), X Y-sided dice are rolled and summed, with the modifier Z
+ * added on.  The result is displayed at the top of the post.
+ */
+function inlineDiceRoller(&$body) {
+	global $config;
+	// Full match
+	// `[11d22+33]`
+	// Group 1.
+	// `11`
+	// Group 2.
+	// `d`
+	// Group 3.
+	// `22`
+	// Group 4.
+	// `+33`
+
+    $count = preg_match_all('/\[(\d+)?([d])(\d+)([-+]\d+)?\]/s', $body, $matches);
+	for($mc = 0; $mc < $count; $mc++) {
+
+		if($matches[1][$mc] == '')
+			$matches[1][$mc] = 1;
+		
+		if($matches[4][$mc] == '')
+			$matches[4][$mc] = 0;
+		
+		// Intify them
+		$diceX = intval($matches[1][$mc]);
+		$diceY = intval($matches[3][$mc]);
+		$diceZ = intval($matches[4][$mc]);
+
+		// Continue only if we have valid values
+		if($diceX > 0 && $diceY > 0) {
+			$dicerolls = array();
+			$dicesum = $diceZ;
+			for($i = 0; $i < $diceX; $i++) {
+				$roll = random_int(1, $diceY);
+				$dicerolls[] = $roll;
+				$dicesum += $roll;
+			}
+
+			// Insert Result in post body
+			$modifier = ($diceZ != 0) ? ((($diceZ < 0) ? ' - ' : ' + ') . abs($diceZ)) : '';
+			$dicesum = (($diceX > 1)||($modifier != '')) ? ' = ' . $dicesum : '';
+			$dicerolltag = '[diceroll]' .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';
+
+			$body = preg_replace('/\[(\d+)?([d])(\d+)([-+]\d+)?\]/s', $dicerolltag, $body, 1);
+		}
+	}
+
+
+	// Full match
+	// `[dice 11d22+33/]`
+	// Group 1.
+	// `11`
+	// Group 2.
+	// `d`
+	// Group 3.
+	// `22`
+	// Group 4.
+	// `+33`
+
+    $count = preg_match_all('/\[dice (\d+)?([d])(\d+)([-+]\d+)?\/\]/s', $body, $matches);
+	for($mc = 0; $mc < $count; $mc++) {
+
+		if($matches[1][$mc] == '')
+			$matches[1][$mc] = 1;
+		
+		if($matches[4][$mc] == '')
+			$matches[4][$mc] = 0;
+		
+		// Intify them
+		$diceX = intval($matches[1][$mc]);
+		$diceY = intval($matches[3][$mc]);
+		$diceZ = intval($matches[4][$mc]);
+
+		// Continue only if we have valid values
+		if($diceX > 0 && $diceY > 0) {
+			$dicerolls = array();
+			$dicesum = $diceZ;
+			for($i = 0; $i < $diceX; $i++) {
+				$roll = random_int(1, $diceY);
+				$dicerolls[] = $roll;
+				$dicesum += $roll;
+			}
+
+			// Insert Result in post body
+			$modifier = ($diceZ != 0) ? ((($diceZ < 0) ? ' - ' : ' + ') . abs($diceZ)) : '';
+			$dicesum = (($diceX > 1)||($modifier != '')) ? ' = ' . $dicesum : '';
+			$dicerolltag = '[diceroll]' .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';
+
+			$body = preg_replace('/\[dice (\d+)?([d])(\d+)([-+]\d+)?\/\]/s', $dicerolltag, $body, 1);
+		}
+	}
+}
+
+
+
 function check_post_limit($post) {
 	global $config, $board;
 	if (!isset($config['post_limit']) || !$config['post_limit'] || !isset($config['post_limit_interval'])) return false;
@@ -3248,6 +3349,7 @@ function check_thread_limit($post) {
 		return $r['count'] >= $config['max_threads_per_hour'];
 	}
 }
+
 
 function slugify($post) {
 	global $config;
@@ -3538,6 +3640,28 @@ function getHumanReadableIP_masked($ip)
 	global $config;
 	
 	return wordwrap(substr($ip,0,8), 4, ":", true) . ":xxxx:xxxx";
+}
+
+
+
+
+
+
+// Scramble the Json name for files
+function json_scrambler($id_name, $append_extention = false)
+{
+	global $board, $config;
+
+	if(!$config['json_scrambler']['scramble']){
+		if($append_extention)
+			return sprintf('%d.json', $id_name);
+		return $id_name;
+	}
+	
+	$hash = crypt($board['uri'] . $id_name, "$2y$05$" . $config['json_scrambler']['salt'] . "$");
+	if($append_extention)
+		return str_replace(array("/", "."), "_", substr($hash, 29)) . ".json";
+	return str_replace(array("/", "."), "_", substr($hash, 29));
 }
 
 
