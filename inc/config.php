@@ -485,10 +485,22 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 
 	$config['filters'][] = array(
 		'condition' => array(
-			'custom' => 'max_threads_per_hour'
+			'custom' => 'check_thread_limit'
 		),
 		'action' => 'reject',
 		'message' => &$config['error']['too_many_threads']
+	);
+
+	// Maximum numbers of posts that can be created every X minutes on a board. Set to false to disable
+	$config['post_limit'] = 30;
+	$config['post_limit_interval'] = 5;
+
+	$config['filters'][] = array(
+		'condition' => array(
+			'custom' => 'check_post_limit'
+		),
+		'action' => 'reject',
+		'message' => &$config['error']['too_many_posts']
 	);
 
 	// Example: Minimum time between posts with the same file hash.
@@ -1268,13 +1280,12 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['embed_height'] = 246;
 
 	$config['embed_url_regex'] = array(
-		array('youtube', '/(?:youtu\.be\/|youtube\.com\/(?:embed\/|watch\?v=|watch\?.+?&v=))([^\s?&#\/]+)/i'),
+		array('youtube', '/(?:youtu\.be\/|(?:youtube\.com\/|hooktube\.com\/)(?:embed\/|watch\?v=|watch\?.+?&v=))([^\s?&#\/]+)/i'),
 		array('vimeo', '/vimeo\.com\/(\d{2,10})/i'),
 		array('dailymotion', '/dailymotion\.com\/video\/([a-zA-Z0-9]{2,10})/i'),
 		array('vidme', '/vid\.me\/([^\s?&#\/]+)/i'),
 		//array('liveleak', '/liveleak\.com\/view\?i=([^\s?&#\/]+)/i'), // Youtube videos on liveleak will currently give a misleading "File not found or deleted!" error
 		array('metacafe', '/metacafe\.com\/watch\/(\d+)/i'),
-		array('vocaroo', '/vocaroo\.com\/i\/([^\s?&#\/]+)/i'),
 		array('soundcloud', '/soundcloud\.com\/([^\s?&#]+)/i')
 	);
 	
@@ -1331,6 +1342,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['error']['invalid_embed']	= _('Couldn\'t make sense of the URL of the video you tried to embed.');
 	$config['error']['captcha']		= _('You seem to have mistyped the verification.');
 	$config['error']['too_many_threads']		= _('To prevent raids, the maximum number of threads has been limited per hour. Please check back later or post in an existing thread.');
+	$config['error']['too_many_posts']		= _('To prevent raids, the maximum number of posts has been limited per hour. Please check back later or post in an existing thread.');
 	$config['error']['already_voted']		= _('You have already voted for this thread to be featured.');
 
 
@@ -1716,8 +1728,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// new ones.
 	$config['mod']['groups'] = array(
 		10	=> 'Janitor',
-		15  => 'Developer',
+		15	=> 'Developer',
 		20	=> 'Mod',
+		25	=> 'SysOp',
 		30	=> 'Admin',
 		// 98	=> 'God',
 		99	=> 'Disabled'
@@ -1935,7 +1948,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Read any PM, sent to or from anybody
 	$config['mod']['master_pm'] = ADMIN;
 	// Rebuild everything
-	$config['mod']['rebuild'] = ADMIN;
+	$config['mod']['rebuild'] = SYSOP;
 	// Search through posts, IP address notes and bans
 	$config['mod']['search'] = JANITOR;
 	// Allow searching posts (can be used with board configuration file to disallow searching through a
