@@ -1600,6 +1600,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['mod']['link_warningdelete'] = '[W&amp;D]';
 	$config['mod']['link_ban'] = '[B]';
 	$config['mod']['link_bandelete'] = '[B&amp;D]';
+	$config['mod']['link_bandeletebyip'] = '[B&amp;D+]';
 	$config['mod']['link_deletefile'] = '[F]';
 	$config['mod']['link_deletefilepermaban'] = '[FPb]';
 	$config['mod']['link_spoilerimage'] = '[S]';
@@ -1782,6 +1783,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
     $config['mod']['ban_all_boards'] = MOD;
     // Ban and delete (one click; instant)
     $config['mod']['bandelete'] = MOD;
+    // Ban and delete all by ip on board (one click; instant)
+    $config['mod']['bandeletebyip'] = MOD;
     // Remove bans
     $config['mod']['unban'] = JANITOR;
     // Remove a Ban on all boards even if mod isnt moderator of all boards

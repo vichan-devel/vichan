@@ -1909,14 +1909,23 @@ function mod_move($originBoard, $postID) {
 
 function mod_ban_post($board, $delete, $post, $token = false) {
 	global $config, $mod;
-	
+
 	if (!openBoard($board))
 		error($config['error']['noboard']);
-	
-	if (!hasPermission($config['mod']['delete'], $board))
-		error($config['error']['noaccess']);
-	
-	$security_token = make_secure_link_token($board . '/ban/' . $post);
+
+	switch($delete) {
+		case '&deletebyip':
+			if (!hasPermission($config['mod']['deletebyip'], $board))
+				error($config['error']['noaccess']);
+		case '&delete':
+		case '':
+		default:
+			if (!hasPermission($config['mod']['delete'], $board))
+				error($config['error']['noaccess']);
+			break;
+	}
+
+	$security_token = make_secure_link_token($board . '/ban' . $delete . '/' . $post);
 	
 	$query = prepare(sprintf('SELECT ' . ($config['ban_show_post'] ? '*' : '`ip`, `cookie`, `thread`') .
 		' FROM ``posts_%s`` WHERE `id` = :id', $board));
@@ -1956,13 +1965,23 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 			buildThread($thread ? $thread : $post);
 			buildIndex();
 		} elseif (isset($_POST['delete']) && (int) $_POST['delete']) {
-			// Delete post
-			deletePostShadow($post);
-			modLog("Deleted post #{$post}");
-			// Rebuild board
-			buildIndex();
-			// Rebuild themes
-			rebuildThemes('post-delete', $board);
+
+			switch($delete) {
+				case '&delete':
+					// Delete post
+					deletePostShadow($post);
+					modLog("Deleted post #{$post}");
+					// Rebuild board
+					buildIndex();
+					// Rebuild themes
+					rebuildThemes('post-delete', $board);
+				case '&deletebyip':
+					mod_deletebyip($board, $post, false);
+				case '':
+				default:
+					break;
+			}
+
 		}
 		
 		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
@@ -1974,6 +1993,7 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 		'uusercookie' => $cookie,
 		'post' => $post,
 		'board' => $board,
+		'delete_str' => "" . $delete,
 		'delete' => (bool)$delete,
 		'boards' => listBoards(),
 		'reasons' => $config['ban_reasons'],
