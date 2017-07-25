@@ -3224,7 +3224,19 @@ function diceRoller($post) {
 	}
 }
 
-function max_threads_per_hour($post) {
+function check_post_limit($post) {
+	global $config, $board;
+	if (!isset($config['post_limit']) || !$config['post_limit'] || !isset($config['post_limit_interval'])) return false;
+
+	$query = prepare(sprintf('SELECT COUNT(*) AS `count` FROM ``posts_%s`` WHERE FROM_UNIXTIME(`time`) > DATE_SUB(NOW(), INTERVAL :time_limit MINUTE);', $board['uri']));
+	$query->bindValue(':time_limit', $config['post_limit_interval'], PDO::PARAM_INT);
+	$query->execute() or error(db_error($query));
+	$r = $query->fetch(PDO::FETCH_ASSOC);
+
+	return $r['count'] >= $config['post_limit'];
+}
+
+function check_thread_limit($post) {
 	global $config, $board;
 	if (!isset($config['max_threads_per_hour']) || !$config['max_threads_per_hour']) return false;
 
@@ -3233,7 +3245,7 @@ function max_threads_per_hour($post) {
 		$query->execute() or error(db_error($query));
 		$r = $query->fetch(PDO::FETCH_ASSOC);
 
-		return ($r['count'] >= $config['max_threads_per_hour']);
+		return $r['count'] >= $config['max_threads_per_hour'];
 	}
 }
 
