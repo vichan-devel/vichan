@@ -60,7 +60,7 @@ class ShadowDelete {
                 // Delete thread HTML page
                 file_unlink($board['dir'] . $config['dir']['res'] . link_for($post) );
                 file_unlink($board['dir'] . $config['dir']['res'] . link_for($post, true) ); // noko50
-                file_unlink($board['dir'] . $config['dir']['res'] . sprintf('%d.json', $post['id']));
+                file_unlink($board['dir'] . $config['dir']['res'] . json_scrambler($post['id'], true));
 
                 // Insert antispam to temp table
                 $antispam_query = prepare("INSERT INTO ``shadow_antispam`` SELECT * FROM ``antispam`` WHERE `board` = :board AND `thread` = :thread");
@@ -172,9 +172,17 @@ class ShadowDelete {
         $query->bindValue(':board', $board['uri']);
         $query->execute() or error(db_error($query));
         
-        if (isset($rebuild) && $rebuild_after) {
-            buildThread($rebuild);
-            buildIndex();
+
+
+        if ($rebuild_after) {
+            // Rebuild thread if post is deleted
+            if (isset($rebuild))
+                buildThread($rebuild);
+            // If OP rebuild Catalog
+            if (!isset($rebuild)) {
+                buildIndex();
+            	rebuildThemes('post-delete', $board['uri']);
+            }
         }
 
         // If Thread ID is set return it (deleted post within thread) this will pe a positive number and thus viewed as true for legacy purposes
@@ -315,10 +323,17 @@ class ShadowDelete {
         $query->bindValue(':board', $board['uri']);
         $query->execute() or error(db_error($query));
 
-        if (isset($rebuild) && $rebuild_after) {
-            buildThread($rebuild);
-            buildIndex();
+
+        if ($rebuild_after) {
+            // Rebuild thread (if post get thread id from `thread` field if OP rebuild ID)
+            buildThread(isset($thread_id)?$thread_id:$id);
+            // If OP rebuild Catalog
+            if (!isset($thread_id)) {
+                buildIndex();
+        		rebuildThemes('post-thread', $board['uri']);
+            }
         }
+        buildIndex();
 
         // If Thread ID is set return it (deleted post within thread) this will pe a positive number and thus viewed as true for legacy purposes
         if(isset($thread_id))
