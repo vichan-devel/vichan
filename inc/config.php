@@ -806,6 +806,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['markup'][] = array("/\[s\]/s", "<span class=\"spoiler\">");
 	$config['markup'][] = array("/\[g\]/s", "<span class=\"quote\">");
 	$config['markup'][] = array("/\[\/\]/s", "</span>");
+	$config['markup'][] = array("/\[align=(center|right)\](.+?)\[\/align\]/s", "<div style=\"text-align: $1;\">\$2</div>");
 
 
 	// // Dice Roll Markup
