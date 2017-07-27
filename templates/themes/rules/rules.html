@@ -1,0 +1,47 @@
+{% filter remove_whitespace %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+	<title>{{ settings.title }}</title>
+	{% if config.meta_keywords %}<meta name="keywords" content="{{ config.meta_keywords }}">{% endif %}
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+	{% if config.url_favicon %}<link rel="shortcut icon" href="{{ config.url_favicon }}">{% endif %}
+	<link rel="stylesheet" media="screen" href="{{ config.url_stylesheet }}">
+	{% if config.default_stylesheet.1 != '' %}<link rel="stylesheet" type="text/css" id="stylesheet" href="{{ config.uri_stylesheets }}{{ config.default_stylesheet.1 }}">{% endif %}
+	{% if config.font_awesome %}<link rel="stylesheet" href="{{ config.root }}{{ config.font_awesome_css }}">{% endif %}
+  </head>
+  <body>
+	{{ boardlist.top }}
+
+    <header>
+      <h1>{{ settings.title }}</h1>
+      <div class="subtitle">{{ settings.subtitle }}</div>
+    </header>
+
+    <div class="ban" id="global">
+      <h2></h2>
+      <ol start="0">
+
+        <li></li>
+
+
+      </ol>
+    </div>
+
+
+      <ol start="0">
+
+        <li></li>
+        
+      </ol>
+    </div>
+	 <footer>
+                <p class="unimportant" style="margin-top:20px;text-align:center;">- <a href="http://tinyboard.org/">Tinyboard</a> + 
+                        <a href='https://int.vichan.net/devel/'>vichan</a> {{ config.version }} -
+                <br><a href="http://tinyboard.org/">Tinyboard</a> Copyright &copy; 2010-2014 Tinyboard Development Group    
+                <br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2015 vichan-devel</p>
+        </footer>
+</body>
+</html>
+{% endfilter %}
