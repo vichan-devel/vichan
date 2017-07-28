@@ -380,8 +380,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 		'lock',
 		'raw',
 		'embed',
-		'recaptcha_challenge_field',
-		'recaptcha_response_field',
+		'g-recaptcha-response',
 		'captcha_cookie',
 		'captcha_text',
 		'spoiler',
@@ -2043,6 +2042,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 
 	// Enable the search form
 	$config['search']['enable'] = false;
+
+	// Enable search in the board index.
+	$config['board_search'] = false;
 
 	// Maximal number of queries per IP address per minutes
 	$config['search']['queries_per_minutes'] = Array(15, 2);
