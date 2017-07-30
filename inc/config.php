@@ -806,6 +806,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['markup'][] = array("/\[s\]/s", "<span class=\"spoiler\">");
 	$config['markup'][] = array("/\[g\]/s", "<span class=\"quote\">");
 	$config['markup'][] = array("/\[\/\]/s", "</span>");
+	$config['markup'][] = array("/\[align=(center|right)\](.+?)\[\/align\]/s", "<div style=\"text-align: $1;\">\$2</div>");
 
 
 	// // Dice Roll Markup
@@ -1342,7 +1343,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['error']['invalid_embed']	= _('Couldn\'t make sense of the URL of the video you tried to embed.');
 	$config['error']['captcha']		= _('You seem to have mistyped the verification.');
 	$config['error']['too_many_threads']		= _('To prevent raids, the maximum number of threads has been limited per hour. Please check back later or post in an existing thread.');
-	$config['error']['too_many_posts']		= _('To prevent raids, the maximum number of posts has been limited per hour. Please check back later or post in an existing thread.');
+	$config['error']['too_many_posts']		= _('To prevent raids, the maximum number of posts has been limited per hour. Please check back later.');
 	$config['error']['already_voted']		= _('You have already voted for this thread to be featured.');
 
 

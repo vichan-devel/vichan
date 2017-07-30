@@ -1669,21 +1669,36 @@ function deletePostPermanent($id, $error_if_doesnt_exist=true, $rebuild_after=tr
 	$query->bindValue(':id', $id, PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
 
-	// Update bump order
+	// Recalculate thread bump time
 	if (isset($thread_id))
 	{
-		$query = prepare(sprintf('SELECT MAX(`time`) AS `correct_bump` FROM `posts_%s`
-		                          WHERE (`thread` = :thread AND NOT email <=> "sage")
-		                          OR `id` = :thread', $board['uri']));
+		$query = prepare(sprintf("SELECT `sage` FROM ``posts_%s`` WHERE `id` = :thread", $board['uri']));
 		$query->bindValue(':thread', $thread_id, PDO::PARAM_INT);
 		$query->execute() or error(db_error($query));
-		$correct_bump = $query->fetch(PDO::FETCH_ASSOC)['correct_bump'];
+		$bump_locked = $query->fetch(PDO::FETCH_ASSOC)['sage'];
 
-		$query = prepare(sprintf("UPDATE ``posts_%s`` SET `bump` = :bump
-		                          WHERE `id` = :id", $board['uri']));
-		$query->bindValue(':bump', $correct_bump, PDO::PARAM_INT);
-		$query->bindValue(':id', $thread_id, PDO::PARAM_INT);
-		$query->execute() or error(db_error($query));
+		if ($bump_locked == 0)
+		{
+			$query = prepare(sprintf('SELECT MAX(`time`) AS `correct_bump` FROM
+			                          (
+				                          SELECT `id`, `time`, `email`
+				                          FROM posts_%s
+				                          WHERE `thread` = :thread OR `id` = :thread
+				                          ORDER BY ID
+				                          LIMIT :reply_limit
+			                          ) AS temp
+			                          WHERE NOT email <=> "sage" OR `id` = :thread', $board['uri']));
+			$query->bindValue(':thread', $thread_id, PDO::PARAM_INT);
+			$query->bindValue(':reply_limit', $config['reply_limit'], PDO::PARAM_INT);
+			$query->execute() or error(db_error($query));
+			$correct_bump = $query->fetch(PDO::FETCH_ASSOC)['correct_bump'];
+
+			$query = prepare(sprintf("UPDATE ``posts_%s`` SET `bump` = :bump
+			                          WHERE `id` = :thread", $board['uri']));
+			$query->bindValue(':thread', $thread_id, PDO::PARAM_INT);
+			$query->bindValue(':bump', $correct_bump, PDO::PARAM_INT);
+			$query->execute() or error(db_error($query));
+		}
 	}
 
 	$query = prepare("SELECT `board`, `post` FROM ``cites`` WHERE `target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ") ORDER BY `board`");
