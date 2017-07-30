@@ -636,21 +636,21 @@ if (isset($_POST['delete'])) {
 		$post['filesize'] = $size;
 	}
 	
-	
 	$post['capcode'] = false;
 	
-	if ($mod && preg_match('/^((.+) )?## (.+)$/', $post['name'], $matches)) {
+	if ($mod && preg_match('/^((.+) )?## *(.+)$/', $post['name'], $matches)) {
 		$name = $matches[2] != '' ? $matches[2] : $config['anonymous'];
 		$cap = $matches[3];
 		
-		if (isset($config['mod']['capcode'][$mod['type']])) {
-			if (	$config['mod']['capcode'][$mod['type']] === true ||
-				(is_array($config['mod']['capcode'][$mod['type']]) &&
-					in_array($cap, $config['mod']['capcode'][$mod['type']])
-				)) {
-				
-				$post['capcode'] = utf8tohtml($cap);
-				$post['name'] = $name;
+		foreach ($config['mod']['capcode'] as $mod_level => $capcode_group) {
+			if ($mod['type'] < $mod_level)
+				break;
+
+			foreach ($capcode_group as $capcode) {
+				if (strcasecmp($cap, $capcode) == 0) {
+					$post['capcode'] = utf8tohtml($capcode);
+					$post['name'] = $name;
+				}
 			}
 		}
 	}
