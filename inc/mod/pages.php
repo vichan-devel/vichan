@@ -1759,7 +1759,9 @@ function mod_move($originBoard, $postID) {
 				$post['has_file'] = true;
 				foreach ($post['files'] as $i => &$file) {
 					$file['file_path'] = sprintf($config['board_path'], $board['uri']) . $config['dir']['img'] . $file['file'];
-					$file['thumb_path'] = sprintf($config['board_path'], $board['uri']) . $config['dir']['thumb'] . $file['thumb'];
+
+					if (isset($file['thumb'])) 
+						$file['thumb_path'] = sprintf($config['board_path'], $board['uri']) . $config['dir']['thumb'] . $file['thumb'];
 				}
 			} else {
 				$post['has_file'] = false;
