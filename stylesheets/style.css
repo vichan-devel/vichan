@@ -199,11 +199,6 @@ img.banner,img.board_image {
   margin: 12px auto 0 auto;
 }
 
-img.banner {
-  width: 300px;
-  height: 100px;
-}
-
 .post-image {
   display: block;
   float: left;
@@ -977,7 +972,7 @@ pre {
   border: 1px solid black;
   display: inline-block;
   position: relative;
-  margin-top: 20px;
+  margin-top: 40px;
 }
 
 #options_div {

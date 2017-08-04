@@ -1,0 +1,28 @@
+
+Solve this captcha in order to proceed.
+<form id="whitelist_form" enctype="multipart/form-data" action="/post.php" method="post" style="margin-bottom: 0em; padding-top: 15px;">
+	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+	<script src="/js/whitelist-dialog.js" async defer></script>
+	<style>
+	#whitelist_form div.g-recaptcha > div {
+	   margin: 0px auto;
+	}
+	</style>
+
+	<div class="g-recaptcha" data-sitekey="{{ config.recaptcha_public }}"></div>
+	<noscript>
+		<div class="g-recaptcha">
+			<div style="width: 302px; height: 422px; position: relative;">
+				<div style="width: 302px; height: 422px; position: absolute;">
+					<iframe src="https://www.google.com/recaptcha/api/fallback?k={{ config.recaptcha_public }}" frameborder="0" scrolling="no" style="width: 302px; height:422px; border-style: none;"></iframe>
+				</div>
+			</div>
+			<div style="width: 300px; height: 60px; border-style: none;
+			            bottom: 12px; left: 25px; margin: 0px auto; padding: 0px; right: 25px;
+			            background: #f9f9f9; border: 1px solid #c1c1c1; border-radius: 3px;">
+				<textarea id="g-recaptcha-response" name="g-recaptcha-response" class="g-recaptcha-response" style="width: 250px; height: 40px; border: 1px solid #c1c1c1; margin: 10px 25px; padding: 0px; resize: none;" ></textarea>
+			</div>
+		</div>
+	</noscript>
+	<input id="whitelist_submit" name="whitelist" value="Continue" type="submit" style="margin-top: 15px;">
+</form>

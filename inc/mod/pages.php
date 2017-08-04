@@ -1165,7 +1165,7 @@ function mod_warning_post($board, $delete, $post, $token = false) {
 	$ip = $_post['ip'];
 
 	// // Get Unique User Cookie
-	// $cookie = get_uuser_cookie($_post['cookie']);
+	// $cookie = $_post['cookie'];
 	
 	if (isset($_POST['new_warning'], $_POST['reason'])) {
 		require_once 'inc/mod/ban.php';
@@ -1940,7 +1940,7 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 	$ip = $_post['ip'];
 
 	// Get Unique User Cookie
-	$cookie = get_uuser_cookie($_post['cookie']);
+	$cookie = $_post['cookie'];
 	
 	if (isset($_POST['new_ban'], $_POST['uuser_cookie'], $_POST['reason'], $_POST['ban_length'], $_POST['board'])) {
 		require_once 'inc/mod/ban.php';
