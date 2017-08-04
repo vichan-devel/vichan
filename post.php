@@ -394,11 +394,17 @@ if (isset($_POST['delete'])) {
 		$post['op'] = true;
 
 
+	$post['ip'] = $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR'];
+	$cookie = get_uuser_cookie();
+	if (!$config['recaptcha'] && !Whitelist::check($post['ip'], $cookie)) {
+		message(Element('whitelist.html', array('config' => $config)), 'White list captcha', '');
+	}
+
 	if (!$dropped_post) {
 		// Check for CAPTCHA right after opening the board so the "return" link is in there
 		if ($config['recaptcha']) {
 			if (!isset($_POST['g-recaptcha-response']))
-				error($config['error']['bot']);	
+				error($config['error']['bot']);
 
 			// Check what reCAPTCHA has to say...
 			$resp = json_decode(file_get_contents(sprintf('https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s&remoteip=%s',
@@ -1324,6 +1330,27 @@ if (isset($_POST['delete'])) {
 
 	// Return user to archive
 	header('Location: ' . $config['root'] . sprintf($config['board_path'], $_POST['board']) . $config['dir']['archive'], true, $config['redirect_http']);
+
+	
+} elseif (isset($_POST['whitelist'])) {
+	$ip = $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR'];
+	$cookie = get_uuser_cookie();
+
+	if (Whitelist::check($ip, $cookie))
+		error($config['error']['already_whitelisted']);
+
+	$response = json_decode(file_get_contents(sprintf('https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s&remoteip=%s',
+		$config['recaptcha_private'],
+		urlencode($_POST['g-recaptcha-response']),
+		$_SERVER['REMOTE_ADDR'])));
+
+	if ($response->success) {
+		Whitelist::add_user($ip, $cookie);
+		message(sprintf('Success! You\'re now whitelisted and can post unrestricted for %s days.', $config['whitelist']['expires_in']), "Success!", "");
+	}
+	else {
+		error($config['error']['captcha']);
+	}
 
 } else {
 	if (!file_exists($config['has_installed'])) {

@@ -396,8 +396,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['recaptcha'] = false;
 
 	// Public and private key pair from https://www.google.com/recaptcha/admin/create
-	$config['recaptcha_public'] = '6LcXTcUSAAAAAKBxyFWIt2SO8jwx4W7wcSMRoN3f';
-	$config['recaptcha_private'] = '6LcXTcUSAAAAAOGVbVdhmEM1_SyRF4xTKe8jbzf_';
+	$config['recaptcha_public'] = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
+	$config['recaptcha_private'] = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe';
 
 	// Enable custom captcha provider for all posts.
 	$config['captcha']['post_captcha'] = false;
@@ -575,6 +575,11 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// (contained in a board configuration file) which has a flood-time greater than any of those in the
 	// global configuration, you need to set the following variable to the maximum flood-time condition value.
 	// $config['flood_cache'] = 60 * 60 * 24; // 24 hours
+
+	// Require users to become whitelisted by completing a captcha before posting
+	$config['whitelist']['enabled'] = false;
+	// Auto remove entries after this many days
+	$config['whitelist']['expires_in'] = 90;
 
 /*
  * ====================
@@ -1344,6 +1349,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['error']['too_many_threads']		= _('To prevent raids, the maximum number of threads has been limited per hour. Please check back later or post in an existing thread.');
 	$config['error']['too_many_posts']		= _('To prevent raids, the maximum number of posts has been limited per hour. Please check back later.');
 	$config['error']['already_voted']		= _('You have already voted for this thread to be featured.');
+	$config['error']['already_whitelisted']		= _('You\'re already whitelisted!');
 
 
 	// Moderator errors

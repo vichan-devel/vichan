@@ -130,6 +130,29 @@ function error($message, $priority = true, $debug_stuff = false) {
 	)));
 }
 
+function message($message, $title = '',  $subtitle = '') {
+	global $board, $mod, $config;
+	
+	if (isset($_POST['json_response'])) {
+		header('Content-Type: text/json; charset=utf-8');
+		die(json_encode(array(
+			'error' => $message
+		)));
+	}
+
+	die(Element('page.html', array(
+		'config' => $config,
+		'title' => $title,
+		'subtitle' => $subtitle,
+		'body' => Element('error.html', array(
+			'config' => $config,
+			'message' => $message,
+			'mod' => $mod,
+			'board' => isset($board) ? $board : false
+		))
+	)));
+}
+
 function loginForm($error=false, $username=false, $redirect=false) {
 	global $config;
 	

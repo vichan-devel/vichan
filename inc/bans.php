@@ -3,6 +3,7 @@
 require 'inc/lib/IP/Lifo/IP/IP.php';
 require 'inc/lib/IP/Lifo/IP/BC.php';
 require 'inc/lib/IP/Lifo/IP/CIDR.php';
+require_once 'inc/whitelist.php';
 
 use Lifo\IP\CIDR;
 
@@ -240,7 +241,7 @@ class Bans {
 		global $config;
 
 		$query = prepare('SELECT ``id``, ``expires`` FROM ``bans_cookie`` WHERE ``cookie`` = :cookie LIMIT 1');
-		$query->bindValue(':cookie', get_uuser_cookie($uuser_cookie));
+		$query->bindValue(':cookie', $uuser_cookie);
 		$query->execute() or error(db_error($query));
 		
 		// If we find a result we return true
@@ -568,9 +569,7 @@ class Bans {
 		else
 			$query->bindValue(':ipend', null, PDO::PARAM_NULL);
 
-		// Add and sanitize (just in case) cookie
-		$query->bindValue(':cookie', get_uuser_cookie($uuser_cookie));
-		
+		$query->bindValue(':cookie', $uuser_cookie);
 		$query->bindValue(':mod', $mod_id);
 		$query->bindValue(':time', time());
 		
@@ -616,6 +615,8 @@ class Bans {
 				' with ' . ($reason ? 'reason: ' . utf8tohtml($reason) . '' : 'no reason'));
 		}
 
+		Whitelist::remove_user($range[0], $uuser_cookie);
+
 		rebuildThemes('bans');
 
 		return $pdo->lastInsertId();
@@ -640,8 +641,7 @@ class Bans {
 			// Add cookie to ban
 			$query = prepare('INSERT INTO ``bans_cookie`` VALUES (NULL, :cookie, :expires, :mod)');
 			
-			$uuser_cookie = get_uuser_cookie($post['cookie']);
-			$query->bindValue(':cookie', $uuser_cookie, PDO::PARAM_STR);
+			$query->bindValue(':cookie', $post['cookie'], PDO::PARAM_STR);
 			$query->bindValue(':mod', $mod_id);
 
 			$length = time() + $config['uuser_cookie_ban_lifetime'];
@@ -653,6 +653,8 @@ class Bans {
 			$query = prepare("UPDATE ``bans`` SET `cookiebanned` = 1 WHERE `cookie` = :cookie");
 			$query->bindValue(':cookie', $uuser_cookie, PDO::PARAM_STR);
 			$query->execute() or error(db_error($query));
+			
+			Whitelist::remove_user('', $post['cookie']);
 		}
 
 		return true;

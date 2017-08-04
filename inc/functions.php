@@ -1012,20 +1012,9 @@ function checkBan($board = false) {
 		$ips = array_merge($ips, explode(", ", $_SERVER['HTTP_X_FORWARDED_FOR']));
 	}
 
-
-	// Set Cookie Variable if not already set and check for cookie ban if set.
-	$uuser_cookie = get_uuser_cookie();
-	if($uuser_cookie === "???")
-	{
-		// Set unique User cookie variable
-		$uuser_cookie = sha1($config['cookies']['salt'] . microtime() . implode(",", $ips));
-		setcookie($config['cookies']['uuser_cookie_name'], $uuser_cookie, 0);
-	} else {
-		// If cookie is banned just die and ignore everything else.
-		if(Bans::findCookie($uuser_cookie))
-			die();
-	}
-
+	// If cookie is banned just die and ignore everything else.
+	if(Bans::findCookie(get_uuser_cookie()))
+		die();
 
 	foreach ($ips as $ip) {
 		$bans = Bans::find($_SERVER['REMOTE_ADDR'], $board, $config['show_modname']);
@@ -1317,18 +1306,7 @@ function post(array $post) {
 	$query->bindValue(':time', isset($post['time']) ? $post['time'] : time(), PDO::PARAM_INT);
 	$query->bindValue(':password', $post['password']);
 	$query->bindValue(':ip', isset($post['ip']) ? $post['ip'] : ($config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']));
-
-
-	// Get and set Cookie Variable
-	$cookie = "???";
-	if(isset($_COOKIE[$config['cookies']['uuser_cookie_name']])) {
-		$cookie = $_COOKIE[$config['cookies']['uuser_cookie_name']];
-		if(!ctype_xdigit($cookie))
-			$cookie = "???";
-		if(strlen($cookie) > 40)
-			$cookie = substr($cookie, 0, 40);
-	}
-	$query->bindValue(':cookie', $cookie);
+	$query->bindValue(':cookie', get_uuser_cookie());
 
 
 	if ($post['op'] && $post['mod'] && isset($post['sticky']) && $post['sticky']) {
@@ -3549,33 +3527,29 @@ function strategy_first($fun, $array) {
 	}
 }
 
-
-
-// Get Unique User Cookie and sanitize it
-function get_uuser_cookie($uuser_cookie = false)
-{
+// Get Unique User Cookie
+function get_uuser_cookie() {
 	global $config;
 
-	// If cookie parameter isn't set we retreave cookie from users browser
-	if($uuser_cookie == false)
-	{
-		$uuser_cookie = "???";
-		if(isset($_COOKIE[$config['cookies']['uuser_cookie_name']])) {
-			$uuser_cookie = $_COOKIE[$config['cookies']['uuser_cookie_name']];
-		}
+	if (!isset($_COOKIE[$config['cookies']['uuser_cookie_name']]) || !valid_uuser_cookie($_COOKIE[$config['cookies']['uuser_cookie_name']])) {
+		// Set a new cookie if the user doesn't have a valid one
+		$uuser_cookie = sha1($config['cookies']['salt'] . microtime() . $_SERVER['REMOTE_ADDR']);
+		$cookie_expire_time = time() + 60 * 60 * 24 * $config['whitelist']['expires_in'];
+		setcookie($config['cookies']['uuser_cookie_name'], $uuser_cookie, $cookie_expire_time);
+		$_COOKIE[$config['cookies']['uuser_cookie_name']] = $uuser_cookie;
 	}
 
-	// Sanitize cookie data
-	if(!ctype_xdigit($uuser_cookie) || strlen($uuser_cookie) != 40)
-		$uuser_cookie = "???";
-
-	return $uuser_cookie;
+	return $_COOKIE[$config['cookies']['uuser_cookie_name']];
 }
 
+function valid_uuser_cookie($cookie) {
+	if (!ctype_xdigit($cookie))
+		return false;
+	if(strlen($cookie) > 40)
+		return false;
 
-
-
-
+	return true;
+}
 
 // Returns hashed version of IP address
 function get_ip_hash($ip)
@@ -3590,8 +3564,6 @@ function get_ip_hash($ip)
 	$hash = crypt($ip, "$2y$" . $config['bcrypt_ip_cost'] . "$" . $config['bcrypt_ip_salt'] . "$");
 	return str_replace("/", "_", substr($hash, 29));
 }
-
-
 
 
 // Verify ip address string
@@ -3612,11 +3584,6 @@ function validate_ip_string($ip)
 }
 
 
-
-
-
-
-
 // Returns URL Encoded version of Hahsed BCrypt IP
 function getURLEncoded_HashIP($ip)
 {
@@ -3624,17 +3591,13 @@ function getURLEncoded_HashIP($ip)
 	return str_replace("\\", "_", $ip);
 }
 
+
 // Returns URL Encoded version of Hahsed BCrypt IP
 function getURLDecoded_HashIP($ip)
 {
 	// Bcrypt [., /, 0–9, A–Z, a–z]
 	return str_replace("_", "\\", $ip);
 }
-
-
-
-
-
 
 
 // Returns Human Readable version of IP
@@ -3655,10 +3618,6 @@ function getHumanReadableIP_masked($ip)
 }
 
 
-
-
-
-
 // Scramble the Json name for files
 function json_scrambler($id_name, $append_extention = false)
 {
@@ -3675,7 +3634,3 @@ function json_scrambler($id_name, $append_extention = false)
 		return str_replace(array("/", "."), "_", substr($hash, 29)) . ".json";
 	return str_replace(array("/", "."), "_", substr($hash, 29));
 }
-
-
-
-
