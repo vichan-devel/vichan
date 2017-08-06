@@ -2,16 +2,6 @@
  * Do not add this file to $config['additional_javascript'][]
  */
 
-var alterButtonRemover = window.setTimeout(function() {
-	var alertButton = $("button.alert_button");
-
-	if (alertButton.length > 0)
-	{
-		alertButton.remove();
-		clearTimeout(alterButtonRemover);
-	}
-}, 100);
-
 $("#whitelist_form").submit(function() {
 	$('#whitelist_submit').prop('disabled', true);
 
