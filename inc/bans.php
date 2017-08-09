@@ -603,6 +603,7 @@ class Bans {
 			$query->bindValue(':post', null, PDO::PARAM_NULL);
 		
 		$query->execute() or error(db_error($query));
+		$ban_id = $pdo->lastInsertId();
 		
 		if (isset($mod['id']) && $mod['id'] == $mod_id) {
 			modLog('Created a new ' .
@@ -619,7 +620,7 @@ class Bans {
 
 		rebuildThemes('bans');
 
-		return $pdo->lastInsertId();
+		return $ban_id;
 	}
 
 
@@ -651,7 +652,7 @@ class Bans {
 
 			// Mark Cookies as banned in ban list
 			$query = prepare("UPDATE ``bans`` SET `cookiebanned` = 1 WHERE `cookie` = :cookie");
-			$query->bindValue(':cookie', $uuser_cookie, PDO::PARAM_STR);
+			$query->bindValue(':cookie', $post['cookie'], PDO::PARAM_STR);
 			$query->execute() or error(db_error($query));
 			
 			Whitelist::remove_user('', $post['cookie']);
