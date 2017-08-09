@@ -153,16 +153,18 @@ class Filter {
 				$this->expires = isset($this->expires) ? $this->expires : false;
 				$this->reject = isset($this->reject) ? $this->reject : true;
 				$this->all_boards = isset($this->all_boards) ? $this->all_boards : false;
+				$this->ban_cookie = isset($this->ban_cookie) ? $this->ban_cookie : false;
 
-				// Get user cookie
-				$cookie = get_uuser_cookie();
+				$ban_id = Bans::new_ban($config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR'], get_uuser_cookie(), $this->reason, $this->expires, $this->all_boards ? false : $board['uri'], -1);
 				
-				Bans::new_ban($_SERVER['REMOTE_ADDR'], $cookie, $this->reason, $this->expires, $this->all_boards ? false : $board['uri'], -1);
-
+				if ($this->ban_cookie)
+				{
+					Bans::ban_cookie($ban_id);
+				}
 
 				if ($this->reject) {
 					if (isset($this->message))
-						error($message);
+						error($this->message);
 					
 					checkBan($board['uri']);
 					exit;
