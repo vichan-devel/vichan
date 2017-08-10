@@ -3534,7 +3534,7 @@ function get_uuser_cookie() {
 	if (!isset($_COOKIE[$config['cookies']['uuser_cookie_name']]) || !valid_uuser_cookie($_COOKIE[$config['cookies']['uuser_cookie_name']])) {
 		// Set a new cookie if the user doesn't have a valid one
 		$uuser_cookie = sha1($config['cookies']['salt'] . microtime() . $_SERVER['REMOTE_ADDR']);
-		$cookie_expire_time = time() + 60 * 60 * 24 * $config['whitelist']['expires_in'];
+		$cookie_expire_time = time() + $config['cookies']['cookie_lifetime'];
 		setcookie($config['cookies']['uuser_cookie_name'], $uuser_cookie, $cookie_expire_time);
 		$_COOKIE[$config['cookies']['uuser_cookie_name']] = $uuser_cookie;
 	}

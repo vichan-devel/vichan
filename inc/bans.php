@@ -634,7 +634,8 @@ class Bans {
 		}
 		
 		// Get cookie for spesific ban
-		$queryGet = prepare('SELECT ``cookie`` FROM ``bans`` WHERE ``id`` = ' . (int)$ban_id);
+		$queryGet = prepare('SELECT ``cookie``, ``expires`` FROM ``bans`` WHERE ``id`` = :id');
+		$queryGet->bindValue(':id', $ban_id);
 		$queryGet->execute() or error(db_error($query));
 
 		// If we find a result we return true
@@ -645,7 +646,7 @@ class Bans {
 			$query->bindValue(':cookie', $post['cookie'], PDO::PARAM_STR);
 			$query->bindValue(':mod', $mod_id);
 
-			$length = time() + $config['uuser_cookie_ban_lifetime'];
+			$length = isset($post['expires']) ? $post['expires'] : time() + $config['cookies']['cookie_lifetime'];
 			$query->bindValue(':expires', $length);
 
 			$query->execute() or error(db_error($query));

@@ -267,7 +267,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 
 	// Cookie name for check of dumb posters ban evade
 	$config['cookies']['uuser_cookie_name'] = 'ponypoontang';
-	$config['uuser_cookie_ban_lifetime'] = 60 * 60 * 6; // 6 hours
+	$config['cookies']['cookie_lifetime'] = 60 * 60 * 24 * 360; // 360 days
 
 /*
  * ====================
