@@ -180,7 +180,7 @@ function loadConfig() {
 
 		require 'inc/config.php';
 
-		include 'inc/instance-config.php';
+		@include 'inc/instance-config.php';
 
 		if (isset($board['dir']) && file_exists($board['dir'] . '/config.php')) {
 			require $board['dir'] . '/config.php';
