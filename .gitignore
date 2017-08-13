@@ -5,7 +5,7 @@
 /*/src
 /*/thumb
 /*/config.php
-/*.html
+*.html
 
 # include some files though
 !/templates/*.html
@@ -22,6 +22,21 @@
 
 # script file
 /main.js
+
+# template-generated stylesheet
+/*.css
+
+# template-generated robot navigation
+/robots.txt
+/sitemap.xml
+
+# gzipped static files for nginx gzip_static
+*.html.gz
+*.css.gz
+*.js.gz
+*.json.gz
+*.xml.gz
+*.txt.gz
 
 # templates cache
 /templates/cache
