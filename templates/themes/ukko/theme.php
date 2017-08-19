@@ -30,9 +30,11 @@
 			$body = '';
 			$overflow = array();
 			$board = array(
-				'url' => $this->settings['uri'],
-				'name' => $this->settings['title'],
-				'title' => sprintf($this->settings['subtitle'], $this->settings['thread_limit'])
+				'uri' => $this->settings['uri'],
+				'url' => sprintf('/%s/', $this->settings['uri']),
+				'dir' => sprintf('%s/', $this->settings['uri']),
+				'title' => $this->settings['title'],
+				'subtitle' => sprintf($this->settings['subtitle'], $this->settings['thread_limit'])
 			);
 
 			$query = '';
@@ -101,6 +103,8 @@
 			$body .= '<script> var overflow = ' . json_encode($overflow) . '</script>';
 			$body .= '<script type="text/javascript" src="/'.$this->settings['uri'].'/ukko.js"></script>';
 
+			$config['catalog_link'] = false;
+			$config['archive']['threads'] = false;
 			return Element('index.html', array(
 				'config' => $config,
 				'board' => $board,

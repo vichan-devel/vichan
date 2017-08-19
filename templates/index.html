@@ -42,8 +42,6 @@
 
 	{% if not no_post_form %}
 		{% include 'post_form.html' %}
-	{% else %}
-		{% include 'boardlist.html' %}
 	{% endif %}
 
 	{% if config.page_nav_top %}
@@ -75,7 +73,8 @@
 	<form name="postcontrols" action="{{ config.post_url }}" method="post">
 	<input type="hidden" name="board" value="{{ board.uri }}" />
 	{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
-	&nbsp; <a id="unimportant" href="#bottom">[{% trans %}Go to bottom{% endtrans %}]</a> &nbsp; {% if config.catalog_link %}<a id="unimportant" href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>{% endif %}
+	&nbsp; <a id="unimportant" href="#bottom">[{% trans %}Go to bottom{% endtrans %}]</a>
+	{% if config.catalog_link %}&nbsp; <a id="unimportant" href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>{% endif %}
 
 	&nbsp; <a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.file_index }}">[{% trans %}Reload{% endtrans %}]</a>
 
