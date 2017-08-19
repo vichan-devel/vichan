@@ -22,6 +22,7 @@ $(document).ready(function() {
 		var board = $(this).next().data("board");
 		var hr = $("<hr />");
 
+		$(this).append('&nbsp;');
 		$(this).append(ukkohide);
 		$(this).append(hr);
 
@@ -50,7 +51,7 @@ $(document).ready(function() {
 		});
 
 	};
-	$("h2").each(addukkohide);
+	$('form[name="postcontrols"] > h2').each(addukkohide);
 
 	$('.pages').hide();
 	var loadnext = function() {

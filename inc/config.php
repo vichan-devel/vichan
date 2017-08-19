@@ -29,7 +29,7 @@
 
 // Json File Scrambler
 // Indicate if json filenames should be scrambled 
-$config['json_scrambler']['scramble'] = true;
+$config['json_scrambler']['scramble'] = false;
 // Salt for hashing json filenames
 $config['json_scrambler']['salt'] = '0123456789012345678901';
 
@@ -1237,6 +1237,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 
 	// Minify Javascript using http://code.google.com/p/minify/.
 	$config['minify_js'] = false;
+
+	// Version number for main.js and style.css
+	$config['resource_version'] = 1;
 
 	// Dispatch thumbnail loading and image configuration with JavaScript. It will need a certain javascript
 	// code to work.

@@ -1,9 +1,7 @@
 # static html and json
-/*/*.html
-/*/*.json
-/*/res
-/*/src
-/*/thumb
+res/
+src/
+thumb/
 /*/config.php
 *.html
 
@@ -55,7 +53,8 @@ Thumbs.db
 *.rss
 /index.html
 /recent.css
-*.json 
+*.json
+/*/ukko.js
 
 # tmp filesystem
 /tmp/cache/*

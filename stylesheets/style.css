@@ -1415,3 +1415,10 @@ table.archive-list tr:hover td {
 .embed_container {
     display: block;
 }
+
+.hover-show {
+    opacity: 0;
+}
+.hover-show:hover {
+    opacity: 1;
+}
