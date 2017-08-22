@@ -298,18 +298,18 @@ class Archive {
 
 
 
-    static public function getArchiveList($featured = false, $mod_archive = false) {
+    static public function getArchiveList($featured = false, $mod_archive = false, $order_by_lifetime = false) {
         global $config, $board;
 
         $archive = false;
         if($featured) {
-            $query = query(sprintf("SELECT `id`, `snippet`, `featured`, `mod_archived` FROM ``archive_%s`` WHERE `featured` = 1 ORDER BY `lifetime` DESC", $board['uri'])) or error(db_error());
+            $query = query(sprintf("SELECT `id`, `snippet`, `featured`, `mod_archived` FROM ``archive_%s`` WHERE `featured` = 1", $board['uri']) . ($order_by_lifetime?" ORDER BY `lifetime` DESC":" ORDER BY `id` DESC")) or error(db_error());
             $archive = $query->fetchAll(PDO::FETCH_ASSOC);
         } else if($mod_archive) {
-            $query = query(sprintf("SELECT `id`, `snippet`, `featured`, `mod_archived` FROM ``archive_%s`` WHERE `mod_archived` = 1 ORDER BY `lifetime` DESC", $board['uri'])) or error(db_error());
+            $query = query(sprintf("SELECT `id`, `snippet`, `featured`, `mod_archived` FROM ``archive_%s`` WHERE `mod_archived` = 1", $board['uri']) . ($order_by_lifetime?" ORDER BY `lifetime` DESC":" ORDER BY `id` DESC")) or error(db_error());
             $archive = $query->fetchAll(PDO::FETCH_ASSOC);
         } else {
-            $query = prepare(sprintf("SELECT `id`, `snippet`, `featured`, `mod_archived`, `votes`  FROM ``archive_%s`` WHERE `lifetime` > :lifetime ORDER BY `lifetime` DESC", $board['uri']));
+            $query = prepare(sprintf("SELECT `id`, `snippet`, `featured`, `mod_archived`, `votes`  FROM ``archive_%s`` WHERE `lifetime` > :lifetime", $board['uri']) . ($order_by_lifetime?" ORDER BY `lifetime` DESC":" ORDER BY `id` DESC"));
             $query->bindValue(':lifetime', strtotime("-" . $config['archive']['lifetime']), PDO::PARAM_INT);
             $query->execute() or error(db_error());
             $archive = $query->fetchAll(PDO::FETCH_ASSOC);
