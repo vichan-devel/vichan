@@ -18,7 +18,7 @@ var storeboards = function() {
 
 $(document).ready(function() {
 	var addukkohide = function() {
-		var ukkohide = $('<a href="javascript:void(0);" class="unimportant ukkohide"></a>');
+		var ukkohide = $('<a href="javascript:void(0);" class="unimportant ukkohide hover-show"></a>');
 		var board = $(this).next().data("board");
 		var hr = $("<hr />");
 
