@@ -128,7 +128,7 @@ class GeoIP {
 		"CFF" => 266, "EUU" => 267, "ANC" => 268, "TRP" => 269, "TEO" => 270, "DBR" => 271, "PAG" => 272,
 		"EQU" => 273, "KEK" => 274, "KAL" => 275, "OLG" => 276, "NAT" => 277, "AOJ" => 278, "ANZ" => 279,
 		"ISI" => 280, "AOG" => 281, "HEZ" => 282, "WAT" => 283, "HOF" => 284, "VRI" => 285, "SYG" => 286,
-		"MWV" => 287
+		"MWV" => 287, "AUF" => 288
 		);
     var $GEOIP_COUNTRY_CODES = array(
 	    "","AP","EU","AD","AE","AF","AG","AI","AL","AM","CW",
@@ -161,7 +161,7 @@ class GeoIP {
 		"CFF", "EUU", "ANC", "TRP", "TEO", "DBR", "PAG",
 		"EQU", "KEK", "KAL", "OLG", "NAT", "AOJ", "ANZ",
 		"ISI", "AOG", "HEZ", "WAT", "HOF", "VRI", "SYG",
-		"MWV" );
+		"MWV", "AUF" );
     var $GEOIP_COUNTRY_CODES3 = array(
 	    "","AP","EU","AND","ARE","AFG","ATG","AIA","ALB","ARM","CUW",
 	    "AGO","ATA","ARG","ASM","AUT","AUS","ABW","AZE","BIH","BRB",
@@ -193,7 +193,7 @@ class GeoIP {
 		"CFF", "EUU", "ANC", "TRP", "TEO", "DBR", "PAG",
 		"EQU", "KEK", "KAL", "OLG", "NAT", "AOJ", "ANZ",
 		"ISI", "AOG", "HEZ", "WAT", "HOF", "VRI", "SYG",
-		"MWV"
+		"MWV", "AUF"
 		);
     var $GEOIP_COUNTRY_NAMES = array(
 	    "","Asia/Pacific Region","Europe","Andorra","United Arab Emirates","Afghanistan","Antigua and Barbuda","Anguilla","Albania","Armenia","Curacao",
@@ -227,7 +227,7 @@ class GeoIP {
 		"Confederate", "Euro Cuck", "AnCap", "Two Right Paths", "Teutonic Order", "Denver Broncos", "Princevlag", 
 		"Equestria", "Kekistan", "Kalmar Union", "Oldest Glory", "NATO", "American Occupied Japan", "ANZUS",
 		"Daesh", "Allied Occupied Germany", "Hezbollah", "Waifu Thief", "Heil Hoofler", "Vril Society", "Syria General",
-		"Meme War Veteran"
+		"Meme War Veteran", "Ausfailia"
 		);
 
     var $GEOIP_CONTINENT_CODES = array(
@@ -261,7 +261,7 @@ class GeoIP {
 		"NA", "EU", "--", "--", "--", "NA", "EU",
 		"--", "--", "EU", "NA", "--", "AS", "OC",
 		"AF", "EU", "AF", "--", "--", "--", "--",
-		"--"
+		"--", "OC"
 		);
 
 }
