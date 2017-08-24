@@ -12,7 +12,7 @@ $(document).ready(function () {
 		return;
 
 	if (window.Options && Options.get_tab('general')) {
-		Options.extend_tab("general", "<label><input type='checkbox' id='disable-embedding' /> " + _('Disable embedding') + "</label>");
+		Options.extend_tab("general", "<label><input type='checkbox' id='disable-embedding' /> " + _('Disable link embedding') + "</label>");
 
 		$('#disable-embedding').on('change', function () {
 			if (this.checked) {
