@@ -1,9 +1,18 @@
-<script src='{{ config.root }}/main.js'></script>
-<script src='{{ config.root }}/js/jquery.min.js'></script>
-<script src='{{ config.root }}/js/mobile-style.js'></script>
+{% if mod %}
+  <script src='main.js'></script>
+  <script src='js/jquery.min.js'></script>
+  <script src='js/mobile-style.js'></script>
 
-<script src="{{ config.root }}/js/mod/chartist.min.js"></script>
-<link rel='stylesheet' href='{{ config.root }}/stylesheets/mod/chartist.min.css'>
+  <script src="js/mod/chartist.min.js"></script>
+  <link rel='stylesheet' href='stylesheets/mod/chartist.min.css'>
+{% else %}
+  <script src='{{ config.root }}/main.js'></script>
+  <script src='{{ config.root }}/js/jquery.min.js'></script>
+  <script src='{{ config.root }}/js/mobile-style.js'></script>
+
+  <script src="{{ config.root }}/js/mod/chartist.min.js"></script>
+  <link rel='stylesheet' href='{{ config.root }}/stylesheets/mod/chartist.min.css'>
+{% endif %}
 
 
 {% if mod %}

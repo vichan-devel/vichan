@@ -37,16 +37,16 @@ class Statistic {
                 if($realtime)
                     $query .= sprintf("SELECT COUNT(*) AS count, HOUR(FROM_UNIXTIME(time)) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time)) = CURDATE() GROUP BY hour UNION ALL ", $board['uri']);
                 else
-                    $query .= sprintf("SELECT COUNT(*) AS count, HOUR(FROM_UNIXTIME(time)) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time)) = CURDATE() - INTERVAL 1 DAY GROUP BY hour UNION ALL ", $board['uri']);
+                    $query .= sprintf("SELECT COUNT(*) AS count, HOUR(FROM_UNIXTIME(time)) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time)) = CURDATE() AND HOUR(FROM_UNIXTIME(time)) < HOUR(NOW() - UNTERVAL 1 HOUR) GROUP BY hour UNION ALL ", $board['uri']);
                 // $query .= sprintf("SELECT * FROM (SELECT COUNT(*) as count, HOUR(FROM_UNIXTIME(time)) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time)) = CURDATE() GROUP BY hour) AS deriv_%s UNION ALL ", $board['uri'], $board['uri']);
             }
             // Remove the last "UNION ALL" seperator and complete the query
             $query = preg_replace('/UNION ALL $/', ') AS deriv_all GROUP BY hour ORDER BY hour ASC', $query);
         } else {
             if($realtime)
-                $query = sprintf("SELECT COUNT(*) AS count, HOUR(FROM_UNIXTIME(time)) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time)) = CURDATE() GROUP BY hour", $boardName);
+                $query = sprintf("SELECT COUNT(*) AS count, HOUR(FROM_UNIXTIME(time) - INTERVAL 1 DAY) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time) - INTERVAL 1 DAY) = CURDATE() GROUP BY hour", $boardName);
             else
-                $query = sprintf("SELECT COUNT(*) AS count, HOUR(FROM_UNIXTIME(time)) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time)) = CURDATE() - 1 DAY GROUP BY hour", $boardName);
+                $query = sprintf("SELECT COUNT(*) AS count, HOUR(FROM_UNIXTIME(time) - INTERVAL 1 DAY) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time) - INTERVAL 1 DAY) = CURDATE() AND HOUR(FROM_UNIXTIME(time)) < HOUR(NOW() - UNTERVAL 1 HOUR) GROUP BY hour", $boardName);
         }
 
         // Execute Query
@@ -87,31 +87,25 @@ class Statistic {
             // Get post count by hour for the last week
             $query = "SELECT SUM(count) AS count, day FROM (";
             foreach ($boards as $board) {
-                if($realtime) {
-                    if($previous_week)
-                        $query .= sprintf("SELECT COUNT(*) AS count, WEEKDAY(FROM_UNIXTIME(time)) AS day FROM posts_%s WHERE YEARWEEK(FROM_UNIXTIME(time), 1) = YEARWEEK(DATE_SUB(NOW(), INTERVAL 1 WEEK), 1) GROUP BY day UNION ALL ", $board['uri']);
-                    else
-                        $query .= sprintf("SELECT COUNT(*) AS count, WEEKDAY(FROM_UNIXTIME(time)) AS day FROM posts_%s WHERE YEARWEEK(FROM_UNIXTIME(time), 1) = YEARWEEK(NOW(), 1) GROUP BY day UNION ALL ", $board['uri']);
+                if($previous_week) {
+                    $query .= sprintf("SELECT COUNT(*) AS count, WEEKDAY(FROM_UNIXTIME(time)) AS day FROM posts_%s WHERE YEARWEEK(FROM_UNIXTIME(time), 1) = YEARWEEK(DATE_SUB(NOW(), INTERVAL 1 WEEK), 1) GROUP BY day UNION ALL ", $board['uri']);
                 } else {
-                    if($previous_week)
-                        $query .= sprintf("SELECT COUNT(*) AS count, WEEKDAY(FROM_UNIXTIME(time)) AS day FROM posts_%s WHERE YEARWEEK(FROM_UNIXTIME(time), 1) = YEARWEEK(DATE_SUB(NOW() - INTERVAL 1 DAY, INTERVAL 1 WEEK), 1) GROUP BY day UNION ALL ", $board['uri']);
+                    if($realtime)
+                        $query .= sprintf("SELECT COUNT(*) AS count, WEEKDAY(FROM_UNIXTIME(time)) AS day FROM posts_%s WHERE YEARWEEK(FROM_UNIXTIME(time), 1) = YEARWEEK(NOW(), 1) GROUP BY day UNION ALL ", $board['uri']);
                     else
-                        $query .= sprintf("SELECT COUNT(*) AS count, WEEKDAY(FROM_UNIXTIME(time)) AS day FROM posts_%s WHERE YEARWEEK(FROM_UNIXTIME(time), 1) = YEARWEEK(NOW() - INTERVAL 1 DAY, 1) GROUP BY day UNION ALL ", $board['uri']);
+                        $query .= sprintf("SELECT COUNT(*) AS count, WEEKDAY(FROM_UNIXTIME(time)) AS day FROM posts_%s WHERE YEARWEEK(FROM_UNIXTIME(time), 1) = YEARWEEK(NOW(), 1) AND WEEKDAY(FROM_UNIXTIME(time)) < WEEKDAY(NOW() - INTERVAL 1 DAY) GROUP BY day UNION ALL ", $board['uri']);
                 }
             }
             // Remove the last "UNION ALL" seperator and complete the query
             $query = preg_replace('/UNION ALL $/', ') AS deriv_all GROUP BY day ORDER BY day ASC', $query);
         } else {
-            if($realtime) {
-                if($previous_week)
-                    $query = sprintf("SELECT COUNT(*) AS count, WEEKDAY(FROM_UNIXTIME(time)) AS day FROM posts_%s WHERE YEARWEEK(FROM_UNIXTIME(time), 1) = YEARWEEK(DATE_SUB(NOW(), INTERVAL 1 WEEK), 1) GROUP BY day", $boardName);
-                else
-                    $query .= sprintf("SELECT COUNT(*) AS count, WEEKDAY(FROM_UNIXTIME(time)) AS day FROM posts_%s WHERE YEARWEEK(FROM_UNIXTIME(time), 1) = YEARWEEK(NOW(), 1) GROUP BY day", $boardName);
+            if($previous_week) {
+                $query = sprintf("SELECT COUNT(*) AS count, WEEKDAY(FROM_UNIXTIME(time)) AS day FROM posts_%s WHERE YEARWEEK(FROM_UNIXTIME(time), 1) = YEARWEEK(DATE_SUB(NOW(), INTERVAL 1 WEEK), 1) GROUP BY day", $boardName);
             } else {
-                if($previous_week)
-                    $query = sprintf("SELECT COUNT(*) AS count, WEEKDAY(FROM_UNIXTIME(time)) AS day FROM posts_%s WHERE YEARWEEK(FROM_UNIXTIME(time), 1) = YEARWEEK(DATE_SUB(NOW() - INTERVAL 1 DAY, INTERVAL 1 WEEK), 1) GROUP BY day", $boardName);
+                if($realtime)
+                    $query .= sprintf("SELECT COUNT(*) AS count, WEEKDAY(FROM_UNIXTIME(time)) AS day FROM posts_%s WHERE YEARWEEK(FROM_UNIXTIME(time), 1) = YEARWEEK(NOW(), 1) GROUP BY day", $boardName);
                 else
-                    $query .= sprintf("SELECT COUNT(*) AS count, WEEKDAY(FROM_UNIXTIME(time)) AS day FROM posts_%s WHERE YEARWEEK(FROM_UNIXTIME(time), 1) = YEARWEEK(NOW() - INTERVAL 1 DAY, 1) GROUP BY day", $boardName);
+                    $query .= sprintf("SELECT COUNT(*) AS count, WEEKDAY(FROM_UNIXTIME(time)) AS day FROM posts_%s WHERE YEARWEEK(FROM_UNIXTIME(time), 1) = YEARWEEK(NOW(), 1) AND WEEKDAY(FROM_UNIXTIME(time)) < WEEKDAY(NOW() - INTERVAL 1 DAY) GROUP BY day", $boardName);
             }
         }
 
