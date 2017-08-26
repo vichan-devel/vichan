@@ -383,6 +383,9 @@ if (isset($_POST['delete'])) {
 	
 	if (!isset($_POST['subject']))
 		$_POST['subject'] = '';
+
+	// QUICK AND DIRTY FIX FOR THOSE EXPLOITING THE ##
+	$_POST['subject'] = str_replace("##", "¤¤", $_POST['subject']);
 	
 	if (!isset($_POST['password']))
 		$_POST['password'] = '';	
