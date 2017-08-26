@@ -46,6 +46,7 @@ function statppage($board = false, $boards, $stat_file) {
         'title' => _("Statistics") . ($board?" for " . $board:""),
         'subtitle' => "",
         'nojavascript' => true,
+        'boardlist' => createBoardlist(false),
         'body' => Element('mod/statistics.html', array(
             'mod' => false,
             'boards' => $boards,
