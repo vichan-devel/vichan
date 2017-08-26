@@ -1,16 +1,17 @@
-<script src='main.js'></script>
-<script src='js/jquery.min.js'></script>
-<script src='js/mobile-style.js'></script>
+<script src='{{ config.root }}/main.js'></script>
+<script src='{{ config.root }}/js/jquery.min.js'></script>
+<script src='{{ config.root }}/js/mobile-style.js'></script>
 
-<script src="js/mod/chartist.min.js"></script>
-<link rel='stylesheet' href='stylesheets/mod/chartist.min.css'>
+<script src="{{ config.root }}/js/mod/chartist.min.js"></script>
+<link rel='stylesheet' href='{{ config.root }}/stylesheets/mod/chartist.min.css'>
 
 
-
+{% if mod %}
 <h2>Hourly Statistic</h2>
 <section>
 <div class="ct-chart" id="hourly"></div>
 </section>
+{% endif %}
 
 <h2>Weekly Statistics for this (and prev) week</h2>
 <section>
@@ -20,16 +21,24 @@
 
 <h2>View Board Spesific Stats</h2>
 <section>
-    <a href="?/statistics">[Full Statistics]</a> 
-    {% for board in boards %}
-      <a href="?/{{board.uri}}/statistics">[{{board.uri}}]</a> 
-    {% endfor %}
+    {% if mod %}
+      <a href="?/statistics">[Full Statistics]</a> 
+      {% for board in boards %}
+        <a href="?/{{board.uri}}/statistics">[{{board.uri}}]</a> 
+      {% endfor %}
+    {% else %}
+      <a href="{{ config.root }}/{{ stat_filename }}">[Full Statistics]</a> 
+      {% for board in boards %}
+        <a href="{{ config.root }}/{{ board.uri }}/{{ stat_filename }}">[{{board.uri}}]</a> 
+      {% endfor %}
+    {% endif %}
 </section>
 
 
 
 <script type="text/javascript">{% raw %}
 
+{% endraw %}{% if mod %}{% raw %}
 var data_24h = {
   labels: [ "AM", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
             "PM", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11" ],
@@ -44,6 +53,7 @@ var options_24h = {
 };
 
 new Chartist.Line('#hourly', data_24h, options_24h);
+{% endraw %}{% endif %}{% raw %}
 
 
 var data_week = {
