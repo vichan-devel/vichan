@@ -152,9 +152,9 @@
 				<script type="text/javascript">if (typeof init_file_selector !== 'undefined') init_file_selector({{ config.max_images }});</script>
 
 				{% if config.allow_upload_by_url %}
-					<div style="float:none;text-align:left" id="upload_url">
+					<div style="float:none;text-align:left" id="upload_url" class="upload_url">
 						<label for="file_url">{% trans %}Or URL{% endtrans %}</label>: 
-						<input style="display:inline" type="text" id="file_url" name="file_url" size="35">
+						<input style="display:inline" type="text" id="file_url" class="file_url_upload_field" name="file_url1" size="35"><br />
 					</div>
 				{% endif %}
 				{{ antibot.html() }}
