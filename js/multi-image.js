@@ -30,22 +30,20 @@ function multi_image() {
 }
 
 
-
-
 function multi_image_upload() {
-    $('input[id=file_url]').after('<a href="#" class="add_image_url no-decoration">&nbsp;&nbsp;&nbsp;&nbsp;+</a>');
+    $('input.upload_url').after('<a href="#" class="add_image_url no-decoration">&nbsp;&nbsp;&nbsp;&nbsp;+</a>');
     
     $(document).on('click', 'a.add_image_url', function(e) {
         e.preventDefault();
 
-        var images_len = $('form:not([id="quick-reply"]) [id=file_url]').length;
+        var images_len = $('form:not([id="quick-reply"]) .upload_url').length;
         
         if (!(images_len >= max_images)) {
-            var new_file_url = '<br class="file_separator_url"/><label for="file_url">URL</label>: <input style="display:inline" type="text" id="file_url" name="file_url'+(images_len+1)+'" size="35">';
+        	var new_file_url = '<br class="file_separator_url"/><label for="file_url' + (images_len + 1) + '">URL</label>: <input style="display:inline" class="upload_url" type="text" id="file_url' + (images_len + 1) + '" name="file_url[]" size="35">';
 
-            $('[id=file_url]:last').after(new_file_url);
+        	$('.upload_url:last').after(new_file_url);
             if ($("#quick-reply").length) {
-                $('form:not(#quick-reply) [id=file_url]:last').after(new_file_url);
+            	$('form:not(#quick-reply) .upload_url:last').after(new_file_url);
             }
             if (typeof setup_form !== 'undefined') setup_form($('form[name="post"]'));
         }
