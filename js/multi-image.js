@@ -10,7 +10,7 @@
  */
 
 function multi_image() {
-    $('input[type=file]').after('<a href="#" class="add_image">+</a>');
+    $('input[type=file]').after('<a href="#" class="add_image no-decoration">+</a>');
     
     $(document).on('click', 'a.add_image', function(e) {
         e.preventDefault();
@@ -29,6 +29,34 @@ function multi_image() {
     })
 }
 
+
+
+
+function multi_image_upload() {
+    $('input[id=file_url]').after('<a href="#" class="add_image_url no-decoration">&nbsp;&nbsp;&nbsp;&nbsp;+</a>');
+    
+    $(document).on('click', 'a.add_image_url', function(e) {
+        e.preventDefault();
+
+        var images_len = $('form:not([id="quick-reply"]) [id=file_url]').length;
+        
+        if (!(images_len >= max_images)) {
+            var new_file_url = '<br class="file_separator_url"/><label for="file_url">URL</label>: <input style="display:inline" type="text" id="file_url" name="file_url'+(images_len+1)+'" size="35">';
+
+            $('[id=file_url]:last').after(new_file_url);
+            if ($("#quick-reply").length) {
+                $('form:not(#quick-reply) [id=file_url]:last').after(new_file_url);
+            }
+            if (typeof setup_form !== 'undefined') setup_form($('form[name="post"]'));
+        }
+    })
+}
+
+
 if (active_page == 'thread' || active_page == 'index' || active_page == 'catalog' && max_images > 1) {
 	$(document).ready(multi_image);
+	$(document).ready(multi_image_upload);
 }
+
+
+

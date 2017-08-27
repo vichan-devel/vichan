@@ -528,61 +528,68 @@ if (isset($_POST['delete'])) {
 		if ($config['field_disable_subject'] || (!$post['op'] && $config['field_disable_reply_subject']))
 			$_POST['subject'] = '';
 	}
+
 	
-	if ($config['allow_upload_by_url'] && isset($_POST['file_url']) && !empty($_POST['file_url'])) {
-		$post['file_url'] = $_POST['file_url'];
-		if (!preg_match('@^https?://@', $post['file_url']))
-			error($config['error']['invalidimg']);
-		
-		if (mb_strpos($post['file_url'], '?') !== false)
-			$url_without_params = mb_substr($post['file_url'], 0, mb_strpos($post['file_url'], '?'));
-		else
-			$url_without_params = $post['file_url'];
 
-		$post['extension'] = strtolower(mb_substr($url_without_params, mb_strrpos($url_without_params, '.') + 1));
+	
+	for($ui = 1; $ui <= $config['max_images']; $ui++) {
+		if ($config['allow_upload_by_url'] && isset($_POST['file_url' . $ui]) && !empty($_POST['file_url' . $ui])) {
+			
+			$post['file_url'] = $_POST['file_url' . $ui];
 
-		if ($post['op'] && $config['allowed_ext_op']) {
-			if (!in_array($post['extension'], $config['allowed_ext_op']))
+			if (!preg_match('@^https?://@', $post['file_url']))
+				error($config['error']['invalidimg']);
+			
+			if (mb_strpos($post['file_url'], '?') !== false)
+				$url_without_params = mb_substr($post['file_url'], 0, mb_strpos($post['file_url'], '?'));
+			else
+				$url_without_params = $post['file_url'];
+	
+			$post['extension'] = strtolower(mb_substr($url_without_params, mb_strrpos($url_without_params, '.') + 1));
+	
+			if ($post['op'] && $config['allowed_ext_op']) {
+				if (!in_array($post['extension'], $config['allowed_ext_op']))
+					error($config['error']['unknownext']);
+			}
+			else if (!in_array($post['extension'], $config['allowed_ext']) && !in_array($post['extension'], $config['allowed_ext_files']))
 				error($config['error']['unknownext']);
-		}
-		else if (!in_array($post['extension'], $config['allowed_ext']) && !in_array($post['extension'], $config['allowed_ext_files']))
-			error($config['error']['unknownext']);
+	
+			$post['file_tmp' . $ui] = tempnam($config['tmp'] . $ui, 'url');
 
-		$post['file_tmp'] = tempnam($config['tmp'], 'url');
-		function unlink_tmp_file($file) {
-			@unlink($file);
-			fatal_error_handler();
-		}
-		register_shutdown_function('unlink_tmp_file', $post['file_tmp']);
-		
-		$fp = fopen($post['file_tmp'], 'w');
-		
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_URL, $post['file_url']);
-		curl_setopt($curl, CURLOPT_FAILONERROR, true);
-		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
-		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
-		curl_setopt($curl, CURLOPT_TIMEOUT, $config['upload_by_url_timeout']);
-		curl_setopt($curl, CURLOPT_USERAGENT, 'Tinyboard');
-		curl_setopt($curl, CURLOPT_BINARYTRANSFER, true);
-		curl_setopt($curl, CURLOPT_FILE, $fp);
-		curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
-		
-		if (curl_exec($curl) === false)
-			error($config['error']['nomove'] . '<br/>Curl says: ' . curl_error($curl));
-		
-		curl_close($curl);
-		
-		fclose($fp);
+			$func = create_function('$file', '@unlink($file); fatal_error_handler();');
+			register_shutdown_function($func, $post['file_tmp' . $ui]);
 
-		$_FILES['file'] = array(
-			'name' => basename($url_without_params),
-			'tmp_name' => $post['file_tmp'],
-			'file_tmp' => true,
-			'error' => 0,
-			'size' => filesize($post['file_tmp'])
-		);
+			$fp = fopen($post['file_tmp' . $ui], 'w');
+			
+			$curl = curl_init();
+			curl_setopt($curl, CURLOPT_URL, $post['file_url']);
+			curl_setopt($curl, CURLOPT_FAILONERROR, true);
+			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
+			curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
+			curl_setopt($curl, CURLOPT_TIMEOUT, $config['upload_by_url_timeout']);
+			curl_setopt($curl, CURLOPT_USERAGENT, 'Tinyboard');
+			curl_setopt($curl, CURLOPT_BINARYTRANSFER, true);
+			curl_setopt($curl, CURLOPT_FILE, $fp);
+			curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+			
+			if (curl_exec($curl) === false)
+				error($config['error']['nomove'] . '<br/>Curl says: ' . curl_error($curl));
+			
+			curl_close($curl);
+			
+			fclose($fp);
+	
+			$_FILES[] = array(
+				'name' => basename($url_without_params),
+				'tmp_name' => $post['file_tmp' . $ui],
+				'file_tmp' => true,
+				'error' => 0,
+				'size' => filesize($post['file_tmp' . $ui])
+			);
+		}
 	}
+
+
 	
 	$post['name'] = $_POST['name'] != '' ? $_POST['name'] : $config['anonymous'];
 	$post['subject'] = $_POST['subject'];
