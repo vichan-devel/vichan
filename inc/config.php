@@ -36,6 +36,15 @@ $config['json_scrambler']['salt'] = '0123456789012345678901';
 
 
 
+// Set to true if all boards is to be shown
+// Set to false if use $config['boards'] var to select boards to show in stat
+// Set to array if only boards listed in this array are to be shown
+$config['public_stat']['boards'] = array('b');
+// Should hourly stats be included in the public stat (need to run cron once an hour)
+$config['public_stat']['hourly'] = false;
+
+
+
 
 /*
  * =======================

@@ -28,7 +28,7 @@ class Statistic {
 
         if(!$boardName) {
             // Get list of all boards
-            if(!$boards)
+            if($boards === false)
                 $boards = listBoards();
 
             // Get post count by hour for the last day
@@ -37,16 +37,16 @@ class Statistic {
                 if($realtime)
                     $query .= sprintf("SELECT COUNT(*) AS count, HOUR(FROM_UNIXTIME(time)) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time)) = CURDATE() GROUP BY hour UNION ALL ", $board['uri']);
                 else
-                    $query .= sprintf("SELECT COUNT(*) AS count, HOUR(FROM_UNIXTIME(time)) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time)) = CURDATE() AND HOUR(FROM_UNIXTIME(time)) <= HOUR(NOW() - UNTERVAL 1 HOUR) GROUP BY hour UNION ALL ", $board['uri']);
+                    $query .= sprintf("SELECT COUNT(*) AS count, HOUR(FROM_UNIXTIME(time)) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time)) = CURDATE() AND HOUR(FROM_UNIXTIME(time)) <= HOUR(NOW() - INTERVAL 1 HOUR) GROUP BY hour UNION ALL ", $board['uri']);
                 // $query .= sprintf("SELECT * FROM (SELECT COUNT(*) as count, HOUR(FROM_UNIXTIME(time)) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time)) = CURDATE() GROUP BY hour) AS deriv_%s UNION ALL ", $board['uri'], $board['uri']);
             }
             // Remove the last "UNION ALL" seperator and complete the query
             $query = preg_replace('/UNION ALL $/', ') AS deriv_all GROUP BY hour ORDER BY hour ASC', $query);
         } else {
             if($realtime)
-                $query = sprintf("SELECT COUNT(*) AS count, HOUR(FROM_UNIXTIME(time) - INTERVAL 1 DAY) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time) - INTERVAL 1 DAY) = CURDATE() GROUP BY hour", $boardName);
+                $query = sprintf("SELECT COUNT(*) AS count, HOUR(FROM_UNIXTIME(time)) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time)) = CURDATE() GROUP BY hour", $boardName);
             else
-                $query = sprintf("SELECT COUNT(*) AS count, HOUR(FROM_UNIXTIME(time) - INTERVAL 1 DAY) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time) - INTERVAL 1 DAY) = CURDATE() AND HOUR(FROM_UNIXTIME(time)) <= HOUR(NOW() - UNTERVAL 1 HOUR) GROUP BY hour", $boardName);
+                $query = sprintf("SELECT COUNT(*) AS count, HOUR(FROM_UNIXTIME(time)) AS hour FROM posts_%s WHERE DATE(FROM_UNIXTIME(time)) = CURDATE() AND HOUR(FROM_UNIXTIME(time)) <= HOUR(NOW() - INTERVAL 1 HOUR) GROUP BY hour", $boardName);
         }
 
         // Execute Query
@@ -81,7 +81,7 @@ class Statistic {
 
         if(!$boardName) {
             // Get list of all boards
-            if(!$boards)
+            if($boards === false)
                 $boards = listBoards();
 
             // Get post count by hour for the last week
