@@ -51,9 +51,9 @@ function statpage($board = false, $boards, $stat_file) {
     global $config;
     
     // Get Statistic from db
-	$statistics_hour = $config['public_stat']['hourly']?Statistic::get_stat_24h($board, false, $boards):false;
-    $this_week = Statistic::get_stat_week(false, $board, false, $boards);
-    $prev_week = Statistic::get_stat_week(true, $board, false, $boards);
+    $statistics_hour = $config['public_stat']['hourly']?Statistic::get_stat_24h($board, false, $boards):false;
+    $this_week = Statistic::get_stat_week(false, $board, false, $config['public_stat']['hourly'], $boards);
+    $prev_week = Statistic::get_stat_week(true, $board, false, $config['public_stat']['hourly'], $boards);
 
     return Element('page.html', array(
         'config' => $config,
