@@ -588,6 +588,7 @@ if (file_exists($config['has_installed'])) {
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 			') or error(db_error());
 		case '5.1.3':
+		case '5.1.4':
 			query('CREATE TABLE IF NOT EXISTS ``bans_cookie`` (
 				`id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 				`cookie` varchar(40) CHARACTER SET ascii NOT NULL,
