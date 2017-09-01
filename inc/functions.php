@@ -3234,6 +3234,10 @@ function inlineDiceRoller(&$body) {
 	// Group 4.
 	// `+33`
 
+	// Small fix
+	$body = str_replace("[diceroll]", "[ diceroll ]", $body);
+	$body = str_replace("[/diceroll]", "[ /diceroll ]", $body);
+
     $count = preg_match_all('/\[(\d+)?([d])(\d+)([-+]\d+)?\]/s', $body, $matches);
 	for($mc = 0; $mc < $count; $mc++) {
 
@@ -3249,7 +3253,7 @@ function inlineDiceRoller(&$body) {
 		$diceZ = intval($matches[4][$mc]);
 
 		// Continue only if we have valid values
-		if($diceX > 0 && $diceY > 0) {
+		if($diceX > 0 && $diceX <= $config['max_roll_count'] && $diceY > 0) {
 			$dicerolls = array();
 			$dicesum = $diceZ;
 			for($i = 0; $i < $diceX; $i++) {
@@ -3294,7 +3298,7 @@ function inlineDiceRoller(&$body) {
 		$diceZ = intval($matches[4][$mc]);
 
 		// Continue only if we have valid values
-		if($diceX > 0 && $diceY > 0) {
+		if($diceX > 0 && $diceX <= $config['max_roll_count'] && $diceY > 0) {
 			$dicerolls = array();
 			$dicesum = $diceZ;
 			for($i = 0; $i < $diceX; $i++) {
