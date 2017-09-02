@@ -1784,7 +1784,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['mod']['capcode'] = array(
 	//	JANITOR		=> array('Janitor'),
 		MOD		=> array('Mod'),
-		ADMIN		=> true
+		ADMIN		=> array('Admin')
 	);
 
 	// Example: Allow mods to post with "## Moderator" as well
