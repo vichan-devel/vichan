@@ -369,7 +369,7 @@ class Archive {
         $query = prepare("SELECT COUNT(*) FROM ``votes_archive`` WHERE `board` = :board AND `thread_id` = :thread_id AND `ip` = :ip");
 	    $query->bindValue(':board', $board, PDO::PARAM_STR);
 	    $query->bindValue(':thread_id', $thread_id, PDO::PARAM_INT);
-		$query->bindValue(':ip', ($config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']), PDO::PARAM_STR);
+		$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']), PDO::PARAM_STR);
     	
         // Error if already voted
         $query->execute() or error(db_error($query));
@@ -383,7 +383,7 @@ class Archive {
         $query = prepare("INSERT INTO ``votes_archive`` VALUES (NULL, :board, :thread_id, :ip)");
 	    $query->bindValue(':board', $board, PDO::PARAM_STR);
 	    $query->bindValue(':thread_id', $thread_id, PDO::PARAM_INT);
-		$query->bindValue(':ip', ($config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']), PDO::PARAM_STR);
+		$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']), PDO::PARAM_STR);
         $query->execute() or error(db_error($query));
 
         // Rebuild Archive Index

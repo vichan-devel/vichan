@@ -137,7 +137,7 @@ class Filter {
 		$this->add_note = isset($this->add_note) ? $this->add_note : false;
 		if ($this->add_note) {
 			$query = prepare('INSERT INTO ``ip_notes`` VALUES (NULL, :ip, :mod, :time, :body)');
-			$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
+			$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
 			$query->bindValue(':mod', -1);
 			$query->bindValue(':time', time());
 			$query->bindValue(':body', "Autoban message: ".$this->post['body']);
@@ -155,7 +155,7 @@ class Filter {
 				$this->all_boards = isset($this->all_boards) ? $this->all_boards : false;
 				$this->ban_cookie = isset($this->ban_cookie) ? $this->ban_cookie : false;
 
-				$ban_id = Bans::new_ban($config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR'], get_uuser_cookie(), $this->reason, $this->expires, $this->all_boards ? false : $board['uri'], -1);
+				$ban_id = Bans::new_ban(get_ip_hash($_SERVER['REMOTE_ADDR']), get_uuser_cookie(), $this->reason, $this->expires, $this->all_boards ? false : $board['uri'], -1);
 				
 				if ($this->ban_cookie)
 				{
@@ -229,12 +229,12 @@ function do_filters(array $post) {
 	if (isset($has_flood)) {
 		if ($post['has_file']) {
 			$query = prepare("SELECT * FROM ``flood`` WHERE `ip` = :ip OR `posthash` = :posthash OR `filehash` = :filehash");
-			$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
+			$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
 			$query->bindValue(':posthash', make_comment_hex($post['body_nomarkup']));
 			$query->bindValue(':filehash', $post['filehash']);
 		} else {
 			$query = prepare("SELECT * FROM ``flood`` WHERE `ip` = :ip OR `posthash` = :posthash");
-			$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
+			$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
 			$query->bindValue(':posthash', make_comment_hex($post['body_nomarkup']));
 		}
 		$query->execute() or error(db_error($query));

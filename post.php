@@ -348,7 +348,7 @@ if (isset($_POST['delete'])) {
 			);
 		$query = prepare("INSERT INTO ``reports`` VALUES (NULL, :time, :ip, :board, :post, :reason)");
 		$query->bindValue(':time', time(), PDO::PARAM_INT);
-		$query->bindValue(':ip', ($config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']), PDO::PARAM_STR);
+		$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']), PDO::PARAM_STR);
 		$query->bindValue(':board', $board['uri'], PDO::PARAM_INT);
 		$query->bindValue(':post', $id, PDO::PARAM_INT);
 		$query->bindValue(':reason', $reason, PDO::PARAM_STR);
@@ -397,7 +397,7 @@ if (isset($_POST['delete'])) {
 		$post['op'] = true;
 
 
-	$post['ip'] = $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR'];
+	$post['ip'] = get_ip_hash($_SERVER['REMOTE_ADDR']);
 	$cookie = get_uuser_cookie();
 	if (!$config['recaptcha'] && !Whitelist::check($post['ip'], $cookie)) {
 		message(Element('whitelist.html', array('config' => $config)), 'White list captcha', '');
@@ -1343,7 +1343,7 @@ if (isset($_POST['delete'])) {
 
 	
 } elseif (isset($_POST['whitelist'])) {
-	$ip = $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR'];
+	$ip = get_ip_hash($_SERVER['REMOTE_ADDR']);
 	$cookie = get_uuser_cookie();
 
 	if (Whitelist::check($ip, $cookie))
