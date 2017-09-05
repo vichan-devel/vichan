@@ -1265,7 +1265,7 @@ function insertFloodPost(array $post) {
 	global $board, $config;
 	
 	$query = prepare("INSERT INTO ``flood`` VALUES (NULL, :ip, :board, :time, :posthash, :filehash, :isreply)");
-	$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
+	$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
 	$query->bindValue(':board', $board['uri']);
 	$query->bindValue(':time', time());
 	$query->bindValue(':posthash', make_comment_hex($post['body_nomarkup']));
@@ -1305,7 +1305,7 @@ function post(array $post) {
 	$query->bindValue(':body_nomarkup', $post['body_nomarkup']);
 	$query->bindValue(':time', isset($post['time']) ? $post['time'] : time(), PDO::PARAM_INT);
 	$query->bindValue(':password', $post['password']);
-	$query->bindValue(':ip', isset($post['ip']) ? $post['ip'] : ($config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']));
+	$query->bindValue(':ip', isset($post['ip']) ? $post['ip'] : get_ip_hash($_SERVER['REMOTE_ADDR']));
 	$query->bindValue(':cookie', get_uuser_cookie());
 
 
@@ -2020,7 +2020,7 @@ function muteTime() {
 	// Find number of mutes in the past X hours
 	$query = prepare("SELECT COUNT(*) FROM ``mutes`` WHERE `time` >= :time AND `ip` = :ip");
 	$query->bindValue(':time', time()-($config['robot_mute_hour']*3600), PDO::PARAM_INT);
-	$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
+	$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
 	$query->execute() or error(db_error($query));
 
 	if (!$result = $query->fetchColumn())
@@ -2034,7 +2034,7 @@ function mute() {
 	// Insert mute
 	$query = prepare("INSERT INTO ``mutes`` VALUES (:ip, :time)");
 	$query->bindValue(':time', time(), PDO::PARAM_INT);
-	$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
+	$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
 	$query->execute() or error(db_error($query));
 
 	return muteTime();
@@ -2054,7 +2054,7 @@ function checkMute() {
 	if ($mutetime > 0) {
 		// Find last mute time
 		$query = prepare("SELECT `time` FROM ``mutes`` WHERE `ip` = :ip ORDER BY `time` DESC LIMIT 1");
-		$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
+		$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
 		$query->execute() or error(db_error($query));
 
 		if (!$mute = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -3559,16 +3559,20 @@ function valid_uuser_cookie($cookie) {
 function get_ip_hash($ip)
 {
 	global $config;
+	static $ip_hash;
 
-	// Bcrypt [., /, 0–9, A–Z, a–z]
-	// preg_match("/[\.\/0-9A-Za-z]{53}/", $ip) != 1)
-
+	if (!$config['bcrypt_ip_addresses'])
+		return $ip;
+	if (isset($ip_hash[$ip]))
+		return $ip_hash[$ip];
 
 	// Generate BCrypt Hash and remove $2a$[cost]$[salt_22_char]$ header info - leaving 31 char hash
 	$hash = crypt($ip, "$2y$" . $config['bcrypt_ip_cost'] . "$" . $config['bcrypt_ip_salt'] . "$");
-	return str_replace("/", "_", substr($hash, 29));
-}
+	$hash = str_replace("/", "_", substr($hash, 29));
+	$ip_hash[$ip] = $hash;
 
+	return $hash;
+}
 
 // Verify ip address string
 function validate_ip_string($ip)

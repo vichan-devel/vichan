@@ -3025,7 +3025,7 @@ function mod_report_dismiss($id, $all = false) {
 	
 	if ($all) {
 		$query = prepare("DELETE FROM ``reports`` WHERE `ip` = :ip");
-		$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($ip) : $ip);
+		$query->bindValue(':ip', get_ip_hash($ip));
 	} else {
 		$query = prepare("DELETE FROM ``reports`` WHERE `id` = :id");
 		$query->bindValue(':id', $id);

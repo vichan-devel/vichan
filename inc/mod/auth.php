@@ -138,7 +138,7 @@ function modLog($action, $_board=null) {
 	global $mod, $board, $config;
 	$query = prepare("INSERT INTO ``modlogs`` VALUES (:id, :ip, :board, :time, :text)");
 	$query->bindValue(':id', (isset($mod['id']) ? $mod['id'] : -1), PDO::PARAM_INT);
-	$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? get_ip_hash($_SERVER['REMOTE_ADDR']) : $_SERVER['REMOTE_ADDR']);
+	$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
 	$query->bindValue(':time', time(), PDO::PARAM_INT);
 	$query->bindValue(':text', $action);
 	if (isset($_board))
