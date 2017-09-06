@@ -73,16 +73,16 @@
 	<form name="postcontrols" action="{{ config.post_url }}" method="post">
 	<input type="hidden" name="board" value="{{ board.uri }}" />
 	{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
-	&nbsp; <a id="unimportant" href="#bottom">[{% trans %}Go to bottom{% endtrans %}]</a>
-	{% if config.catalog_link %}&nbsp; <a id="unimportant" href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>{% endif %}
+	&nbsp;&nbsp;<a id="unimportant" href="#bottom">[{% trans %}Go to bottom{% endtrans %}]</a>
+	{% if config.catalog_link %}&nbsp;&nbsp;<a id="unimportant" href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>{% endif %}
 
-	&nbsp; <a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.file_index }}">[{% trans %}Reload{% endtrans %}]</a>
+	&nbsp;&nbsp;<a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.file_index }}">[{% trans %}Reload{% endtrans %}]</a>
 
-	{% if config.archive.threads %} &nbsp; <a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.dir.archive }}">[{% trans %}Archive{% endtrans %}]</a>{% endif %}
-	{% if config.feature.threads and config.feature.link_post_page %} &nbsp; <a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured{% endtrans %}]</a>{% endif %}
+	{% if config.archive.threads %}&nbsp;&nbsp;<a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.dir.archive }}">[{% trans %}Archive{% endtrans %}]</a>{% endif %}
+	{% if config.feature.threads and config.feature.link_post_page %}&nbsp;&nbsp;<a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured{% endtrans %}]</a>{% endif %}
 	<hr />
 	{{ body }}
-	&nbsp; <a id="unimportant" href="#top">[{% trans %}Go to top{% endtrans %}]</a> &nbsp; {% if config.catalog_link %}<a id="unimportant" href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>{% endif %}
+	&nbsp;&nbsp;<a id="unimportant" href="#top">[{% trans %}Go to top{% endtrans %}]</a> &nbsp; {% if config.catalog_link %}<a id="unimportant" href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>{% endif %}
 	{% include 'report_delete.html' %}
 	</form>
 	
