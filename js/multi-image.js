@@ -10,7 +10,7 @@
  */
 
 function multi_image() {
-    $('input[type=file]').after('<a href="#" class="add_image no-decoration">+</a>');
+    $('input[type=file]').after('<a href="#" class="add_image no-decoration">&nbsp;&nbsp;&nbsp;+</a>');
     
     $(document).on('click', 'a.add_image', function(e) {
         e.preventDefault();

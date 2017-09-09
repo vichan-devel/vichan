@@ -301,7 +301,7 @@
 			$postForm.find('textarea[name="body"]').val($(this).val());
 		});
 		$postForm.find('textarea[name="body"]').on('change input propertychange', function() {
-			$origPostForm.find('textarea[name="body"]').val($(this).val());
+			$origPostForm.find('textarea[name="body"]').val($(this).val()).trigger('input');
 		});
 		$postForm.find('textarea[name="body"]').focus(function() {
 			$origPostForm.find('textarea[name="body"]').removeAttr('id');
