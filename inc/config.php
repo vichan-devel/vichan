@@ -1904,7 +1904,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 		287 	=>	'Syria General',
 		288 	=>	'Meme War Veteran',
 		289 	=>	'Ausfailia',
-		290 	=>	'Aryanne Brotherhood'
+		290 	=>	'Aryanne Brotherhood',
+		291 	=>	'Moderate Centrist'
 	);
 	/* Administration */
 	// View the report queue
