@@ -2400,9 +2400,10 @@ function mod_spoiler_image($board, $post, $file) {
 
 	// Rebuild themes
 	rebuildThemes('post-delete', $board);
-	   
+	
 	// Redirect
-	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
+	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['dir']['res'] . link_for_threadid($result['thread']) . '#' . $post, true, $config['redirect_http']);
+	// header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
 }
 
 function mod_deletebyip($boardName, $post, $global = false) {

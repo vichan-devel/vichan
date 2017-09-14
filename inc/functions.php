@@ -3431,6 +3431,13 @@ function link_for($post, $page50 = false, $foreignlink = false, $thread = false)
 	return sprintf($tpl, $id, $slug);
 }
 
+
+function link_for_threadid($threadID) {
+	global $config;
+	
+	return sprintf($config['file_page'], $threadID, false);
+}
+
 function prettify_textarea($s){
 	return str_replace("\t", '&#09;', str_replace("\n", '&#13;&#10;', htmlentities($s)));
 }
