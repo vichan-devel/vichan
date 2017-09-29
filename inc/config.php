@@ -2182,6 +2182,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
  * ====================
  */
 
+	// Meta description. It's probably best to include these in per-board configurations.
+	// $config['meta_description'] = 'Anonymous discussion on given topics';
+
 	// Meta keywords. It's probably best to include these in per-board configurations.
 	// $config['meta_keywords'] = 'chan,anonymous discussion,imageboard,tinyboard';
 
