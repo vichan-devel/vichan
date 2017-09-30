@@ -785,8 +785,11 @@
 	$config['allowed_ext_op'] = false;
 
 	// Allowed additional file extensions (not images; downloadable files).
-	// $config['allowed_ext_files'][] = 'txt';
-	// $config['allowed_ext_files'][] = 'zip';
+	$config['allowed_ext_files'][] = 'txt';
+	$config['allowed_ext_files'][] = 'zip';
+	$config['allowed_ext_files'][] = 'mp4';
+	$config['allowed_ext_files'][] = 'mp3';
+	$config['allowed_ext_files'][] = 'webm';
 
 	// An alternative function for generating image filenames, instead of the default UNIX timestamp.
 	// $config['filename_func'] = function($post) {
@@ -796,8 +799,6 @@
 	// Thumbnail to use for the non-image file uploads.
 	$config['file_icons']['default'] = 'file.png';
 	$config['file_icons']['zip'] = 'zip.png';
-	$config['file_icons']['webm'] = 'video.png';
-	$config['file_icons']['mp4'] = 'video.png';
 	// Example: Custom thumbnail for certain file extension.
 	// $config['file_icons']['extension'] = 'some_file.png';
 
@@ -827,13 +828,6 @@
 	$config['show_ratio'] = false;
 	// Display the file's original filename.
 	$config['show_filename'] = true;
-
-	// WebM Settings
-	$config['webm']['use_ffmpeg'] = false;
-	$config['webm']['allow_audio'] = false;
-	$config['webm']['max_length'] = 120;
-	$config['webm']['ffmpeg_path'] = 'ffmpeg';
-	$config['webm']['ffprobe_path'] = 'ffprobe';
 
 	// Display image identification links for ImgOps, regex.info/exif, Google Images and iqdb.
 	$config['image_identification'] = false;
@@ -1138,11 +1132,6 @@
 	$config['error']['unknownext']		= _('Unknown file extension.');
 	$config['error']['filesize']		= _('Maximum file size: %maxsz% bytes<br>Your file\'s size: %filesz% bytes');
 	$config['error']['maxsize']		= _('The file was too big.');
-	$config['error']['genwebmerror']	= _('There was a problem processing your webm.');
-	$config['error']['webmerror'] 		= _('There was a problem processing your webm.');//Is this error used anywhere ?
-	$config['error']['invalidwebm'] 	= _('Invalid webm uploaded.');
-	$config['error']['webmhasaudio'] 	= _('The uploaded webm contains an audio or another type of additional stream.');
-	$config['error']['webmtoolong'] 	= _('The uploaded webm is longer than ' . $config['webm']['max_length'] . ' seconds.');
 	$config['error']['fileexists']		= _('That file <a href="%s">already exists</a>!');
 	$config['error']['fileexistsinthread']	= _('That file <a href="%s">already exists</a> in this thread!');
 	$config['error']['delete_too_soon']	= _('You\'ll have to wait another %s before deleting that.');

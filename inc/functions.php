@@ -256,10 +256,6 @@ function loadConfig() {
 
 		if ($config['allow_roll'])
 			event_handler('post', 'diceRoller');
-
-		if (in_array('webm', $config['allowed_ext_files']) ||
-        	    in_array('mp4',  $config['allowed_ext_files']))
-			event_handler('post', 'postHandler');
 	}
 	// Effectful config processing below:
 
@@ -291,10 +287,6 @@ function loadConfig() {
 
 	if ($config['cache']['enabled'])
 		require_once 'inc/cache.php';
-
-	if (in_array('webm', $config['allowed_ext_files']) ||
-            in_array('mp4',  $config['allowed_ext_files']))
-		require_once 'inc/lib/webm/posthandler.php';
 
 	event('load-config');
 
