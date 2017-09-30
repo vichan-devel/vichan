@@ -292,10 +292,6 @@ function loadConfig() {
 	if ($config['cache']['enabled'])
 		require_once 'inc/cache.php';
 
-	if (in_array('webm', $config['allowed_ext_files']) ||
-            in_array('mp4',  $config['allowed_ext_files']))
-		require_once 'inc/lib/webm/posthandler.php';
-
 	event('load-config');
 
 	if ($config['cache_config'] && !isset ($config['cache_config_loaded'])) {
