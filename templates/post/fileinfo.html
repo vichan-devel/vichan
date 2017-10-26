@@ -12,6 +12,9 @@
 			{% if file.thumb == 'spoiler' %}
 				{% trans %}Spoiler Image{% endtrans %}, 
 			{% endif %}
+			{% if file.thumb == 'spoiler_nsfw' %}
+                                {% trans %}NSFW{% endtrans %},
+                        {% endif %}
 			{{ file.size|filesize }}
 			{% if file.width and file.height %}
 				, {{ file.width}}x{{ file.height }}

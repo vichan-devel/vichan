@@ -290,6 +290,7 @@
 		'captcha_cookie',
 		'captcha_text',
 		'spoiler',
+		'spoiler_nsfw',
 		'page',
 		'file_url',
 		'json_response',
@@ -567,9 +568,10 @@
 	// Example: Custom secure tripcode.
 	// $config['custom_tripcode']['##securetrip'] = '!!somethingelse';
 
-	// Allow users to mark their image as a "spoiler" when posting. The thumbnail will be replaced with a
-	// static spoiler image instead (see $config['spoiler_image']).
+	// Allow users to mark their image as a "spoiler" or "NSFW" when posting. The thumbnail will be replaced with a
+	// static spoiler image instead (see $config['spoiler_image'] and $config['spoiler_nsfw_image']).
 	$config['spoiler_images'] = false;
+	$config['spoiler_nsfw'] = false;
 
 	// With the following, you can disable certain superfluous fields or enable "forced anonymous".
 
@@ -805,6 +807,7 @@
 	$config['file_thumb'] = 'static/%s';
 	// Location of thumbnail to use for spoiler images.
 	$config['spoiler_image'] = 'static/spoiler.png';
+	$config['spoiler_nsfw_image'] = 'static/spoiler_nsfw.png';
 	// Location of thumbnail to use for deleted images.
 	$config['image_deleted'] = 'static/deleted.png';
 

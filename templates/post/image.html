@@ -33,6 +33,8 @@
 					{% else %}
 						{{ config.file_thumb|sprintf(config.file_icons.default) }}
 					{% endif %}
+				{% elseif post.thumb == 'spoiler_nsfw' %}
+					{{ config.root }}{{ config.spoiler_nsfw_image }}
 				{% elseif post.thumb == 'spoiler' %}
 					{{ config.root }}{{ config.spoiler_image }}
 				{% else %}
