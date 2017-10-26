@@ -61,10 +61,8 @@ Upgrade
 -------
 To upgrade from any version of Tinyboard or vichan:
 
-Either run ```git pull``` to update your files, if you used git, or
-backup your ```inc/instance-config.php```, replace all your files in place
-(don't remove boards etc.), then put ```inc/instance-config.php``` back and
-finally run ```install.php```.
+Either run ```git pull``` to update your files if you use git, or replace all
+your files in place (don't remove boards etc.) and then run ```install.php```.
 
 To migrate from a Kusaba X board, use http://github.com/vichan-devel/Tinyboard-Migration
 
