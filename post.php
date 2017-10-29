@@ -633,12 +633,24 @@ if (isset($_POST['delete'])) {
 		$size = 0;
 		if ($config['multiimage_method'] == 'split') {
 			foreach ($_FILES as $key => $file) {
-				$size += $file['size'];
+				if(is_array($file['size'])) {
+					foreach($file['size'] as $fsize)
+						$size += $fsize;
+				} else {
+					$size += $file['size'];
+				}
 			}
 		} elseif ($config['multiimage_method'] == 'each') {
 			foreach ($_FILES as $key => $file) {
-				if ($file['size'] > $size) {
-					$size = $file['size'];
+				if(is_array($file['size'])) {
+					foreach($file['size'] as $fsize)
+						if ($fsize > $size) {
+							$size = $fsize;
+						}
+				} else {
+					if ($file['size'] > $size) {
+						$size = $file['size'];
+					}
 				}
 			}
 		} else {
@@ -689,21 +701,50 @@ if (isset($_POST['delete'])) {
 	if ($post['has_file']) {
 		$i = 0;
 		foreach ($_FILES as $key => $file) {
-			if ($file['size'] && $file['tmp_name']) {
-				$file['filename'] = urldecode($file['name']);
-				$file['extension'] = strtolower(mb_substr($file['filename'], mb_strrpos($file['filename'], '.') + 1));
-				if (isset($config['filename_func']))
-					$file['file_id'] = $config['filename_func']($file);
-				else
-					$file['file_id'] = time() . substr(microtime(), 2, 3);
+			if(is_array($file['size'])) {
+				// Turn the $_FILES[] -> into a workable array
+				$tmp_fi_file = array();
+				for($fi = 0; $fi < count($file['size']); $fi++) {
+					foreach ($file as $fi_key => $fi_val) {
+						$tmp_fi_file[$fi][$fi_key] = $fi_val[$fi];
+					}
+				}
+				// Add all files
+				foreach($tmp_fi_file as $fi_key => $fi_file) {
+					if ($fi_file['size'] && $fi_file['tmp_name']) {
+						$fi_file['filename'] = urldecode($fi_file['name']);
+						$fi_file['extension'] = strtolower(mb_substr($fi_file['filename'], mb_strrpos($fi_file['filename'], '.') + 1));
+						if (isset($config['filename_func']))
+							$fi_file['file_id'] = $config['filename_func']($fi_file);
+						else
+							$fi_file['file_id'] = time() . substr(microtime(), 2, 3);
 
-				if (sizeof($_FILES) > 1)
-					$file['file_id'] .= "-$i";
-				
-				$file['file'] = $board['dir'] . $config['dir']['img'] . $file['file_id'] . '.' . $file['extension'];
-				$file['thumb'] = $board['dir'] . $config['dir']['thumb'] . $file['file_id'] . '.' . ($config['thumb_ext'] ? $config['thumb_ext'] : $file['extension']);
-				$post['files'][] = $file;
-				$i++;
+						if (sizeof($_FILES) > 1 || sizeof($file['size']) > 1)
+							$fi_file['file_id'] .= "-$i";
+						
+						$fi_file['file'] = $board['dir'] . $config['dir']['img'] . $fi_file['file_id'] . '.' . $fi_file['extension'];
+						$fi_file['thumb'] = $board['dir'] . $config['dir']['thumb'] . $fi_file['file_id'] . '.' . ($config['thumb_ext'] ? $config['thumb_ext'] : $fi_file['extension']);
+						$post['files'][] = $fi_file;
+						$i++;
+					}
+				}
+			} else {
+				if ($file['size'] && $file['tmp_name']) {
+					$file['filename'] = urldecode($file['name']);
+					$file['extension'] = strtolower(mb_substr($file['filename'], mb_strrpos($file['filename'], '.') + 1));
+					if (isset($config['filename_func']))
+						$file['file_id'] = $config['filename_func']($file);
+					else
+						$file['file_id'] = time() . substr(microtime(), 2, 3);
+
+					if (sizeof($_FILES) > 1)
+						$file['file_id'] .= "-$i";
+					
+					$file['file'] = $board['dir'] . $config['dir']['img'] . $file['file_id'] . '.' . $file['extension'];
+					$file['thumb'] = $board['dir'] . $config['dir']['thumb'] . $file['file_id'] . '.' . ($config['thumb_ext'] ? $config['thumb_ext'] : $file['extension']);
+					$post['files'][] = $file;
+					$i++;
+				}
 			}
 		}
 	}
