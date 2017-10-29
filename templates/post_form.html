@@ -147,14 +147,14 @@
 				{% trans %}File{% endtrans %}
 			</th>
 			<td>
-				<input type="file" name="file" id="upload_file">
-
+				<input type="file" name="file[]" id="upload_file" multiple/>
+				
 				<script type="text/javascript">if (typeof init_file_selector !== 'undefined') init_file_selector({{ config.max_images }});</script>
 
 				{% if config.allow_upload_by_url %}
-					<div style="float:none;text-align:left" id="upload_url" class="upload_url">
-						<label for="file_url1">{% trans %}URL{% endtrans %}</label>: 
-						<input style="display:inline" class="upload_url_field" type="text" id="file_url1" name="file_url[]" size="35"><br />
+					<div style="float:none;text-align:left" id="upload_url">
+						<label for="file_url">{% trans %}URL{% endtrans %}</label>: 
+						<input style="display:inline" type="text" id="file_url" name="file_url" size="35"><br />
 					</div>
 				{% endif %}
 				{{ antibot.html() }}
