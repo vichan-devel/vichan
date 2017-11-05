@@ -375,31 +375,13 @@ if (isset($_POST['delete'])) {
 		$post['thread'] = round($_POST['thread']);
 	} else
 		$post['op'] = true;
-	
-	// Check if banned
-	checkBan($board['uri']);
-	
-	if ($post['mod'] = isset($_POST['mod']) && $_POST['mod']) {
-		check_login(false);
-		if (!$mod) {
-			// Liar. You're not a mod.
-			error($config['error']['notamod']);
-		}
-		
-		$post['sticky'] = $post['op'] && isset($_POST['sticky']);
-		$post['locked'] = $post['op'] && isset($_POST['lock']);
-		$post['raw'] = isset($_POST['raw']);
-		
-		if ($post['sticky'] && !hasPermission($config['mod']['sticky'], $board['uri']))
-			error($config['error']['noaccess']);
-		if ($post['locked'] && !hasPermission($config['mod']['lock'], $board['uri']))
-			error($config['error']['noaccess']);
-		if ($post['raw'] && !hasPermission($config['mod']['rawhtml'], $board['uri']))
-			error($config['error']['noaccess']);
-	}
 
 
 	if (!$dropped_post) {
+
+		// Check if banned
+		checkBan($board['uri']);
+
 		// Check for CAPTCHA right after opening the board so the "return" link is in there
 		if ($config['recaptcha']) {
 			if (!isset($_POST['g-recaptcha-response']))
@@ -439,6 +421,26 @@ if (isset($_POST['delete'])) {
 			error($config['error']['referer']);
 	
 		checkDNSBL();
+		
+
+		if ($post['mod'] = isset($_POST['mod']) && $_POST['mod']) {
+			check_login(false);
+			if (!$mod) {
+				// Liar. You're not a mod.
+				error($config['error']['notamod']);
+			}
+		
+			$post['sticky'] = $post['op'] && isset($_POST['sticky']);
+			$post['locked'] = $post['op'] && isset($_POST['lock']);
+			$post['raw'] = isset($_POST['raw']);
+		
+			if ($post['sticky'] && !hasPermission($config['mod']['sticky'], $board['uri']))
+				error($config['error']['noaccess']);
+			if ($post['locked'] && !hasPermission($config['mod']['lock'], $board['uri']))
+				error($config['error']['noaccess']);
+			if ($post['raw'] && !hasPermission($config['mod']['rawhtml'], $board['uri']))
+				error($config['error']['noaccess']);
+		}
 		
 		if (!$post['mod']) {
 			$post['antispam_hash'] = checkSpam(array($board['uri'], isset($post['thread']) ? $post['thread'] : ($config['try_smarter'] && isset($_POST['page']) ? 0 - (int)$_POST['page'] : null)));
