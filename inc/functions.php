@@ -3265,7 +3265,8 @@ function inlineDiceRoller(&$body) {
 			// Insert Result in post body
 			$modifier = ($diceZ != 0) ? ((($diceZ < 0) ? ' - ' : ' + ') . abs($diceZ)) : '';
 			$dicesum = (($diceX > 1)||($modifier != '')) ? ' = ' . $dicesum : '';
-			$dicerolltag = '[diceroll]' .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';
+			// $dicerolltag = '[diceroll]' .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';
+			$dicerolltag = '[diceroll]' . $matches[0][0] . "||" .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';
 
 			$body = preg_replace('/\[(\d+)?([d])(\d+)([-+]\d+)?\]/s', $dicerolltag, $body, 1);
 		}
@@ -3310,7 +3311,8 @@ function inlineDiceRoller(&$body) {
 			// Insert Result in post body
 			$modifier = ($diceZ != 0) ? ((($diceZ < 0) ? ' - ' : ' + ') . abs($diceZ)) : '';
 			$dicesum = (($diceX > 1)||($modifier != '')) ? ' = ' . $dicesum : '';
-			$dicerolltag = '[diceroll]' .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';
+			// $dicerolltag = '[diceroll]' .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';
+			$dicerolltag = '[diceroll]' . $matches[0][0] . "||" .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';			
 
 			$body = preg_replace('/\[dice (\d+)?([d])(\d+)([-+]\d+)?\/\]/s', $dicerolltag, $body, 1);
 		}
