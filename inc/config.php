@@ -2285,7 +2285,10 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 
 
 
+	// // Dice Roll Markup
+	// $config['markup'][] = array("/\[diceroll\](.+?)\[\/diceroll\]/s", "<img src='" . $config['root'] . "static/icons/dice.png' width=16 height=16/><b>\$1</b>");
+	
 	// Dice Roll Markup
-	$config['markup'][] = array("/\[diceroll\](.+?)\[\/diceroll\]/s", "<img src='" . $config['root'] . "static/icons/dice.png' width=16 height=16/><b>\$1</b>");
-
-
+	$config['markup'][] = array("/\[diceroll\](\[((\d+)?([d])(\d+)([-+]\d+)?)\]\|\|)?(.+?)\[\/diceroll\]/s", "<img src='" . $config['root'] . "static/icons/dice.png' alt='\$2' title='\$2' width=16 height=16/><b>\$7</b>");
+	
+		
