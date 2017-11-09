@@ -45,6 +45,9 @@ $config['json_scrambler']['salt'] = '0123456789012345678901';
 // Set to true if you want to dissable all GETS globaly (can also be set for each board in it's config)
 $config['post_get']['dissable_post_gets'] = false;
 
+// Allow MODS to get the GET if they manage to post at the right time
+$config['post_get']['not_dissabled_for_mods'] = false;
+
 // Minimum length of number to be conscidered a get number
 $config['post_get']['minimum_length'] = 5;
 

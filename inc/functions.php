@@ -1278,7 +1278,8 @@ function insertFloodPost(array $post) {
 }
 
 function post(array $post) {
-	global $pdo, $board, $config;
+	global $pdo, $board, $config, $mod;
+
 	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :cookie, :sticky, :locked, :cycle, 0, :embed, :slug)", $board['uri']));
 
 	// Basic stuff
@@ -1372,7 +1373,7 @@ function post(array $post) {
 	$postID = $pdo->lastInsertId();
 
 	// Skip GETS
-	if($config['post_get']['dissable_post_gets']) {
+	if($config['post_get']['dissable_post_gets'] && !($config['post_get']['not_dissabled_for_mods'] && $mod && $mod['type'] >= MOD)) {
 		if(postID_GetCheck($postID)){
 			// Delete current get post entry
 			$query = prepare(sprintf("DELETE FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
