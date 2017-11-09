@@ -38,6 +38,31 @@ $config['json_scrambler']['salt'] = '0123456789012345678901';
 
 /*
  * ====================
+ *  Deny GET settings
+ * ====================
+ */
+
+// Set to true if you want to dissable all GETS globaly (can also be set for each board in it's config)
+$config['post_get']['dissable_post_gets'] = false;
+
+// Allow MODS to get the GET if they manage to post at the right time
+$config['post_get']['not_dissabled_for_mods'] = false;
+
+// Minimum length of number to be conscidered a get number
+$config['post_get']['minimum_length'] = 5;
+
+// Post ID that ends in a sequense of repeating number that has "repeating_digits_count" of the same number.
+$config['post_get']['repeating_digits'] = true;
+$config['post_get']['repeating_digits_count'] = 4;
+
+// Post ID that is made up of consecutive digits starting with 1 ex. 12345, 123456 ... 1234567890.
+$config['post_get']['sequential_digits'] = true;
+
+
+
+
+/*
+ * ====================
  *  Public Statistics settings
  * ====================
  */
