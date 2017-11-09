@@ -1371,6 +1371,20 @@ function post(array $post) {
 	// Save Post ID
 	$postID = $pdo->lastInsertId();
 
+	// Skip GETS
+	if($config['post_get']['dissable_post_gets']) {
+		if(postID_GetCheck($postID)){
+			// Delete current get post entry
+			$query = prepare(sprintf("DELETE FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
+			$query->bindValue(':id', $postID, PDO::PARAM_INT);
+			$query->execute() or error(db_error($query));
+
+			// Create a new post entry and return new ID
+			return post($post);
+		}
+	}
+
+
 	// Add file-hashes to database
 	if($post['has_file'])
 	{
@@ -1395,6 +1409,51 @@ function post(array $post) {
 	// Return Post ID
 	return $postID;
 }
+
+
+
+function postID_GetCheck($postID)
+{
+	global $config;
+
+	//
+	// Post ID that ends in a sequense of repeating number that has "repeating_digits_count" of the same number.
+	//
+	// \b[0-9]+([0-9])\1{4,}\b
+	//
+	// Explanation:
+	// ^(?=.{4,}$)	# Number must be of five or more digits
+	// \b      		# match word boundary
+	// [1-9]* 		# match zero or more instances of digit 1-9
+	// ([0-9]){3,}	# match three more instances of same number at the end (four or more total)
+	// \b      		# match word boundary
+	//
+	if($config['post_get']['repeating_digits']) {
+		// if(preg_match('/^(?=.{4,}$)\b[1-9]*([0-9])\1{3,}\b/', $postID))
+		if(preg_match('/^(?=.{' . ($config['post_get']['minimum_length'] - 1) . ',10}$)\b[0-9]+([0-9])\1{' . ($config['post_get']['repeating_digits_count'] - 1) . ',}\b/', $postID))
+			return true;
+	}
+
+	//
+	// Post ID that is made up of consecutive digits starting with 1 ex. 12345, 123456 ... 1234567890.
+	//
+	// \b(123|1234|12345|123456|123457|12345678|123456789|1234567890)\b
+	//
+	// Explanation:
+	// ^(?=.{5,}$)		# Number must be of five or more digits
+	// \b(123|1234|..	# Match 1234, or, 12345, or ...
+	//
+	if($config['post_get']['sequential_digits']) {
+		// if(preg_match('/^(?=.{5,10}$)\b(123|1234|12345|123456|1234567|12345678|123456789|1234567890){1}\b/', $postID))
+		if(preg_match('/^(?=.{' . ($config['post_get']['minimum_length'] - 1) . ',10}$)\b(123|1234|12345|123456|1234567|12345678|123456789|1234567890){1}\b/', $postID))
+			return true;
+	}
+
+	// If post ID was not a get number retrn false
+	return false; 
+}
+
+
 
 function bumpThread($id) {
 	global $config, $board, $build_pages;
