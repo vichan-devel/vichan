@@ -1932,7 +1932,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 		290 	=>	'Aryanne Brotherhood',
 		291 	=>	'Moderate Centrist',
 		292 	=>	'Cult of Epona',
-		293 	=>	'Scotland'
+		293 	=>	'Scotland',
+		294		=>	'Imperial Germany'
 	);
 	/* Administration */
 	// View the report queue
