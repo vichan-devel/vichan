@@ -129,7 +129,7 @@
 		$total = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE " . $like, $board['uri']));
 		$total->execute() or error(db_error($query));
 		
-		// How many items to list per page
+	// How many items to list per page
         $limit = 25;
         // How many pages will there be
         $pages = ceil($total->rowCount() / $limit);
