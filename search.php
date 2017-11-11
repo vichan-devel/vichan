@@ -126,8 +126,9 @@
 		
 		$like = str_replace('%', '%%', $like);
 		
-		$total = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE " . $like, $board['uri']));
-		$total->execute() or error(db_error($query));
+	//Query to calculate the total amount of content in the database
+	$total = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE " . $like, $board['uri']));
+	$total->execute() or error(db_error($query));
 		
 	// How many items to list per page
         $limit = 25;
