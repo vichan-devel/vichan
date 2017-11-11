@@ -125,10 +125,36 @@
 		}
 		
 		$like = str_replace('%', '%%', $like);
+		
+		$total = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE " . $like, $board['uri']));
+		$total->execute() or error(db_error($query));
+		
+		// How many items to list per page
+        $limit = 25;
+        // How many pages will there be
+        $pages = ceil($total->rowCount() / $limit);
+        // What page are we currently on?
+        $page = min($pages, filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT, array(
+            'options' => array(
+                'default'   => 1,
+                'min_range' => 1,
+            ),
+        )));
+        // Calculate the offset for the query
+        $offset = ($page - 1)  * $limit;
+        // Some information to display to the user
+        $start = $offset + 1;
+        $end = min(($offset + $limit), $total->rowCount());
+        $url="http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        // The "back" link
+        $prevlink = ($page > 1) ? '<a href="'. $url .'&page=1" title="First page"> &laquo;</a> <a href="'. $url .'&page=' . ($page - 1) . '" title="Previous Page ">&lsaquo; Previous </a>' : '<span class="disabled">&laquo;</span> <span class="disabled">&lsaquo; </span>';
+        // The "forward" link
+        $nextlink = ($page < $pages) ? '<a href="' . $url . '&page=' . ($page + 1) . '" title="Next page"> Next &rsaquo;</a> <a href="' . $url . '&page=' . $pages . '" title="Last page">&raquo;</a>' : '<span class="disabled">&rsaquo;</span> <span class="disabled">&raquo; </span>';
 			
-		$query = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE " . $like . " ORDER BY `time` DESC LIMIT :limit", $board['uri']));
-		$query->bindValue(':limit', $search_limit, PDO::PARAM_INT);
-		$query->execute() or error(db_error($query));
+		$query = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE " . $like . " ORDER BY `time` DESC LIMIT :limit OFFSET :offset", $board['uri']));
+		$query->bindValue(':limit', $limit, PDO::PARAM_INT);
+		$query->bindValue(':offset', $offset, PDO::PARAM_INT);
+		$query->execute();
 		
 		if($query->rowCount() == $search_limit) {
 			_syslog(LOG_WARNING, 'Query too broad.');
@@ -142,6 +168,7 @@
 		}
 
 		$temp = '';
+		if ($query->rowCount() > 0) {
 		while($post = $query->fetch()) {
 			if(!$post['thread']) {
 				$po = new Thread($post);
@@ -150,25 +177,36 @@
 			}
 			$temp .= $po->build(true) . '<hr/>';
 		}
+		$iterator = new IteratorIterator($query);
 		
-		if(!empty($temp))
+		if(!empty($temp)){
 			$_body .= '<fieldset><legend>' .
-					sprintf(ngettext('%d result in', '%d results in', $query->rowCount()), 
-					$query->rowCount()) . ' <a href="/' .
-					sprintf($config['board_path'], $board['uri']) . $config['file_index'] .
-			'">' .
+					sprintf(ngettext( '%d result in', '%d results in', $total->rowCount()), 
+					$total->rowCount()) . ' <a href="/' .
+					sprintf($config['board_path'], $board['uri']) . $config['file_index'] . '">' .
 			sprintf($config['board_abbreviation'], $board['uri']) . ' - ' . $board['title'] .
-			'</a></legend>' . $temp . '</fieldset>';
-		
+			'</a> ' . $prevlink . $page . ' of ' . $pages . ' pages, displaying ' . $start . '-' . $end . ' results ' . $nextlink . '</legend>' . $temp . 
+			'<legend>' .
+					sprintf(ngettext( '%d result in', '%d results in', $total->rowCount()), 
+					$total->rowCount()) . ' <a href="/' .
+					sprintf($config['board_path'], $board['uri']) . $config['file_index'] . '">' .
+			sprintf($config['board_abbreviation'], $board['uri']) . ' - ' . $board['title'] .
+			'</a> ' . $prevlink . $page  . ' of ' . $pages . ' pages, displaying ' . $start . '-' . $end . ' results ' . $nextlink . '</legend></fieldset>';
+		}
 		$body .= '<hr/>';
-		if(!empty($_body))
+		if(!empty($_body)){
+		    if($iterator) {
 			$body .= $_body;
-		else
+		    }
+		}
+		}else{
 			$body .= '<p style="text-align:center" class="unimportant">('._('No results.').')</p>';
+		}
 	}
 		
 	echo Element('page.html', Array(
 		'config'=>$config,
+		'boardlist' => createBoardlist(),
 		'title'=>_('Search'),
-		'body'=>'' . $body
+		'body'=>'' . $body 
 	));
