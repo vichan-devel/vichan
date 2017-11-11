@@ -209,5 +209,5 @@
 		'config'=>$config,
 		'boardlist' => createBoardlist(),
 		'title'=>_('Search'),
-		'body'=>'' . $body 
+		'body'=>'' . $body
 	));
