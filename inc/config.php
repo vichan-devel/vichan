@@ -318,9 +318,9 @@
  	 $config['new_thread_capt'] = false;
 
 	// Custom captcha get provider path (if not working get the absolute path aka your url.)
-	$config['captcha']['provider_get'] = '../inc/captcha/entrypoint.php';
+	$config['captcha']['provider_get'] = '../captcha/entrypoint.php';
 	// Custom captcha check provider path
-	$config['captcha']['provider_check'] = '../inc/captcha/entrypoint.php';
+	$config['captcha']['provider_check'] = '../captcha/entrypoint.php';
 
 	// Custom captcha extra field (eg. charset)
 	 $config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
