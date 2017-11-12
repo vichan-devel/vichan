@@ -22,6 +22,7 @@ require_once 'inc/mod/auth.php';
 require_once 'inc/lock.php';
 require_once 'inc/queue.php';
 require_once 'inc/polyfill.php';
+require_once 'captcha/functions.php';
 @include_once 'inc/lib/parsedown/Parsedown.php'; // fail silently, this isn't a critical piece of code
 
 if (!extension_loaded('gettext')) {
