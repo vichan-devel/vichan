@@ -1932,7 +1932,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 		290 	=>	'Aryanne Brotherhood',
 		291 	=>	'Moderate Centrist',
 		292 	=>	'Cult of Epona',
-		293 	=>	'Scotland'
+		293 	=>	'Scotland',
+		294		=>	'Imperial Germany'
 	);
 	/* Administration */
 	// View the report queue
@@ -2315,6 +2316,10 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// $config['markup'][] = array("/\[diceroll\](.+?)\[\/diceroll\]/s", "<img src='" . $config['root'] . "static/icons/dice.png' width=16 height=16/><b>\$1</b>");
 	
 	// Dice Roll Markup
-	$config['markup'][] = array("/\[diceroll\](\[((\d+)?([d])(\d+)([-+]\d+)?)\]\|\|)?(.+?)\[\/diceroll\]/s", "<img src='" . $config['root'] . "static/icons/dice.png' alt='\$2' title='\$2' width=16 height=16/><b>\$7</b>");
+	$config['markup'][] = array("/\[diceroll\](\{((\d+)?([d])(\d+)([-+]\d+)?)\}\|\|)?(.+?)\[\/diceroll\]/s", "<img src='" . $config['root'] . "static/icons/dice.png' alt='\$2' title='\$2' width=16 height=16/><b>\$7</b>");
 	
+	// If user tries to delete post with a diceroll, the diceroll and trip is kept.
+	$config['diceroll']['anticheat'] = true;
+
+
 		
