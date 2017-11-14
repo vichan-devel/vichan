@@ -1643,7 +1643,7 @@ function deletePostShadow($id, $error_if_doesnt_exist=true, $rebuild_after=true,
 
 // Delete a post (reply or thread)
 function deletePostPermanent($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
-	global $board, $config;
+	global $board, $config, $mod;
 
 	// Select post and replies (if thread) in one query
 	$query = prepare(sprintf("SELECT `id`,`thread`,`files`,`slug` FROM ``posts_%s`` WHERE `id` = :id OR `thread` = :id", $board['uri']));
@@ -1690,14 +1690,41 @@ function deletePostPermanent($id, $error_if_doesnt_exist=true, $rebuild_after=tr
 
 	}
 
-	$query = prepare(sprintf("SELECT `thread` FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
+	$query = prepare(sprintf("SELECT `thread`,`body_nomarkup` FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
 	$query->bindValue(':id', $id, PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
-	$thread_id = $query->fetch(PDO::FETCH_ASSOC)['thread'];
+	$post_data = $query->fetch(PDO::FETCH_ASSOC);
+	$thread_id = $post_data['thread'];
 
-	$query = prepare(sprintf("DELETE FROM ``posts_%s`` WHERE `id` = :id OR `thread` = :id", $board['uri']));
-	$query->bindValue(':id', $id, PDO::PARAM_INT);
-	$query->execute() or error(db_error($query));
+
+	// Dice roll anticheat check
+	// Only a reply that is deleted
+	$new_body_nomarkup_count = 0;
+	$new_body_nomarkup = "";
+	if(!$mod && $config['diceroll']['anticheat'] && isset($thread_id) && count($ids) == 1) {
+		$post_body_nomarkup = $post_data['body_nomarkup'];
+
+		if(strpos($post_body_nomarkup, "[/diceroll]") !== false) {
+			$new_body_nomarkup_count = preg_match_all('/.*?(\[diceroll\].*?\[\/diceroll\])/i', $post_body_nomarkup, $new_body_nomarkup);
+			$new_body_nomarkup = implode("\n", $new_body_nomarkup[0]);
+		}
+	}
+
+
+	// Delete Post, or update body
+	if($new_body_nomarkup_count == 0) {
+		$query = prepare(sprintf("DELETE FROM ``posts_%s`` WHERE `id` = :id OR `thread` = :id", $board['uri']));
+		$query->bindValue(':id', $id, PDO::PARAM_INT);
+		$query->execute() or error(db_error($query));
+	} else {
+		$query = prepare(sprintf("UPDATE ``posts_%s`` SET `body_nomarkup` = :body_nomarkup, `subject` = '', `email` = '', `name` = '' WHERE `id` = :id OR `thread` = :id", $board['uri']));
+		$query->bindValue(':body_nomarkup', $new_body_nomarkup, PDO::PARAM_STR);
+		$query->bindValue(':id', $id, PDO::PARAM_INT);
+		$query->execute() or error(db_error($query));
+
+		// Rebuild markup
+		rebuildPost($id);
+	}
 
 	// Delete filehash entries for thread from filehash table
 	$query = prepare(sprintf("DELETE FROM ``filehashes`` WHERE ( `thread` = :id OR `post` = :id ) AND `board` = '%s'", $board['uri']));
@@ -1736,25 +1763,30 @@ function deletePostPermanent($id, $error_if_doesnt_exist=true, $rebuild_after=tr
 		}
 	}
 
-	$query = prepare("SELECT `board`, `post` FROM ``cites`` WHERE `target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ") ORDER BY `board`");
-	$query->bindValue(':board', $board['uri']);
-	$query->execute() or error(db_error($query));
-	while ($cite = $query->fetch(PDO::FETCH_ASSOC)) {
-		if ($board['uri'] != $cite['board']) {
-			if (!isset($tmp_board))
-				$tmp_board = $board['uri'];
-			openBoard($cite['board']);
+
+	// If post was deleted and not updated do to diceroll cheat prevention
+	if($new_body_nomarkup_count == 0) {
+		$query = prepare("SELECT `board`, `post` FROM ``cites`` WHERE `target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ") ORDER BY `board`");
+		$query->bindValue(':board', $board['uri']);
+		$query->execute() or error(db_error($query));
+		while ($cite = $query->fetch(PDO::FETCH_ASSOC)) {
+			if ($board['uri'] != $cite['board']) {
+				if (!isset($tmp_board))
+					$tmp_board = $board['uri'];
+				openBoard($cite['board']);
+			}
+			rebuildPost($cite['post']);
 		}
-		rebuildPost($cite['post']);
+
+		if (isset($tmp_board))
+			openBoard($tmp_board);
+
+		$query = prepare("DELETE FROM ``cites`` WHERE (`target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ")) OR (`board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . "))");
+		$query->bindValue(':board', $board['uri']);
+		$query->execute() or error(db_error($query));
 	}
 
-	if (isset($tmp_board))
-		openBoard($tmp_board);
 
-	$query = prepare("DELETE FROM ``cites`` WHERE (`target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ")) OR (`board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . "))");
-	$query->bindValue(':board', $board['uri']);
-	$query->execute() or error(db_error($query));
-	
 	if (isset($rebuild) && $rebuild_after) {
 		buildThread($rebuild);
 		buildIndex();
@@ -3326,7 +3358,7 @@ function inlineDiceRoller(&$body) {
 			$modifier = ($diceZ != 0) ? ((($diceZ < 0) ? ' - ' : ' + ') . abs($diceZ)) : '';
 			$dicesum = (($diceX > 1)||($modifier != '')) ? ' = ' . $dicesum : '';
 			// $dicerolltag = '[diceroll]' .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';
-			$dicerolltag = '[diceroll]' . $matches[0][0] . "||" .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';
+			$dicerolltag = '[diceroll]' . str_replace(array('[', ']'), array("{", "}"), $matches[0][$mc]) . "||" .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';
 
 			$body = preg_replace('/\[(\d+)?([d])(\d+)([-+]\d+)?\]/s', $dicerolltag, $body, 1);
 		}
@@ -3372,7 +3404,7 @@ function inlineDiceRoller(&$body) {
 			$modifier = ($diceZ != 0) ? ((($diceZ < 0) ? ' - ' : ' + ') . abs($diceZ)) : '';
 			$dicesum = (($diceX > 1)||($modifier != '')) ? ' = ' . $dicesum : '';
 			// $dicerolltag = '[diceroll]' .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';
-			$dicerolltag = '[diceroll]' . $matches[0][0] . "||" .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';			
+			$dicerolltag = '[diceroll]' . str_replace(array('[', ']'), array("{", "}"), $matches[0][$mc]) . "||" .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';			
 
 			$body = preg_replace('/\[dice (\d+)?([d])(\d+)([-+]\d+)?\/\]/s', $dicerolltag, $body, 1);
 		}
