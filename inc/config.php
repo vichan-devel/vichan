@@ -1681,6 +1681,10 @@
 
 	// Limit of search results
 	$config['search']['search_limit'] = 100;
+
+	// the amount of results per page. 
+	// use the same number as above if you don't want pagination
+	$config['search']['search_results_per_page'] = 100;
 		
 	// Boards for searching
 	//$config['search']['boards'] = array('a', 'b', 'c', 'd', 'e');
