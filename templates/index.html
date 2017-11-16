@@ -57,17 +57,11 @@
 	
 	{% if config.global_message %}<hr /><div class="blotter">{{ config.global_message }}</div>{% endif %}
 	<hr />
+	
 	{% if config.board_search %}
-	<!-- Start Search Form -->
-        	<form style="display:inline" action="/search.php">
-                	<p style="margin: 10px;">
-                    		<input type="text" name="search" placeholder="{{ board.uri }} search">
-                    		<input type="hidden" name="board" value="{{ board.uri }}">
-                    		<input type="submit" value="Search">
-                	</p>
-        	</form>
-    	<!-- End Search Form -->
-    	{% endif %}
+	{% include 'index_search.html' %}
+	{% endif %}
+	
 	<form name="postcontrols" action="{{ config.post_url }}" method="post">
 	<input type="hidden" name="board" value="{{ board.uri }}" />
 	{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
