@@ -1673,6 +1673,9 @@
 	// Enable search in the board index.
 	$config['board_search'] = false;
 
+	// Enable search in board threads.
+	$config['board_thread_search'] = false;
+
 	// Maximal number of queries per IP address per minutes
 	$config['search']['queries_per_minutes'] = Array(15, 2);
 
