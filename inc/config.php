@@ -305,22 +305,31 @@
 	$config['recaptcha_public'] = '6LcXTcUSAAAAAKBxyFWIt2SO8jwx4W7wcSMRoN3f';
 	$config['recaptcha_private'] = '6LcXTcUSAAAAAOGVbVdhmEM1_SyRF4xTKe8jbzf_';
 
-	// Enable Custom Captcha you need to change a couple of settings 
-	//Read more at: /captcha/instructions.md
+	// Enable Custom Captcha you need to change provider_get and provider_check below in order for it to work.
 	 $config['captcha'] = array();
 
 	// Enable custom captcha provider
-	$config['captcha']['enabled'] = false;
+  	$config['captcha']['enabled'] = false;
+
+	// Custom CAPTCHA provider general settings
+	// Captcha expiration:
+	$config['captcha']['expires_in'] = 120; // 120 seconds
+	// Captcha length:
+	$config['captcha']['length'] = 3;
+	
+	// Custom captcha provider path (You will need to change these depending on your configuration! It cannot be
+	// automatically determined because provider_check requires curl which needs to know the domain of your site.)
+	// Specify yourimageboard.com/$config['root']/captcha/entrypoint.php for the default provider or write your own
+	
+	// provider_get url (needs absolute path):
+	$config['captcha']['provider_get'] = '../captcha/entrypoint.php';
+	// provider_check url (needs absolute path):
+	$config['captcha']['provider_check'] = '../captcha/entrypoint.php';
 
 	//New thread captcha
- 	//Require solving a captcha to post a thread. 
+ 	//Require solving a captcha to post a thread only, don't enable captcha above if you want to use this one. 
  	//Default off.
  	 $config['new_thread_capt'] = false;
-
-	// Custom captcha get provider path (if not working get the absolute path aka your url.)
-	$config['captcha']['provider_get'] = '../captcha/entrypoint.php';
-	// Custom captcha check provider path
-	$config['captcha']['provider_check'] = '../captcha/entrypoint.php';
 
 	// Custom captcha extra field (eg. charset)
 	 $config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
