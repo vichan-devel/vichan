@@ -126,12 +126,11 @@
 		
 		$like = str_replace('%', '%%', $like);
 		
-	//Query to calculate the total amount of content in the database
-	$total = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE " . $like, $board['uri']));
-	$total->execute() or error(db_error($query));
+		$total = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE " . $like, $board['uri']));
+		$total->execute() or error(db_error($query));
 		
-	// How many items to list per page
-        $limit = 25;
+		// How many items to list per page
+        $limit = $config['search']['search_results_per_page'];
         // How many pages will there be
         $pages = ceil($total->rowCount() / $limit);
         // What page are we currently on?
@@ -209,5 +208,5 @@
 		'config'=>$config,
 		'boardlist' => createBoardlist(),
 		'title'=>_('Search'),
-		'body'=>'' . $body
+		'body'=>'' . $body 
 	));
