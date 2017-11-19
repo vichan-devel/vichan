@@ -367,7 +367,7 @@ function init() {
 
 	{% endraw %}	
 	{% if config.allow_delete %}
-	if (document.forms.postcontrols) {
+	if (document.forms.postcontrols.password) {
 		document.forms.postcontrols.password.value = localStorage.password;
 	}
 	{% endif %}
