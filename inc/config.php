@@ -830,6 +830,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// How many ban appeals can be made for a single ban?
 	$config['ban_appeals_max'] = 1;
 
+	// Max length of appeal text
+	$config['ban_appeals_max_appeal_text_len'] = 2000;
+
 	// Show moderator name on ban page.
 	$config['show_modname'] = false;
 
@@ -1477,6 +1480,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['dir']['shadow_del'] = 'tempura/';
 	// Use shadow delete instead of immediate permanent delete
 	$config['shadow_del']['use'] = true;
+	// Use shadow delete instead of immediate permanent delete when users delete
+	$config['shadow_del']['user_delete'] = false;
 	// Hash Seed used to obscure filenames of shadow deleted files for posts
 	$config['shadow_del']['filename_seed'] = '5azs5co3wAN67tlqbINEmWuERtTX4FatsMVe446JbHVIJbZyjephDsdRtULw501';
 	// Lifetime for shadow deleted threads before permanent delete (ex. "60 minutes", "6 hours", "1 day", "1 week")

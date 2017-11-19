@@ -252,8 +252,14 @@ if (isset($_POST['delete'])) {
 				}
 
 				// Delete entire post
-				deletePostPermanent($id);
-				modLog("User deleted his own post #$id");
+				if($config['shadow_del']['user_delete']) {
+					deletePostShadow($id);
+					modLog("User deleted his own post #$id (shadow deleted)");
+				}
+				else {
+					deletePostPermanent($id);
+					modLog("User deleted his own post #$id");
+				}
 			}
 
 			_syslog(LOG_INFO, 'Deleted post: ' .
@@ -1364,7 +1370,7 @@ if (isset($_POST['delete'])) {
 	$query = prepare("INSERT INTO ``ban_appeals`` VALUES (NULL, :ban_id, :time, :message, 0)");
 	$query->bindValue(':ban_id', $ban_id, PDO::PARAM_INT);
 	$query->bindValue(':time', time(), PDO::PARAM_INT);
-	$query->bindValue(':message', $_POST['appeal']);
+	$query->bindValue(':message', substr($_POST['appeal'], 0, $config['ban_appeals_max_appeal_text_len']));
 	$query->execute() or error(db_error($query));
 	
 	displayBan($ban);
