@@ -168,6 +168,7 @@
 	}
 		
 	echo Element('page.html', Array(
+		'boardlist' => createBoardlist(),
 		'config'=>$config,
 		'title'=>_('Search'),
 		'body'=>'' . $body
