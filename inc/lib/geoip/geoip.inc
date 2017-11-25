@@ -441,6 +441,9 @@ function geoip_close($gi) {
 function geoip_forced_country_code_by_addr($gi, $addrv6, $addrv4 = false) {
 	global $config;
 
+	if(!$config['country_flags_use_forceflags'])
+		return false;
+
 	$addr = $addrv6;
 	if($config['bcrypt_ip_addresses'])
 		$addr = get_ip_hash($addrv4);
