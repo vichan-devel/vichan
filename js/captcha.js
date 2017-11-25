@@ -12,7 +12,7 @@ function actually_load_captcha(provider, extra) {
   }
 
   $.getJSON(provider, {mode: 'get', extra: extra}, function(json) {
-    $(".captcha .captcha_cookie").val(json.cookie);
+    $(".captcha_cookie").val(json.cookie);
     $(".captcha .captcha_html").html(json.captchahtml);
 
     setTimeout(function() {
@@ -24,8 +24,8 @@ function actually_load_captcha(provider, extra) {
 function load_captcha(provider, extra) {
   $(function() {
     $(".captcha>td").html("<input class='captcha_text' type='text' name='captcha_text' size='25' maxlength='6' autocomplete='off'>"+
-			  "<input class='captcha_cookie' name='captcha_cookie' type='hidden'>"+
-			  "<div class='captcha_html'></div>");
+                          "<input class='captcha_cookie' name='captcha_cookie' type='hidden'>"+
+                          "<div class='captcha_html'></div>");
 
     $("#quick-reply .captcha .captcha_text").prop("placeholder", _("Verification"));
 
@@ -36,7 +36,7 @@ function load_captcha(provider, extra) {
     $(window).on("quick-reply", function() {
       redo_events(provider, extra);
       $("#quick-reply .captcha .captcha_html").html($("form:not(#quick-reply) .captcha .captcha_html").html());
-      $("#quick-reply .captcha .captcha_cookie").val($("form:not(#quick-reply) .captcha .captcha_cookie").html());
+      $("#quick-reply .captcha_cookie").html($("form:not(#quick-reply) .captcha .captcha_cookie").html());
       $("#quick-reply .captcha .captcha_html").on("click", function() { actually_load_captcha(provider, extra); });
     });
   });
