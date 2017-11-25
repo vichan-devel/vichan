@@ -773,6 +773,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Attach country flags to posts.
 	$config['country_flags'] = false;
 
+	// Attach forceflag flags to posts (if set for IP).
+	$config['country_flags_use_forceflags'] = false;
+	
 	// Allow the user to decide whether or not he wants to display his country
 	$config['allow_no_country'] = false;
 
