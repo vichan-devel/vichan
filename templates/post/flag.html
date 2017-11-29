@@ -1,4 +1,4 @@
-{% if config.display_flags and post.modifiers.flag %}
+{% if config.display_flags and post.modifiers.flag and ((config.display_flags_mod_only and mod) or not config.display_flags_mod_only) %}
 	 <img
 		{% if config.country_flags_condensed %}
 			 class="flag flag-{{ post.modifiers.flag }}" src="{{ config.image_blank }}"

@@ -1258,6 +1258,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// $config['country_flags']). Disable this if you want all previously-assigned flags to be hidden.
 	$config['display_flags'] = true;
 
+	// Only show flags to logged in moderators
+	$config['display_flags_mod_only'] = false;
+
 	// Location of post flags/icons (where "%s" is the flag name). Defaults to static/flags/%s.png.
 	// $config['uri_flags'] = 'http://static.example.org/flags/%s.png';
 
