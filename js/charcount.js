@@ -13,6 +13,9 @@ $(document).ready(function(){
 	// prevents jQuery from having to search the DOM for it again
 	// every time an event is fired.
 	var $inputArea = $('#body');
+	if ($inputArea.length == 0)
+		return;
+
 	var $maxChars = 6000;
 
 	// Preset countdown field to max initial content length
