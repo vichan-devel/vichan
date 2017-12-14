@@ -324,6 +324,10 @@ span.quote-orange, span.orange {
   color: #DB7A18;
 }
 
+span.ponkpink {
+  color: #FF69B3;
+}
+
 span.omitted {
   display: block;
   margin-top: 1em;

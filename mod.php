@@ -113,7 +113,10 @@ $pages = array(
 	'/(\%b)/(un)?cycle/(\d+)'                         => 'secure cycle',          // cycle thread
 	'/(\%b)/bump(un)?lock/(\d+)'		=> 'secure bumplock',		// "bumplock" thread
 	'/(\%b)/deletefilepermaban/(\d+)/(\d+)'     => 'secure deletefilepermaban',     // delete file from post and permaban it
-	
+
+
+	'/(\%b)/archive_thread/(\d+)'		=> 'secure archive_thread',		// send thread to archive
+
 	'/themes'				=> 'themes_list',		// manage themes
 	'/themes/(\w+)'				=> 'secure_POST theme_configure',		// configure/reconfigure theme
 	'/themes/(\w+)/rebuild'			=> 'secure theme_rebuild',		// rebuild theme

@@ -868,6 +868,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['markup'][] = array("/\[s\]/s", "<span class=\"spoiler\">");
 	$config['markup'][] = array("/\[g\]/s", "<span class=\"quote\">");
 	$config['markup'][] = array("/\[o\]/s", "<span class=\"orange\">");
+	$config['markup'][] = array("/\[p\]/s", "<span class=\"ponkpink\">");
 	$config['markup'][] = array("/\[\/\]/s", "</span>");
 	$config['markup'][] = array("/\[align=(center|right)\](.+?)\[\/align\]/s", "<div style=\"text-align: $1;\">\$2</div>");
 	
@@ -1693,6 +1694,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['mod']['link_shadow_restore'] = '[SD Restore]';
 	$config['mod']['link_shadow_delete'] = '[SD Delete]';
 
+	$config['mod']['link_send_to_archive'] = '[Archive]';
+	
 	// Moderator capcodes.
 	$config['capcode'] = ' <span class="capcode">## %s</span>';
 
@@ -1962,6 +1965,10 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['mod']['announcements'] = ADMIN;
 
 
+	// Send  Threads directly to Archive (need to be greater than or equal to ['mod']['delete'] permission)
+	$config['mod']['send_threads_to_archive'] = MOD;
+	if($config['mod']['send_threads_to_archive'] < $config['mod']['delete'])
+		$config['mod']['send_threads_to_archive'] = $config['mod']['delete'];
 	// Feature Archived Threads
 	$config['mod']['feature_archived_threads'] = JANITOR;
 	// Delete Featured Archived Threads

@@ -218,3 +218,12 @@ table.board-list-table tr:nth-of-type( even ) .board-tags .board-cell {
 }
 
 
+/* fix for post menu */
+.post-menu {
+  color: #DB7A18;
+}
+  
+.post-menu ul {
+  background-color: #1D1F21;
+}
+
