@@ -4,6 +4,7 @@
 		{% trans %}Delete Post{% endtrans %} [<input title="Delete file only" type="checkbox" name="file" id="delete_file" />
 		 <label for="delete_file">{% trans %}File{% endtrans %}</label>] <label for="password">{% trans %}Password{% endtrans %}</label> 
 		<input id="password" type="password" name="password" size="12" maxlength="18" />
+		<input type="hidden" name="file_single" id="delete_file_single" />
 		<input type="submit" name="delete" value="{% trans %}Delete{% endtrans %}" />
 	</div>
 	{% endif %}

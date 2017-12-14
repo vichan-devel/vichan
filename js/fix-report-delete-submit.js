@@ -11,29 +11,79 @@
 if (active_page == 'thread' || active_page == 'index' || active_page == 'ukko') {
 $(document).on('menu_ready', function(){
 var Menu = window.Menu;
-	
+
+
 if ($('#delete-fields #password').length) {
 	Menu.add_item("delete_post_menu", _("Delete post"));
-	Menu.add_item("delete_file_menu", _("Delete file"));
+	var submenu = Menu.add_submenu("delete_file_menu", _("Delete file(s)"));
+
+	// Add sub menu elements for file deletion
+	submenu.add_item("delete_file_menu_all", "All images");
+    for (var i = 0; i < max_images; i++)
+    {
+        submenu.add_item('delete_file_menu_image_index-' + i, '#' + (i + 1));
+	}
+	
+
 	Menu.onclick(function(e, $buf) {
+
 		var ele = e.target.parentElement.parentElement;
 		var $ele = $(ele);
 		var threadId = $ele.parent().attr('id').replace('thread_', '');
 		var postId = $ele.find('.post_no').not('[id]').text();
 		var board_name = $ele.parent().data('board');
 
-		$buf.find('#delete_post_menu,#delete_file_menu').click(function(e) {
+		var image_count = $ele.find('.files').children().length;
+		if($ele.hasClass('op'))
+			image_count = $ele.prev('.files').children().length;
+			// image_count = $('.files:first').children().length;
+
+		if(image_count != 0)
+			$buf.find("#delete_file_menu").show();
+		else
+			$buf.find("#delete_file_menu").hide();
+		
+		
+        for (var i = 0; i < max_images; i++)
+        {
+            if (i < image_count)
+                $buf.find('#delete_file_menu_image_index-' + i).show();
+            else
+                $buf.find('#delete_file_menu_image_index-' + i).hide();
+        }
+
+		$buf.find('#delete_post_menu').click(function(e) {
 			e.preventDefault();
 			$('#delete_'+postId).prop('checked', 'checked');
-		
-			if ($(this).attr('id') === 'delete_file_menu') {
-				$('#delete_file').prop('checked', 'checked');
-			} else {
-				$('#delete_file').prop('checked', '');
-			}
+			$('#delete_file').prop('checked', '');
 			$('input[type="hidden"][name="board"]').val(board_name);
 			$('input[name=delete][type=submit]').click();
 		});
+
+		$buf.find('#delete_file_menu_all').click(function(e) {
+			e.preventDefault();
+			$('#delete_'+postId).prop('checked', 'checked');
+			$('#delete_file').prop('checked', 'checked');
+			$('input[type="hidden"][name="board"]').val(board_name);
+			$('input[name=delete][type=submit]').click();
+		});
+
+		// Add functions for deletion of given indexes
+		for (var i = 0; i < max_images; i++)
+		{
+			$buf.find('#delete_file_menu_image_index-' + i).click(function(e){
+				e.preventDefault();
+				$('#delete_'+postId).prop('checked', 'checked');
+				$('#delete_file').prop('checked', 'checked');
+
+				// 0 is treated as empty by php
+				var img_no = $(this).attr('id').split('-')[1];
+				$('#delete_file_single').val(parseInt(img_no) + 1);
+				
+				$('input[type="hidden"][name="board"]').val(board_name);
+				$('input[name=delete][type=submit]').click();
+			});
+		}
 	});
 }
 

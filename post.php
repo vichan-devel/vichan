@@ -177,7 +177,7 @@ elseif (isset($_GET['Newsgroups'])) {
 
 if (isset($_POST['delete'])) {
 	// Delete
-	
+
 	if (!isset($_POST['board'], $_POST['password']))
 		error($config['error']['bot']);
 	
@@ -239,9 +239,21 @@ if (isset($_POST['delete'])) {
 			}
 
 			if (isset($_POST['file'])) {
-				// Delete just the file
-				deleteFile($id);
-				modLog("User deleted file from his own post #$id");
+				// Delete file
+
+				if(isset($_POST['file_single']) && !empty($_POST['file_single'])){
+					// Delete spesific file
+					if(is_numeric($_POST['file_single'])) {
+						deleteFile($id, TRUE, (int)$_POST['file_single'] - 1);
+						modLog("User deleted spesific file from his own post #$id");
+					} else {
+						error(_('Uknown file specified.'));
+					}
+				} else {
+					// Delete all file(s)
+					deleteFile($id);
+					modLog("User deleted all file(s) from his own post #$id");
+				}
 			} else {
 
 				// Check if thread and that the delete cutoff post count haven't been reached
