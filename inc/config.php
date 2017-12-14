@@ -867,9 +867,10 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// Special Markup
 	$config['markup'][] = array("/\[s\]/s", "<span class=\"spoiler\">");
 	$config['markup'][] = array("/\[g\]/s", "<span class=\"quote\">");
+	$config['markup'][] = array("/\[o\]/s", "<span class=\"orange\">");
 	$config['markup'][] = array("/\[\/\]/s", "</span>");
 	$config['markup'][] = array("/\[align=(center|right)\](.+?)\[\/align\]/s", "<div style=\"text-align: $1;\">\$2</div>");
-
+	
 
 	// // Dice Roll Markup
 	// $config['markup'][] = array("/\[diceroll\](.+?)\[\/diceroll\]/s", "<img src='" . $config['root'] . "static/icons/dice.png' width=16 height=16/><b>\$1</b>");
