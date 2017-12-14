@@ -3821,3 +3821,22 @@ function mod_view_board_statistics($boardName) {
 }
 
 
+
+
+
+
+
+function mod_archive_thread($board, $post) {
+	global $config;
+	
+	if (!openBoard($board))
+		error($config['error']['noboard']);
+	
+	if (!hasPermission($config['mod']['send_threads_to_archive'], $board))
+		error($config['error']['noaccess']);
+	
+	Archive::archiveThread($post);
+	mod_delete($board, false, $post);
+		
+	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
+}

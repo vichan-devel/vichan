@@ -194,3 +194,14 @@ div.report {
 #quick-reply table {
 	background: none repeat scroll 0% 0% #333 !important;
 }
+
+/* fix for post menu */
+.post-menu {
+	color: #DB7A18;
+}
+
+.post-menu ul {
+	background-color: #1D1F21;
+}
+  
+

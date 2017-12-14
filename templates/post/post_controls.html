@@ -63,6 +63,9 @@
 			<a title="{% trans %}Lock thread{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'lock/' ~ post.id) }}">{{ config.mod.link_lock }}</a>&nbsp;
 			{% endif %}
 		{% endif %}
+		{% if mod|hasPermission(config.mod.send_threads_to_archive, board.uri) %}
+			{{ secure_link_confirm(config.mod.link_send_to_archive, 'Send thread to archive'|trans, 'Are you sure you want to send thread to archive and delete it from the catalog?'|trans, board.dir ~ 'archive_thread/' ~ post.id ) }}&nbsp;
+		{% endif %}
 	{% endif %}
 
 	{% if mod|hasPermission(config.mod.move, board.uri) %}
