@@ -59,6 +59,22 @@ if (active_page == 'thread' || active_page == 'index') {
 				exclusiveline:false, 
 				prefix:'[-]',
 				suffix:'[/-]'
+			},
+			orange: {
+				text: _('Orange'),
+				key: 'o',
+				multiline:true, 
+				exclusiveline:false, 
+				prefix:'[o]',
+				suffix:'[/o]'
+			},
+			ponkpink: {
+				text: _('Ponk Pink'),
+				key: 'p',
+				multiline:false, 
+				exclusiveline:false, 
+				prefix:'[p]',
+				suffix:'[/p]'
 			}
 		};
 		
