@@ -11,6 +11,9 @@ class ShadowDelete {
     {
         global $config;
 
+        if($filename == 'spoiler')
+            return $config['spoiler_image'];
+
         $file = pathinfo($filename);
         return sha1($file['filename'] . $config['shadow_del']['filename_seed']) . "." . $file['extension'];
     }
