@@ -21,7 +21,11 @@
 				{% endif %}
 			{% endif %}
 	</p>
-	<p><strong>{% trans %}Your IP address is not stored on mlpol.net. We currently hash IP addresses {% endtrans %}</strong>.</p>
+	{% if config.bcrypt_ip_addresses %}
+		<p><strong>{% trans %}Your IP address is not stored on{% endtrans %} {{ config.site_name_short_form }}. {% trans %}We currently hash IP addresses{% endtrans %}</strong>.</p>
+	{% else %}
+		<p>{% trans %}Your IP address is{% endtrans %} <strong>{{ warning.ip }}</strong>.</p>
+	{% endif %}
 
 	{% if config.warning_page_extra %}
 		<p>{{ config.warning_page_extra }}</p>
