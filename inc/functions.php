@@ -3358,9 +3358,10 @@ function inlineDiceRoller(&$body) {
 			$modifier = ($diceZ != 0) ? ((($diceZ < 0) ? ' - ' : ' + ') . abs($diceZ)) : '';
 			// Inserting diceroll code in sum
 			$dicesum = '[ ' . str_replace(array('[', ']'), "", $matches[0][$mc]) . ' = ' . $dicesum . ' ]';
-			$dicesum = (($diceX > 1)||($modifier != '')) ? ' = ' . $dicesum : '';
+			// $dicesum = (($diceX > 1)||($modifier != '')) ? ' = ' . $dicesum : '';
 			// $dicerolltag = '[diceroll]' .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';
-			$dicerolltag = '[diceroll]' . str_replace(array('[', ']'), array("{", "}"), $matches[0][$mc]) . "||" .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';
+			$dicerolltag = '[diceroll]' . str_replace(array('[', ']'), array("{", "}"), $matches[0][$mc]) . "||" .  $dicesum . '[/diceroll]';
+			// $dicerolltag = '[diceroll]' . str_replace(array('[', ']'), array("{", "}"), $matches[0][$mc]) . "||" .  implode(', ', $dicerolls) . $modifier . $dicesum . '[/diceroll]';
 
 			$body = preg_replace('/\[(\d+)?([d])(\d+)([-+]\d+)?\]/s', $dicerolltag, $body, 1);
 		}
