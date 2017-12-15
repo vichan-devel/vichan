@@ -26,6 +26,16 @@
 	defined('TINYBOARD') or exit;
 
 
+/*
+ * ====================
+ *  Basic settings
+ * ====================
+ */
+$config['site_name_short_form'] = "mlpol.net";
+
+
+
+
 
 // Json File Scrambler
 // Indicate if json filenames should be scrambled 
