@@ -18,6 +18,7 @@ class Twig_Extensions_Extension_Tinyboard extends Twig_Extension
 			new Twig_SimpleFilter('sprintf', 'sprintf'),
 			new Twig_SimpleFilter('capcode', 'capcode'),
 			new Twig_SimpleFilter('remove_modifiers', 'remove_modifiers'),
+			new Twig_SimpleFilter('remove_markup', 'remove_markup'),
 			new Twig_SimpleFilter('hasPermission', 'twig_hasPermission_filter'),
 			new Twig_SimpleFilter('date', 'twig_date_filter'),
 			new Twig_SimpleFilter('poster_id', 'poster_id'),
