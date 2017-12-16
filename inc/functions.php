@@ -2471,6 +2471,19 @@ function extract_modifiers($body) {
 	return $modifiers;
 }
 
+
+
+function remove_markup($body) {
+	global $config;
+
+	foreach ($config['markup'] as $markup) {
+		if (is_string($markup[1]))
+			$body = preg_replace($markup[0], "$1", $body);
+	}
+	return $body;
+}
+
+
 function remove_modifiers($body) {
 	return preg_replace('@<tinyboard ([\w\s]+)>(.+?)</tinyboard>@usm', '', $body);
 }
