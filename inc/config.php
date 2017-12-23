@@ -1367,7 +1367,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 		array('vidme', '/vid\.me\/([^\s?&#\/]+)/i'),
 		//array('liveleak', '/liveleak\.com\/view\?i=([^\s?&#\/]+)/i'), // Youtube videos on liveleak will currently give a misleading "File not found or deleted!" error
 		array('metacafe', '/metacafe\.com\/watch\/(\d+)/i'),
-		array('soundcloud', '/soundcloud\.com\/([^\s?&#]+)/i')
+		array('soundcloud', '/soundcloud\.com\/([^\s?&#]+)/i'),
+		array('vocaroo', '/vocaroo\.com\/i\/([^\s?&#\/]+)/i')
 	);
 	
 /*

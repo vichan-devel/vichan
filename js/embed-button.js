@@ -12,7 +12,7 @@ $(document).ready(function () {
 		return;
 
 	if (window.Options && Options.get_tab('general')) {
-		Options.extend_tab("general", "<label><input type='checkbox' id='disable-embedding' /> " + _('Disable link embedding') + "</label>");
+		Options.extend_tab("general", "<label><input type='checkbox' id='disable-embedding' /> " + _('Disable link embeds') + "</label>");
 
 		$('#disable-embedding').on('change', function () {
 			if (this.checked) {
@@ -55,10 +55,7 @@ function toggleEmbed() {
 		var embedId = generateEmbedId();
 		this.setAttribute('data-embed-id', embedId);
 
-		var embedCode = getEmbedHTML(this.getAttribute("data-embed-type"));
-		embedCode = embedCode.replace("%video_width%", '640');
-		embedCode = embedCode.replace("%video_height%", '360');
-		embedCode = embedCode.replace("%embed_data%", this.getAttribute("data-embed-data"));
+		var embedCode = getEmbedHTML(this.getAttribute('data-embed-type'), '640', '360', this.getAttribute('data-embed-data'));
 
 		var embeddedElement = $(embedCode).insertAfter($(this).parent());
 		embeddedElement.attr('id', 'embed_frame_' + embedId);
@@ -80,22 +77,24 @@ function generateEmbedId() {
 	return embedIdCounter;
 }
 
-function getEmbedHTML(type) {
+function getEmbedHTML(type, width, height, data) {
 	switch (type) {
 		case 'youtube':
-			return '<iframe width="%video_width%" height="%video_height%" src="https://href.li/?https://hooktube.com/embed/%embed_data%?autoplay=1" frameborder="0" allowfullscreen scrolling="no"></iframe>';
+			return '<iframe width="' + width + '" height="' + height + '" src="https://href.li/?https://hooktube.com/embed/' + data + '?autoplay=1" frameborder="0" allowfullscreen scrolling="no"></iframe>';
 		case 'dailymotion':
-			return '<iframe width="%video_width%" height="%video_height%" src="https://href.li/?https://www.dailymotion.com/embed/video/%embed_data%?autoplay=1" frameborder="0" allowfullscreen></iframe>';
+			return '<iframe width="' + width + '" height="' + height + '" src="https://href.li/?https://www.dailymotion.com/embed/video/' + data + '?autoplay=1" frameborder="0" allowfullscreen></iframe>';
 		case 'vimeo':
-			return '<iframe width="%video_width%" height="%video_height%" src="https://href.li/?https://player.vimeo.com/video/%embed_data%?byline=0&portrait=0&autoplay=1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+			return '<iframe width="' + width + '" height="' + height + '" src="https://href.li/?https://player.vimeo.com/video/' + data + '?byline=0&portrait=0&autoplay=1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
 		case 'vidme':
-			return '<iframe width="%video_width%" height="%video_height%" src="https://href.li/?https://vid.me/e/%embed_data%" frameborder="0" allowfullscreen webkitallowfullscreen mozallowfullscreen scrolling="no"></iframe>';
+			return '<iframe width="' + width + '" height="' + height + '" src="https://href.li/?https://vid.me/e/' + data + '" frameborder="0" allowfullscreen webkitallowfullscreen mozallowfullscreen scrolling="no"></iframe>';
 		case 'liveleak':
-			return '<iframe width="%video_width%" height="%video_height%" src="https://href.li/?https://www.liveleak.com/ll_embed?i=%embed_data%" frameborder="0" allowfullscreen></iframe>';
+			return '<iframe width="' + width + '" height="' + height + '" src="https://href.li/?https://www.liveleak.com/ll_embed?i=' + data + '" frameborder="0" allowfullscreen></iframe>';
 		case 'metacafe':
-			return '<iframe width="%video_width%" height="%video_height%" src="https://href.li/?https://www.metacafe.com/embed/%embed_data%/" frameborder="0" allowfullscreen></iframe>';
+			return '<iframe width="' + width + '" height="' + height + '" src="https://href.li/?https://www.metacafe.com/embed/' + data + '/" frameborder="0" allowfullscreen></iframe>';
 		case 'soundcloud':
-			return '<iframe width="640" height="166" scrolling="no" frameborder="no" src="https://href.li/?https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/%embed_data%&amp;color=ff5500&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>';
+			return '<iframe width="640" height="166" scrolling="no" frameborder="no" src="https://href.li/?https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/' + data + '&amp;color=ff5500&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>';
+		case 'vocaroo':
+			return '<audio controls autoplay><source src="https://vocaroo.com/media_command.php?media=' + data + '&amp;command=download_mp3" type="audio/mpeg"><source src="https://vocaroo.com/media_command.php?media=' + data + '&amp;command=download_ogg" type="audio/ogg">Your browser does not support the audio element.</audio>';
 
 		default:
 			return '<span>Unknown embed type: "' + type + '"</span>';
