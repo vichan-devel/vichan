@@ -149,7 +149,12 @@
 			<td>
 				<input type="file" name="file[]" id="upload_file" multiple/>
 				
-				<script type="text/javascript">if (typeof init_file_selector !== 'undefined') init_file_selector({{ config.max_images }});</script>
+				<script type="text/javascript">
+					if (typeof init_file_selector !== 'undefined') {
+						var iOS_ifs = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+						if(!iOS_ifs) { init_file_selector({{ config.max_images }}); }
+					}
+				</script>
 
 				{% if config.allow_upload_by_url %}
 					<div style="float:none;text-align:left" id="upload_url" class="upload_url">
