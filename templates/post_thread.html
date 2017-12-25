@@ -100,5 +100,17 @@
 {% for post in post.posts %}
 	{% include 'post_reply.html' %}
 {% endfor %}
-<br class="clear"/>{% if hr %}<hr/>{% endif %}
+<br class="clear"/>
+
+{% if not post.shadow %}
+	{% if isnoko50 %}
+		<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post) }}">[{% trans %}View All{% endtrans %}]</a>
+	{% endif %}
+	{% if hasnoko50 and not isnoko50 %}
+		{% set lastcount = config.noko50_count %}
+		<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post, true) }}">[{% trans %}Last 1 Post{% plural lastcount %}Last {{ count }} Posts{% endtrans %}]</a>
+	{% endif %}
+{% endif %}
+
+{% if hr %}<hr/>{% endif %}
 </div>
