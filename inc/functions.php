@@ -1281,7 +1281,7 @@ function post(array $post) {
 	global $pdo, $board, $config, $mod;
  
 	$given_spesific_get = false;
-	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :cookie, :sticky, :locked, :cycle, 0, 0, :embed, :slug)", $board['uri']));
+	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :cookie, :sticky, :locked, :cycle, 0, :hideposterid, :embed, :slug)", $board['uri']));
 
 	// Check if we should use saved get.
 	if($config['post_get']['post_gets_need_history_give_retrospect'] && $config['post_get']['dissable_post_gets'] && !($config['post_get']['not_dissabled_for_mods'] && $mod && $mod['type'] >= MOD)) {
@@ -1385,6 +1385,12 @@ function post(array $post) {
 		$query->bindValue(':cycle', true, PDO::PARAM_INT);
 	} else {
 		$query->bindValue(':cycle', false, PDO::PARAM_INT);
+	}
+
+	if ($post['op'] && isset($post['hideposterid']) && $post['hideposterid']) {
+		$query->bindValue(':hideposterid', true, PDO::PARAM_INT);
+	} else {
+		$query->bindValue(':hideposterid', false, PDO::PARAM_INT);
 	}
 
 	if ($post['mod'] && isset($post['capcode']) && $post['capcode']) {
