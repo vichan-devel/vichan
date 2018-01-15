@@ -97,19 +97,52 @@
 {% endif %}
 </div>{% endfilter %}
 {% set hr = post.hr %}
+
+
+{% set post_shadow = post.shadow %}
+{% set post_omitted = post.omitted %}
+{% set post_omitted_images = post.omitted_images %}
+
+
 {% for post in post.posts %}
 	{% include 'post_reply.html' %}
 {% endfor %}
 <br class="clear"/>
 
-{% if not post.shadow %}
+
+
+{% if not post_shadow %}
+		
+	
 	{% if isnoko50 %}
+		{% if post_omitted or post_omitted_images %}<span class="omitted">{% endif %}
 		<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post) }}">[{% trans %}View All{% endtrans %}]</a>
+		{% if post_omitted or post_omitted_images %}
+			 (
+			{% if post_omitted %}
+				{% trans %}
+					1 post
+				{% plural post_omitted %}
+					{{ count }} posts
+				{% endtrans %}
+				{% if post_omitted_images %}
+					 {% trans %}and{% endtrans %} 
+				{% endif %}
+			{% endif %}
+			{% if post_omitted_images %}
+				{% trans %}
+					1 image reply
+				{% plural post_omitted_images %}
+					{{ count }} image replies
+				{% endtrans %}
+			{% endif %} {% trans %}omitted{% endtrans %})</span>
+		{% endif %}
 	{% endif %}
 	{% if hasnoko50 and not isnoko50 %}
 		{% set lastcount = config.noko50_count %}
 		<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post, true) }}">[{% trans %}Last 1 Post{% plural lastcount %}Last {{ count }} Posts{% endtrans %}]</a>
 	{% endif %}
+
 {% endif %}
 
 {% if hr %}<hr/>{% endif %}

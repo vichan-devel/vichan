@@ -111,6 +111,7 @@ $pages = array(
 	'/(\%b)/(un)?lock/(\d+)'		=> 'secure lock',		// lock thread
 	'/(\%b)/(un)?sticky/(\d+)'		=> 'secure sticky',		// sticky thread
 	'/(\%b)/(un)?cycle/(\d+)'                         => 'secure cycle',          // cycle thread
+	'/(\%b)/(un)?hideid/(\d+)'		=> 'secure hideid',		// hide poster ID on thread
 	'/(\%b)/bump(un)?lock/(\d+)'		=> 'secure bumplock',		// "bumplock" thread
 	'/(\%b)/deletefilepermaban/(\d+)/(\d+)'     => 'secure deletefilepermaban',     // delete file from post and permaban it
 

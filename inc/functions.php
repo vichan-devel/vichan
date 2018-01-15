@@ -1279,8 +1279,67 @@ function insertFloodPost(array $post) {
 
 function post(array $post) {
 	global $pdo, $board, $config, $mod;
+ 
+	$given_spesific_get = false;
+	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :cookie, :sticky, :locked, :cycle, 0, 0, :embed, :slug)", $board['uri']));
 
-	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :cookie, :sticky, :locked, :cycle, 0, :embed, :slug)", $board['uri']));
+	// Check if we should use saved get.
+	if($config['post_get']['post_gets_need_history_give_retrospect'] && $config['post_get']['dissable_post_gets'] && !($config['post_get']['not_dissabled_for_mods'] && $mod && $mod['type'] >= MOD)) {
+		if(file_exists($board['dir'] . "get_denies.txt") && file_exists($board['dir'] . "get_denies.txt.lock")) {
+
+			$has_history = false;
+			if($config['post_get']['post_gets_need_history']) {
+				// Get post history for IP
+				$post_count_query = prepare(sprintf("SELECT COUNT(*) AS count FROM ``posts_%s`` WHERE `ip` = :ip AND `time` < :timeoffset", $board['uri']));
+				$post_count_query->bindValue(':ip', isset($post['ip']) ? $post['ip'] : get_ip_hash($_SERVER['REMOTE_ADDR'], PDO::PARAM_STR));
+				$post_count_query->bindValue(':timeoffset', time() - $config['post_get']['post_gets_need_history_time'], PDO::PARAM_INT);
+
+				
+				$post_count_query->execute() or error(db_error($post_count_query));
+				$post_count_hist = $post_count_query->fetch()['count'];
+				if($post_count_hist >= $config['post_get']['post_gets_need_history_count'])
+				{
+					$has_history = true;
+				}
+			}
+
+			// If no history needed or poster has needed history get the get num needed.
+			if(!$config['post_get']['post_gets_need_history'] || $has_history) {
+
+				$file_get_num = NULL;
+
+				// create file to make samephoric check
+				$fp = fopen($board['dir'] . "get_denies.txt.lock", "r");
+				if (flock($fp, LOCK_EX)) {  // acquire an exclusive lock
+					if(file_exists($board['dir'] . "get_denies.txt")) {
+						$file_content = file_get_contents($board['dir'] . "get_denies.txt");
+
+						$file_content = explode("\n", $file_content);
+						$file_get_num = array_shift($file_content);
+
+						if(sizeof($file_content) == 0) {
+							unlink($board['dir'] . "get_denies.txt");
+						} else {
+							file_put_contents($board['dir'] . "get_denies.txt", implode("\n", $file_content));
+						}
+
+						flock($fp, LOCK_UN);    // release the lock
+
+						// Set spesific post num
+						if(is_numeric($file_get_num)) {
+							$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( :post_num, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :cookie, :sticky, :locked, :cycle, 0, 0, :embed, :slug)", $board['uri']));
+							$query->bindValue(':post_num', $file_get_num, PDO::PARAM_INT);
+							$given_spesific_get = true;
+						}
+					} else {
+						error("Couldn't get the lock!");
+					}
+				}
+				fclose($fp);
+			}
+		}
+	}
+
 
 	// Basic stuff
 	if (!empty($post['subject'])) {
@@ -1373,15 +1432,46 @@ function post(array $post) {
 	$postID = $pdo->lastInsertId();
 
 	// Skip GETS
-	if($config['post_get']['dissable_post_gets'] && !($config['post_get']['not_dissabled_for_mods'] && $mod && $mod['type'] >= MOD)) {
+	if(!$given_spesific_get && ($config['post_get']['shadowdelete_post_gets'] || $config['post_get']['dissable_post_gets']) && !($config['post_get']['not_dissabled_for_mods'] && $mod && $mod['type'] >= MOD)) {
 		if(postID_GetCheck($postID)){
-			// Delete current get post entry
-			$query = prepare(sprintf("DELETE FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
-			$query->bindValue(':id', $postID, PDO::PARAM_INT);
-			$query->execute() or error(db_error($query));
+			if($config['post_get']['shadowdelete_post_gets']) {
+				ShadowDelete::deletePost($postID);
+				error("Something .... Sometimes ....");
+			} else if($config['post_get']['post_gets_need_history']) {
+				// Get post history for IP
+				$post_count_query = prepare(sprintf("SELECT COUNT(*) AS count FROM ``posts_%s`` WHERE `ip` = :ip AND `time` < UNIX_TIMESTAMP() - :timeoffset", $board['uri']));
+				$query->bindValue(':ip', isset($post['ip']) ? $post['ip'] : get_ip_hash($_SERVER['REMOTE_ADDR']));
+				$query->bindValue(':timeoffset', $config['post_get']['post_gets_need_history_time']);
 
-			// Create a new post entry and return new ID
-			return post($post);
+				$post_count_hist = $post_count_query->fetch()['count'];
+				if($post_count_hist < $config['post_get']['post_gets_need_history_count']) {
+					// Delete current get post entry
+					$query = prepare(sprintf("DELETE FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
+					$query->bindValue(':id', $postID, PDO::PARAM_INT);
+					$query->execute() or error(db_error($query));
+
+					if($config['post_get']['post_gets_need_history_give_retrospect']){
+						// Create or append post id to file 
+						if(file_exists($board['dir'] . "get_denies.txt"))
+							$file_content = file_get_contents($board['dir'] . "get_denies.txt") . "\n" . $postID;
+						else
+							$file_content = $postID;
+						file_put_contents($board['dir'] . "get_denies.txt", $file_content);
+						file_put_contents($board['dir'] . "get_denies.txt.lock", "");
+					}
+
+					// Create a new post entry and return new ID
+					return post($post);
+				}
+			} else {
+				// Delete current get post entry
+				$query = prepare(sprintf("DELETE FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
+				$query->bindValue(':id', $postID, PDO::PARAM_INT);
+				$query->execute() or error(db_error($query));
+
+				// Create a new post entry and return new ID
+				return post($post);
+			}
 		}
 	}
 
@@ -1704,9 +1794,10 @@ function deletePostPermanent($id, $error_if_doesnt_exist=true, $rebuild_after=tr
 	if(!$mod && $config['diceroll']['anticheat'] && isset($thread_id) && count($ids) == 1) {
 		$post_body_nomarkup = $post_data['body_nomarkup'];
 
+		// Remove all other text than dicerolls
 		if(strpos($post_body_nomarkup, "[/diceroll]") !== false) {
 			$new_body_nomarkup_count = preg_match_all('/.*?(\[diceroll\].*?\[\/diceroll\])/i', $post_body_nomarkup, $new_body_nomarkup);
-			$new_body_nomarkup = implode("\n", $new_body_nomarkup[0]);
+			$new_body_nomarkup = implode("", $new_body_nomarkup[0]);
 		}
 	}
 
@@ -2832,7 +2923,8 @@ function buildThread($id, $return = false, $mod = false, $shadow = false) {
 		$query = prepare(
 			sprintf("SELECT ``posts_%s``.*, 0 AS `shadow` FROM ``posts_%s`` WHERE (`thread` IS NULL AND `id` = :id) OR `thread` = :id", $board['uri'], $board['uri']) .
 			($shadow?" UNION ALL " . sprintf("SELECT ``shadow_posts_%s``.*, 1 AS `shadow` FROM ``shadow_posts_%s`` WHERE (`thread` IS NULL AND `id` = :id) OR `thread` = :id", $board['uri'], $board['uri']):"") .
-			" ORDER BY `thread`,`id`");
+			// " ORDER BY `thread`,`id`");
+			" ORDER BY `thread`,`time`,`id`");
 		$query->bindValue(':id', $id, PDO::PARAM_INT);
 		$query->execute() or error(db_error($query));
 
@@ -2859,6 +2951,7 @@ function buildThread($id, $return = false, $mod = false, $shadow = false) {
 		$body = Element('thread.html', array(
 			'board' => $board,
 			'thread' => $thread,
+			'hideposterid' => $thread->hideid,
 			'body' => $thread->build(),
 			'config' => $config,
 			'id' => $id,
@@ -2908,7 +3001,8 @@ function buildThread50($id, $return = false, $mod = false, $thread = null, $anti
 		$antibot->reset();
 		
 	if (!$thread) {
-		$query = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE (`thread` IS NULL AND `id` = :id) OR `thread` = :id ORDER BY `thread`,`id` DESC LIMIT :limit", $board['uri']));
+		$query = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE (`thread` IS NULL AND `id` = :id) OR `thread` = :id ORDER BY `thread`, `time` DESC,`id` DESC LIMIT :limit", $board['uri']));
+		// $query = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE (`thread` IS NULL AND `id` = :id) OR `thread` = :id ORDER BY `thread`,`id` DESC LIMIT :limit", $board['uri']));
 		$query->bindValue(':id', $id, PDO::PARAM_INT);
 		$query->bindValue(':limit', $config['noko50_count']+1, PDO::PARAM_INT);
 		$query->execute() or error(db_error($query));
@@ -3260,6 +3354,7 @@ function shell_exec_error($command, $suppress_stdout = false) {
  */
 function diceRoller($post) {
 	global $config;
+
 	if(strpos(strtolower($post->email), 'dice%20') === 0) {
 		// $dicestr_all = str_split(substr($post->email, strlen('dice%20')));
 		$dicestr_all = substr($post->email, strlen('dice%20'));
@@ -3301,7 +3396,9 @@ function diceRoller($post) {
 			$diceZ = intval($diceZ);
 
 			// Continue only if we have valid values
-			if($diceX > 0 && $diceY > 0) {
+			// if($diceX > 0 && $diceY > 0) {
+			// Continue only if we have valid values
+			if($diceX > 0 && $diceX <= $config['max_roll_count'] && $diceY > 0) {				
 				$dicerolls = array();
 				$dicesum = $diceZ;
 				for($i = 0; $i < $diceX; $i++) {
