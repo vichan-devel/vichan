@@ -607,8 +607,9 @@ if (isset($_POST['delete'])) {
 		}
 	}
 
+	if($config['hide_poster_id_thread'] && $post['op'])
+		$post['hideposterid'] = isset($_POST['hideposterid']);
 
-	
 	$post['name'] = $_POST['name'] != '' ? $_POST['name'] : $config['anonymous'];
 	$post['subject'] = $_POST['subject'];
 	$post['email'] = str_replace(' ', '%20', htmlspecialchars($_POST['email']));

@@ -770,6 +770,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// static spoiler image instead (see $config['spoiler_image']).
 	$config['spoiler_images'] = false;
 
+	// Allow users to mark thread they create as and No Poster ID thread
+	$config['hide_poster_id_thread'] = false;
+
 	// With the following, you can disable certain superfluous fields or enable "forced anonymous".
 
 	// When true, all names will be set to $config['anonymous'].
