@@ -1539,6 +1539,34 @@ function mod_bumplock($board, $unbumplock, $post) {
 	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
 }
 
+
+
+
+
+function mod_hideid($board, $unhideid, $post) {
+	global $config;
+	
+	if (!openBoard($board))
+		error($config['error']['noboard']);
+	
+	if (!hasPermission($config['mod']['hideid'], $board))
+		error($config['error']['noaccess']);
+	
+	$query = prepare(sprintf('UPDATE ``posts_%s`` SET `hideid` = :hideid WHERE `id` = :id AND `thread` IS NULL', $board));
+	$query->bindValue(':id', $post);
+	$query->bindValue(':hideid', $unhideid ? 0 : 1);
+	$query->execute() or error(db_error($query));
+	if ($query->rowCount()) {
+		modLog(($unhideid ? 'UnHided Poster ID' : 'Hided Poster ID') . " thread #{$post}");
+		buildThread($post);
+		buildIndex();
+	}
+	
+	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
+}
+
+
+
 function mod_move_reply($originBoard, $postID) { 
 	global $board, $config, $mod;
 
@@ -3202,7 +3230,13 @@ function mod_config($board_config = false) {
 		}
 		
 		if (!empty($config_append)) {
-			$config_append = "\n// Changes made via web editor by \"" . $mod['username'] . "\" @ " . date('r') . ":\n" . $config_append . "\n";
+			$config_append = "\n// Changes made via web editor by \"" . preg_replace('/[[:^alnum:]]/', '_', $mod['username']) . "\" @ " . date('r') . ":\n" . $config_append . "\n";
+			
+			if($board_config)
+				modLog("Changed board config for " . $board['dir'] . " via web editor");
+			else
+				modLog("Changed site config via web editor");
+			
 			if (!is_file($config_file))
 				$config_append = "<?php\n\n$config_append";
 			if (!@file_put_contents($config_file, $config_append, FILE_APPEND)) {

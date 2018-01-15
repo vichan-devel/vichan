@@ -21,7 +21,7 @@ $(document).ready(function () {
 			}
 		});
 
-		if (typeof localStorage.file_dragdrop === 'undefined') localStorage.file_dragdrop = 'true';
+		if (typeof localStorage.file_dragdrop === 'undefined') localStorage.file_dragdrop = 'false';
 		if (localStorage.file_dragdrop === 'true') $('#file-drag-drop>input').prop('checked', true);
 	}
 });

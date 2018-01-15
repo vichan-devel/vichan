@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS ``posts_{{ board }}`` (
   `locked` int(1) NOT NULL,
   `cycle` int(1) NOT NULL,
   `sage` int(1) NOT NULL,
+  `hideid` int(1) NOT NULL,
   `embed` text,
   `slug` varchar(256) DEFAULT NULL,
   UNIQUE KEY `id` (`id`),

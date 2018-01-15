@@ -477,6 +477,9 @@ class Thread {
 		
 		event('show-thread', $this);
 
+		// Var telling if we should hide poster id	
+		$hideposterid = $this->hideid;
+
 		// Fix Inline Links for Last 50
 		// Get minimum post_no in thread
 		// Go through all post.body and use regex on links
@@ -485,7 +488,8 @@ class Thread {
         if($isnoko50)
         {
             $thread_num = $this->posts[0]->id;
-            $min_post_num = $this->posts[1]->id;
+			$min_post_num = $this->posts[1]->id;
+
             for($i=1; $i<count($this->posts); $i++)
             {
                 // Find all links
@@ -508,7 +512,7 @@ class Thread {
         }
 
 		$file = ($index && $config['file_board']) ? 'post_thread_fileboard.html' : 'post_thread.html';
-		$built = Element($file, array('config' => $config, 'board' => $board, 'post' => &$this, 'index' => $index, 'hasnoko50' => $hasnoko50, 'isnoko50' => $isnoko50, 'mod' => $this->mod));
+		$built = Element($file, array('config' => $config, 'hideposterid' => $hideposterid, 'board' => $board, 'post' => &$this, 'index' => $index, 'hasnoko50' => $hasnoko50, 'isnoko50' => $isnoko50, 'mod' => $this->mod));
 		
 		return $built;
 	}

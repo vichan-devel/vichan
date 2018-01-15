@@ -25,7 +25,7 @@
 
 	defined('TINYBOARD') or exit;
 
-
+	
 /*
  * ====================
  *  Basic settings
@@ -52,8 +52,20 @@ $config['json_scrambler']['salt'] = '0123456789012345678901';
  * ====================
  */
 
+// Set to true if you want to automatically shadow delete all GETS globaly (this overrides disabling of gets) (can also be set for each board in it's config)
+$config['post_get']['shadowdelete_post_gets'] = false;
+
 // Set to true if you want to dissable all GETS globaly (can also be set for each board in it's config)
 $config['post_get']['dissable_post_gets'] = false;
+
+// Set to true if poster need a posting history to get GETS globaly (can also be set for each board in it's config)
+$config['post_get']['post_gets_need_history'] = false;
+// Give skippet GET to someone with post history if it was skipped
+$config['post_get']['post_gets_need_history_give_retrospect'] = false;
+// Needs to have posted 7 days ago
+$config['post_get']['post_gets_need_history_time'] = 60*60*24*7;
+// Needs to have posted at least 10 posts prior to time
+$config['post_get']['post_gets_need_history_count'] = 10;
 
 // Allow MODS to get the GET if they manage to post at the right time
 $config['post_get']['not_dissabled_for_mods'] = false;
@@ -1702,6 +1714,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['mod']['link_cycle'] = '[Cycle]';
 	$config['mod']['link_uncycle'] = '[-Cycle]';
 
+	$config['mod']['link_hideid'] = '[HideID]';
+	$config['mod']['link_unhideid'] = '[-HideID]';
+
 	$config['mod']['link_shadow_restore'] = '[SD Restore]';
 	$config['mod']['link_shadow_delete'] = '[SD Delete]';
 
@@ -1893,6 +1908,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
     $config['cycle_limit'] = &$config['reply_limit'];
     // Lock a thread
     $config['mod']['lock'] = JANITOR;
+    // Hide Poster ID in thread
+    $config['mod']['hideid'] = MOD;
     // Post in a locked thread
     $config['mod']['postinlocked'] = JANITOR;
     // Prevent a thread from being bumped

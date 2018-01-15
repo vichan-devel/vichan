@@ -84,6 +84,15 @@
 			{% endif %}
 		{% endif %}
 	{% endif %}
+	{% if mod|hasPermission(config.mod.hideid, board.uri) %}
+		{% if not post.thread %}
+			{% if post.hideid %}
+			<a title="{% trans %}Show Poster IDs in thread{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'unhideid/' ~ post.id) }}">{{ config.mod.link_unhideid }}</a>&nbsp;
+			{% else %}
+			<a title="{% trans %}Hide Poster IDs in thread{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'hideid/' ~ post.id) }}">{{ config.mod.link_hideid }}</a>&nbsp;
+			{% endif %}
+		{% endif %}
+	{% endif %}
 	{% if mod|hasPermission(config.mod.editpost, board.uri) %}
 		<a title="{% trans %}Edit post{% endtrans %}" href="?/{{ board.dir }}edit{% if config.mod.raw_html_default %}_raw{% endif %}/{{ post.id }}">{{ config.mod.link_editpost }}</a>&nbsp;
 	{% endif %}

@@ -1,7 +1,7 @@
 <?php
 
 // Installation/upgrade file	
-define('VERSION', '6.0.6');
+define('VERSION', '6.0.7');
 
 require 'inc/functions.php';
 
@@ -775,6 +775,11 @@ if (file_exists($config['has_installed'])) {
 				KEY `cookie` (`cookie`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 			') or error(db_error());
+		case '6.0.6':
+			foreach ($boards as &$board) {
+				query(sprintf("ALTER TABLE ``posts_%s`` ADD `hideid` INT(1) NOT NULL DEFAULT '0' AFTER `sage`;", $board['uri'])) or error(db_error());
+				query(sprintf("ALTER TABLE ``shadow_posts_%s`` ADD `hideid` INT(1) NOT NULL DEFAULT '0' AFTER `sage`;", $board['uri'])) or error(db_error());
+			}
 		case false:
 			// TODO: enhance Tinyboard -> vichan upgrade path.
 			query("CREATE TABLE IF NOT EXISTS ``search_queries`` (  `ip` varchar(39) NOT NULL,  `time` int(11) NOT NULL,  `query` text NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8;") or error(db_error());
