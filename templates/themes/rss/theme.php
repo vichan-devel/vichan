@@ -24,12 +24,14 @@
 			
 			$this->excluded = explode(' ', $settings['exclude']);
 			
-			if ($action == 'all' || $action == 'post' || $action == 'post-thread' || $action == 'post-delete')
+			if ($action == 'all' || $action == 'post' || $action == 'post-thread' || $action == 'post-delete') {
 				file_write($config['dir']['home'] . $settings['xml'], $this->homepage($settings));
+				file_write($config['dir']['home'] . $settings['xml_op'], $this->homepage($settings, true));
+			}
 		}
 		
 		// Build news page
-		public function homepage($settings) {
+		public function homepage($settings, $op_only = false) {
 			global $config, $board;
 			
 			//$recent_images = Array();
@@ -57,25 +59,81 @@
 				//$recent_images[] = $post;
 			}*/
 			
+
+
+			// SELECT b1.*, b2.subject AS `title`, 'b' AS `board` 
+			// FROM `posts_b` b1
+			// LEFT JOIN `posts_b` b2
+			// ON (b1.thread IS NOT NULL AND b1.thread = b2.id)
+			// OR (b1.thread IS NULL AND b1.id = b2.id)
+			// ORDER BY `time` DESC LIMIT 30
+
 			
+
 			$query = '';
 			foreach ($boards as &$_board) {
 				if (in_array($_board['uri'], $this->excluded))
 					continue;
-				$query .= sprintf("SELECT *, '%s' AS `board` FROM ``posts_%s`` UNION ALL ", $_board['uri'], $_board['uri']);
+				// $query .= sprintf("SELECT b1.*, b2.subject AS `title`, '%s' AS `board` FROM `posts_%s` b1 INNER JOIN `posts_%s` b2 ON (b1.thread IS NOT NULL AND b1.thread = b2.id) OR (b1.thread IS NULL AND b1.id = b2.id) UNION ALL ", $_board['uri'], $_board['uri'], $_board['uri']);
+				// // $query .= sprintf("SELECT t1.*, IF (t1.thread IS NULL, t1.subject, t2.subject) AS `title`, '%s' AS `board` FROM ``posts_%s`` t1, ``posts_%s`` t2 WHERE t1.thread IS NULL OR t2.id = t1.thread UNION ALL ", $_board['uri'], $_board['uri'], $_board['uri']);
+				if($op_only)
+					$query .= sprintf("SELECT *, '%s' AS `board` FROM ``posts_%s`` WHERE `thread` IS NULL UNION ALL ", $_board['uri'], $_board['uri']);
+				else
+					$query .= sprintf("SELECT *, '%s' AS `board` FROM ``posts_%s`` UNION ALL ", $_board['uri'], $_board['uri']);
 			}
+
 			$query = preg_replace('/UNION ALL $/', 'ORDER BY `time` DESC LIMIT ' . (int)$settings['limit_posts'], $query);
 			$query = query($query) or error(db_error());
-			
+
 			while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
 				openBoard($post['board']);
 				
 				$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res'] . sprintf($config['file_page'], ($post['thread'] ? $post['thread'] : $post['id'])) . '#' . $post['id'];
-				$post['snippet'] = pm_snippet($post['body'], 30);
+				$post['snippet'] = pm_snippet($post['body'], 80);
 				$post['board_name'] = $board['name'];
+				$post['pub_date'] = date('r', $post['time']);
 				
 				$recent_posts[] = $post;
 			}
+
+
+			// Get titles of threads
+			$threads = array();
+			if(!$op_only) {
+				if(sizeof($recent_posts) > 0) {
+					foreach($recent_posts as $p) {
+						if($p['thread'] != null && (!isset($threads[$p['board']]) || !in_array($p['thread'], $threads[$p['board']])))
+							$threads[$p['board']][] = $p['thread'];
+					}
+
+					// Build query
+					$query = '';
+					foreach($threads as $board => $thread_list) {
+						$query .= sprintf("SELECT `id`, `subject`, '%s' AS `board` FROM ``posts_%s`` WHERE `id` IN (%s) UNION ALL ", $board, $board, implode(',', $threads[$board]));
+					}
+					$query = preg_replace('/UNION ALL $/', '', $query);
+					$query = query($query) or error(db_error());
+
+					// Fetch and Organize fetched data in a usefull manner 
+					$threads = array();
+					while ($t = $query->fetch(PDO::FETCH_ASSOC)) {
+						$threads[$t['board']][$t['id']] = $t['subject'];
+					}
+				}
+
+			}
+
+			// Update all posts with thread subject data
+			foreach($recent_posts as &$post) {
+				if($post['thread'] == null)
+					$post['title'] = $post['subject'];
+				else
+					$post['title'] = $threads[$post['board']][$post['thread']];
+
+				// Trunkate title
+				$post['title'] = !empty($post['title'])?pm_snippet($post['title'], 25):"No title";
+			}
+
 			
 			// Total posts
 			/*$query = 'SELECT SUM(`top`) FROM (';
@@ -109,10 +167,14 @@
 			$query = preg_replace('/UNION ALL $/', ') AS `posts_all`', $query);
 			$query = query($query) or error(db_error());
 			//$stats['active_content'] = $query->fetchColumn();*/
+
+			
+			// error(var_export($settings));
 			
 			return Element('themes/rss/rss.xml', Array(
 				'settings' => $settings,
 				'config' => $config,
+				'op_only' => $op_only,
 				//'boardlist' => createBoardlist(),
 				//'recent_images' => $recent_images,
 				'recent_posts' => $recent_posts,
