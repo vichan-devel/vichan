@@ -6,12 +6,13 @@
     <description>
       <![CDATA[{{ settings.subtitle }}]]>
     </description>
-    <title>{{ settings.title }}</title>
-    <generator>Tinyboard {{ config.version }}</generator>
+    <title>{% if op_only %}{{ settings.title_op }}{% else %}{{ settings.title }}{% endif %}</title>
+    <generator>NPFChan {{ config.version }}</generator>
     <link>{{ settings.base_url }}{{ config.root }}{{ settings.html }}</link>
     {% for post in recent_posts %}
     <item>
-      <title>{{ post.board_name }}</title>
+      <title>{{ post.title }}</title>
+      <category>{{ post.board_name }}</category>
       <description>
 	<![CDATA[
 		 <a href="{{ settings.base_url }}{{ post.link }}">
@@ -21,6 +22,7 @@
       </description>
       <link>{{ settings.base_url }}{{ post.link }}</link>
       <guid>{{ settings.base_url }}{{ post.link }}</guid>
+      <pubDate>{{ post.pub_date }}</pubDate>
     </item>
     {% endfor %}
   </channel>

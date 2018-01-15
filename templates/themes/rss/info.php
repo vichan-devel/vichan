@@ -11,10 +11,17 @@
 	$theme['config'] = Array();
 	
 	$theme['config'][] = Array(
-		'title' => 'Title',
+		'title' => 'Title Recent Posts',
 		'name' => 'title',
 		'type' => 'text',
 		'default' => 'Recent Posts RSS'
+	);
+	
+	$theme['config'][] = Array(
+		'title' => 'Title Recent Thread OPs',
+		'name' => 'title_op',
+		'type' => 'text',
+		'default' => 'Recent Threads RSS'
 	);
 	
 	$theme['config'][] = Array(
@@ -25,19 +32,27 @@
 	);
 	
 	$theme['config'][] = Array(
-		'title' => '# of recent posts',
+		'title' => '# of recent posts/threads',
 		'name' => 'limit_posts',
 		'type' => 'text',
 		'default' => '30',
-		'comment' => '(maximum posts to display)'
+		'comment' => '(maximum posts/threads to display)'
 	);
 	
 	$theme['config'][] = Array(
-		'title' => 'XML file',
+		'title' => 'XML file recent posts',
 		'name' => 'xml',
 		'type' => 'text',
 		'default' => 'recent.xml',
 		'comment' => '(eg. "recent.xml")'
+	);
+	
+	$theme['config'][] = Array(
+		'title' => 'XML file recent thread OPs only',
+		'name' => 'xml_op',
+		'type' => 'text',
+		'default' => 'recent_threads.xml',
+		'comment' => '(eg. "recent_threads.xml")'
 	);
 	
 	$theme['config'][] = Array(
