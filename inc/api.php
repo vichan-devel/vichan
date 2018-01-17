@@ -101,13 +101,13 @@ class Api {
 		}
 	}
 
-	private function translatePost($post, $threadsPage = false) {
+	private function translatePost($post, $threadsPage = false, $hideposterid = false) {
 		global $config, $board;
 		$apiPost = array();
 		$fields = $threadsPage ? $this->threadsPageFields : $this->postFields;
 		$this->translateFields($fields, $post, $apiPost);
 
-		if (isset($config['poster_ids']) && $config['poster_ids']) $apiPost['id'] = poster_id($post->ip, $post->thread, $board['uri']);
+		if (!$hideposterid && isset($config['poster_ids']) && $config['poster_ids']) $apiPost['id'] = poster_id($post->ip, $post->thread, $board['uri']);
 		if ($threadsPage) return $apiPost;
 
 		// Handle country field
@@ -149,13 +149,16 @@ class Api {
 	}
 
 	function translateThread(Thread $thread, $threadsPage = false) {
+		
+		$hideposterid = $thread->hideid;
+
 		$apiPosts = array();
-		$op = $this->translatePost($thread, $threadsPage);
+		$op = $this->translatePost($thread, $threadsPage, $hideposterid);
 		if (!$threadsPage) $op['resto'] = 0;
 		$apiPosts['posts'][] = $op;
 
 		foreach ($thread->posts as $p) {
-			$apiPosts['posts'][] = $this->translatePost($p, $threadsPage);
+			$apiPosts['posts'][] = $this->translatePost($p, $threadsPage, $hideposterid);
 		}
 
 		return $apiPosts;
