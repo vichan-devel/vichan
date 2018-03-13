@@ -3207,7 +3207,7 @@ function getPostByAllHash($allhashes)
 	foreach($hashes as $hash)
 	{
 		// Search for filehash
-		$query = prepare(sprintf("SELECT `post` AS `d`, `thread` FROM `filehashes` WHERE `filehash` = :hash AND ( `board` = '%s' OR `board` = '%s' )", $board['uri'], "permaban"));
+		$query = prepare(sprintf("SELECT `post` AS `id`,`thread` FROM `filehashes` WHERE `filehash` = :hash AND ( `board` = '%s' OR `board` = '%s' )", $board['uri'], "permaban"));
 		$query->bindValue(':hash', $hash, PDO::PARAM_STR);
 		$query->execute() or error(db_error($query));
 
