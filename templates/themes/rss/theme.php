@@ -23,7 +23,7 @@
 			}*/
 			
 			$this->excluded = explode(' ', $settings['exclude']);
-			
+
 			if ($action == 'all' || $action == 'post' || $action == 'post-thread' || $action == 'post-delete') {
 				file_write($config['dir']['home'] . $settings['xml'], $this->homepage($settings));
 				file_write($config['dir']['home'] . $settings['xml_op'], $this->homepage($settings, true));
@@ -89,7 +89,7 @@
 				openBoard($post['board']);
 				
 				$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res'] . sprintf($config['file_page'], ($post['thread'] ? $post['thread'] : $post['id'])) . '#' . $post['id'];
-				$post['snippet'] = pm_snippet($post['body'], 80);
+				$post['snippet'] = str_replace('&hellip;', '...', pm_snippet($post['body'], 80));
 				$post['board_name'] = $board['name'];
 				$post['pub_date'] = date('r', $post['time']);
 				
@@ -131,10 +131,10 @@
 					$post['title'] = $threads[$post['board']][$post['thread']];
 
 				// Trunkate title
-				$post['title'] = !empty($post['title'])?pm_snippet($post['title'], 25):"No title";
+				$post['title'] = !empty($post['title'])?str_replace('&hellip;', '...', pm_snippet($post['title'], 25)):"No title";
 			}
 
-			
+
 			// Total posts
 			/*$query = 'SELECT SUM(`top`) FROM (';
 			foreach ($boards as &$_board) {

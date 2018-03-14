@@ -1431,9 +1431,9 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['error']['invalidwebm'] 	= _('Invalid webm uploaded.');
 	$config['error']['webmhasaudio'] 	= _('The uploaded webm contains an audio or another type of additional stream.');
 	$config['error']['webmtoolong'] 	= _('The uploaded webm is longer than ' . $config['webm']['max_length'] . ' seconds.');
-	$config['error']['fileexists']		= _('That file <a href="%s">already exists</a>!');
+	$config['error']['fileexists']		= _('The file (%s) <a href="%s">already exists</a>!');
 	$config['error']['fileduplicate']		= _('You can\'t add duplicates of same file!');
-	$config['error']['fileexistsinthread']	= _('That file <a href="%s">already exists</a> in this thread!');
+	$config['error']['fileexistsinthread']	= _('The file (%s) <a href="%s">already exists</a> in this thread!');
 	$config['error']['delete_too_soon']	= _('You\'ll have to wait another %s before deleting that.');
 	$config['error']['mime_exploit']	= _('MIME type detection XSS exploit (IE) detected; post discarded.');
 	$config['error']['invalid_embed']	= _('Couldn\'t make sense of the URL of the video you tried to embed.');
@@ -1939,6 +1939,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// The country name showed to the users will always match the flag.
 	$config['mod']['forcedflag'] = MOD;
 	$config['mod']['forcedflag_countries'] = array(
+		225 	=>	'United States',
 		38 		=>	'Canada',
 		102		=>	'Israel',
 		256 	=>	'Gypsy',

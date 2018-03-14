@@ -2892,19 +2892,43 @@ function ordutf8($string, &$offset) {
 	return $code;
 }
 
+
 function strip_combining_chars($str) {
-	$chars = preg_split('//u', $str, -1, PREG_SPLIT_NO_EMPTY);
-	$str = '';
-	foreach ($chars as $char) {
-		$o = 0;
-		$ord = ordutf8($char, $o);
 
-		if ( ($ord >= 768 && $ord <= 879) || ($ord >= 1536 && $ord <= 1791) || ($ord >= 3655 && $ord <= 3659) || ($ord >= 7616 && $ord <= 7679) || ($ord >= 8400 && $ord <= 8447) || ($ord >= 65056 && $ord <= 65071))
-			continue;
+	// https://stackoverflow.com/questions/32921751/how-to-prevent-zalgo-text-using-php
+	$str = preg_replace("~(?:[\p{M}]{1})([\p{M}])+?~uis","", $str);
 
-		$str .= $char;
-	}
-	return $str;
+	// https://stackoverflow.com/questions/1401317/remove-non-utf8-characters-from-string
+	$regex = <<<'END'
+/
+  (
+    (?: [\x00-\x7F]                 # single-byte sequences   0xxxxxxx
+    |   [\xC0-\xDF][\x80-\xBF]      # double-byte sequences   110xxxxx 10xxxxxx
+    |   [\xE0-\xEF][\x80-\xBF]{2}   # triple-byte sequences   1110xxxx 10xxxxxx * 2
+    |   [\xF0-\xF7][\x80-\xBF]{3}   # quadruple-byte sequence 11110xxx 10xxxxxx * 3 
+    ){1,100}                        # ...one or more times
+  )
+| .                                 # anything else
+/x
+END;
+	$str = preg_replace($regex, '$1', $str);
+
+	// Return an fully sanitized utf-8 string
+	return mb_convert_encoding($str, 'UTF-8', 'UTF-8');
+
+
+	// $chars = preg_split('//u', $str, -1, PREG_SPLIT_NO_EMPTY);
+	// $str = '';
+	// foreach ($chars as $char) {
+	// 	$o = 0;
+	// 	$ord = ordutf8($char, $o);
+
+	// 	if ( ($ord >= 768 && $ord <= 879) || ($ord >= 1536 && $ord <= 1791) || ($ord >= 3655 && $ord <= 3659) || ($ord >= 7616 && $ord <= 7679) || ($ord >= 8400 && $ord <= 8447) || ($ord >= 65056 && $ord <= 65071))
+	// 		continue;
+
+	// 	$str .= $char;
+	// }
+	// return $str;
 }
 
 function buildThread($id, $return = false, $mod = false, $shadow = false) {
@@ -3204,7 +3228,7 @@ function getPostByAllHash($allhashes)
 {
 	global $board;
 	$hashes = explode(":", $allhashes);
-	foreach($hashes as $hash)
+	foreach($hashes as $key => $hash)
 	{
 		// Search for filehash
 		$query = prepare(sprintf("SELECT `post` AS `id`,`thread` FROM `filehashes` WHERE `filehash` = :hash AND ( `board` = '%s' OR `board` = '%s' )", $board['uri'], "permaban"));
@@ -3213,6 +3237,7 @@ function getPostByAllHash($allhashes)
 
 		// Return result if found
 		if ($post = $query->fetch(PDO::FETCH_ASSOC)) {
+			$post['image_number'] = $key;
 			return $post;
 		}
 	}
@@ -3225,7 +3250,7 @@ function getPostByAllHashInThread($allhashes, $thread)
 {
 	global $board;
 	$hashes = explode(":", $allhashes);
-	foreach($hashes as $hash)
+	foreach($hashes as $key => $hash)
 	{
 		$query = prepare(sprintf("SELECT `post` AS `id`,`thread` FROM `filehashes` WHERE `filehash` = :hash AND ( ( `board` = '%s' AND `thread` = :thread ) OR `board` = '%s' )", $board['uri'], "permaban"));
 		$query->bindValue(':hash', $hash, PDO::PARAM_STR);
@@ -3234,6 +3259,7 @@ function getPostByAllHashInThread($allhashes, $thread)
 
 		// Return result if found
 		if ($post = $query->fetch(PDO::FETCH_ASSOC)) {
+			$post['image_number'] = $key;
 			return $post;
 		}
 	}
@@ -3246,7 +3272,7 @@ function getPostByAllHashInOP($allhashes)
 {
 	global $board;
 	$hashes = explode(":", $allhashes);
-	foreach($hashes as $hash)
+	foreach($hashes as $key => $hash)
 	{
 		// Search for filehash amongst OP images
 		$query = prepare(sprintf("SELECT `post` AS `id`,`thread` FROM `filehashes` WHERE `filehash` = :hash AND ( ( `board` = '%s' AND `thread` = `post` ) OR `board` = '%s' )", $board['uri'], "permaban"));
@@ -3255,6 +3281,7 @@ function getPostByAllHashInOP($allhashes)
 
 		// Return result if found
 		if ($post = $query->fetch(PDO::FETCH_ASSOC)) {
+			$post['image_number'] = $key;
 			return $post;
 		}
 	}
