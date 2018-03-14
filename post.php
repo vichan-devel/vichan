@@ -909,6 +909,9 @@ if (isset($_POST['delete'])) {
 			$file['hash'] = $hash;
 			// Add Hashes as an imploded string
 			$allhashes .= $hash . ":";
+
+			// Add list of filenames
+			$post['allhashes_filenames'][] = $file['filename'];
 		}
 
 
@@ -1121,7 +1124,7 @@ if (isset($_POST['delete'])) {
 			// if ($p = getPostByHash($post['filehash'])) {
 			if ($p = getPostByAllHash($post['allhashes'])) {
 				undoImage($post);
-				error(sprintf($config['error']['fileexists'], 
+				error(sprintf($config['error']['fileexists'], $post['allhashes_filenames'][$p['image_number']],
 					($post['mod'] ? $config['root'] . $config['file_mod'] . '?/' : $config['root']) .
 					($board['dir'] . $config['dir']['res'] .
 						($p['thread'] ?
@@ -1135,7 +1138,7 @@ if (isset($_POST['delete'])) {
 			// if ($p = getPostByHashInThread($post['filehash'], $post['thread'])) {
 			if ($p = getPostByAllHashInThread($post['allhashes'], $post['thread'])) {
 				undoImage($post);
-				error(sprintf($config['error']['fileexistsinthread'], 
+				error(sprintf($config['error']['fileexistsinthread'], $post['allhashes_filenames'][$p['image_number']],
 					($post['mod'] ? $config['root'] . $config['file_mod'] . '?/' : $config['root']) .
 					($board['dir'] . $config['dir']['res'] .
 						($p['thread'] ?
@@ -1149,7 +1152,7 @@ if (isset($_POST['delete'])) {
 			// Check all OP images and see if any have been used before
 			if ($p = getPostByAllHashInOP($post['allhashes'])) {
 				undoImage($post);
-				error(sprintf($config['error']['fileexistsinthread'], 
+				error(sprintf($config['error']['fileexistsinthread'], $post['allhashes_filenames'][$p['image_number']],
 					($post['mod'] ? $config['root'] . $config['file_mod'] . '?/' : $config['root']) .
 					($board['dir'] . $config['dir']['res'] .
 						($p['thread'] ?
