@@ -1635,7 +1635,11 @@ function mod_move_reply($originBoard, $postID) {
 		$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
 		$hashquery->execute() or error(db_error($hashquery));
 
-		if ($post['has_file']) {
+
+		// bool indicator if it is a move from one board to another
+		$board_move = !($originBoard == $targetBoard);
+
+		if ($post['has_file'] && $board_move) {
 			foreach ($post['files'] as $i => &$file) {
 				// move the image
 				rename($file['file_path'], sprintf($config['board_path'], $board['uri']) . $config['dir']['img'] . $file['file']);
@@ -1659,7 +1663,7 @@ function mod_move_reply($originBoard, $postID) {
 		openBoard($originBoard);
 
 		// delete original post
-		deletePostPermanent($postID);
+		deletePostPermanent($postID, true, true, $board_move);
 		buildIndex();
 
 		// open target board for redirect
