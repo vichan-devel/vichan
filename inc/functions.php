@@ -1738,7 +1738,7 @@ function deletePostShadow($id, $error_if_doesnt_exist=true, $rebuild_after=true,
 
 
 // Delete a post (reply or thread)
-function deletePostPermanent($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
+function deletePostPermanent($id, $error_if_doesnt_exist=true, $rebuild_after=true, $delete_files=true) {
 	global $board, $config, $mod;
 
 	// Select post and replies (if thread) in one query
@@ -1772,7 +1772,7 @@ function deletePostPermanent($id, $error_if_doesnt_exist=true, $rebuild_after=tr
 			// Rebuild thread
 			$rebuild = &$post['thread'];
 		}
-		if ($post['files']) {
+		if ($post['files'] && $delete_files) {
 			// Delete file
 			foreach (json_decode($post['files']) as $i => $f) {
 				if ($f->file !== 'deleted') {
