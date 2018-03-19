@@ -95,9 +95,10 @@ function config_vars() {
 		if ($var['name'] !== false) {
 			if ($var['default_temp'])
 				$var['default'] = $var['default_temp'];
-			if ($var['default'][0] == '&')
-				continue; // This is just an alias.
-			if (!preg_match('/^array|\[\]|function/', $var['default']) && !preg_match('/^Example: /', trim(implode(' ', $var['comment'])))) {
+			if ($var['default'][0] == '&') {
+				// Skip aliases
+			}
+			else if (!preg_match('/^array|\[\]|function/', $var['default']) && !preg_match('/^Example: /', trim(implode(' ', $var['comment'])))) {
 				$syntax_error = true;
 				$temp = eval('$syntax_error = false;return @' . $var['default'] . ';');
 				if ($syntax_error && $temp === false) {
