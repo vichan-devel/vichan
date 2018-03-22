@@ -49,8 +49,11 @@
 		}\
 		#quick-reply tr td:nth-child(2) {\
 			white-space: nowrap;\
-			text-align: right;\
 			padding-right: 4px;\
+		}\
+		#quick-reply td.post-options > * {\
+			display: block;\
+			margin-bottom: 2px;\
 		}\
 		#quick-reply tr td:nth-child(2) input[type="submit"] {\
 			width: 100%;\
@@ -140,7 +143,7 @@
 		
 		$postForm.find('table tr').each(function() {
 			var $th = $(this).children('th:first');
-			var $td = $(this).children('td:first');		
+			var $td = $(this).children('td:first');
 			if ($th.length && $td.length) {
 				$td.attr('colspan', 2);
 	
@@ -259,18 +262,15 @@
 				
 				// Remove mod controls, because it looks shit.
 				if ($td.find('input[type="checkbox"]').length) {
+					if ($postForm.find('td.post-options').length == 0)
+						$postForm.find('input[type="file"]').parent().removeAttr('colspan').after('<td class="post-options"></td>');
+
 					var tr = this;
 					$td.find('input[type="checkbox"]').each(function() {
-						if ($(this).attr('name') == 'spoiler') {
-							$td.find('label').remove();
-							$(this).attr('id', 'q-spoiler-image');
-							$postForm.find('input[type="file"]').parent()
-								.removeAttr('colspan')
-								.after($('<td class="spoiler"></td>').append(this, ' ', $('<label for="q-spoiler-image">').text(_('Spoiler Image'))));
-						} else if ($(this).attr('name') == 'no_country') {
-							$td.find('label,input[type="checkbox"]').remove();
+						if ($(this).attr('name') == 'spoiler' || $(this).attr('name') == 'no_country') {
+							$(this).parent('label').appendTo($postForm.find('td.post-options'));
 						} else {
-							$(tr).remove();
+							$(tr).hide();
 						}
 					});
 				}
@@ -317,6 +317,13 @@
 		});
 		$postForm.find('input[type="text"],select').on('change input propertychange', function() {
 			$origPostForm.find('[name="' + $(this).attr('name') + '"]').val($(this).val());
+		});
+
+		$origPostForm.find('input[type="checkbox"]').on('change input propertychange', function() {
+			$postForm.find('[name="' + $(this).attr('name') + '"]').prop('checked', $(this).prop('checked'));
+		});
+		$postForm.find('input[type="checkbox"]').on('change input propertychange', function() {
+			$origPostForm.find('[name="' + $(this).attr('name') + '"]').prop('checked', $(this).prop('checked'));
 		});
 
 		if (typeof $postForm.draggable != 'undefined') {	

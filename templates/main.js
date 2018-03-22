@@ -267,6 +267,9 @@ function dopost(form) {
 	if (form.elements['email'] && form.elements['email'].value != 'sage') {
 		localStorage.email = form.elements['email'].value;
 	}
+	if (form.elements['no_country']) {
+		localStorage.no_country = form.elements['no_country'].checked;
+	}
 	
 	saved[document.location] = form.elements['body'].value;
 	sessionStorage.body = JSON.stringify(saved);
@@ -323,6 +326,8 @@ function rememberStuff() {
 			document.forms.post.elements['name'].value = localStorage.name;
 		if (localStorage.email && document.forms.post.elements['email'])
 			document.forms.post.elements['email'].value = localStorage.email;
+		if (localStorage.no_country && document.forms.post.elements['no_country'])
+			document.forms.post.elements['no_country'].checked = localStorage.no_country == 'true';
 		
 		if (window.location.hash.indexOf('q') == 1)
 			citeReply(window.location.hash.substring(2), true);
