@@ -68,6 +68,16 @@ class Archive {
                 @file_put_contents($board['dir'] . $config['dir']['archive'] . $config['dir']['res'] . sprintf($config['file_page'], $thread_id), $thread_file_content, LOCK_EX);
             }
 
+
+            // Copy json file to Archive
+            // Read Content of Json file
+            $json_file_content = @file_get_contents($board['dir'] . $config['dir']['res'] . json_scrambler($thread_id, true));
+            // Replace links and posting mode to Archived
+            $json_file_content = str_replace(substr($board['dir'], 0, -1) . '\/' . substr($config['dir']['res'], 0, -1), substr($board['dir'], 0, -1) . '\/' . substr($config['dir']['archive'], 0, -1) . '\/' . substr($config['dir']['res'], 0, -1), $json_file_content);
+            // Write altered thread json to archive location
+            @file_put_contents($board['dir'] . $config['dir']['archive'] . $config['dir']['res'] .  json_scrambler($thread_id, true), $json_file_content, LOCK_EX);
+            
+
             // Copy Images and Files Associated with Thread
             if ($post['files']) {
                 foreach (json_decode($post['files']) as $i => $f) {
