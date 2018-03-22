@@ -14,17 +14,22 @@
 {% endif %}
 {% if mod %}<input type="hidden" name="mod" value="1">{% endif %}
 	<table>
-		{% if not config.field_disable_name or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri)) %}<tr>
+		{% if not config.field_disable_name or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri)) %}
+		<tr>
 			<th>
 				{% trans %}Name{% endtrans %}
 				{{ antibot.html() }}
 			</th>
 			<td>
-				<input type="text" name="name" size="25" maxlength="35" autocomplete="off"> {% if config.allow_no_country and config.country_flags %}<input id="no_country" name="no_country" type="checkbox"> <label for="no_country">{% trans %}Don't show my flag{% endtrans %}</label>{% endif %}
+				<input type="text" name="name" size="25" maxlength="35" autocomplete="off">
+				{% if config.allow_no_country and config.country_flags %}
+					<label><input id="no_country" name="no_country" type="checkbox">{% trans %}Don't show my flag{% endtrans %}</label>
+				{% endif %}
 				{{ antibot.html() }}
 			</td>
 		</tr>{% endif %}
-		{% if not config.field_disable_email or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri)) %}<tr>
+		{% if not config.field_disable_email or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri)) %}
+		<tr>
 			<th>
 				{% trans %}Email{% endtrans %}
 				{{ antibot.html() }}
@@ -51,14 +56,18 @@
 				{{ antibot.html() }}
 			</td>
 		</tr>{% endif %}
-		{% if not (config.field_disable_subject or (id and config.field_disable_reply_subject)) or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri)) %}<tr>
+		{% if not (config.field_disable_subject or (id and config.field_disable_reply_subject)) or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri)) %}
+		<tr>
 			<th>
 				{% trans %}Subject{% endtrans %}
 				{{ antibot.html() }}
 			</th>
 			<td>
 				<input style="float:left;" type="text" name="subject" size="25" maxlength="100" autocomplete="off">
-				<input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />{% if config.spoiler_images %} <input id="spoiler" name="spoiler" type="checkbox"> <label for="spoiler">{% trans %}Spoiler Image{% endtrans %}</label>{% endif %}
+				<input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />
+				{% if config.spoiler_images %}
+					<label><input id="spoiler" name="spoiler" type="checkbox">{% trans %}Spoiler Image{% endtrans %}</label>
+				{% endif %}
 			</td>
 		</tr>
 		{% endif %}
@@ -113,39 +122,39 @@
 		</tr>
 		{% endif %}
 		{% if config.captcha.post_captcha or (config.captcha.thread_captcha and not id) %}
-			<tr class='captcha'>
-				<th>
-					{% trans %}Verification{% endtrans %}
-				</th>
-				<td>
-					<script>load_captcha("{{ config.captcha.provider_get }}", "{{ config.captcha.extra }}");</script>
-				</td>
-			</tr>
+		<tr class='captcha'>
+			<th>
+				{% trans %}Verification{% endtrans %}
+			</th>
+			<td>
+				<script>load_captcha("{{ config.captcha.provider_get }}", "{{ config.captcha.extra }}");</script>
+			</td>
+		</tr>
 		{% endif %}
 		{% if config.user_flag %}
-			<tr>
-				<th>{% trans %}Flag{% endtrans %}</th>
-				<td>
-					<select name="user_flag" id="user_flag">
-						<option value="">{% trans %}None{% endtrans %}</option>
-						{% for flag, text in config.user_flags %}
-							<option value="{{ flag }}">{{ text }}</option>
-						{% endfor %}
-					</select>
-				</td>
-			</tr>
+		<tr>
+			<th>{% trans %}Flag{% endtrans %}</th>
+			<td>
+				<select name="user_flag" id="user_flag">
+					<option value="">{% trans %}None{% endtrans %}</option>
+					{% for flag, text in config.user_flags %}
+						<option value="{{ flag }}">{{ text }}</option>
+					{% endfor %}
+				</select>
+			</td>
+		</tr>
 		{% endif %}
 		{% if config.allowed_tags and not id %}
-			<tr>
-				<th>{% trans %}Tag{% endtrans %}</th>
-				<td>
-					<select name="tag">
-						{% for id, tag in config.allowed_tags %}
-							<option value="{{ id|e }}">{{ tag|e }}</option>
-						{% endfor %}
-					</select>
-				</td>
-			</tr>
+		<tr>
+			<th>{% trans %}Tag{% endtrans %}</th>
+			<td>
+				<select name="tag">
+					{% for id, tag in config.allowed_tags %}
+						<option value="{{ id|e }}">{{ tag|e }}</option>
+					{% endfor %}
+				</select>
+			</td>
+		</tr>
 		{% endif %}
 		<tr id="upload">
 			<th>
@@ -202,7 +211,8 @@
 			</td>
 		</tr>
 		{% endif %}
-		{% if not config.field_disable_password or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri)) %}<tr>
+		{% if not config.field_disable_password or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri)) %}
+		<tr>
 			<th>
 				{% trans %}Password{% endtrans %}
 				{{ antibot.html() }}
