@@ -50,7 +50,7 @@ function make_webm_thumbnail($filename, $thumbnail, $width, $height, $duration) 
   $ffmpeg = $config['webm']['ffmpeg_path'];
   $ret = 0;
   $ffmpeg_out = array();
-  exec("$ffmpeg -strict -2 -ss " . floor($duration / 2) . " -i $filename -v quiet -an -vframes 1 -f mjpeg -vf scale=$width:$height $thumbnailfc 2>&1", $ffmpeg_out, $ret);
+    exec("$ffmpeg -i $filename -ss 00 -t 5 -r 10 -vf scale=$width:$height -f image2pipe -vcodec ppm - | convert -delay 10 -loop 0 -layers Optimize - $thumbnailfc 2>&1", $ffmpeg_out, $ret);
   // Work around for https://trac.ffmpeg.org/ticket/4362
   if (filesize($thumbnail) === 0) {
     // try again with first frame
