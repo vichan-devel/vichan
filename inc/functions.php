@@ -2513,7 +2513,7 @@ function markup_url($matches) {
 	);
 	event('markup-url', (object)$link);
 	
-	if (strncasecmp($link['href'], 'http', 4) === 0)
+	if (strlen($config['link_prefix']) > 0 && strncasecmp($link['href'], 'http', 4) === 0)
 	{
 		$link['href'] = $config['link_prefix'] . $link['href'];
 	}

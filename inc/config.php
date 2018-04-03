@@ -733,7 +733,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['markup_urls'] = true;
 
 	// Optional URL prefix for links (eg. "http://anonym.to/?").
-	$config['link_prefix'] = 'https://href.li/?'; 
+	$config['link_prefix'] = ''; 
 	$config['url_ads'] = &$config['link_prefix'];	 // leave alias
 	
 	// Allow "uploading" images via URL as well. Users can enter the URL of the image and then Tinyboard will
