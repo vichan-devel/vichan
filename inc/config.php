@@ -463,7 +463,8 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 		'json_response',
 		'user_flag',
 		'no_country',
-		'tag'
+		'tag',
+		'hideposterid'
 	);
 
 	// Enable reCaptcha to make spam even harder. Rarely necessary.
