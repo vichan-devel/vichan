@@ -381,16 +381,11 @@ function init() {
 	if (window.location.hash.indexOf('q') != 1 && window.location.hash.substring(1))
 		highlightReply(window.location.hash.substring(1));
 
-{% endraw %}{% if config.announcements.show %}{% raw %}
-    var hideAnnouncements = get_cookie("hideAnnouncements");
-    buildAnnouncementList(hideAnnouncements);
 
-    $("#announcements").delegate("#toggleAnnouncements", "click", function(){
-        hideAnnouncements = ((hideAnnouncements != "1")?"1":"0");
-        document.cookie = 'hideAnnouncements=' + hideAnnouncements + ';expires=0;path=/;';
-        buildAnnouncementList(hideAnnouncements);
-    });
-{% endraw %}{% endif %}{% raw %}
+{% endraw %}{% if config.announcements.show %}{% raw %}
+    buildAnnouncementList();
+{% endraw %} {% endif %} {% raw %}
+
 }
 
 var RecaptchaOptions = {
@@ -436,47 +431,70 @@ s.parentNode.insertBefore(sc, s);
 
 
 {% if config.announcements.show %}
-function buildAnnouncementList(hideAnnouncements)
+function buildAnnouncementList()
 {
     $("#announcements").empty();
 
-    if(hideAnnouncements != "1") {
+    var hideAnnouncements = get_cookie("hideAnnouncements");
+
+    if (hideAnnouncements != "1") {
         $.getJSON("{{ config.root }}{{ config.announcements.file_json_small }}",
-        function (json) {
+            function (json) {
 
-            var thead;
-            thead = $('<thead/>').append(
-                $('<tr/>').append('<td colspan="2">&nbsp;</td>')
-            );
+                var thead;
+                thead = $('<thead/>').append(
+                    $('<tr/>').append('<td colspan="2">&nbsp;</td>')
+                );
 
-            var tfoot;
-            tfoot = $('<tfoot/>').append(
-                $('<tr/>').append('<td colspan="2">[<a id="toggleAnnouncements" href="#">Hide</a>]{% if config.announcements.page %} <span> [<a href="{{ config.root }}{{ config.announcements.page_html }}" target="_blank">Show All</a>]</span>{% endif %}</td>')
-            );
+                var tfoot;
+                tfoot = $('<tfoot/>').append(
+                    $('<tr/>').append(
+                        $('<td colspan="2"/>').append(
+                            "[",
+                            $('<a id = "toggleAnnouncements" href = "#">Hide</a>').on('click', function () {
+                                var hideAnnouncements = get_cookie("hideAnnouncements");
+                                hideAnnouncements = ((hideAnnouncements != "1") ? "1" : "0");
+                                document.cookie = 'hideAnnouncements=' + hideAnnouncements + ';expires=0;path=/;';
+                                buildAnnouncementList();
+                            }),
+                            "]"
+                            {% if config.announcements.page %} , $('<span>[<a href="{{ config.root }}{{ config.announcements.page_html }}" target="_blank">Show All</a>]</span>') {% endif %}
+                        )));
 
-            var tbody;
-            tbody = $('<tbody/>');
-            var tr;
-            for (var i = 0; i < json.length; i++) {
-                tr = $("<tr/>");
-                tr.append('<td class="announcement-date">' + json[i].date_formated + '</td>');
-                tr.append('<td class="announcement-content">' + json[i].text + '</td>');
-                tbody.append(tr);
-            }
+                var tbody;
+                tbody = $('<tbody/>');
+                var tr;
+                for (var i = 0; i < json.length; i++) {
+                    tr = $("<tr/>");
+                    tr.append('<td class="announcement-date">' + json[i].date_formated + '</td>');
+                    tr.append('<td class="announcement-content">' + json[i].text + '</td>');
+                    tbody.append(tr);
+                }
 
-            $("#announcements").append(thead);
-            $("#announcements").append(tbody);
-            $("#announcements").append(tfoot);
-        });
+                $("#announcements").append(thead);
+                $("#announcements").append(tbody);
+                $("#announcements").append(tfoot);
+            });
     } else {
         var thead;
         thead = $('<thead/>').append(
             $('<tr/>').append('<td colspan="2">&nbsp;</td>')
         );
         var tfoot;
+
         tfoot = $('<tfoot/>').append(
-            $('<tr/>').append('<td colspan="2">[<a id="toggleAnnouncements" href="#">Show Announcements</a>]</td>')
-        );
+            $('<tr/>').append(
+                $('<td colspan="2"/>').append(
+                    "[",
+                    $('<a id = "toggleAnnouncements" href = "#">Show</a>').on('click', function () {
+                        var hideAnnouncements = get_cookie("hideAnnouncements");
+                        hideAnnouncements = ((hideAnnouncements != "1") ? "1" : "0");
+                        document.cookie = 'hideAnnouncements=' + hideAnnouncements + ';expires=0;path=/;';
+                        buildAnnouncementList();
+                    }),
+                    "]"
+                )));
+
         $("#announcements").append(thead);
         $("#announcements").append(tfoot);
     }
