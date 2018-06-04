@@ -789,6 +789,9 @@ if (isset($_POST['delete'])) {
 		$post['body'] = strip_combining_chars($post['body']);
 	}
 	
+	// Fix for line count in max chars
+	$post['body'] = str_replace(array("\r\n", "\n\r"), "\n", $post['body']);
+
 	if (!$dropped_post) {
 		// Check string lengths
 		if (mb_strlen($post['name']) > 35)
