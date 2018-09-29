@@ -223,7 +223,7 @@ class Archive {
     static public function deleteFeatured($thread_id, $mod_archive = false) {
         global $config, $board, $mod;
 
-        $query = query(sprintf("SELECT `id`, `files`, `lifetime` FROM ``archive_%s`` WHERE `featured` = 1", $board['uri'])) or error(db_error());
+        $query = query(sprintf("SELECT `id`, `files`, `lifetime` FROM ``archive_%s`` WHERE `featured` = 1 OR `mod_archived` = 1", $board['uri'])) or error(db_error());
         if(!$thread = $query->fetch(PDO::FETCH_ASSOC))
             error($config['error']['invalidpost']);
         
