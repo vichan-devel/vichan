@@ -158,7 +158,7 @@ function loadConfig() {
 		else {
 			$config['locale'] = 'en';
 
-			$configstr = file_get_contents('inc/instance-config.php');
+			$configstr = file_get_contents('./inc/instance-config.php');
 
 			if (isset($board['dir']) && file_exists($board['dir'] . '/config.php')) {
 				$configstr .= file_get_contents($board['dir'] . '/config.php');
