@@ -5,7 +5,7 @@
     {% for file in post.files %}
         <div class="file{% if post.num_files > 1 %} multifile" style="width:{{ file.thumbwidth + 40 }}px"{% else %}"{% endif %}>
 	{% if file.file == 'deleted' %}
-		<img class="post-image deleted" src="{{ config.image_deleted }}" alt="" />
+		<img class="post-image deleted" src="{{ config.root }}{{ config.image_deleted }}" alt="" />
 	{% else %}
 		<p class="fileinfo">File: <a href="{% if post.shadow %}{{ config.uri_shadow_img }}{% else %}{{ config.uri_img }}{% endif %}{{ file.file }}">{{ file.file }}</a> <span class="unimportant">
 		(

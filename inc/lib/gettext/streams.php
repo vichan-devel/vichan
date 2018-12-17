@@ -49,9 +49,13 @@ class StringReader {
   var $_pos;
   var $_str;
 
-  function StringReader($str='') {
+  function __construct($str='') {
     $this->_str = $str;
     $this->_pos = 0;
+  }
+
+  function StringReader($str='') {
+    self::__construct($str);
   }
 
   function read($bytes) {
@@ -86,7 +90,7 @@ class FileReader {
   var $_fd;
   var $_length;
 
-  function FileReader($filename) {
+  function __construct($filename) {
     if (file_exists($filename)) {
 
       $this->_length=filesize($filename);
@@ -100,6 +104,10 @@ class FileReader {
       $this->error = 2; // File doesn't exist
       return false;
     }
+  }
+
+  function FileReader($filename) {
+    self::__construct($filename);
   }
 
   function read($bytes) {
@@ -143,7 +151,7 @@ class FileReader {
 // Preloads entire file in memory first, then creates a StringReader
 // over it (it assumes knowledge of StringReader internals)
 class CachedFileReader extends StringReader {
-  function CachedFileReader($filename) {
+  function __construct($filename) {
     if (file_exists($filename)) {
 
       $length=filesize($filename);
@@ -160,6 +168,10 @@ class CachedFileReader extends StringReader {
       $this->error = 2; // File doesn't exist
       return false;
     }
+  }
+
+  function CachedFileReader($filename) {
+    self::__construct($filename);
   }
 };
 

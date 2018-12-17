@@ -7,6 +7,16 @@ This is the a fork of vichan running on [mlpol.net](https://mlpol.net), a free l
 imageboard software package. It is written in PHP and has few dependencies.
 
 NPFchan is a fork of [vichan](https://github.com/vichan-devel/vichan) which is a fork of (now defunc'd) [Tinyboard](http://github.com/savetheinternet/Tinyboard),
+=======
+In November 2017, Marcin Łabanowski (@czaks) retired as maintainer for personal reasons. His retirement may be temporary, but in his absence, Fredrick Brennan (@ctrlcctrlv), co-maintainer since 2013, and #3 in terms of number of commits, took his place as interim sole maintianer and point of contact. (See [issue #266](https://github.com/vichan-devel/vichan/issues/266))
+
+*Security problems can be reported to Fredrick Brennan at his email: COPYPASTE \<AT\> KITTENS \<DOT\> PH.*
+	
+Vichan is still accepting patches, but there is at the moment no active development besides fixing security problems and other serious bugs as they emerge. Given the lack of active development, we strongly urge you to consider other imageboard packages. It is the opinion of the vichan development team that no new vichan imageboards should be deployed, and other imageboard packages, such as lynxchan, used instead.
+
+History
+------------
+vichan is a fork of (now defunc'd) [Tinyboard](http://github.com/savetheinternet/Tinyboard),
 a great imageboard package, actively building on it and adding a lot of features and other
 improvements.
 
@@ -17,10 +27,9 @@ Requirements
 3.	[mbstring](http://www.php.net/manual/en/mbstring.installation.php) 
 4.	[PHP GD](http://www.php.net/manual/en/intro.image.php)
 5.	[PHP PDO](http://www.php.net/manual/en/intro.pdo.php)
+6.	A Unix-like OS, preferrably FreeBSD or Linux
 
-We try to make sure NPFchan is compatible with all major web servers and
-operating systems. NPFchan does not include an Apache ```.htaccess``` file nor does
-it need one.
+We try to make sure vichan is compatible with all major web servers. vichan does not include an Apache ```.htaccess``` file nor does it need one.
 
 ### Recommended
 1.	MySQL >= 5.7

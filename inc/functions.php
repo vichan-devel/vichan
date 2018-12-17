@@ -1394,7 +1394,7 @@ function post(array $post) {
 	}
 
 	if ($post['mod'] && isset($post['capcode']) && $post['capcode']) {
-		$query->bindValue(':capcode', $post['capcode'], PDO::PARAM_INT);
+		$query->bindValue(':capcode', $post['capcode'], PDO::PARAM_STR);
 	} else {
 		$query->bindValue(':capcode', null, PDO::PARAM_NULL);
 	}

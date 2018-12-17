@@ -13,6 +13,8 @@
 							{% if settings[conf.name] or (not settings[conf.name] is defined and conf.default) %}
 								checked
 							{% endif %}>
+						{% elseif conf.type == 'textarea' %}
+							<textarea name="{{ conf.name }}">{% if settings[conf.name] %}{{ settings[conf.name] }}{% else %} {% if conf.default %}{{ conf.default }}{% endif %}{% endif %}</textarea> 
 						{% else %}
 							<input type="text" name="{{ conf.name }}" 
 							{% if settings[conf.name] %}
@@ -22,6 +24,7 @@
 							{% if conf.size %}
 								size="{{ conf.size }}"
 							{% endif %}>
+						
 						{% endif %}
 					{% if conf.comment %}
 						 <span class="unimportant">{{ conf.comment }}</span>
@@ -35,3 +38,8 @@
 		<input name="install" type="submit" value="{% trans 'Install theme' %}" />
 	</p>
 </form>
+<script>
+$(function() {
+    ( $('textarea').val() );
+});
+</script>

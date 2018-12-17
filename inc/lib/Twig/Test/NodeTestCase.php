@@ -8,24 +8,31 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-abstract class Twig_Test_NodeTestCase extends PHPUnit_Framework_TestCase
+
+use PHPUnit\Framework\TestCase;
+
+abstract class Twig_Test_NodeTestCase extends TestCase
 {
     abstract public function getTests();
 
     /**
      * @dataProvider getTests
      */
-    public function testCompile($node, $source, $environment = null)
+    public function testCompile($node, $source, $environment = null, $isPattern = false)
     {
-        $this->assertNodeCompilation($source, $node, $environment);
+        $this->assertNodeCompilation($source, $node, $environment, $isPattern);
     }
 
-    public function assertNodeCompilation($source, Twig_Node $node, Twig_Environment $environment = null)
+    public function assertNodeCompilation($source, Twig_Node $node, Twig_Environment $environment = null, $isPattern = false)
     {
         $compiler = $this->getCompiler($environment);
         $compiler->compile($node);
 
-        $this->assertEquals($source, trim($compiler->getSource()));
+        if ($isPattern) {
+            $this->assertStringMatchesFormat($source, trim($compiler->getSource()));
+        } else {
+            $this->assertEquals($source, trim($compiler->getSource()));
+        }
     }
 
     protected function getCompiler(Twig_Environment $environment = null)
@@ -35,16 +42,22 @@ abstract class Twig_Test_NodeTestCase extends PHPUnit_Framework_TestCase
 
     protected function getEnvironment()
     {
-        return new Twig_Environment();
+        return new Twig_Environment(new Twig_Loader_Array(array()));
     }
 
-    protected function getVariableGetter($name)
+    protected function getVariableGetter($name, $line = false)
     {
-        if (version_compare(phpversion(), '5.4.0RC1', '>=')) {
-            return sprintf('(isset($context["%s"]) ? $context["%s"] : null)', $name, $name);
+        $line = $line > 0 ? "// line {$line}\n" : '';
+
+        if (PHP_VERSION_ID >= 70000) {
+            return sprintf('%s($context["%s"] ?? null)', $line, $name, $name);
         }
 
-        return sprintf('$this->getContext($context, "%s")', $name);
+        if (PHP_VERSION_ID >= 50400) {
+            return sprintf('%s(isset($context["%s"]) ? $context["%s"] : null)', $line, $name, $name);
+        }
+
+        return sprintf('%s$this->getContext($context, "%s")', $line, $name);
     }
 
     protected function getAttributeGetter()
@@ -56,3 +69,7 @@ abstract class Twig_Test_NodeTestCase extends PHPUnit_Framework_TestCase
         return '$this->getAttribute(';
     }
 }
+
+class_alias('Twig_Test_NodeTestCase', 'Twig\Test\NodeTestCase', false);
+class_exists('Twig_Environment');
+class_exists('Twig_Node');

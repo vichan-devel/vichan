@@ -366,8 +366,8 @@ if (isset($_POST['delete'])) {
 			);
 		$query = prepare("INSERT INTO ``reports`` VALUES (NULL, :time, :ip, :board, :post, :reason)");
 		$query->bindValue(':time', time(), PDO::PARAM_INT);
-		$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']), PDO::PARAM_STR);
-		$query->bindValue(':board', $board['uri'], PDO::PARAM_INT);
+		$query->bindValue(':ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
+		$query->bindValue(':board', $board['uri'], PDO::PARAM_STR);
 		$query->bindValue(':post', $id, PDO::PARAM_INT);
 		$query->bindValue(':reason', $reason, PDO::PARAM_STR);
 		$query->execute() or error(db_error($query));
@@ -422,6 +422,10 @@ if (isset($_POST['delete'])) {
 	}
 
 	if (!$dropped_post) {
+
+		// Check if banned
+		checkBan($board['uri']);
+
 		// Check for CAPTCHA right after opening the board so the "return" link is in there
 		if ($config['recaptcha']) {
 			if (!isset($_POST['g-recaptcha-response']))
@@ -462,7 +466,6 @@ if (isset($_POST['delete'])) {
 			error($config['error']['referer']);
 	
 		checkDNSBL();
-		
 		// Check if banned, warned or nicenoticed
 		checkBan($board['uri']);
 
@@ -748,21 +751,21 @@ if (isset($_POST['delete'])) {
 					}
 				}
 			} else {
-				if ($file['size'] && $file['tmp_name']) {
-					$file['filename'] = urldecode($file['name']);
-					$file['extension'] = strtolower(mb_substr($file['filename'], mb_strrpos($file['filename'], '.') + 1));
-					if (isset($config['filename_func']))
-						$file['file_id'] = $config['filename_func']($file);
-					else
-						$file['file_id'] = time() . substr(microtime(), 2, 3);
+			if ($file['size'] && $file['tmp_name']) {
+				$file['filename'] = urldecode($file['name']);
+				$file['extension'] = strtolower(mb_substr($file['filename'], mb_strrpos($file['filename'], '.') + 1));
+				if (isset($config['filename_func']))
+					$file['file_id'] = $config['filename_func']($file);
+				else
+					$file['file_id'] = time() . substr(microtime(), 2, 3);
 
-					if (sizeof($_FILES) > 1)
-						$file['file_id'] .= "-$i";
-					
-					$file['file'] = $board['dir'] . $config['dir']['img'] . $file['file_id'] . '.' . $file['extension'];
-					$file['thumb'] = $board['dir'] . $config['dir']['thumb'] . $file['file_id'] . '.' . ($config['thumb_ext'] ? $config['thumb_ext'] : $file['extension']);
-					$post['files'][] = $file;
-					$i++;
+				if (sizeof($_FILES) > 1)
+					$file['file_id'] .= "-$i";
+				
+				$file['file'] = $board['dir'] . $config['dir']['img'] . $file['file_id'] . '.' . $file['extension'];
+				$file['thumb'] = $board['dir'] . $config['dir']['thumb'] . $file['file_id'] . '.' . ($config['thumb_ext'] ? $config['thumb_ext'] : $file['extension']);
+				$post['files'][] = $file;
+				$i++;
 				}
 			}
 		}

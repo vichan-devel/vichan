@@ -69,13 +69,14 @@ function test_password($password, $salt, $test) {
 }
 
 function generate_salt() {
-	// 128 bits of entropy
-	if (function_exists('random_bytes')) {
-		return strtr(base64_encode(random_bytes(16)), '+', '.');
-	} else {
+	// mcrypt_create_iv() was deprecated in PHP 7.1.0, only use it if we're below that version number.
+	if (PHP_VERSION_ID < 70100) {
+		// 128 bits of entropy
 		return strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_URANDOM)), '+', '.');
 	}
 
+	// Otherwise, use random_bytes()
+	return strtr(base64_encode(random_bytes(16)), '+', '.');
 }
 
 function login($username, $password) {
@@ -213,8 +214,8 @@ function check_login($prompt = false) {
 		}
 		
 		$mod = array(
-			'id' => $user['id'],
-			'type' => $user['type'],
+			'id' => (int)$user['id'],
+			'type' => (int)$user['type'],
 			'username' => $cookie[0],
 			'boards' => explode(',', $user['boards'])
 		);

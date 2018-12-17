@@ -87,7 +87,7 @@
 	</ul>
 </form>
 
-{% if logs|count > 0  %}
+{% if logs and logs|count > 0  %}
 	<table class="modlog" style="width:600px">
 		<tr>
 			<th>{% trans 'IP address' %}</th>			

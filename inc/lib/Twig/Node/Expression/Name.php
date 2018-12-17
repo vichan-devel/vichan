@@ -3,8 +3,8 @@
 /*
  * This file is part of Twig.
  *
- * (c) 2009 Fabien Potencier
- * (c) 2009 Armin Ronacher
+ * (c) Fabien Potencier
+ * (c) Armin Ronacher
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,7 +12,7 @@
 class Twig_Node_Expression_Name extends Twig_Node_Expression
 {
     protected $specialVars = array(
-        '_self'    => '$this',
+        '_self' => '$this',
         '_context' => '$context',
         '_charset' => '$this->env->getCharset()',
     );
@@ -25,6 +25,8 @@ class Twig_Node_Expression_Name extends Twig_Node_Expression
     public function compile(Twig_Compiler $compiler)
     {
         $name = $this->getAttribute('name');
+
+        $compiler->addDebugInfo($this);
 
         if ($this->getAttribute('is_defined_test')) {
             if ($this->isSpecial()) {
@@ -41,10 +43,20 @@ class Twig_Node_Expression_Name extends Twig_Node_Expression
                 ->raw(']')
             ;
         } else {
-            // remove the non-PHP 5.4 version when PHP 5.3 support is dropped
-            // as the non-optimized version is just a workaround for slow ternary operator
-            // when the context has a lot of variables
-            if (version_compare(phpversion(), '5.4.0RC1', '>=')) {
+            if (PHP_VERSION_ID >= 70000) {
+                // use PHP 7 null coalescing operator
+                $compiler
+                    ->raw('($context[')
+                    ->string($name)
+                    ->raw('] ?? ')
+                ;
+
+                if ($this->getAttribute('ignore_strict_check') || !$compiler->getEnvironment()->isStrictVariables()) {
+                    $compiler->raw('null)');
+                } else {
+                    $compiler->raw('$this->getContext($context, ')->string($name)->raw('))');
+                }
+            } elseif (PHP_VERSION_ID >= 50400) {
                 // PHP 5.4 ternary operator performance was optimized
                 $compiler
                     ->raw('(isset($context[')
@@ -86,3 +98,5 @@ class Twig_Node_Expression_Name extends Twig_Node_Expression
         return !$this->isSpecial() && !$this->getAttribute('is_defined_test');
     }
 }
+
+class_alias('Twig_Node_Expression_Name', 'Twig\Node\Expression\NameExpression', false);

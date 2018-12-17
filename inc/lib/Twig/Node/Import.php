@@ -3,7 +3,7 @@
 /*
  * This file is part of Twig.
  *
- * (c) 2009 Fabien Potencier
+ * (c) Fabien Potencier
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -21,11 +21,6 @@ class Twig_Node_Import extends Twig_Node
         parent::__construct(array('expr' => $expr, 'var' => $var), array(), $lineno, $tag);
     }
 
-    /**
-     * Compiles the node to PHP.
-     *
-     * @param Twig_Compiler A Twig_Compiler instance
-     */
     public function compile(Twig_Compiler $compiler)
     {
         $compiler
@@ -36,15 +31,21 @@ class Twig_Node_Import extends Twig_Node
         ;
 
         if ($this->getNode('expr') instanceof Twig_Node_Expression_Name && '_self' === $this->getNode('expr')->getAttribute('name')) {
-            $compiler->raw("\$this");
+            $compiler->raw('$this');
         } else {
             $compiler
-                ->raw('$this->env->loadTemplate(')
+                ->raw('$this->loadTemplate(')
                 ->subcompile($this->getNode('expr'))
-                ->raw(")")
+                ->raw(', ')
+                ->repr($this->getTemplateName())
+                ->raw(', ')
+                ->repr($this->getTemplateLine())
+                ->raw(')')
             ;
         }
 
         $compiler->raw(";\n");
     }
 }
+
+class_alias('Twig_Node_Import', 'Twig\Node\ImportNode', false);

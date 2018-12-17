@@ -3,8 +3,8 @@
 /*
  * This file is part of Twig.
  *
- * (c) 2009 Fabien Potencier
- * (c) 2009 Armin Ronacher
+ * (c) Fabien Potencier
+ * (c) Armin Ronacher
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -19,14 +19,14 @@ class Twig_Node_Include extends Twig_Node implements Twig_NodeOutputInterface
 {
     public function __construct(Twig_Node_Expression $expr, Twig_Node_Expression $variables = null, $only = false, $ignoreMissing = false, $lineno, $tag = null)
     {
-        parent::__construct(array('expr' => $expr, 'variables' => $variables), array('only' => (Boolean) $only, 'ignore_missing' => (Boolean) $ignoreMissing), $lineno, $tag);
+        $nodes = array('expr' => $expr);
+        if (null !== $variables) {
+            $nodes['variables'] = $variables;
+        }
+
+        parent::__construct($nodes, array('only' => (bool) $only, 'ignore_missing' => (bool) $ignoreMissing), $lineno, $tag);
     }
 
-    /**
-     * Compiles the node to PHP.
-     *
-     * @param Twig_Compiler A Twig_Compiler instance
-     */
     public function compile(Twig_Compiler $compiler)
     {
         $compiler->addDebugInfo($this);
@@ -60,40 +60,31 @@ class Twig_Node_Include extends Twig_Node implements Twig_NodeOutputInterface
 
     protected function addGetTemplate(Twig_Compiler $compiler)
     {
-        if ($this->getNode('expr') instanceof Twig_Node_Expression_Constant) {
-            $compiler
-                ->write("\$this->env->loadTemplate(")
-                ->subcompile($this->getNode('expr'))
-                ->raw(")")
-            ;
-        } else {
-            $compiler
-                ->write("\$template = \$this->env->resolveTemplate(")
-                ->subcompile($this->getNode('expr'))
-                ->raw(");\n")
-                ->write('$template')
-            ;
-        }
+        $compiler
+             ->write('$this->loadTemplate(')
+             ->subcompile($this->getNode('expr'))
+             ->raw(', ')
+             ->repr($this->getTemplateName())
+             ->raw(', ')
+             ->repr($this->getTemplateLine())
+             ->raw(')')
+         ;
     }
 
     protected function addTemplateArguments(Twig_Compiler $compiler)
     {
-        if (false === $this->getAttribute('only')) {
-            if (null === $this->getNode('variables')) {
-                $compiler->raw('$context');
-            } else {
-                $compiler
-                    ->raw('array_merge($context, ')
-                    ->subcompile($this->getNode('variables'))
-                    ->raw(')')
-                ;
-            }
+        if (!$this->hasNode('variables')) {
+            $compiler->raw(false === $this->getAttribute('only') ? '$context' : 'array()');
+        } elseif (false === $this->getAttribute('only')) {
+            $compiler
+                ->raw('array_merge($context, ')
+                ->subcompile($this->getNode('variables'))
+                ->raw(')')
+            ;
         } else {
-            if (null === $this->getNode('variables')) {
-                $compiler->raw('array()');
-            } else {
-                $compiler->subcompile($this->getNode('variables'));
-            }
+            $compiler->subcompile($this->getNode('variables'));
         }
     }
 }
+
+class_alias('Twig_Node_Include', 'Twig\Node\IncludeNode', false);

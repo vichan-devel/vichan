@@ -1,7 +1,7 @@
 <p>
 	Any changes you make here will simply be appended to <code>{{ file }}</code>. If you wish to make the most of Tinyboard's customizability, you can instead edit the file directly. This page is intended for making quick changes and for those who don't have a basic understanding of PHP code.
 </p>
-{% if boards|count %}
+{% if boards|length %}
 	<ul>
 		{% if board %}
 			<li><a href="?/config">Edit site-wide config</a></li>
@@ -23,7 +23,7 @@
 			<th>{% trans 'Description' %}</th>
 		</tr>
 		{% for var in conf if var.type != 'array' %}
-			{% if var.name|count == 1 %}
+			{% if var.name|length == 1 %}
 				{% set name = 'cf_' ~ var.name %}
 			{% else %}
 				{% set name = 'cf_' ~ var.name|join('/') %}
@@ -31,7 +31,7 @@
 			
 			<tr>
 				<th class="minimal">
-					{% if var.name|count == 1 %}
+					{% if var.name|length == 1 %}
 						{{ var.name }}
 					{% else %}
 						{{ var.name|join(' &rarr; ') }}

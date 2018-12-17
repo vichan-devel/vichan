@@ -1,11 +1,51 @@
 <?php
 
-// Installation/upgrade file	
+// Installation/upgrade file
 define('VERSION', '6.0.7');
-
 require 'inc/functions.php';
-
 loadConfig();
+
+// Salt generators
+class SaltGen {
+	public $salt_length = 128;
+
+	// Best function I could think of for non-SSL PHP 5
+	private function generate_install_salt() {
+		$ret = "";
+
+		// This is bad! But what else can we do sans OpenSSL?
+		for ($i = 0; $i < $this->salt_length; ++$i) {
+			$s = pack("c", mt_rand(0,255));
+			$ret = $ret . $s;
+		}
+
+		return base64_encode($ret);
+	}
+
+	// Best function of the lot. Works with any PHP version as long as OpenSSL extension is on
+	private function generate_install_salt_openssl() {
+		$ret = openssl_random_pseudo_bytes($this->salt_length, $strong);
+		if (!$strong) {
+			error(_("Misconfigured system: OpenSSL returning weak salts. Cannot continue."));
+		}
+		return base64_encode($ret);
+	}
+
+	private function generate_install_salt_php7() {
+		return base64_encode(random_bytes($this->salt_length));
+	}
+
+	// TODO: Perhaps add mcrypt as an option? Maybe overkill.
+	public function generate() {
+		if (extension_loaded('openssl')) {
+			return "OSSL." . $this->generate_install_salt_openssl();
+		} else if (defined('PHP_MAJOR_VERSION') && PHP_MAJOR_VERSION >= 7) {
+			return "PHP7." . $this->generate_install_salt_php7();
+		} else {
+			return "INSECURE." . $this->generate_install_salt();
+		}
+	}
+}
 
 $step = isset($_GET['step']) ? round($_GET['step']) : 0;
 $page = array(
@@ -864,6 +904,10 @@ if ($step == 0) {
 		'Imagick' => array(
 			'installed' => extension_loaded('imagick'),
 			'required' => false
+		),
+		'OpenSSL' => array(
+			'installed' => extension_loaded('openssl'),
+			'required' => false
 		)
 	);
 
@@ -888,6 +932,13 @@ if ($step == 0) {
 			'result' => extension_loaded('mbstring'),
 			'required' => true,
 			'message' => 'You must install the PHP <a href="http://www.php.net/manual/en/mbstring.installation.php">mbstring</a> extension.',
+		),
+		array(
+			'category' => 'PHP',
+			'name' => 'OpenSSL extension installed or PHP &ge; 7.0',
+			'result' => (extension_loaded('openssl') || (defined('PHP_MAJOR_VERSION') && PHP_MAJOR_VERSION >= 7)),
+			'required' => false,
+			'message' => 'It is highly recommended that you install the PHP <a href="http://www.php.net/manual/en/openssl.installation.php">OpenSSL</a> extension and/or use PHP version 7 or above. <strong>If you do not, it is possible that the IP addresses of users of your site could be compromised &mdash; see <a href="https://github.com/vichan-devel/vichan/issues/284">vichan issue #284.</a></strong> Installing the OpenSSL extension allows vichan to generate a secure salt automatically for you.',
 		),
 		array(
 			'category' => 'Database',
@@ -1047,11 +1098,13 @@ if ($step == 0) {
 		'config' => $config,
 	));
 } elseif ($step == 2) {
+
 	// Basic config
 	$page['title'] = 'Configuration';
-	
-	$config['cookies']['salt'] = substr(base64_encode(sha1(rand())), 0, 30);
-	$config['secure_trip_salt'] = substr(base64_encode(sha1(rand())), 0, 30);	
+
+	$sg = new SaltGen();
+	$config['cookies']['salt'] = $sg->generate();
+	$config['secure_trip_salt'] = $sg->generate();
 	
 	echo Element('page.html', array(
 		'body' => Element('installer/config.html', array(
@@ -1085,6 +1138,10 @@ if ($step == 0) {
 	$instance_config .= "\n";
 	
 	if (@file_put_contents('inc/instance-config.php', $instance_config)) {
+		// flushes opcache if php >= 5.5.0 or opcache is installed via PECL
+		if (function_exists('opcache_invalidate')) {
+			opcache_invalidate('inc/instance-config.php');
+		}
 		header('Location: ?step=4', true, $config['redirect_http']);
 	} else {
 		$page['title'] = 'Manual installation required';

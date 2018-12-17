@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright (c) 2016 vichan-devel
+ *  Copyright (c) 2018 vichan-devel
  */
 
 defined('TINYBOARD') or exit;

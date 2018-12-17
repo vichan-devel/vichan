@@ -3,8 +3,8 @@
 /*
  * This file is part of Twig.
  *
- * (c) 2009 Fabien Potencier
- * (c) 2009 Armin Ronacher
+ * (c) Fabien Potencier
+ * (c) Armin Ronacher
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -19,22 +19,22 @@ class Twig_Node_If extends Twig_Node
 {
     public function __construct(Twig_NodeInterface $tests, Twig_NodeInterface $else = null, $lineno, $tag = null)
     {
-        parent::__construct(array('tests' => $tests, 'else' => $else), array(), $lineno, $tag);
+        $nodes = array('tests' => $tests);
+        if (null !== $else) {
+            $nodes['else'] = $else;
+        }
+
+        parent::__construct($nodes, array(), $lineno, $tag);
     }
 
-    /**
-     * Compiles the node to PHP.
-     *
-     * @param Twig_Compiler A Twig_Compiler instance
-     */
     public function compile(Twig_Compiler $compiler)
     {
         $compiler->addDebugInfo($this);
-        for ($i = 0; $i < count($this->getNode('tests')); $i += 2) {
+        for ($i = 0, $count = count($this->getNode('tests')); $i < $count; $i += 2) {
             if ($i > 0) {
                 $compiler
                     ->outdent()
-                    ->write("} elseif (")
+                    ->write('} elseif (')
                 ;
             } else {
                 $compiler
@@ -50,7 +50,7 @@ class Twig_Node_If extends Twig_Node
             ;
         }
 
-        if ($this->hasNode('else') && null !== $this->getNode('else')) {
+        if ($this->hasNode('else')) {
             $compiler
                 ->outdent()
                 ->write("} else {\n")
@@ -64,3 +64,5 @@ class Twig_Node_If extends Twig_Node
             ->write("}\n");
     }
 }
+
+class_alias('Twig_Node_If', 'Twig\Node\IfNode', false);

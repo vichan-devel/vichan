@@ -3,8 +3,8 @@
 /*
  * This file is part of Twig.
  *
- * (c) 2009 Fabien Potencier
- * (c) 2009 Armin Ronacher
+ * (c) Fabien Potencier
+ * (c) Armin Ronacher
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -21,13 +21,6 @@
  */
 class Twig_TokenParser_Include extends Twig_TokenParser
 {
-    /**
-     * Parses a token and returns a node.
-     *
-     * @param Twig_Token $token A Twig_Token instance
-     *
-     * @return Twig_NodeInterface A Twig_NodeInterface instance
-     */
     public function parse(Twig_Token $token)
     {
         $expr = $this->parser->getExpressionParser()->parseExpression();
@@ -42,24 +35,19 @@ class Twig_TokenParser_Include extends Twig_TokenParser
         $stream = $this->parser->getStream();
 
         $ignoreMissing = false;
-        if ($stream->test(Twig_Token::NAME_TYPE, 'ignore')) {
-            $stream->next();
+        if ($stream->nextIf(Twig_Token::NAME_TYPE, 'ignore')) {
             $stream->expect(Twig_Token::NAME_TYPE, 'missing');
 
             $ignoreMissing = true;
         }
 
         $variables = null;
-        if ($stream->test(Twig_Token::NAME_TYPE, 'with')) {
-            $stream->next();
-
+        if ($stream->nextIf(Twig_Token::NAME_TYPE, 'with')) {
             $variables = $this->parser->getExpressionParser()->parseExpression();
         }
 
         $only = false;
-        if ($stream->test(Twig_Token::NAME_TYPE, 'only')) {
-            $stream->next();
-
+        if ($stream->nextIf(Twig_Token::NAME_TYPE, 'only')) {
             $only = true;
         }
 
@@ -68,13 +56,10 @@ class Twig_TokenParser_Include extends Twig_TokenParser
         return array($variables, $only, $ignoreMissing);
     }
 
-    /**
-     * Gets the tag name associated with this token parser.
-     *
-     * @return string The tag name
-     */
     public function getTag()
     {
         return 'include';
     }
 }
+
+class_alias('Twig_TokenParser_Include', 'Twig\TokenParser\IncludeTokenParser', false);

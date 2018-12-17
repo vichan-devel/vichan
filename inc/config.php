@@ -513,7 +513,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	 * it still is, as long as you leave the relevant $config['filters'] intact. These old config variables
 	 * still exist for backwards-compatability and general convenience.
 	 *
-	 * Read more: https://web.archive.org/web/20121003095648/http://tinyboard.org/docs/?p=Config/Flood_filters
+	 * Read more: https://web.archive.org/web/20121003095807/http://tinyboard.org/docs/?p=Config/Flood_filters
 	 */
 
 	// Minimum time between between each post by the same IP address.
@@ -1265,7 +1265,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	// with non-board links.
 	// $config['custom_categories'] = array(
 	// 	'Links' => array(
-	// 		'Tinyboard' => 'http://tinyboard.org',
+	// 		'Github' => 'https://github.com/my/project',
 	// 		'Donate' => 'donate.html'
 	// 	)
 	// );
@@ -1352,7 +1352,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 		),
 		array(
 			'/^https?:\/\/(\w+\.)?vimeo\.com\/(\d{2,10})(\?.+)?$/i',
-			'<object style="float: left;margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%"><param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="always" /><param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=$2&amp;server=vimeo.com&amp;show_title=0&amp;show_byline=0&amp;show_portrait=0&amp;color=00adef&amp;fullscreen=1&amp;autoplay=0&amp;loop=0" /><embed src="http://vimeo.com/moogaloop.swf?clip_id=$2&amp;server=vimeo.com&amp;show_title=0&amp;show_byline=0&amp;show_portrait=0&amp;color=00adef&amp;fullscreen=1&amp;autoplay=0&amp;loop=0" type="application/x-shockwave-flash" allowfullscreen="true" allowscriptaccess="always" width="%%tb_width%%" height="%%tb_height%%"></object>'
+			'<iframe style="float: left;margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" src="https://player.vimeo.com/video/$2" frameborder="0"></iframe>'
 		),
 		array(
 			'/^https?:\/\/(\w+\.)?dailymotion\.com\/video\/([a-zA-Z0-9]{2,10})(_.+)?$/i',
@@ -1424,6 +1424,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
 	$config['error']['toomanyreports']	= _('You can\'t report that many posts at once.');
 	$config['error']['invalidpassword']	= _('Wrong password…');
 	$config['error']['invalidimg']		= _('Invalid image.');
+	$config['error']['phpfileserror']	= _('Upload failure (file #%index%): Error code %code%. Refer to <a href="http://php.net/manual/en/features.file-upload.errors.php">http://php.net/manual/en/features.file-upload.errors.php</a>; post discarded.');
 	$config['error']['unknownext']		= _('Unknown file extension.');
 	$config['error']['filesize']		= _('Maximum file size: %maxsz% bytes<br>Your file\'s size: %filesz% bytes');
 	$config['error']['maxsize']		= _('The file was too big.');
@@ -2189,7 +2190,7 @@ $config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We
  * ====================
  */
 
-	// https://web.archive.org/web/20121003095807/http://tinyboard.org/docs/?p=Events
+	// https://web.archive.org/web/20121003095551/http://tinyboard.org/docs/?p=Events
 
 	// event_handler('post', function($post) {
 	// 	// do something

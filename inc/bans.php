@@ -53,31 +53,31 @@ class Bans {
 	
 		if (isset($matches[2])) {
 			// Years
-			$expire += $matches[2]*60*60*24*365;
+			$expire += (int)$matches[2]*60*60*24*365;
 		}
 		if (isset($matches[4])) {
 			// Months
-			$expire += $matches[4]*60*60*24*30;
+			$expire += (int)$matches[4]*60*60*24*30;
 		}
 		if (isset($matches[6])) {
 			// Weeks
-			$expire += $matches[6]*60*60*24*7;
+			$expire += (int)$matches[6]*60*60*24*7;
 		}
 		if (isset($matches[8])) {
 			// Days
-			$expire += $matches[8]*60*60*24;
+			$expire += (int)$matches[8]*60*60*24;
 		}
 		if (isset($matches[10])) {
 			// Hours
-			$expire += $matches[10]*60*60;
+			$expire += (int)$matches[10]*60*60;
 		}
 		if (isset($matches[12])) {
 			// Minutes
-			$expire += $matches[12]*60;
+			$expire += (int)$matches[12]*60;
 		}
 		if (isset($matches[14])) {
 			// Seconds
-			$expire += $matches[14];
+			$expire += (int)$matches[14];
 		}
 	
 		return time() + $expire;

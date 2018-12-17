@@ -140,7 +140,7 @@
 	</fieldset>
 {%  endif %}
 
-{% if config.mod.dashboard_links|count %}
+{% if config.mod.dashboard_links and config.mod.dashboard_links|count %}
 	<fieldset>
 		<legend>{% trans 'Other' %}</legend>
 	

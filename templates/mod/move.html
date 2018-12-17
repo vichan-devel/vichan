@@ -1,4 +1,4 @@
-<form action="?/{{ board }}/move/{{ post }}" method="post">
+<form action="?/{{ board }}/move/{{ post }}" method="post" onsubmit="btnSubmit.disabled = true; return true;">
 	<input type="hidden" name="token" value="{{ token }}">
 	<table>
 		<tr>
@@ -36,7 +36,7 @@
 	</table>
 	
 	<ul style="padding:0;text-align:center;list-style:none">
-		<li><input type="submit" value="{% trans 'Move thread' %}"></li>
+		<li><input type="submit" name="btnSubmit" value="{% trans 'Move thread' %}"></li>
 	</ul>
 </form>
 
