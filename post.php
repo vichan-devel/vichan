@@ -198,13 +198,14 @@ if (!isset($_POST['captcha_cookie']) && isset($_SESSION['captcha_cookie'])) {
 	$_POST['captcha_cookie'] = $_SESSION['captcha_cookie'];
 }
 
-if (isset($_POST['delete'])) {
-	// Delete
+function handle_delete() {
+	global $config, $board;
 
-	if (!isset($_POST['board'], $_POST['password']))
+	if (!isset($_POST['board'], $_POST['password'])) {
 		error($config['error']['bot']);
+	}
 
-	if (empty($_POST['password'])){
+	if (empty($_POST['password'])) {
 		error($config['error']['invalidpassword']);
 	}
 
@@ -303,8 +304,11 @@ if (isset($_POST['delete'])) {
 		@fastcgi_finish_request();
 
 	Vichan\Functions\Theme\rebuild_themes('post-delete', $board['uri']);
+}
 
-} elseif (isset($_POST['report'])) {
+function handle_report() {
+	global $config, $board, $build_pages;
+
 	if (!isset($_POST['board'], $_POST['reason']))
 		error($config['error']['bot']);
 
@@ -404,7 +408,11 @@ if (isset($_POST['delete'])) {
 		header('Content-Type: text/json');
 		echo json_encode(array('success' => true));
 	}
-} elseif (isset($_POST['post']) || $dropped_post) {
+}
+
+function handle_post() {
+	global $config, $dropped_post, $board, $mod, $pdo;
+
 	if (!isset($_POST['body'], $_POST['board']) && !$dropped_post)
 		error($config['error']['bot']);
 
@@ -716,7 +724,7 @@ if (isset($_POST['delete'])) {
 	if (strtolower($post['email']) == 'noko') {
 		$noko = true;
 		$post['email'] = '';
-	} elseif (strtolower($post['email']) == 'nonoko'){
+	} elseif (strtolower($post['email']) == 'nonoko') {
 		$noko = false;
 		$post['email'] = '';
 	} else $noko = $config['always_noko'];
@@ -1198,10 +1206,14 @@ if (isset($_POST['delete'])) {
 		Vichan\Functions\Theme\rebuild_themes('post-thread', $board['uri']);
 	else
 		Vichan\Functions\Theme\rebuild_themes('post', $board['uri']);
+}
 
-} elseif (isset($_POST['appeal'])) {
-	if (!isset($_POST['ban_id']))
+function handle_appeal() {
+	global $config;
+
+	if (!isset($_POST['ban_id'])) {
 		error($config['error']['bot']);
+	}
 
 	$ban_id = (int)$_POST['ban_id'];
 
@@ -1239,6 +1251,16 @@ if (isset($_POST['delete'])) {
 	$query->execute() or error(db_error($query));
 
 	displayBan($ban);
+}
+
+if (isset($_POST['delete'])) {
+	handle_delete();
+} elseif (isset($_POST['report'])) {
+	handle_report();
+} elseif (isset($_POST['post']) || $dropped_post) {
+	handle_post();
+} elseif (isset($_POST['appeal'])) {
+	handle_appeal();
 } else {
 	if (!file_exists($config['has_installed'])) {
 		header('Location: install.php', true, $config['redirect_http']);
