@@ -902,7 +902,7 @@
 	// Tinyboard has been translated into a few langauges. See inc/locale for available translations.
 	$config['locale'] = 'en'; // (en, ru_RU.UTF-8, fi_FI.UTF-8, pl_PL.UTF-8)
 
-	// Timezone to use for displaying dates/tiems.
+	// Timezone to use for displaying dates/times.
 	$config['timezone'] = 'America/Los_Angeles';
 	// The format string passed to strftime() for displaying dates.
 	// http://www.php.net/manual/en/function.strftime.php
