@@ -5,7 +5,7 @@ Tinyboard is a light-weight, fast, highly configurable and user-friendly imagebo
 
 Getting started
 ---------------
-* [Why Tinyboard](why_tinyboard.md)?
+* [Why Tinyboard?](why_tinyboard.md)
 * [Installing Tinyboard](installation.md)
 * [Configuration Basics](config.md)
 * [Introduction to the moderator interface](mod_interface.md)
