@@ -72,7 +72,7 @@
 		if(!preg_match('/[^*^\s]/', $phrase) && empty($filters)) {
 			_syslog(LOG_WARNING, 'Query too broad.');
 			$body .= '<p class="unimportant" style="text-align:center">(Query too broad.)</p>';
-			echo Element('page.html', Array(
+			echo Element($config['file_page_template'], Array(
 				'config'=>$config,
 				'title'=>'Search',
 				'body'=>$body,
@@ -133,7 +133,7 @@
 		if($query->rowCount() == $search_limit) {
 			_syslog(LOG_WARNING, 'Query too broad.');
 			$body .= '<p class="unimportant" style="text-align:center">('._('Query too broad.').')</p>';
-			echo Element('page.html', Array(
+			echo Element($config['file_page_template'], Array(
 				'config'=>$config,
 				'title'=>'Search',
 				'body'=>$body,
@@ -167,7 +167,7 @@
 			$body .= '<p style="text-align:center" class="unimportant">('._('No results.').')</p>';
 	}
 		
-	echo Element('page.html', Array(
+	echo Element($config['file_page_template'], Array(
 		'config'=>$config,
 		'title'=>_('Search'),
 		'body'=>'' . $body

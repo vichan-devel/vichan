@@ -9,10 +9,10 @@ defined('TINYBOARD') or exit;
 function mod_page($title, $template, $args, $subtitle = false) {
 	global $config, $mod;
 	
-	echo Element('page.html', array(
+	echo Element($config['file_page_template'], array(
 		'config' => $config,
 		'mod' => $mod,
-		'hide_dashboard_link' => $template == 'mod/dashboard.html',
+		'hide_dashboard_link' => $template == $config['file_mod_dashboard'],
 		'title' => $title,
 		'subtitle' => $subtitle,
 		'boardlist' => createBoardlist($mod),
@@ -57,11 +57,11 @@ function mod_login($redirect = false) {
 	if (isset($_POST['username']))
 		$args['username'] = $_POST['username'];
 
-	mod_page(_('Login'), 'mod/login.html', $args);
+	mod_page(_('Login'), $config['file_mod_login'], $args);
 }
 
 function mod_confirm($request) {
-	mod_page(_('Confirm action'), 'mod/confirm.html', array('request' => $request, 'token' => make_secure_link_token($request)));
+	mod_page(_('Confirm action'), $config['file_mod_confim'], array('request' => $request, 'token' => make_secure_link_token($request)));
 }
 
 function mod_logout() {
@@ -159,7 +159,7 @@ function mod_dashboard() {
 	
 	$args['logout_token'] = make_secure_link_token('logout');
 	
-	mod_page(_('Dashboard'), 'mod/dashboard.html', $args);
+	mod_page(_('Dashboard'), $config['file_mod_dashboard'], $args);
 }
 
 function mod_search_redirect() {
@@ -331,7 +331,7 @@ function mod_search($type, $search_query_escaped, $page_no = 1) {
 	
 	// $results now contains the search results
 		
-	mod_page(_('Search results'), 'mod/search_results.html', array(
+	mod_page(_('Search results'), $config['file_mod_search_results'], array(
 		'search_type' => $type,
 		'search_query' => $search_query,
 		'search_query_escaped' => $search_query_escaped,
@@ -435,7 +435,7 @@ function mod_edit_board($boardName) {
 		
 		header('Location: ?/', true, $config['redirect_http']);
 	} else {
-		mod_page(sprintf('%s: ' . $config['board_abbreviation'], _('Edit board'), $board['uri']), 'mod/board.html', array(
+		mod_page(sprintf('%s: ' . $config['board_abbreviation'], _('Edit board'), $board['uri']), $config['file_mod_board'], array(
 			'board' => $board,
 			'token' => make_secure_link_token('edit/' . $board['uri'])
 		));
@@ -508,7 +508,7 @@ function mod_new_board() {
 		header('Location: ?/' . $board['uri'] . '/' . $config['file_index'], true, $config['redirect_http']);
 	}
 	
-	mod_page(_('New board'), 'mod/board.html', array('new' => true, 'token' => make_secure_link_token('new-board')));
+	mod_page(_('New board'), $config['file_mod_board'], array('new' => true, 'token' => make_secure_link_token('new-board')));
 }
 
 function mod_noticeboard($page_no = 1) {
@@ -559,7 +559,7 @@ function mod_noticeboard($page_no = 1) {
 	$query->execute() or error(db_error($query));
 	$count = $query->fetchColumn();
 	
-	mod_page(_('Noticeboard'), 'mod/noticeboard.html', array(
+	mod_page(_('Noticeboard'), $config['file_mod_noticeboard'], array(
 		'noticeboard' => $noticeboard,
 		'count' => $count,
 		'token' => make_secure_link_token('noticeboard')
@@ -628,7 +628,7 @@ function mod_news($page_no = 1) {
 	$query->execute() or error(db_error($query));
 	$count = $query->fetchColumn();
 	
-	mod_page(_('News'), 'mod/news.html', array('news' => $news, 'count' => $count, 'token' => make_secure_link_token('edit_news')));
+	mod_page(_('News'), $config['file_mod_news'], array('news' => $news, 'count' => $count, 'token' => make_secure_link_token('edit_news')));
 }
 
 function mod_news_delete($id) {
@@ -668,7 +668,7 @@ function mod_log($page_no = 1) {
 	$query->execute() or error(db_error($query));
 	$count = $query->fetchColumn();
 	
-	mod_page(_('Moderation log'), 'mod/log.html', array('logs' => $logs, 'count' => $count));
+	mod_page(_('Moderation log'), $config['file_mod_log'], array('logs' => $logs, 'count' => $count));
 }
 
 function mod_user_log($username, $page_no = 1) {
@@ -695,7 +695,7 @@ function mod_user_log($username, $page_no = 1) {
 	$query->execute() or error(db_error($query));
 	$count = $query->fetchColumn();
 	
-	mod_page(_('Moderation log'), 'mod/log.html', array('logs' => $logs, 'count' => $count, 'username' => $username));
+	mod_page(_('Moderation log'), $config['file_mod_log'], array('logs' => $logs, 'count' => $count, 'username' => $username));
 }
 
 function mod_board_log($board, $page_no = 1, $hide_names = false, $public = false) {
@@ -731,7 +731,7 @@ function mod_board_log($board, $page_no = 1, $hide_names = false, $public = fals
 	$query->execute() or error(db_error($query));
 	$count = $query->fetchColumn();
 	
-	mod_page(_('Board log'), 'mod/log.html', array('logs' => $logs, 'count' => $count, 'board' => $board, 'hide_names' => $hide_names, 'public' => $public));
+	mod_page(_('Board log'), $config['file_mod_log'], array('logs' => $logs, 'count' => $count, 'board' => $board, 'hide_names' => $hide_names, 'public' => $public));
 }
 
 function mod_view_board($boardName, $page_no = 1) {
@@ -750,7 +750,7 @@ function mod_view_board($boardName, $page_no = 1) {
 	$page['mod'] = true;
 	$page['config'] = $config;
 	
-	echo Element('index.html', $page);
+	echo Element($config['file_board_index'], $page);
 }
 
 function mod_view_thread($boardName, $thread) {
@@ -882,7 +882,7 @@ function mod_page_ip($ip) {
 	
 	$args['security_token'] = make_secure_link_token('IP/' . $ip);
 	
-	mod_page(sprintf('%s: %s', _('IP'), htmlspecialchars($ip)), 'mod/view_ip.html', $args, $args['hostname']);
+	mod_page(sprintf('%s: %s', _('IP'), htmlspecialchars($ip)), $config['file_mod_view_ip'], $args, $args['hostname']);
 }
 
 function mod_ban() {
@@ -892,7 +892,7 @@ function mod_ban() {
 		error($config['error']['noaccess']);
 	
 	if (!isset($_POST['ip'], $_POST['reason'], $_POST['length'], $_POST['board'])) {
-		mod_page(_('New ban'), 'mod/ban_form.html', array('token' => make_secure_link_token('ban')));
+		mod_page(_('New ban'), $config['file_mod_ban_form'], array('token' => make_secure_link_token('ban')));
 		return;
 	}
 	
@@ -933,7 +933,7 @@ function mod_bans() {
 		return;
 	}
 	
-	mod_page(_('Ban list'), 'mod/ban_list.html', array(
+	mod_page(_('Ban list'), $config['file_mod_ban_list'], array(
 		'mod' => $mod,
 		'boards' => json_encode($mod['boards']),
 		'token' => make_secure_link_token('bans'),
@@ -1027,7 +1027,7 @@ function mod_ban_appeals() {
 		}
 	}
 
-	mod_page(_('Ban appeals'), 'mod/ban_appeals.html', array(
+	mod_page(_('Ban appeals'), $config['file_mod_ban_appeals'], array(
 		'ban_appeals' => $ban_appeals,
 		'token' => make_secure_link_token('ban-appeals')
 	));
@@ -1229,7 +1229,7 @@ function mod_move_reply($originBoard, $postID) {
 		
 		$security_token = make_secure_link_token($originBoard . '/move_reply/' . $postID);
 		
-		mod_page(_('Move reply'), 'mod/move_reply.html', array('post' => $postID, 'board' => $originBoard, 'boards' => $boards, 'token' => $security_token));
+		mod_page(_('Move reply'), $config['file_mod_move_reply'], array('post' => $postID, 'board' => $originBoard, 'boards' => $boards, 'token' => $security_token));
 
 	}
 
@@ -1442,7 +1442,7 @@ function mod_move($originBoard, $postID) {
 	
 	$security_token = make_secure_link_token($originBoard . '/move/' . $postID);
 	
-	mod_page(_('Move thread'), 'mod/move.html', array('post' => $postID, 'board' => $originBoard, 'boards' => $boards, 'token' => $security_token));
+	mod_page(_('Move thread'), $config['file_mod_move'], array('post' => $postID, 'board' => $originBoard, 'boards' => $boards, 'token' => $security_token));
 }
 
 function mod_ban_post($board, $delete, $post, $token = false) {
@@ -1513,7 +1513,7 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 		'token' => $security_token
 	);
 	
-	mod_page(_('New ban'), 'mod/ban_form.html', $args);
+	mod_page(_('New ban'), $config['file_mod_ban_form'], $args);
 }
 
 function mod_edit_post($board, $edit_raw_html, $postID) {
@@ -1589,7 +1589,7 @@ function mod_edit_post($board, $edit_raw_html, $postID) {
 			$post['body'] = str_replace("\t", '&#09;', $post['body']);
 		}
 
-		mod_page(_('Edit post'), 'mod/edit_post_form.html', array('token' => $security_token, 'board' => $board, 'raw' => $edit_raw_html, 'post' => $post));
+		mod_page(_('Edit post'), $config['file_mod_edit_post_form'], array('token' => $security_token, 'board' => $board, 'raw' => $edit_raw_html, 'post' => $post));
 	}
 }
 
@@ -1874,7 +1874,7 @@ function mod_user($uid) {
 	
 	$user['boards'] = explode(',', $user['boards']);
 	
-	mod_page(_('Edit user'), 'mod/user.html', array(
+	mod_page(_('Edit user'), $config['file_mod_user'], array(
 		'user' => $user,
 		'logs' => $log,
 		'boards' => listBoards(),
@@ -1931,7 +1931,7 @@ function mod_user_new() {
 		return;
 	}
 		
-	mod_page(_('New user'), 'mod/user.html', array('new' => true, 'boards' => listBoards(), 'token' => make_secure_link_token('users/new')));
+	mod_page(_('New user'), $config['file_mod_user'], array('new' => true, 'boards' => listBoards(), 'token' => make_secure_link_token('users/new')));
 }
 
 
@@ -1953,7 +1953,7 @@ function mod_users() {
 		$user['demote_token'] = make_secure_link_token("users/{$user['id']}/demote");
 	}
 	
-	mod_page(sprintf('%s (%d)', _('Manage users'), count($users)), 'mod/users.html', array('users' => $users));
+	mod_page(sprintf('%s (%d)', _('Manage users'), count($users)), $config['file_mod_users'], array('users' => $users));
 }
 
 function mod_user_promote($uid, $action) {
@@ -2043,14 +2043,14 @@ function mod_pm($id, $reply = false) {
 		if (!$pm['to_username'])
 			error($config['error']['404']); // deleted?
 		
-		mod_page(sprintf('%s %s', _('New PM for'), $pm['to_username']), 'mod/new_pm.html', array(
+		mod_page(sprintf('%s %s', _('New PM for'), $pm['to_username']), $config['file_mod_new_pm'], array(
 			'username' => $pm['username'],
 			'id' => $pm['sender'],
 			'message' => quote($pm['message']),
 			'token' => make_secure_link_token('new_PM/' . $pm['username'])
 		));
 	} else {
-		mod_page(sprintf('%s &ndash; #%d', _('Private message'), $id), 'mod/pm.html', $pm);
+		mod_page(sprintf('%s &ndash; #%d', _('Private message'), $id), $config['file_mod_pm'], $pm);
 	}
 }
 
@@ -2071,7 +2071,7 @@ function mod_inbox() {
 		$message['snippet'] = pm_snippet($message['message']);
 	}
 	
-	mod_page(sprintf('%s (%s)', _('PM inbox'), count($messages) > 0 ? $unread . ' unread' : 'empty'), 'mod/inbox.html', array(
+	mod_page(sprintf('%s (%s)', _('PM inbox'), count($messages) > 0 ? $unread . ' unread' : 'empty'), $config['file_mod_inbox'], array(
 		'messages' => $messages,
 		'unread' => $unread
 	));
@@ -2119,7 +2119,7 @@ function mod_new_pm($username) {
 		header('Location: ?/', true, $config['redirect_http']);
 	}
 	
-	mod_page(sprintf('%s %s', _('New PM for'), $username), 'mod/new_pm.html', array(
+	mod_page(sprintf('%s %s', _('New PM for'), $username), $config['file_mod_new_pm'], array(
 		'username' => $username,
 		'id' => $id,
 		'token' => make_secure_link_token('new_PM/' . $username)
@@ -2188,11 +2188,11 @@ function mod_rebuild() {
 			}
 		}
 		
-		mod_page(_('Rebuild'), 'mod/rebuilt.html', array('logs' => $log));
+		mod_page(_('Rebuild'), $config['file_mod_rebuilt'], array('logs' => $log));
 		return;
 	}
 	
-	mod_page(_('Rebuild'), 'mod/rebuild.html', array(
+	mod_page(_('Rebuild'), $config['file_mod_rebuild'], array(
 		'boards' => listBoards(),
 		'token' => make_secure_link_token('rebuild')
 	));
@@ -2250,7 +2250,7 @@ function mod_reports() {
 		}
 		
 		// a little messy and inefficient
-		$append_html = Element('mod/report.html', array(
+		$append_html = Element($config['file_mod_report'], array(
 			'report' => $report,
 			'config' => $config,
 			'mod' => $mod,
@@ -2277,7 +2277,7 @@ function mod_reports() {
 		$count++;
 	}
 	
-	mod_page(sprintf('%s (%d)', _('Report queue'), $count), 'mod/reports.html', array('reports' => $body, 'count' => $count));
+	mod_page(sprintf('%s (%d)', _('Report queue'), $count), $config['file_mod_reports'], array('reports' => $body, 'count' => $count));
 }
 
 function mod_report_dismiss($id, $all = false) {
@@ -2364,7 +2364,7 @@ function mod_recent_posts($lim) {
 		$last_time = $post['time'];
 	}
 
-	echo mod_page(_('Recent posts'), 'mod/recent_posts.html',  array(
+	echo mod_page(_('Recent posts'), $config['file_mod_recent_posts'],  array(
 			'posts' => $posts,
 			'limit' => $limit,
 			'last_time' => $last_time
@@ -2409,7 +2409,7 @@ function mod_config($board_config = false) {
 		}
 		$instance_config = str_replace("\n", '&#010;', utf8tohtml($instance_config));
 		
-		mod_page(_('Config editor'), 'mod/config-editor-php.html', array(
+		mod_page(_('Config editor'), $config['file_mod_config_editor_php'], array(
 			'php' => $instance_config,
 			'readonly' => $readonly,
 			'boards' => listBoards(),
@@ -2493,7 +2493,7 @@ function mod_config($board_config = false) {
 					<p style="text-align:center">You may proceed with these changes manually by copying and pasting the following code to the end of <strong>' . $config_file . '</strong>:</p>
 					<textarea style="width:700px;height:370px;margin:auto;display:block;background:white;color:black" readonly>' . $config_append . '</textarea>
 				';
-				echo Element('page.html', $page);
+				echo Element($config['file_page_template'], $page);
 				exit;
 			}
 		}
@@ -2504,7 +2504,7 @@ function mod_config($board_config = false) {
 	}
 
 	mod_page(_('Config editor') . ($board_config ? ': ' . sprintf($config['board_abbreviation'], $board_config) : ''),
-		'mod/config-editor.html', array(
+		$config['file_mod_config_editor'], array(
 			'boards' => listBoards(),
 			'board' => $board_config,
 			'conf' => $conf,
@@ -2541,7 +2541,7 @@ function mod_themes_list() {
 		$theme['uninstall_token'] = make_secure_link_token('themes/' . $theme_name . '/uninstall');
 	}
 
-	mod_page(_('Manage themes'), 'mod/themes.html', array(
+	mod_page(_('Manage themes'), $config['file_mod_themes'], array(
 		'themes' => $themes,
 		'themes_in_use' => $themes_in_use,
 	));
@@ -2610,7 +2610,7 @@ function mod_theme_configure($theme_name) {
 		// Build themes
 		rebuildThemes('all');
 		
-		mod_page(sprintf(_($result ? 'Installed theme: %s' : 'Installation failed: %s'), $theme['name']), 'mod/theme_installed.html', array(
+		mod_page(sprintf(_($result ? 'Installed theme: %s' : 'Installation failed: %s'), $theme['name']), $config['file_mod_theme_installed'], array(
 			'theme_name' => $theme_name,
 			'theme' => $theme,
 			'result' => $result,
@@ -2621,7 +2621,7 @@ function mod_theme_configure($theme_name) {
 
 	$settings = themeSettings($theme_name);
 
-	mod_page(sprintf(_('Configuring theme: %s'), $theme['name']), 'mod/theme_config.html', array(
+	mod_page(sprintf(_('Configuring theme: %s'), $theme['name']), $config['file_mod_theme_config'], array(
 		'theme_name' => $theme_name,
 		'theme' => $theme,
 		'settings' => $settings,
@@ -2654,7 +2654,7 @@ function mod_theme_rebuild($theme_name) {
 	
 	rebuildTheme($theme_name, 'all');
 
-	mod_page(sprintf(_('Rebuilt theme: %s'), $theme_name), 'mod/theme_rebuilt.html', array(
+	mod_page(sprintf(_('Rebuilt theme: %s'), $theme_name), $config['file_mod_theme_rebuilt'], array(
 		'theme_name' => $theme_name,
 	));
 }
@@ -2752,7 +2752,7 @@ function mod_edit_page($id) {
 
 		$fn = ($board['uri'] ? ($board['uri'] . '/') : '') . $page['name'] . '.html';
 		$body = "<div class='ban'>$write</div>";
-		$html = Element('page.html', array('config' => $config, 'body' => $body, 'title' => utf8tohtml($page['title'])));
+		$html = Element($config['file_page_template'], array('config' => $config, 'body' => $body, 'title' => utf8tohtml($page['title'])));
 		file_write($fn, $html);
 	}
 
@@ -2763,7 +2763,7 @@ function mod_edit_page($id) {
 		$content = $query->fetchColumn();
 	}
 	
-	mod_page(sprintf(_('Editing static page: %s'), $page['name']), 'mod/edit_page.html', array('page' => $page, 'token' => make_secure_link_token("edit_page/$id"), 'content' => prettify_textarea($content), 'board' => $board));
+	mod_page(sprintf(_('Editing static page: %s'), $page['name']), $config['file_mod_edit_page'], array('page' => $page, 'token' => make_secure_link_token("edit_page/$id"), 'content' => prettify_textarea($content), 'board' => $board));
 }
 
 function mod_pages($board = false) {
@@ -2817,7 +2817,7 @@ function mod_pages($board = false) {
 		$p['delete_token'] = make_secure_link_token('edit_pages/delete/' . $p['name'] . ($board ? ('/' . $board) : ''));
 	}
 
-	mod_page(_('Pages'), 'mod/pages.html', array('pages' => $pages, 'token' => make_secure_link_token('edit_pages' . ($board ? ('/' . $board) : '')), 'board' => $board));
+	mod_page(_('Pages'), $config['file_mod_pages'], array('pages' => $pages, 'token' => make_secure_link_token('edit_pages' . ($board ? ('/' . $board) : '')), 'board' => $board));
 }
 
 function mod_debug_antispam() {
@@ -2854,7 +2854,7 @@ function mod_debug_antispam() {
 	$query = query('SELECT * FROM ``antispam`` ' . ($where ? "WHERE $where" : '') . ' ORDER BY `created` DESC LIMIT 20') or error(db_error());
 	$args['recent'] = $query->fetchAll(PDO::FETCH_ASSOC);
 	
-	mod_page(_('Debug: Anti-spam'), 'mod/debug/antispam.html', $args);
+	mod_page(_('Debug: Anti-spam'), $config['file_mod_debug_antispam'], $args);
 }
 
 function mod_debug_recent_posts() {
@@ -2888,7 +2888,7 @@ function mod_debug_recent_posts() {
 		}
 	}
 	
-	mod_page(_('Debug: Recent posts'), 'mod/debug/recent_posts.html', array('posts' => $posts, 'flood_posts' => $flood_posts));
+	mod_page(_('Debug: Recent posts'), $config['file_mod_debug_recent_posts'], array('posts' => $posts, 'flood_posts' => $flood_posts));
 }
 
 function mod_debug_sql() {
@@ -2912,7 +2912,7 @@ function mod_debug_sql() {
 		}
 	}
 	
-	mod_page(_('Debug: SQL'), 'mod/debug/sql.html', $args);
+	mod_page(_('Debug: SQL'), $config['file_mod_debug_sql'], $args);
 }
 
 function mod_debug_apc() {
@@ -2934,6 +2934,6 @@ function mod_debug_apc() {
 		$cached_vars[] = $var;
 	}
 	
-	mod_page(_('Debug: APC'), 'mod/debug/apc.html', array('cached_vars' => $cached_vars));
+	mod_page(_('Debug: APC'), $config['file_mod_debug_apc'], array('cached_vars' => $cached_vars));
 }
 

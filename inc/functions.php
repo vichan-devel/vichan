@@ -886,11 +886,11 @@ function displayBan($ban) {
 	
 	// Show banned page and exit
 	die(
-		Element('page.html', array(
+		Element($config['file_page_template'], array(
 			'title' => _('Banned!'),
 			'config' => $config,
 			'boardlist' => createBoardlist(isset($mod) ? $mod : false),
-			'body' => Element('banned.html', array(
+			'body' => Element($config['file_banned'], array(
 				'config' => $config,
 				'ban' => $ban,
 				'board' => $board,
@@ -1227,7 +1227,7 @@ function deletePost($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
 	// Delete posts and maybe replies
 	while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
 		event('delete', $post);
-
+		
 		$thread_id = $post['thread'];
 		if (!$post['thread']) {
 			// Delete thread HTML page
@@ -1279,17 +1279,17 @@ function deletePost($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
 	$query = prepare("DELETE FROM ``cites`` WHERE (`target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ")) OR (`board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . "))");
 	$query->bindValue(':board', $board['uri']);
 	$query->execute() or error(db_error($query));
-	
-	if ($config['anti_bump_flood']) {
-                $query = prepare(sprintf("SELECT `time` FROM ``posts_%s`` WHERE (`thread` = :thread OR `id` = :thread) AND `sage` = 0 ORDER BY `time` DESC LIMIT 1", $board['uri']));
-                $query->bindValue(':thread', $thread_id);
-                $query->execute() or error(db_error($query));
-                $bump = $query->fetchColumn();
 
-                $query = prepare(sprintf("UPDATE ``posts_%s`` SET `bump` = :bump WHERE `id` = :thread", $board['uri']));
-                $query->bindValue(':bump', $bump);
-                $query->bindValue(':thread', $thread_id);
-                $query->execute() or error(db_error($query));
+	if ($config['anti_bump_flood']) {
+		$query = prepare(sprintf("SELECT `time` FROM ``posts_%s`` WHERE (`thread` = :thread OR `id` = :thread) AND `sage` = 0 ORDER BY `time` DESC LIMIT 1", $board['uri']));
+		$query->bindValue(':thread', $thread_id);
+		$query->execute() or error(db_error($query));
+		$bump = $query->fetchColumn();
+
+		$query = prepare(sprintf("UPDATE ``posts_%s`` SET `bump` = :bump WHERE `id` = :thread", $board['uri']));
+		$query->bindValue(':bump', $bump);
+		$query->bindValue(':thread', $thread_id);
+		$query->execute() or error(db_error($query));
 	}
 	
 	if (isset($rebuild) && $rebuild_after) {
@@ -1436,7 +1436,7 @@ function index($page, $mod=false, $brief = false) {
 	}
 
 	if ($config['file_board']) {
-		$body = Element('fileboard.html', array('body' => $body, 'mod' => $mod));
+		$body = Element($config['file_fileboard'], array('body' => $body, 'mod' => $mod));
 	}
 
 	return array(
@@ -1705,7 +1705,7 @@ function buildIndex($global_api = "yes") {
 			$content['btn'] = getPageButtons($content['pages']);
 			$content['antibot'] = $antibot;
 
-			file_write($filename, Element('index.html', $content));
+			file_write($filename, Element($config['file_board_index'], $content));
 		}
 		elseif ($action == 'delete' || $catalog_api_action == 'delete') {
 			file_unlink($filename);
@@ -2277,7 +2277,7 @@ function buildThread($id, $return = false, $mod = false) {
 		$hasnoko50 = $thread->postCount() >= $config['noko50_min'];
 		$antibot = $mod || $return ? false : create_antibot($board['uri'], $id);
 
-		$body = Element('thread.html', array(
+		$body = Element($config['file_thread'], array(
 			'board' => $board,
 			'thread' => $thread,
 			'body' => $thread->build(),
@@ -2380,7 +2380,7 @@ function buildThread50($id, $return = false, $mod = false, $thread = null, $anti
 
 	$hasnoko50 = $thread->postCount() >= $config['noko50_min'];		
 
-	$body = Element('thread.html', array(
+	$body = Element($config['file_thread'], array(
 		'board' => $board,
 		'thread' => $thread,
 		'body' => $thread->build(false, true),

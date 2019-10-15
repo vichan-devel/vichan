@@ -116,11 +116,11 @@ function error($message, $priority = true, $debug_stuff = false) {
 	if ($debug_stuff) 
 		$debug_stuff = array_filter($debug_stuff, $debug_callback);
 
-	die(Element('page.html', array(
+	die(Element($config['file_page_template'], array(
 		'config' => $config,
 		'title' => _('Error'),
 		'subtitle' => _('An error has occured.'),
-		'body' => Element('error.html', array(
+		'body' => Element($config['file_error'], array(
 			'config' => $config,
 			'message' => $message,
 			'mod' => $mod,
@@ -133,11 +133,11 @@ function error($message, $priority = true, $debug_stuff = false) {
 function loginForm($error=false, $username=false, $redirect=false) {
 	global $config;
 	
-	die(Element('page.html', array(
+	die(Element($config['file_page_template'], array(
 		'index' => $config['root'],
 		'title' => _('Login'),
 		'config' => $config,
-		'body' => Element('login.html', array(
+		'body' => Element($config['file_login'], array(
 			'config'=>$config,
 			'error'=>$error,
 			'username'=>utf8tohtml($username),
@@ -384,7 +384,7 @@ class Post {
 	public function build($index=false) {
 		global $board, $config;
 		
-		return Element('post_reply.html', array('config' => $config, 'board' => $board, 'post' => &$this, 'index' => $index, 'mod' => $this->mod));
+		return Element($config['file_post_reply'], array('config' => $config, 'board' => $board, 'post' => &$this, 'index' => $index, 'mod' => $this->mod));
 	}
 };
 
@@ -448,7 +448,7 @@ class Thread {
 		
 		event('show-thread', $this);
 
-		$file = ($index && $config['file_board']) ? 'post_thread_fileboard.html' : 'post_thread.html';
+		$file = ($index && $config['file_board']) ? $config['file_post_thread_fileboard'] : $config['file_post_thread'];
 		$built = Element($file, array('config' => $config, 'board' => $board, 'post' => &$this, 'index' => $index, 'hasnoko50' => $hasnoko50, 'isnoko50' => $isnoko50, 'mod' => $this->mod));
 		
 		return $built;

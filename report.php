@@ -15,5 +15,5 @@ if ($config['report_captcha']) {
 	$captcha = null;
 }
 
-$body = Element('report.html', ['global' => $global, 'post' => $post, 'board' => $board, 'captcha' => $captcha, 'config' => $config]);
-echo Element('page.html', ['config' => $config, 'body' => $body]);
+$body = Element($config['file_report'], ['global' => $global, 'post' => $post, 'board' => $board, 'captcha' => $captcha, 'config' => $config]);
+echo Element($config['file_page_template'], ['config' => $config, 'body' => $body]);

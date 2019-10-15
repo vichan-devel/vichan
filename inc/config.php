@@ -1200,7 +1200,7 @@
 	// enter the directory path here. Otherwise, keep it false.
 	$config['root_file'] = false;
 
-	// Location of files.
+	// Location of primary files.
 	$config['file_index'] = 'index.html';
 	$config['file_page'] = '%d.html'; // NB: page is both an index page and a thread
 	$config['file_page50'] = '%d+50.html';
@@ -1209,6 +1209,67 @@
 	$config['file_mod'] = 'mod.php';
 	$config['file_post'] = 'post.php';
 	$config['file_script'] = 'main.js';
+
+	$config['file_board_index'] = 'index.html';
+	$config['file_page_template'] = 'page.html';
+	$config['file_report'] = 'report.html';
+	$config['file_error'] = 'error.html';
+	$config['file_login'] = 'login.html';
+	$config['file_banned'] = 'banned.html';
+	$config['file_fileboard'] = 'fileboard.html';
+	$config['file_thread'] = 'thread.html';
+	$config['file_post_reply'] = 'post_reply.html';
+	$config['file_post_thread'] = 'post_thread.html';
+	$config['file_post_thread_fileboard'] = 'post_thread_fileboard.html';
+
+	// Mod page file settings
+	$config['file_mod_dashboard'] = 'mod/dashboard.html';
+	$config['file_mod_login'] = 'mod/login.html';
+	$config['file_mod_confim'] = 'mod/confirm.html';
+	$config['file_mod_board'] = 'mod/board.html';
+	$config['file_mod_news'] = 'mod/news.html';
+	$config['file_mod_log'] = 'mod/log.html';
+
+	$config['file_mod_view_ip'] = 'mod/view_ip.html';
+	$config['file_mod_ban_form'] = 'mod/ban_form.html';
+	$config['file_mod_ban_list'] = 'mod/ban_list.html';
+	$config['file_mod_ban_appeals'] = 'mod/ban_appeals.html';
+
+	$config['file_mod_noticeboard'] = 'mod/noticeboard.html';
+	$config['file_mod_search_results'] = 'mod/search_results.html';
+
+	$config['file_mod_move'] = 'mod/move.html';
+	$config['file_mod_move_reply'] = 'mod/move_reply.html';
+	$config['file_mod_edit_post_form'] = 'mod/edit_post_form.html';
+
+	$config['file_mod_user'] = 'mod/user.html';
+	$config['file_mod_users'] = 'mod/users.html';
+
+	$config['file_mod_pm'] = 'mod/pm.html';
+	$config['file_mod_new_pm'] = 'mod/new_pm.html';
+	$config['file_mod_inbox'] = 'mod/inbox.html';
+
+	$config['file_mod_rebuilt'] = 'mod/rebuilt.html';
+	$config['file_mod_rebuild'] = 'mod/rebuild.html';
+	$config['file_mod_report'] = 'mod/report.html';
+	$config['file_mod_reports'] = 'mod/reports.html';
+	$config['file_mod_recent_posts'] = 'mod/recent_posts.html';
+
+	$config['file_mod_config_editor'] = 'mod/config-editor.html';
+	$config['file_mod_config_editor_php'] = 'mod/config-editor-php.html';
+
+	$config['file_mod_themes'] = 'mod/themes.html';
+	$config['file_mod_theme_installed'] = 'mod/theme_installed.html';
+	$config['file_mod_theme_config'] = 'mod/theme_config.html';
+	$config['file_mod_theme_rebuilt'] = 'mod/theme_rebuilt.html';
+
+	$config['file_mod_pages'] = 'mod/pages.html';
+	$config['file_mod_edit_page'] = 'mod/edit_page.html';
+
+	$config['file_mod_debug_antispam'] = 'mod/debug/antispam.html';
+	$config['file_mod_debug_recent_posts'] = 'mod/debug/recent_posts.html';
+	$config['file_mod_debug_sql'] = 'mod/debug/sql.html';
+	$config['file_mod_debug_apc'] = 'mod/debug/apc.html';
 
 	// Board directory, followed by a forward-slash (/).
 	$config['board_path'] = '%s/';
