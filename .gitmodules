@@ -5,5 +5,5 @@
 
 [submodule "inc/lib/parsedown"]
 	path = inc/lib/parsedown
-	url = https://github.com/vichan-devel/parsedown
+	url = https://github.com/vichan-devel/parsedown.git
 	branch = master

@@ -2752,7 +2752,7 @@ function mod_edit_page($id) {
 
 		$fn = ($board['uri'] ? ($board['uri'] . '/') : '') . $page['name'] . '.html';
 		$body = "<div class='ban'>$write</div>";
-		$html = Element('page.html', array('config' => $config, 'body' => $body, 'title' => utf8tohtml($page['title'])));
+		$html = Element('page.html', array('config' => $config, 'boardlist' => createBoardlist(), 'body' => $body, 'title' => utf8tohtml($page['title'])));
 		file_write($fn, $html);
 	}
 
