@@ -2174,7 +2174,7 @@ function markup(&$body, $track_cites = false, $op = false) {
 		$body = str_replace("\t", '&#09;', $body);
 		$body = $tidy->repairString($body, array(
 			'doctype' => 'omit',
-			'bare' => true,
+			'bare' => $config['markup_repair_tidy_bare'],
 			'literal-attributes' => true,
 			'indent' => false,
 			'show-body-only' => true,

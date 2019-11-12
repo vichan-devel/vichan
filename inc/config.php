@@ -676,10 +676,15 @@
 	// "/```([a-z0-9-]{0,20})\n(.*?)\n?```\n?/s"
 	$config['markup_code'] = false;
 
-	// Repair markup with HTML Tidy. This may be slower, but it solves nesting mistakes. Tinyboad, at the
+	// Repair markup with HTML Tidy. This may be slower, but it solves nesting mistakes. Tinyboard, at the
 	// time of writing this, can not prevent out-of-order markup tags (eg. "**''test**'') without help from
 	// HTML Tidy.
 	$config['markup_repair_tidy'] = false;
+
+	// Use 'bare' config option of tidy::repairString.
+	// This option replaces some punctuation marks with their ASCII counterparts.
+	// Dashes are replaced with (single) hyphens, for example.
+	$config['markup_repair_tidy_bare'] = true;
 
 	// Always regenerate markup. This isn't recommended and should only be used for debugging; by default,
 	// Tinyboard only parses post markup when it needs to, and keeps post-markup HTML in the database. This
