@@ -930,7 +930,7 @@ function checkBan($board = false) {
 	}
 
 	foreach ($ips as $ip) {
-		$bans = Bans::find($_SERVER['REMOTE_ADDR'], $board, $config['show_modname']);
+		$bans = Bans::find($ip, $board, $config['show_modname']);
 	
 		foreach ($bans as &$ban) {
 			if ($ban['expires'] && $ban['expires'] < time()) {
