@@ -11,7 +11,7 @@
 
 	{% include 'header.html' %}
 
-	{% set meta_subject %}{% if config.thread_subject_in_title and thread.subject %}{{ thread.subject|e }}{% else %}{{ thread.body_nomarkup[:256]|remove_modifiers|e }}{% endif %}{% endset %}
+	{% set meta_subject %}{% if config.thread_subject_in_title and thread.subject %}{{ thread.subject|e }}{% else %}{{ thread.body_nomarkup|remove_modifiers|remove_markup|e[:256] }}{% endif %}{% endset %}
 
 	<meta name="description" content="{{ board.url }} - {{ board.title|e }} - {{ meta_subject }}" />
 	<meta name="twitter:card" value="summary">
@@ -19,7 +19,7 @@
 	<meta property="og:type" content="article" />
 	<meta property="og:url" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.res }}{{ thread.id }}.html" />
 	{% if thread.files.0.thumb %}<meta property="og:image" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.thumb }}{{ thread.files.0.thumb }}" />{% endif %}
-	<meta property="og:description" content="{{ thread.body_nomarkup|e }}" />
+	<meta property="og:description" content="{{ thread.body_nomarkup|remove_modifiers|remove_markup|e }}" />
 
 	<title>{{ board.url }} - {{ meta_subject }}</title>
 </head>
