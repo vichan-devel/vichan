@@ -68,7 +68,7 @@ function refreshSettings() {
     }
 }
 
-function setupControl(control) {
+function setUpControl(control) {
     if (control.addEventListener) control.addEventListener("change", function(e) {
         if (control.type == "checkbox") {
             changeSetting(control.name, control.checked);
@@ -81,7 +81,7 @@ function setupControl(control) {
 refreshSettings();
 var settingsItems = settingsMenu.getElementsByTagName("input");
 for (var i = 0; i < settingsItems.length; i++) {
-    setupControl(settingsItems[i]);
+    setUpControl(settingsItems[i]);
 }
 
 if (settingsMenu.addEventListener && !window.Options) {
