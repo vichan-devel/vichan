@@ -1,0 +1,45 @@
+services:
+  #nginx webserver + php 5.6
+  web:
+      image: nginx:1.19.6-alpine
+      ports:
+        - "8080:80"
+      depends_on:
+        - db
+      volumes:
+          - ./:/code
+          - ./site.conf:/etc/nginx/conf.d/default.conf
+      networks:
+        leftchan_net:
+          ipv4_address: 172.20.0.3
+      links:
+          - php
+  php:
+      build: .
+      volumes:
+          - ./:/code
+      networks:
+        leftchan_net:
+          ipv4_address: 172.20.0.4
+  #MySQL Service
+  db:
+    image: mysql:5.6.50
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: lainchan
+      MYSQL_ROOT_PASSWORD: M9q5lO0RxJVh
+    networks:
+        leftchan_net:
+            ipv4_address: 172.20.0.2
+
+#Docker Networks
+networks:
+    leftchan_net:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.20.0.0/16
