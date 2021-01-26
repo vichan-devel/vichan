@@ -31,8 +31,27 @@ onReady(function() {
 				'width="360" height="270" src="//www.youtube.com/embed/' + videoID +
 				'?autoplay=1&html5=1" allowfullscreen frameborder="0"/>');
 
-			return false;
+			const ON = "[Remove]";
+			const OFF = "[Embed]";
+
+			let videoNode = $('div.video-container', tag);
+			let videoId = videoNode.data('video');
+			let span = $("<span>[Embed]</span>");
+			let embedNode = $('<iframe style="float:left;margin: 10px 20px" type="text/html" '+
+					'width="360" height="270" src="//www.youtube.com/embed/' + videoId +
+					'?autoplay=1&html5=1" allowfullscreen frameborder="0"/>')
+			span.click(function() {
+				if (span.text() == ON){
+					embedNode.remove();
+					span.text(OFF);
+				} else {
+					videoNode.append(embedNode);
+					span.text(ON);
+				}
+			});
 		});
+
+		videoNode.append(span);
 	};
 	do_embed_yt(document);
 
