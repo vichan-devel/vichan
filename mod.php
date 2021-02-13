@@ -179,7 +179,12 @@ foreach ($pages as $uri => $handler) {
 			);
 			$debug['time']['parse_mod_req'] = '~' . round((microtime(true) - $parse_start_time) * 1000, 2) . 'ms';
 		}
-		
+
+		if (is_array($matches)) {
+			// we don't want to call named parameters (PHP 8)
+			$matches = array_values($matches);
+		}
+
 		if (is_string($handler)) {
 			if ($handler[0] == ':') {
 				header('Location: ' . substr($handler, 1),  true, $config['redirect_http']);
