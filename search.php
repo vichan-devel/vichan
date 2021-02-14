@@ -1,5 +1,5 @@
 <?php
-	require 'inc/functions.php';
+	require 'inc/bootstrap.php';
 	
 	if (!$config['search']['enable']) {
 		die(_("Post search is disabled"));

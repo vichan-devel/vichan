@@ -1,6 +1,5 @@
 <?php
-include 'inc/functions.php';
-include 'inc/mod/pages.php';
+require 'inc/bootstrap.php';
 
 if (!isset($_GET['board']) || !preg_match("/{$config['board_regex']}/u", $_GET['board'])) {
 	http_response_code(400);

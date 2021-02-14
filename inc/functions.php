@@ -10,24 +10,7 @@ if (realpath($_SERVER['SCRIPT_FILENAME']) == str_replace('\\', '/', __FILE__)) {
 	exit;
 }
 
-define('TINYBOARD', null);
-
 $microtime_start = microtime(true);
-
-require_once 'inc/display.php';
-require_once 'inc/template.php';
-require_once 'inc/database.php';
-require_once 'inc/events.php';
-require_once 'inc/api.php';
-require_once 'inc/mod/auth.php';
-require_once 'inc/lock.php';
-require_once 'inc/queue.php';
-require_once 'inc/polyfill.php';
-@include_once 'inc/lib/parsedown/Parsedown.php'; // fail silently, this isn't a critical piece of code
-
-if (!extension_loaded('gettext')) {
-	require_once 'inc/lib/gettext/gettext.inc';
-}
 
 // the user is not currently logged in as a moderator
 $mod = false;
@@ -1658,6 +1641,97 @@ function checkMute() {
 	}
 }
 
+function _create_antibot($board, $thread) {
+	global $config, $purged_old_antispam;
+
+	$antibot = new AntiBot(array($board, $thread));
+
+	if (!isset($purged_old_antispam)) {
+		$purged_old_antispam = true;
+		query('DELETE FROM ``antispam`` WHERE `expires` < UNIX_TIMESTAMP()') or error(db_error());
+	}
+
+	if ($thread)
+		$query = prepare('UPDATE ``antispam`` SET `expires` = UNIX_TIMESTAMP() + :expires WHERE `board` = :board AND `thread` = :thread AND `expires` IS NULL');
+	else
+		$query = prepare('UPDATE ``antispam`` SET `expires` = UNIX_TIMESTAMP() + :expires WHERE `board` = :board AND `thread` IS NULL AND `expires` IS NULL');
+
+	$query->bindValue(':board', $board);
+	if ($thread)
+		$query->bindValue(':thread', $thread);
+	$query->bindValue(':expires', $config['spam']['hidden_inputs_expire']);
+	$query->execute() or error(db_error($query));
+
+	$query = prepare('INSERT INTO ``antispam`` VALUES (:board, :thread, :hash, UNIX_TIMESTAMP(), NULL, 0)');
+	$query->bindValue(':board', $board);
+	$query->bindValue(':thread', $thread);
+	$query->bindValue(':hash', $antibot->hash());
+	$query->execute() or error(db_error($query));
+
+	return $antibot;
+}
+
+function checkSpam(array $extra_salt = array()) {
+	global $config, $pdo;
+
+	if (!isset($_POST['hash']))
+		return true;
+
+	$hash = $_POST['hash'];
+
+	if (!empty($extra_salt)) {
+		// create a salted hash of the "extra salt"
+		$extra_salt = implode(':', $extra_salt);
+	} else {
+		$extra_salt = '';
+	}
+
+	// Reconsturct the $inputs array
+	$inputs = array();
+
+	foreach ($_POST as $name => $value) {
+		if (in_array($name, $config['spam']['valid_inputs']))
+			continue;
+
+		$inputs[$name] = $value;
+	}
+
+	// Sort the inputs in alphabetical order (A-Z)
+	ksort($inputs);
+
+	$_hash = '';
+
+	// Iterate through each input
+	foreach ($inputs as $name => $value) {
+		$_hash .= $name . '=' . $value;
+	}
+
+	// Add a salt to the hash
+	$_hash .= $config['cookies']['salt'];
+
+	// Use SHA1 for the hash
+	$_hash = sha1($_hash . $extra_salt);
+
+	if ($hash != $_hash)
+		return true;
+
+	$query = prepare('SELECT `passed` FROM ``antispam`` WHERE `hash` = :hash');
+	$query->bindValue(':hash', $hash);
+	$query->execute() or error(db_error($query));
+	if ((($passed = $query->fetchColumn(0)) === false) || ($passed > $config['spam']['hidden_inputs_max_pass'])) {
+		// there was no database entry for this hash. most likely expired.
+		return true;
+	}
+
+	return $hash;
+}
+
+function incrementSpamHash($hash) {
+	$query = prepare('UPDATE ``antispam`` SET `passed` = `passed` + 1 WHERE `hash` = :hash');
+	$query->bindValue(':hash', $hash);
+	$query->execute() or error(db_error($query));
+}
+
 function buildIndex($global_api = "yes") {
 	global $board, $config, $build_pages;
 
@@ -1785,7 +1859,6 @@ function buildJavascript() {
 	}
 
 	if ($config['minify_js']) {
-		require_once 'inc/lib/minify/JSMin.php';		
 		$script = JSMin::minify($script);
 	}
 

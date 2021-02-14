@@ -61,10 +61,11 @@ Installation
 	development version with:
 
         git clone git://github.com/vichan-devel/vichan.git
-	
-2.	Navigate to ```install.php``` in your web browser and follow the
+
+2.	run ```composer install``` inside the directory	
+3.	Navigate to ```install.php``` in your web browser and follow the
 	prompts.
-3.	vichan should now be installed. Log in to ```mod.php``` with the
+4.	vichan should now be installed. Log in to ```mod.php``` with the
 	default username and password combination: **admin / password**.
 
 Please remember to change the administrator account password.

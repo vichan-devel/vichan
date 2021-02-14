@@ -1,5 +1,5 @@
 <?php
-require_once("inc/functions.php");
+require_once("inc/bootstrap.php");
 require_once("inc/route.php");
 require_once("inc/controller.php");
 

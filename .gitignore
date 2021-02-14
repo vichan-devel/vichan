@@ -11,9 +11,6 @@
 !/templates/*.html
 !/inc/config.php
 
-# minify
-/inc/lib/minify
-
 # instance-config
 /inc/instance-config.php
 
@@ -47,3 +44,5 @@ Thumbs.db
 #vichan custom
 favicon.ico
 /static/spoiler.png
+
+/vendor/
