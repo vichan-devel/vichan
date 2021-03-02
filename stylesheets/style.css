@@ -9,7 +9,7 @@ body {
 }
 
 .hidden {
-  display:none;
+  display: none;
 }
 
 a,a:visited {
@@ -420,13 +420,13 @@ fieldset label {
 }
 
 div.pages {
-	color: #89A;
-	background: #D6DAF0;
-	display: inline-block;
-	padding: 8px;
-	margin: 8px 0 4px 0;
-	border-right: 1px solid #B7C5D9;
-	border-bottom: 1px solid #B7C5D9;
+  color: #89A;
+  background: #D6DAF0;
+  display: inline-block;
+  padding: 8px;
+  margin: 8px 0 4px 0;
+  border-right: 1px solid #B7C5D9;
+  border-bottom: 1px solid #B7C5D9;
 }
 
 div.pages.top {
@@ -825,8 +825,6 @@ pre {
   overflow: auto;
 }
 
-
-
 #alert_div {
   width: 500px;
 }
@@ -928,18 +926,17 @@ pre {
 
 pre {
 /* Better code tags */
-  max-width:inherit;
-  word-wrap:normal;
-  overflow:auto;
+  max-width: inherit;
+  word-wrap: normal;
+  overflow: auto;
   display: block!important;
-  font-size:9pt;
-  font-family:monospace;
+  font-size: 9pt;
+  font-family: monospace;
 }
 
 span.pln {
-  color:grey;
+  color: grey;
 }
-
 
 @media screen and (min-width: 768px) {
   .intro {
@@ -952,103 +949,99 @@ span.pln {
 }
 
 .clearfix {
-	display: block;
-	clear: both;
-	visibility: hidden;
-	overflow: hidden;
-	
-	font-size: 0px;
-	line-height: 0px;
-	
-	box-sizing: border-box;
-	border: none;
-	height: 0;
-	margin: 0;
-	padding: 0;
-	width: 100%;
-	zoom: 1;
+  display: block;
+  clear: both;
+  visibility: hidden;
+  overflow: hidden;
+  font-size: 0px;
+  line-height: 0px;
+  box-sizing: border-box;
+  border: none;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  zoom: 1;
 }
 
 /* === SPECIFIC PAGES & FEATURES === */
 
 /* Board List */
 div.boardlist {
-	margin-top: 3px;
-	
-	color: #89A;
-	font-size: 9pt;
+  margin-top: 3px;
+  color: #89A;
+  font-size: 9pt;
 }
+
 div.boardlist.bottom {
-	margin-top: 12px;
-	clear: both;
+  margin-top: 12px;
+  clear: both;
 }
+
 div.boardlist a {
-	text-decoration: none;
+  text-decoration: none;
 }
 
 /* Threads */
 /* Thread Footer */
 #thread-interactions {
-	margin: 8px 0;
-	clear: both;
+  margin: 8px 0;
+  clear: both;
 }
+
 #thread-links {
-	float: left;
+  float: left;
 }
+
 #thread-links > a {
-	padding-left: none;
-	padding-right: 10px;
+  padding-left: none;
+  padding-right: 10px;
 }
+
 #thread-quick-reply {
-	display: none;
-	position: absolute;
-	left: 50%;
-	right: 50%;
-	text-align: center;
-	width: 100px;
-	margin-left: -50px;
+  display: none;
+  position: absolute;
+  left: 50%;
+  right: 50%;
+  text-align: center;
+  width: 100px;
+  margin-left: -50px;
 }
+
 #thread_stats {
-	float: right;
+  float: right;
 }
 
 #post-moderation-fields {
-	float: right;
-	text-align: right;
+  float: right;
+  text-align: right;
 }
-#delete-fields {
-}
-#report-fields {
-}
-
-
 
 /* threadwatcher */
-
 #watchlist {
-	display: none;
-	max-height: 250px;
-	overflow: auto;
-	border: 1px solid;
-	border-style: none solid solid none;
-	width: 50%;
-	margin: 0 auto;
-	margin-bottom: 10px;
+  display: none;
+  max-height: 250px;
+  overflow: auto;
+  border: 1px solid;
+  border-style: none solid solid none;
+  width: 50%;
+  margin: 0 auto;
+  margin-bottom: 10px;
 }
 
 .watchlist-inner, .watchlist-controls {
-	margin: 0 auto;
-	margin-top: 10px;
-	margin-bottom: 10px;
-	text-align: center;
+  margin: 0 auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 #watchlist-toggle, .watchThread, .watchlist-remove, #clearList, #clearGhosts {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 #youtube-size input {
-	width: 50px;
+  width: 50px;
 }
 
 /* File selector */
@@ -1064,9 +1057,11 @@ div.boardlist a {
   background-color: rgba(200, 200, 200, 0.5);
   overflow-y: auto;
 }
+
 .dropzone-wrap {
   width: 100%;
 }
+
 .dropzone .file-hint {
   color: rgba(0, 0, 0, 0.5);
   cursor: pointer;
@@ -1077,22 +1072,27 @@ div.boardlist a {
   transition: 0.2s;
   border: 2px dashed rgba(125, 125, 125, 0.4);
 }
+
 .file-hint:hover, .dropzone.dragover .file-hint {
   color: rgba(0, 0, 0, 1);
   border-color: rgba(125, 125, 125, 0.8);
 }
+
 .dropzone.dragover {
   background-color: rgba(200, 200, 200, 1);
 }
+
 .dropzone .file-thumbs {
   text-align: left;
   width: 100%;
 }
+
 .dropzone .tmb-container {
   padding: 3px;
   overflow-x: hidden;
   white-space: nowrap;
 }
+
 .dropzone .file-tmb {
   height: 40px;
   width: 70px;
@@ -1103,11 +1103,13 @@ div.boardlist a {
   background-size: cover;
   background-position: center;
 }
+
 .dropzone .file-tmb span {
   font-weight: 600;
   position: relative;
   top: 13px;
 }
+
 .dropzone .tmb-filename {
   display: inline-block;
   vertical-align: bottom;
@@ -1115,6 +1117,7 @@ div.boardlist a {
   position: relative;
   margin-left: 5px;
 }
+
 .dropzone .remove-btn {
   cursor: pointer;
   color: rgba(125, 125, 125, 0.5);
@@ -1125,6 +1128,7 @@ div.boardlist a {
   margin-right: 5px;
   font-size: 20px
 }
+
 .dropzone .remove-btn:hover {
   color: rgba(125, 125, 125, 1);
 }
@@ -1140,6 +1144,7 @@ table.fileboard th, table.fileboard td {
   padding: 2px;
   text-align: center;
 }
+
 table.fileboard .intro a {
   margin-left: 0px;
 }
@@ -1154,6 +1159,7 @@ table.fileboard .intro a {
   background-color: rgba(0, 0, 0, 0.4);
   overflow: auto;
 }
+
 #gallery_toolbar {
   position: absolute;
   right: 12%;
@@ -1163,13 +1169,16 @@ table.fileboard .intro a {
   background-color: rgba(0, 0, 0, 0.4);
   text-align: right;
 }
+
 #gallery_images img {
   width: 100%;
 }
+
 #gallery_toolbar a {
   font-size: 28px;
   padding-right: 5px;
 }
+
 #gallery_main {
   position: absolute;
   left: 0px;
@@ -1184,25 +1193,30 @@ table.fileboard .intro a {
   -webkit-transition: all 0.5s;
           transition: all 0.5s;
 }
+
 #gallery_images img:hover, #gallery_images img.active {
   opacity: 1;
 }
+
 #gallery_images img.active {
   -webkit-box-shadow: 0px 0px 29px 2px rgba(255,255,255,1);
      -moz-box-shadow: 0px 0px 29px 2px rgba(255,255,255,1);
           box-shadow: 0px 0px 29px 2px rgba(255,255,255,1);
   z-index: 1;
 }
+
 #gallery_main img, #gallery_main video {
   max-width: 100%;
   max-height: 100%;
   position: absolute;
 }
+
 .own_post {
 	font-style: italic;
 	font-weight: normal;
 	opacity: .666;
 }
+
 div.mix {
 	display: inline-block;
 }
