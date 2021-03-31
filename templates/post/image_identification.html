@@ -14,7 +14,7 @@
 			<a href="http://iqdb.org/?url={{ config.domain }}{{ config.uri_img }}{{ file.file }}" target="_blank">iqdb</a>
 		{% endif %}
 		{% if config.image_identification_yandex %}
-                        <a href="https://yandex.com/images/search?rpt=imageview&url={{ config.domain }}{{ config.uri_img }}{{ file.file }" target="_blank">yandex</a>
+                        <a rel="noreferrer" href="https://yandex.com/images/search?url={{ config.domain }}{{ config.uri_img }}{{ file.file }}&rpt=imagelike" target="_blank">Yandex</a>
                 {% endif %}
 	</span>
 {% endif %}
