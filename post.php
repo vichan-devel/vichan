@@ -1089,9 +1089,17 @@ if (isset($_POST['delete'])) {
 
 			if ($config['redraw_image'] || (!@$file['exif_stripped'] && $config['strip_exif'] && ($file['extension'] == 'jpg' || $file['extension'] == 'jpeg'))) {
 				if (!$config['redraw_image'] && $config['use_exiftool']) {
-					if($error = shell_exec_error('exiftool -overwrite_original -ignoreMinorErrors -q -q -all= ' .
-						escapeshellarg($file['tmp_name'])))
+					if ($error = shell_exec_error('exiftool -overwrite_original -ignoreMinorErrors -q -q -all= ' .
+						escapeshellarg($file['tmp_name']))) {
 						error(_('Could not strip EXIF metadata!'), null, $error);
+					} else {
+						clearstatcache(true, $file['tmp_name']);
+						$ret = filesize($file['tmp_name']);
+						if ($ret === false) {
+							error(_('Could not calculate file size!'), null, $error);
+						}
+						$file['size'] = $ret;
+					}
 				} else {
 					$image->to($file['file']);
 					$dont_copy_file = true;
