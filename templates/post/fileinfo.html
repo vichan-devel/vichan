@@ -22,9 +22,9 @@
 			{% if config.show_filename and file.filename %}
 				, 
 				{% if file.filename|length > config.max_filename_display %}
-					<span class="postfilename" title="{{ file.filename|e|bidi_cleanup }}">{{ file.filename|truncate_filename(config.max_filename_display)|e|bidi_cleanup }}</span>
+					<a href="{{ config.uri_img }}{{ file.file|e|bidi_cleanup }}" download="{{ file.filename|e|bidi_cleanup }}" title="Save as original filename: {{ file.filename|e|bidi_cleanup }}">{{ file.filename|truncate_filename(config.max_filename_display)|e|bidi_cleanup }}</a>
 				{% else %}
-					<span class="postfilename">{{ file.filename|e|bidi_cleanup }}</span>
+					<a href="{{ config.uri_img }}{{ file.file|e|bidi_cleanup }}" download="{{ file.filename|e|bidi_cleanup }}" title="Save as original filename">{{ file.filename|e|bidi_cleanup }}</a>
 				{% endif %}
 			{% endif %}
 		)
