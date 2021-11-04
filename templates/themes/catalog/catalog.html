@@ -78,17 +78,17 @@
 		<br>Tinyboard Copyright &copy; 2010-2014 Tinyboard Development Group    
 		<br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2018 vichan-devel</p>
 	</footer>
-	<script type="text/javascript">{% raw %}
+	<script type="text/javascript">{% verbatim %}
 		var styles = {
-			{% endraw %}
-			{% for name, uri in config.stylesheets %}{% raw %}'{% endraw %}{{ name|addslashes }}{% raw %}' : '{% endraw %}/stylesheets/{{ uri|addslashes }}{% raw %}',
-			{% endraw %}{% endfor %}{% raw %}
+			{% endverbatim %}
+			{% for name, uri in config.stylesheets %}{% verbatim %}'{% endverbatim %}{{ name|addslashes }}{% verbatim %}' : '{% endverbatim %}/stylesheets/{{ uri|addslashes }}{% verbatim %}',
+			{% endverbatim %}{% endfor %}{% verbatim %}
 		}; onready(init);
-	{% endraw %}</script>
+	{% endverbatim %}</script>
 
-	<script type="text/javascript">{% raw %}
+	<script type="text/javascript">{% verbatim %}
 		ready();
-	{% endraw %}</script>
+	{% endverbatim %}</script>
 </body>
 </html>
 {% endfilter %}

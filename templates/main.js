@@ -1,4 +1,4 @@
-{% raw %}
+{% verbatim %}
 
 /* gettext-compatible _ function, example of usage:
  *
@@ -109,11 +109,11 @@ function alert(a, do_confirm, confirm_ok_action, confirm_cancel_action) {
 var saved = {};
 
 
-var selectedstyle = '{% endraw %}{{ config.default_stylesheet.0|addslashes }}{% raw %}';
+var selectedstyle = '{% endverbatim %}{{ config.default_stylesheet.0|addslashes }}{% verbatim %}';
 var styles = {
-	{% endraw %}
-	{% for stylesheet in stylesheets %}{% raw %}'{% endraw %}{{ stylesheet.name|addslashes }}{% raw %}' : '{% endraw %}{{ stylesheet.uri|addslashes }}{% raw %}',
-	{% endraw %}{% endfor %}{% raw %}
+	{% endverbatim %}
+	{% for stylesheet in stylesheets %}{% verbatim %}'{% endverbatim %}{{ stylesheet.name|addslashes }}{% verbatim %}' : '{% endverbatim %}{{ stylesheet.uri|addslashes }}{% verbatim %}',
+	{% endverbatim %}{% endfor %}{% verbatim %}
 };
 
 if (typeof board_name === 'undefined') {
@@ -121,16 +121,16 @@ if (typeof board_name === 'undefined') {
 }
 
 function changeStyle(styleName, link) {
-	{% endraw %}
-	{% if config.stylesheets_board %}{% raw %}
+	{% endverbatim %}
+	{% if config.stylesheets_board %}{% verbatim %}
 		if (board_name) {
 			stylesheet_choices[board_name] = styleName;
 			localStorage.board_stylesheets = JSON.stringify(stylesheet_choices);
 		}
-	{% endraw %}{% else %}
+	{% endverbatim %}{% else %}
 		localStorage.stylesheet = styleName;
 	{% endif %}
-	{% raw %}
+	{% verbatim %}
 	
 	if (!document.getElementById('stylesheet')) {
 		var s = document.createElement('link');
@@ -160,9 +160,9 @@ function changeStyle(styleName, link) {
 }
 
 
-{% endraw %}
+{% endverbatim %}
 {% if config.stylesheets_board %}
-	{% raw %}
+	{% verbatim %}
 	
 	if (!localStorage.board_stylesheets) {
 		localStorage.board_stylesheets = '{}';
@@ -177,9 +177,9 @@ function changeStyle(styleName, link) {
 			}
 		}
 	}
-	{% endraw%}
+	{% endverbatim%}
 {% else %}
-	{% raw %}
+	{% verbatim %}
 	if (localStorage.stylesheet) {
 		for (var styleName in styles) {
 			if (styleName == localStorage.stylesheet) {
@@ -188,9 +188,9 @@ function changeStyle(styleName, link) {
 			}
 		}
 	}
-	{% endraw %}
+	{% endverbatim %}
 {% endif %}
-{% raw %}
+{% verbatim %}
 
 function init_stylechooser() {
 	var newElement = document.createElement('div');
@@ -243,7 +243,7 @@ function highlightReply(id) {
 
 function generatePassword() {
 	var pass = '';
-	var chars = '{% endraw %}{{ config.genpassword_chars }}{% raw %}';
+	var chars = '{% endverbatim %}{{ config.genpassword_chars }}{% verbatim %}';
 	for (var i = 0; i < 8; i++) {
 		var rnd = Math.floor(Math.random() * chars.length);
 		pass += chars.substring(rnd, rnd + 1);
@@ -323,15 +323,15 @@ function rememberStuff() {
 		
 		if (sessionStorage.body) {
 			var saved = JSON.parse(sessionStorage.body);
-			if (get_cookie('{% endraw %}{{ config.cookies.js }}{% raw %}')) {
+			if (get_cookie('{% endverbatim %}{{ config.cookies.js }}{% verbatim %}')) {
 				// Remove successful posts
-				var successful = JSON.parse(get_cookie('{% endraw %}{{ config.cookies.js }}{% raw %}'));
+				var successful = JSON.parse(get_cookie('{% endverbatim %}{{ config.cookies.js }}{% verbatim %}'));
 				for (var url in successful) {
 					saved[url] = null;
 				}
 				sessionStorage.body = JSON.stringify(saved);
 				
-				document.cookie = '{% endraw %}{{ config.cookies.js }}{% raw %}={};expires=0;path=/;';
+				document.cookie = '{% endverbatim %}{{ config.cookies.js }}{% verbatim %}={};expires=0;path=/;';
 			}
 			if (saved[document.location]) {
 				document.forms.post.body.value = saved[document.location];
@@ -359,13 +359,13 @@ var script_settings = function(script_name) {
 function init() {
 	init_stylechooser();
 
-	{% endraw %}	
+	{% endverbatim %}	
 	{% if config.allow_delete %}
 	if (document.forms.postcontrols) {
 		document.forms.postcontrols.password.value = localStorage.password;
 	}
 	{% endif %}
-	{% raw %}
+	{% verbatim %}
 	
 	if (window.location.hash.indexOf('q') != 1 && window.location.hash.substring(1))
 		highlightReply(window.location.hash.substring(1));
@@ -386,16 +386,16 @@ function ready() {
 	}
 }
 
-{% endraw %}
+{% endverbatim %}
 
 var post_date = "{{ config.post_date }}";
 var max_images = {{ config.max_images }};
 
 onready(init);
 
-{% if config.google_analytics %}{% raw %}
+{% if config.google_analytics %}{% verbatim %}
 
-var _gaq = _gaq || [];_gaq.push(['_setAccount', '{% endraw %}{{ config.google_analytics }}{% raw %}']);{% endraw %}{% if config.google_analytics_domain %}{% raw %}_gaq.push(['_setDomainName', '{% endraw %}{{ config.google_analytics_domain }}{% raw %}']){% endraw %}{% endif %}{% if not config.google_analytics_domain %}{% raw %}_gaq.push(['_setDomainName', 'none']){% endraw %}{% endif %}{% raw %};_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();{% endraw %}{% endif %}
+var _gaq = _gaq || [];_gaq.push(['_setAccount', '{% endverbatim %}{{ config.google_analytics }}{% verbatim %}']);{% endverbatim %}{% if config.google_analytics_domain %}{% verbatim %}_gaq.push(['_setDomainName', '{% endverbatim %}{{ config.google_analytics_domain }}{% verbatim %}']){% endverbatim %}{% endif %}{% if not config.google_analytics_domain %}{% verbatim %}_gaq.push(['_setDomainName', 'none']){% endverbatim %}{% endif %}{% verbatim %};_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();{% endverbatim %}{% endif %}
 
 {% if config.statcounter_project and config.statcounter_security %}
 var sc = document.createElement('script');
