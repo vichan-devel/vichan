@@ -14,6 +14,18 @@
         </script>
 
 	{% include 'header.html' %}
+
+	{% set meta_subject %}{% if config.thread_subject_in_title and thread.subject %}{{ thread.subject|e }}{% else %}{{ thread.body_nomarkup|remove_modifiers[:256]|e }}{% endif %}{% endset %}
+
+	<meta name="description" content="{{ meta_subject }}" />
+	<meta name="twitter:card" value="summary">
+	<meta name="twitter:title" content="{{ board.url }} - {{ board.title|e }}" />
+	<meta name="twitter:description" content="{{ meta_subject }}" />
+	<meta name="twitter:image" content="{{ config.domain }}/{{ config.logo }}" />
+	<meta property="og:title" content="{{ board.url }} - {{ board.title|e }}" />
+	<meta property="og:type" content="article" />
+	<meta property="og:image" content="{{ config.domain }}/{{ config.logo }}" />
+	<meta property="og:description" content="{{ meta_subject }}" />
 	<title>{{ board.url }} - {{ board.title|e }}</title>
 </head>
 <body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %} active-{% if not no_post_form %}index{% else %}ukko{% endif %}" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
