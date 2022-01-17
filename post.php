@@ -1212,7 +1212,7 @@ if (isset($_POST['delete'])) {
 	if (!$post['mod']) header('X-Associated-Content: "' . $redirect . '"');
 
 	// Any telegrams to show?
-	$query = prepare('SELECT * FROM ``telegrams`` WHERE ``ip`` = :ip AND ``seen`` = 0');
+	$query = prepare('SELECT * FROM ``telegrams`` WHERE `ip` = :ip AND `seen` = 0');
 	$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
 	$query->execute() or error(db_error($query));
 	$telegrams = $query->fetchAll(PDO::FETCH_ASSOC);
