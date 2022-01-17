@@ -118,10 +118,14 @@ class Cache {
 		
 		switch ($config['cache']['enabled']) {
 			case 'memcached':
-			case 'redis':
 				if (!self::$cache)
 					self::init();
 				self::$cache->delete($key);
+				break;
+			case 'redis':
+				if (!self::$cache)
+					self::init();
+				self::$cache->del($key);
 				break;
 			case 'apc':
 				apc_delete($key);
