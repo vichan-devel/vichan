@@ -174,6 +174,17 @@ if (!isset($_POST['captcha_cookie']) && isset($_SESSION['captcha_cookie'])) {
 	$_POST['captcha_cookie'] = $_SESSION['captcha_cookie'];
 }
 
+// Check if poster is is mod
+check_login(false);
+$is_mod = false;
+if (isset($_POST['mod']) && $_POST['mod']) {
+	if ($mod) {
+		$is_mod = true;
+	} else {
+		error($config['error']['notamod']);
+	}
+}
+
 if (isset($_POST['delete'])) {
 	// Delete
 	
@@ -198,8 +209,8 @@ if (isset($_POST['delete'])) {
 	if (!openBoard($_POST['board']))
 		error($config['error']['noboard']);
 
-	if ((!isset($_POST['mod']) || !$_POST['mod']) && $config['board_locked']) {
-    	error("Board is locked");
+	if (!$is_mod && $config['board_locked']) {
+		error("Board is locked");
 	}
 	
 	// Check if banned
@@ -252,7 +263,6 @@ if (isset($_POST['delete'])) {
 	
 	buildIndex();
 
-	$is_mod = isset($_POST['mod']) && $_POST['mod'];
 	$root = $is_mod ? $config['root'] . $config['file_mod'] . '?/' : $config['root'];
 
 	if (!isset($_POST['json_response'])) {
@@ -285,8 +295,8 @@ if (isset($_POST['delete'])) {
 	if (!openBoard($_POST['board']))
 		error($config['error']['noboard']);
 
-	if ((!isset($_POST['mod']) || !$_POST['mod']) && $config['board_locked']) {
-   		error("Board is locked");
+	if (!$is_mod && $config['board_locked']) {
+		error("Board is locked");
 	}
 	
 	// Check if banned
@@ -347,7 +357,6 @@ if (isset($_POST['delete'])) {
 		$query->execute() or error(db_error($query));
 	}
 	
-	$is_mod = isset($_POST['mod']) && $_POST['mod'];
 	$root = $is_mod ? $config['root'] . $config['file_mod'] . '?/' : $config['root'];
 	
 	if (!isset($_POST['json_response'])) {
@@ -367,8 +376,8 @@ if (isset($_POST['delete'])) {
 	if (!openBoard($post['board']))
 		error($config['error']['noboard']);
 
-	if ((!isset($_POST['mod']) || !$_POST['mod']) && $config['board_locked']) {
-    	error("Board is locked");
+	if (!$is_mod && $config['board_locked']) {
+		error("Board is locked");
 	}
 	
 	if (!isset($_POST['name']))
@@ -439,13 +448,7 @@ if (isset($_POST['delete'])) {
 		checkDNSBL();
 		
 
-		if ($post['mod'] = isset($_POST['mod']) && $_POST['mod']) {
-			check_login(false);
-			if (!$mod) {
-				// Liar. You're not a mod.
-				error($config['error']['notamod']);
-			}
-		
+		if ($post['mod'] = $is_mod) {
 			$post['sticky'] = $post['op'] && isset($_POST['sticky']);
 			$post['locked'] = $post['op'] && isset($_POST['lock']);
 			$post['raw'] = isset($_POST['raw']);
