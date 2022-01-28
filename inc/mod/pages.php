@@ -2800,7 +2800,7 @@ function mod_edit_page($id) {
 		$query->bindValue(':id', $id);
 		$query->execute() or error(db_error($query));
 
-		$fn = ($board['uri'] ? ($board['uri'] . '/') : '') . $page['name'] . '.html';
+		$fn = (isset($board['uri']) ? ($board['uri'] . '/') : '') . $page['name'] . '.html';
 		$body = "<div class='ban'>$write</div>";
 		$html = Element('page.html', array('config' => $config, 'boardlist' => createBoardlist(), 'body' => $body, 'title' => utf8tohtml($page['title'])));
 		file_write($fn, $html);
