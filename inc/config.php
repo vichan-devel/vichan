@@ -796,6 +796,7 @@
 	$config['allowed_ext_op'] = false;
 
 	// Allowed additional file extensions (not images; downloadable files).
+	// $config['allowed_ext_files'][] = 'pdf';
 	// $config['allowed_ext_files'][] = 'txt';
 	// $config['allowed_ext_files'][] = 'zip';
 
@@ -803,6 +804,10 @@
 	// $config['filename_func'] = function($post) {
 	//	  return sprintf("%s", time() . substr(microtime(), 2, 3));
 	// };
+
+	// Thumbnail pdf files from their first page using convert.
+	$config['pdf_thumb'] = false;
+	$config['pdf_thumb_height'] = 300;
 
 	// Thumbnail to use for the non-image file uploads.
 	$config['file_icons']['default'] = 'file.png';
