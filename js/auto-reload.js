@@ -23,10 +23,10 @@ auto_reload_enabled = true; // for watch.js to interop
 $(document).ready(function(){
 	if($('div.banner').length == 0)
 		return; // not index
-		
-	if($(".post.op").size() != 1)
+
+	if($(".post.op").length != 1)
 		return; //not thread page
-	
+
 	var countdown_interval;
 
 	// Add an update link
@@ -46,7 +46,7 @@ $(document).ready(function(){
 
         var new_posts = 0;
 	var first_new_post = null;
-	
+
 	var title = document.title;
 
 	if (typeof update_title == "undefined") {
@@ -77,7 +77,7 @@ $(document).ready(function(){
 	$(window).blur(function() {
 		window_active = false;
 	});
-	
+
 
 	$('#auto_update_status').click(function() {
 		if($("#auto_update_status").is(':checked')) {
@@ -88,12 +88,12 @@ $(document).ready(function(){
 		}
 
 	});
-	
+
 
 	var decrement_timer = function() {
 		poll_current_time = poll_current_time - 1000;
 		$('#update_secs').text(poll_current_time/1000);
-		
+
 		if (poll_current_time <= 0) {
 			poll(manualUpdate = false);
 		}
@@ -109,23 +109,23 @@ $(document).ready(function(){
 		update_title();
 		first_new_post = null;
 	};
-	
+
 	// automatically updates the thread after a specified delay
 	var auto_update = function(delay) {
 		clearInterval(countdown_interval);
 
-		poll_current_time = delay;		
+		poll_current_time = delay;
 		countdown_interval = setInterval(decrement_timer, 1000);
-		$('#update_secs').text(poll_current_time/1000);		
+		$('#update_secs').text(poll_current_time/1000);
 	}
-	
+
 	var stop_auto_update = function() {
 		clearInterval(countdown_interval);
 	}
-		
+
     	var epoch = (new Date).getTime();
     	var epochold = epoch;
-    	
+
 	var timeDiff = function (delay) {
 		if((epoch-epochold) > delay) {
 			epochold = epoch = (new Date).getTime();
@@ -135,11 +135,11 @@ $(document).ready(function(){
 			return;
 		}
 	}
-	
+
 	var poll = function(manualUpdate) {
 		stop_auto_update();
 		$('#update_secs').text(_("Updating..."));
-	
+
 		$.ajax({
 			url: document.location,
 			success: function(data) {
@@ -158,15 +158,15 @@ $(document).ready(function(){
 					}
 				});
 				time_loaded = Date.now(); // interop with watch.js
-				
-				
+
+
 				if ($('#auto_update_status').is(':checked')) {
 					// If there are no new posts, double the delay. Otherwise set it to the min.
 					if(loaded_posts == 0) {
 						// if the update was manual, don't increase the delay
 						if (manualUpdate == false) {
 							poll_interval_delay *= 2;
-				
+
 							// Don't increase the delay beyond the maximum
 							if(poll_interval_delay > poll_interval_maxdelay) {
 								poll_interval_delay = poll_interval_maxdelay;
@@ -175,7 +175,7 @@ $(document).ready(function(){
 					} else {
 						poll_interval_delay = poll_interval_mindelay;
 					}
-					
+
 					auto_update(poll_interval_delay);
 				} else {
 					// Decide the message to show if auto update is disabled
@@ -200,7 +200,7 @@ $(document).ready(function(){
 				} else {
 					$('#update_secs').text(_("Unknown error"));
 				}
-				
+
 				// Keep trying to update
 				if ($('#auto_update_status').is(':checked')) {
 					poll_interval_delay = poll_interval_errordelay;
@@ -208,13 +208,13 @@ $(document).ready(function(){
 				}
 			}
 		});
-		
+
 		return false;
 	};
-	
+
 	$(window).scroll(function() {
 		recheck_activated();
-		
+
 		// if the newest post is not visible
 		if($(this).scrollTop() + $(this).height() <
 			$('div.post:last').position().top + $('div.post:last').height()) {
