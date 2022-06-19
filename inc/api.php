@@ -9,8 +9,7 @@ defined('TINYBOARD') or exit;
  * Class for generating json API compatible with 4chan API
  */
 class Api {
-	function __construct(){
-		global $config;
+	function __construct(Array $config){
 		/**
 		 * Translation from local fields to fields in 4chan-style API
 		 */
@@ -50,8 +49,8 @@ class Api {
 			'size' => 'fsize',
 		);
 
-		if (isset($config['api']['extra_fields']) && gettype($config['api']['extra_fields']) == 'array'){
-			$this->postFields = array_merge($this->postFields, $config['api']['extra_fields']);
+		if (isset($this->config['api']['extra_fields']) && gettype($this->config['api']['extra_fields']) == 'array'){
+			$this->postFields = array_merge($this->postFields, $this->config['api']['extra_fields']);
 		}
 	}
 
@@ -102,12 +101,13 @@ class Api {
 	}
 
 	private function translatePost($post, $threadsPage = false) {
-		global $config, $board;
+		// TODO: add a setter and getter to $board instead of using it as global
+		global $board;
 		$apiPost = array();
 		$fields = $threadsPage ? $this->threadsPageFields : $this->postFields;
 		$this->translateFields($fields, $post, $apiPost);
 
-		if (isset($config['poster_ids']) && $config['poster_ids']) $apiPost['id'] = poster_id($post->ip, $post->thread, $board['uri']);
+		if (isset($this->config['poster_ids']) && $this->config['poster_ids']) $apiPost['id'] = poster_id($post->ip, $post->thread, $board['uri']);
 		if ($threadsPage) return $apiPost;
 
 		// Handle country field
@@ -122,7 +122,7 @@ class Api {
 			}
 		}
 
-		if ($config['slugify'] && !$post->thread) {
+		if ($this->config['slugify'] && !$post->thread) {
 			$apiPost['semantic_url'] = $post->slug;
 		}
 

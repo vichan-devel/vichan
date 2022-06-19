@@ -1741,7 +1741,7 @@ function buildIndex($global_api = "yes") {
 	$antibot = null;
 
 	if ($config['api']['enabled']) {
-		$api = new Api();
+		$api = new Api($config);
 		$catalog = array();
 	}
 
@@ -2374,7 +2374,7 @@ function buildThread($id, $return = false, $mod = false) {
 
 		// json api
 		if ($config['api']['enabled'] && !$mod) {
-			$api = new Api();
+			$api = new Api($config);
 			$json = json_encode($api->translateThread($thread));
 			$jsonFilename = $board['dir'] . $config['dir']['res'] . $id . '.json';
 			file_write($jsonFilename, $json);
