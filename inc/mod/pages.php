@@ -734,6 +734,18 @@ function mod_board_log($board, $page_no = 1, $hide_names = false, $public = fals
 	mod_page(_('Board log'), 'mod/log.html', array('logs' => $logs, 'count' => $count, 'board' => $board, 'hide_names' => $hide_names, 'public' => $public));
 }
 
+function mod_view_catalog($boardName) {
+	global $config, $mod;
+	require_once($config['dir']['themes'].'/catalog/theme.php');
+	$settings = array();
+	$settings['boards'] = $boardName;
+	$settings['update_on_posts'] = true;
+	$settings['title'] = 'Catalog';
+	$settings['use_tooltipster'] = true;
+	$catalog = new Catalog();
+	echo $catalog->build($settings, $boardName, true);
+}
+
 function mod_view_board($boardName, $page_no = 1) {
 	global $config, $mod;
 	

@@ -14,7 +14,9 @@
 	{{ boardlist.top }}
 	<header>
 		<h1>{{ settings.title }} (<a href="{{link}}">/{{ board }}/</a>)</h1>
-		<div class="subtitle">{{ settings.subtitle }}</div>
+		<div class="subtitle">{{ settings.subtitle }}
+			{% if mod %}<p><a href="?/">{% trans %}Return to dashboard{% endtrans %}</a></p>{% endif %}
+		</div>
 	</header>
 
         <span>{% trans 'Sort by' %}: </span>

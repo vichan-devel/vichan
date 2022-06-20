@@ -1207,6 +1207,7 @@
 	// Location of files.
 	$config['file_index'] = 'index.html';
 	$config['file_page'] = '%d.html'; // NB: page is both an index page and a thread
+	$config['file_catalog'] = 'catalog.html';
 	$config['file_page50'] = '%d+50.html';
 	$config['file_page_slug'] = '%d-%s.html';
 	$config['file_page50_slug'] = '%d-%s+50.html';

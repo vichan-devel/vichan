@@ -42,7 +42,7 @@
 	
 	// Wrap functions in a class so they don't interfere with normal Tinyboard operations
 	class Catalog {
-		public function build($settings, $board_name) {
+		public function build($settings, $board_name, $mod = false) {
 			global $config, $board;
 
 			if (!isset($board) || $board['uri'] != $board_name) {			
@@ -62,7 +62,11 @@
 			$board_name, $board_name, $board_name, $board_name, $board_name)) or error(db_error());
 			
 			while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
-				$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res'] . link_for($post);
+
+				if ($mod)
+					$post['link'] = $config['root'] . $config['file_mod'] . '?/'. $board['dir'] . $config['dir']['res'] . link_for($post);
+				else
+					$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res'] . link_for($post);
 				$post['board_name'] = $board['name'];
 
 				if ($post['embed'] && preg_match('/^https?:\/\/(\w+\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9\-_]{10,11})(&.+)?$/i', $post['embed'], $matches)) {
@@ -109,7 +113,9 @@
 					$config['additional_javascript'][] = $s;
 			}
 
-			file_write($config['dir']['home'] . $board_name . '/catalog.html', Element('themes/catalog/catalog.html', Array(
+			$link = ($mod) ? $config['root'] . $config['file_mod'] . '?/' . $board['dir'] : $config['root'] . $board['dir'];
+
+			$element = Element('themes/catalog/catalog.html', Array(
 				'settings' => $settings,
 				'config' => $config,
 				'boardlist' => createBoardlist(),
@@ -117,13 +123,20 @@
 				'recent_posts' => $recent_posts,
 				'stats' => $stats,
 				'board' => $board_name,
-				'link' => $config['root'] . $board['dir']
-			)));
+				'link' => $link,
+				'mod' => $mod
+			));
+
+			if ($mod) {
+				return $element;
+			} else {
+			file_write($config['dir']['home'] . $board_name . '/catalog.html', $element);
 
 			file_write($config['dir']['home'] . $board_name . '/index.rss', Element('themes/catalog/index.rss', Array(
 				'config' => $config,
 				'recent_posts' => $recent_posts,
 				'board' => $board
 			)));
+		}
 		}
 	};
