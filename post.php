@@ -966,6 +966,8 @@ if (isset($_POST['delete'])) {
 			
 				$thumb->_destroy();
 			}
+
+			$dont_copy_file = false;
 			
 			if ($config['redraw_image'] || (!@$file['exif_stripped'] && $config['strip_exif'] && ($file['extension'] == 'jpg' || $file['extension'] == 'jpeg'))) {
 				if (!$config['redraw_image'] && $config['use_exiftool']) {
@@ -988,6 +990,7 @@ if (isset($_POST['delete'])) {
 					$config['file_icons'][$file['extension']] : $config['file_icons']['default']));
 			$file['thumbwidth'] = $size[0];
 			$file['thumbheight'] = $size[1];
+			$dont_copy_file = false;
 		}
 
 		if ($config['tesseract_ocr'] && $file['thumb'] != 'file') { // Let's OCR it!
@@ -1018,7 +1021,7 @@ if (isset($_POST['delete'])) {
 			}
 		}
 		
-		if (!isset($dont_copy_file) || !$dont_copy_file) {
+		if (!$dont_copy_file) {
 			if (isset($file['file_tmp'])) {
 				if (!@rename($file['tmp_name'], $file['file']))
 					error($config['error']['nomove']);
