@@ -144,18 +144,25 @@ $(document).ready(function(){
 			url: document.location,
 			success: function(data) {
 				var loaded_posts = 0;	// the number of new posts loaded in this update
+				var elementsToAppend = [];
+				var elementsToTriggerNewpostEvent = [];
 				$(data).find('div.post.reply').each(function() {
 					var id = $(this).attr('id');
 					if($('#' + id).length == 0) {
 						if (!new_posts) {
 							first_new_post = this;
 						}
-						$(this).insertAfter($('div.post:last').next()).after('<br class="clear">');
 						new_posts++;
 						loaded_posts++;
-						$(document).trigger('new_post', this);
-						recheck_activated();
+						elementsToAppend.push($(this));
+						elementsToAppend.push($('<br class="clear">'));
+						elementsToTriggerNewpostEvent.push(this);
 					}
+				});
+				$('div.post:last').next().after(elementsToAppend);
+				recheck_activated();
+				elementsToTriggerNewpostEvent.forEach(function(ele){
+					$(document).trigger('new_post', ele);
 				});
 				time_loaded = Date.now(); // interop with watch.js
 				
