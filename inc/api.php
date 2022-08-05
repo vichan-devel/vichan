@@ -45,13 +45,11 @@ class Api {
 		'size' => 'fsize'
 	];
 
-	public function __construct() {
-		global $config;
-
+	public function __construct(bool $show_filename, bool $hide_email, bool $country_flags) {
 		// Translation from local fields to fields in 4chan-style API
-		$this->show_filename = $config['show_filename'];
-		$this->hide_email = $config['hide_email'];
-		$this->country_flags = $config['country_flags'];
+		$this->show_filename = $show_filename;
+		$this->hide_email = $hide_email;
+		$this->country_flags = $country_flags;
 
 		$this->postFields = [
 			'id' => 'no',
