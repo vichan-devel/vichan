@@ -15,6 +15,7 @@
 
 $(document).ready(function(){
 	'use strict';
+	localStorage.show_relative_time = 'false';
 
 	var iso8601 = function(s) {
 		s = s.replace(/\.\d\d\d+/,""); // remove milliseconds
