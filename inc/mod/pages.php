@@ -1384,7 +1384,7 @@ function mod_move($originBoard, $postID) {
 			$query = prepare('SELECT `target` FROM ``cites`` WHERE `target_board` = :board AND `board` = :board AND `post` = :post');
 			$query->bindValue(':board', $originBoard);
 			$query->bindValue(':post', $post['id'], PDO::PARAM_INT);
-			$query->execute() or error(db_error($qurey));
+			$query->execute() or error(db_error($query));
 			
 			// correct >>X links
 			while ($cite = $query->fetch(PDO::FETCH_ASSOC)) {

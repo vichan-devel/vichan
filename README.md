@@ -45,8 +45,9 @@ We try to make sure vichan is compatible with all major web servers. vichan does
 1.	MySQL/MariaDB server >= 5.5.3
 2.	ImageMagick (command-line ImageMagick or GraphicsMagick preferred).
 3.	[APC (Alternative PHP Cache)](http://php.net/manual/en/book.apc.php),
-	[XCache](http://xcache.lighttpd.net/) or
-	[Memcached](http://www.php.net/manual/en/intro.memcached.php)
+	[XCache](http://xcache.lighttpd.net/),
+	[Memcached](http://www.php.net/manual/en/intro.memcached.php) or
+	[Redis](https://redis.io/docs/about/)
 
 Contributing
 ------------
@@ -82,6 +83,15 @@ backup your ```inc/instance-config.php```, replace all your files in place
 finally run ```install.php```.
 
 To migrate from a Kusaba X board, use http://github.com/vichan-devel/Tinyboard-Migration
+
+Demo
+--------
+Demo with the most updated version of [Vichan](https://vichan.27chan.org).
+
+1. PHP 7.2
+2. MySQL 5.7
+3. KeyDB 6.2.1 (Redis)
+4. NGINX 1.14.0
 
 Support
 --------

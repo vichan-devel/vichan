@@ -311,8 +311,8 @@ class ImageConvert extends ImageBase {
 			$this->destroy();
 		}
 		
-		$this->temp = tempnam($config['tmp'], 'convert');
-				
+		$this->temp = tempnam($config['tmp'], 'convert') . ($config['thumb_ext'] == '' ? '' : '.' . $config['thumb_ext']);
+		
 		$config['thumb_keep_animation_frames'] = (int)$config['thumb_keep_animation_frames'];
 		
 		if ($this->format == 'gif' && ($config['thumb_ext'] == 'gif' || $config['thumb_ext'] == '') && $config['thumb_keep_animation_frames'] > 1) {

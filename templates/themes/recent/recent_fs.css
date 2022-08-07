@@ -55,3 +55,15 @@ body {
 header div.subtitle, h1 {
     color: #888A8C;
 }
+
+@media screen and (max-width: 696px) {
+	.box-wrap {
+		overflow: visible;
+	}
+	.box {
+		width: 100%;
+	}
+	.box ul {
+		text-align: center;
+        }
+}

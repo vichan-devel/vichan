@@ -1270,19 +1270,27 @@ function deletePost($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
 	$query = prepare("DELETE FROM ``cites`` WHERE (`target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ")) OR (`board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . "))");
 	$query->bindValue(':board', $board['uri']);
 	$query->execute() or error(db_error($query));
-	
-	if ($config['anti_bump_flood']) {
-                $query = prepare(sprintf("SELECT `time` FROM ``posts_%s`` WHERE (`thread` = :thread OR `id` = :thread) AND `sage` = 0 ORDER BY `time` DESC LIMIT 1", $board['uri']));
-                $query->bindValue(':thread', $thread_id);
-                $query->execute() or error(db_error($query));
-                $bump = $query->fetchColumn();
 
-                $query = prepare(sprintf("UPDATE ``posts_%s`` SET `bump` = :bump WHERE `id` = :thread", $board['uri']));
-                $query->bindValue(':bump', $bump);
+        // No need to run on OPs
+        if ($config['anti_bump_flood'] && isset($thread_id)) {
+                $query = prepare(sprintf("SELECT `sage` FROM ``posts_%s`` WHERE `id` = :thread", $board['uri']));
                 $query->bindValue(':thread', $thread_id);
                 $query->execute() or error(db_error($query));
-	}
-	
+                $bumplocked = (bool)$query->fetchColumn();
+
+                if (!$bumplocked) {
+                        $query = prepare(sprintf("SELECT `time` FROM ``posts_%s`` WHERE (`thread` = :thread AND NOT email <=> 'sage') OR `id` = :thread ORDER BY `time` DESC LIMIT 1", $board['uri']));
+                        $query->bindValue(':thread', $thread_id);
+                        $query->execute() or error(db_error($query));
+                        $bump = $query->fetchColumn();
+
+                        $query = prepare(sprintf("UPDATE ``posts_%s`` SET `bump` = :bump WHERE `id` = :thread", $board['uri']));
+                        $query->bindValue(':bump', $bump);
+                        $query->bindValue(':thread', $thread_id);
+                        $query->execute() or error(db_error($query));
+                }
+        }
+
 	if (isset($rebuild) && $rebuild_after) {
 		buildThread($rebuild);
 		buildIndex();
