@@ -76,7 +76,7 @@
 		#quick-reply input[type="text"], #quick-reply select {\
 			width: 100%;\
 			padding: 2px;\
-			font-size: 10pt;\
+			//font-size: 10pt;\
 			box-sizing: border-box;\
 			-webkit-box-sizing:border-box;\
 			-moz-box-sizing: border-box;\
