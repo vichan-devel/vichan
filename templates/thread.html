@@ -9,11 +9,13 @@
 	    , thread_id = "{{ thread.id }}";
 	</script>
 
-	{% include 'header.html' %}
+	{% include 'header-thread.html' %}
+	
+	{% set body_subject %}{{ thread.body_nomarkup|remove_modifiers[:256]|e }}{% endset %}
 
-	{% set meta_subject %}{% if config.thread_subject_in_title and thread.subject %}{{ thread.subject|e }}{% else %}{{ thread.body_nomarkup|remove_modifiers[:256]|e }}{% endif %}{% endset %}
+	{% set meta_subject %}{% if config.thread_subject_in_title and thread.subject %}{{ thread.subject|e }}{% else %}{{ body_subject }}{% endif %}{% endset %}
 
-	<meta name="description" content="{{ board.url }} - {{ board.title|e }} - {{ meta_subject }}" />
+	<meta name="description" content="{{ board.url }} - {{ board.title|e }} - {{ body_subject }}" />
 	<meta name="twitter:card" value="summary">
 	<meta property="og:title" content="{{ meta_subject }}" />
 	<meta property="og:type" content="article" />
@@ -21,7 +23,7 @@
 	{% if thread.files.0.thumb %}<meta property="og:image" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.thumb }}{{ thread.files.0.thumb }}" />{% endif %}
 	<meta property="og:description" content="{{ thread.body_nomarkup|remove_modifiers|e }}" />
 
-	<title>{{ board.url }} - {{ meta_subject }}</title>
+	<title>{{ board.url }} - {{ meta_subject }} - 9ch</title>
 </head>
 <body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %} active-thread" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
 	{{ boardlist.top }}
