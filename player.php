@@ -11,7 +11,7 @@ $params = '?v=' . urlencode($v) . '&amp;t=' . urlencode($t);
     <meta charset="utf-8">
     <title><?php echo htmlspecialchars($t); ?></title>
     <link rel="stylesheet" href="stylesheets/webm/playerstyle.css">
-    <script src="js/webm-settings.js"></script>
+    <!-- <script src="js/webm-settings.js"></script> -->
     <script src="js/webm/playersettings.js"></script>
 </head>
 <body>
