@@ -1,0 +1,44 @@
+.box-wrap {
+	max-width: 670px;
+	min-width: 332px;
+	margin: 30px auto;
+	overflow: auto;
+	padding: 0;
+}
+.box {
+	background: black;
+	border: 1px solid #98E;
+	width: 330px;
+	margin: 5px 0;
+	padding: 0;
+}
+.box ul {
+	padding: 2px 15px;
+}
+.box ul li {
+	list-style: none;
+	margin: 0;
+}
+.box.left {
+	border: 1px solid #32DD72;
+	float: left;
+}
+.box.right {
+	border: 1px solid #32DD72;
+	float: right;
+}
+
+.box h2 {
+	padding: 9px 11px;
+	font-size: 21px;
+}
+.box.left h2 {
+	color: #32DD72;
+}
+.box.right h2 {
+	color: #32DD72;
+}
+.box img {
+	float: none;
+	margin: 10px auto;
+}

@@ -3,7 +3,7 @@
 <html>
 <head>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-	<title>{{ settings.title }}</title>
+	<title>{{ settings.title }} - 9ch</title>
 	<link rel="stylesheet" media="screen" href="{{ config.url_stylesheet }}"/>
 	<link rel="stylesheet" media="screen" href="{{ config.root }}{{ settings.css }}"/>
 	{% if config.url_favicon %}<link rel="shortcut icon" href="{{ config.url_favicon }}" />{% endif %}
@@ -44,7 +44,7 @@
 				{% endfor %}
 			</ul>
 		</div>
-		<div class="box right">
+		<div class="box left">
 			<h2>Stats</h2>
 			<ul>
 				<li>Total posts: {{ stats.total_posts }}</li>

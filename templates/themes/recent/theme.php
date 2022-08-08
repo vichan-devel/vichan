@@ -64,9 +64,10 @@
 
 				if (isset($post['files']))
 					$files = json_decode($post['files']);
-
-                if ($files[0]->file == 'deleted' || $files[0]->thumb == 'file') continue;
 				
+				if ($files[0]->file == 'deleted' || $files[0]->thumb == 'file') continue;
+				if ($files[0]->extension == 'webm') continue;
+
 				// board settings won't be available in the template file, so generate links now
 				$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res']
 				  . link_for($post) . '#' . $post['id'];
