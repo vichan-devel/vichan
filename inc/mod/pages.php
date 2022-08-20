@@ -1521,7 +1521,7 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 		if (isset($_POST['ip']))
 			$ip = $_POST['ip'];
 		
-		Bans::new_ban($_POST['ip'], $_POST['reason'], $_POST['length'], $_POST['board'] == '*' ? false : $_POST['board'],
+		Bans::new_ban($ip, $_POST['reason'], $_POST['length'], $_POST['board'] == '*' ? false : $_POST['board'],
 			false, $config['ban_show_post'] ? $_post : false);
 		
 		if (isset($_POST['public_message'], $_POST['message'])) {
