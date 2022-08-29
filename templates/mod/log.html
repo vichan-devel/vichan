@@ -27,7 +27,7 @@
 			</td>
 			<td class="minimal">
 				{% if mod|hasPermission(config.mod.show_ip_modlog) %}
-					<a href="?/IP/{{ log.ip }}">{{ log.ip }}</a>
+					<a href="?/IP/{{ log.ip|cloak_ip }}">{{ log.ip|cloak_ip }}</a>
 				{% else %}
 					<em>hidden</em>
 				{% endif %}

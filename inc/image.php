@@ -311,8 +311,8 @@ class ImageConvert extends ImageBase {
 			$this->destroy();
 		}
 		
-		$this->temp = tempnam($config['tmp'], 'convert');
-				
+		$this->temp = tempnam($config['tmp'], 'convert') . ($config['thumb_ext'] == '' ? '' : '.' . $config['thumb_ext']);
+		
 		$config['thumb_keep_animation_frames'] = (int)$config['thumb_keep_animation_frames'];
 		
 		if ($this->format == 'gif' && ($config['thumb_ext'] == 'gif' || $config['thumb_ext'] == '') && $config['thumb_keep_animation_frames'] > 1) {
@@ -364,7 +364,8 @@ class ImageConvert extends ImageBase {
 					escapeshellarg($this->temp)))) || !file_exists($this->temp)) {
 
 					if (strpos($error, "known incorrect sRGB profile") === false &&
-                                            strpos($error, "iCCP: Not recognizing known sRGB profile that has been edited") === false) {
+                                            strpos($error, "iCCP: Not recognizing known sRGB profile that has been edited") === false &&
+                                            strpos($error, "cHRM chunk does not match sRGB") === false) {
 						$this->destroy();
 						error(_('Failed to resize image!')." "._('Details: ').nl2br(htmlspecialchars($error)), null, array('convert_error' => $error));
 					}

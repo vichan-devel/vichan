@@ -11,7 +11,7 @@
 
 	{% include 'header.html' %}
 
-	{% set meta_subject %}{% if config.thread_subject_in_title and thread.subject %}{{ thread.subject|e }}{% else %}{{ thread.body_nomarkup[:256]|remove_modifiers|e }}{% endif %}{% endset %}
+	{% set meta_subject %}{% if config.thread_subject_in_title and thread.subject %}{{ thread.subject|e }}{% else %}{{ thread.body_nomarkup|remove_modifiers[:256]|e }}{% endif %}{% endset %}
 
 	<meta name="description" content="{{ board.url }} - {{ board.title|e }} - {{ meta_subject }}" />
 	<meta name="twitter:card" value="summary">
@@ -19,7 +19,7 @@
 	<meta property="og:type" content="article" />
 	<meta property="og:url" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.res }}{{ thread.id }}.html" />
 	{% if thread.files.0.thumb %}<meta property="og:image" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.thumb }}{{ thread.files.0.thumb }}" />{% endif %}
-	<meta property="og:description" content="{{ thread.body_nomarkup|e }}" />
+	<meta property="og:description" content="{{ thread.body_nomarkup|remove_modifiers|e }}" />
 
 	<title>{{ board.url }} - {{ meta_subject }}</title>
 </head>
@@ -63,7 +63,7 @@
 				<a id="thread-return" href="{{ return }}">[{% trans %}Return{% endtrans %}]</a>
 				<a id="thread-top" href="#top">[{% trans %}Go to top{% endtrans %}]</a>
                 		{% if config.catalog_link %}
-					<a id="thread-catalog" href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>
+					<a id="thread-catalog" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.catalog_link }}">{% trans %}Catalog{% endtrans %}</a>
 		                {% endif %}
 			</span>
 			
@@ -89,8 +89,8 @@
 		<br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2018 vichan-devel</p>
 		{% for footer in config.footer %}<p class="unimportant" style="text-align:center;">{{ footer }}</p>{% endfor %}
 	</footer>
-	<script type="text/javascript">{% raw %}
+	<script type="text/javascript">{% verbatim %}
 		ready();
-	{% endraw %}</script>
+	{% endverbatim %}</script>
 </body>
 </html>

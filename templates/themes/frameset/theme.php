@@ -48,7 +48,7 @@
 		
 		// Build sidebar
 		public static function sidebar($settings) {
-			global $config, $board;
+			global $config;
 			
 			return Element('themes/frameset/sidebar.html', Array(
 				'settings' => $settings,

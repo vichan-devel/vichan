@@ -86,6 +86,12 @@
 			</th>
 			<td>
 				<script>load_captcha("{{ config.captcha.provider_get }}", "{{ config.captcha.extra }}");</script>
+				<noscript>
+					<input class='captcha_text' type='text' name='captcha_text' size='32' maxlength='6' autocomplete='off'>
+					<div class="captcha_html">
+						<img src="/{{ config.captcha.provider_get }}?mode=get&raw=1">
+					</div>
+				</noscript>
 			</td>
 		</tr>
 			{% elseif config.new_thread_capt %}
@@ -96,6 +102,12 @@
                         </th>
                         <td>
                                 <script>load_captcha("{{ config.captcha.provider_get }}", "{{ config.captcha.extra }}");</script>
+				<noscript>
+					<input class='captcha_text' type='text' name='captcha_text' size='32' maxlength='6' autocomplete='off'>
+					<div class="captcha_html">
+						<img src="/{{ config.captcha.provider_get }}?mode=get&raw=1">
+					</div>
+				</noscript>
                         </td>
                 	</tr>
 			{% endif %}
@@ -191,6 +203,6 @@
 <input type="hidden" name="hash" value="{{ antibot.hash() }}">
 </form>
 
-<script type="text/javascript">{% raw %}
+<script type="text/javascript">{% verbatim %}
 	rememberStuff();
-{% endraw %}</script>
+{% endverbatim %}</script>

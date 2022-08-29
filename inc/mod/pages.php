@@ -734,6 +734,18 @@ function mod_board_log($board, $page_no = 1, $hide_names = false, $public = fals
 	mod_page(_('Board log'), $config['file_mod_log'], array('logs' => $logs, 'count' => $count, 'board' => $board, 'hide_names' => $hide_names, 'public' => $public));
 }
 
+function mod_view_catalog($boardName) {
+	global $config, $mod;
+	require_once($config['dir']['themes'].'/catalog/theme.php');
+	$settings = array();
+	$settings['boards'] = $boardName;
+	$settings['update_on_posts'] = true;
+	$settings['title'] = 'Catalog';
+	$settings['use_tooltipster'] = true;
+	$catalog = new Catalog();
+	echo $catalog->build($settings, $boardName, true);
+}
+
 function mod_view_board($boardName, $page_no = 1) {
 	global $config, $mod;
 	
@@ -773,7 +785,8 @@ function mod_view_thread50($boardName, $thread) {
 	echo $page;
 }
 
-function mod_ip_remove_note($ip, $id) {
+function mod_ip_remove_note($cloaked_ip, $id) {
+	$ip = uncloak_ip($cloaked_ip);
 	global $config, $mod;
 	
 	if (!hasPermission($config['mod']['remove_notes']))
@@ -786,13 +799,35 @@ function mod_ip_remove_note($ip, $id) {
 	$query->bindValue(':ip', $ip);
 	$query->bindValue(':id', $id);
 	$query->execute() or error(db_error($query));
+
+	modLog("Removed a note for <a href=\"?/IP/{$cloaked_ip}\">{$cloaked_ip}</a>");
 	
-	modLog("Removed a note for <a href=\"?/IP/{$ip}\">{$ip}</a>");
-	
-	header('Location: ?/IP/' . $ip . '#notes', true, $config['redirect_http']);
+	header('Location: ?/IP/' . $cloaked_ip . '#notes', true, $config['redirect_http']);
 }
 
-function mod_page_ip($ip) {
+function mod_ip_remove_telegram($cloaked_ip, $id) {
+	$ip = uncloak_ip($cloaked_ip);
+	global $config, $mod;
+
+	if (!hasPermission($config['mod']['remove_telegrams']))
+		error($config['error']['noaccess']);
+
+	if (filter_var($ip, FILTER_VALIDATE_IP) === false)
+		error("Invalid IP address.");
+
+	$query = prepare('DELETE FROM ``telegrams`` WHERE `ip` = :ip AND `id` = :id');
+	$query->bindValue(':ip', $ip);
+	$query->bindValue(':id', $id);
+	$query->execute() or error(db_error($query));
+
+	modLog("Removed a telegram for <a href=\"?/IP/{$cloaked_ip}\">{$cloaked_ip}</a>");
+
+	header('Location: ?/IP/' . $cloaked_ip . '#telegrams', true, $config['redirect_http']);
+}
+
+
+function mod_page_ip($cip) {
+	$ip = uncloak_ip($cip);
 	global $config, $mod;
 	
 	if (filter_var($ip, FILTER_VALIDATE_IP) === false)
@@ -804,7 +839,7 @@ function mod_page_ip($ip) {
 		
 		Bans::delete($_POST['ban_id'], true, $mod['boards']);
 		
-		header('Location: ?/IP/' . $ip . '#bans', true, $config['redirect_http']);
+		header('Location: ?/IP/' . $cip . '#bans', true, $config['redirect_http']);
 		return;
 	}
 	
@@ -821,17 +856,36 @@ function mod_page_ip($ip) {
 		$query->bindValue(':body', $_POST['note']);
 		$query->execute() or error(db_error($query));
 		
-		modLog("Added a note for <a href=\"?/IP/{$ip}\">{$ip}</a>");
+		modLog("Added a note for <a href=\"?/IP/{$cip}\">{$cip}</a>");
 		
-		header('Location: ?/IP/' . $ip . '#notes', true, $config['redirect_http']);
+		header('Location: ?/IP/' . $cip . '#notes', true, $config['redirect_http']);
 		return;
 	}
-	
+
+	if (isset($_POST['telegram'])) {
+		if (!hasPermission($config['mod']['create_telegrams']))
+			error($config['error']['noaccess']);
+
+		$_POST['telegram'] = escape_markup_modifiers($_POST['telegram']);
+		markup($_POST['telegram']);
+		$query = prepare('INSERT INTO ``telegrams`` VALUES (NULL, :mod_id, :ip, :message, 0, :created_at)');
+		$query->bindValue(':ip', $ip);
+		$query->bindValue(':mod_id', $mod['id']);
+		$query->bindValue(':created_at', time());
+		$query->bindValue(':message', $_POST['telegram']);
+		$query->execute() or error(db_error($query));
+
+		modLog("Added a telegram for <a href=\"?/IP/{$cip}\">{$cip}</a>");
+
+		header('Location: ?/IP/' . $cip . '#telegrams', true, $config['redirect_http']);
+		return;
+	}
+
 	$args = array();
 	$args['ip'] = $ip;
 	$args['posts'] = array();
 	
-	if ($config['mod']['dns_lookup'])
+	if ($config['mod']['dns_lookup'] && empty($config['ipcrypt_key']))
 		$args['hostname'] = rDNS($ip);
 	
 	$boards = listBoards();
@@ -870,19 +924,26 @@ function mod_page_ip($ip) {
 		$query->execute() or error(db_error($query));
 		$args['notes'] = $query->fetchAll(PDO::FETCH_ASSOC);
 	}
-	
+
+	if (hasPermission($config['mod']['view_telegrams'])) {
+		$query = prepare("SELECT ``telegrams``.*, `username` FROM ``telegrams`` LEFT JOIN ``mods`` ON `mod_id` = ``mods``.`id` WHERE `ip` = :ip ORDER BY `created_at` DESC");
+		$query->bindValue(':ip', $ip);
+		$query->execute() or error(db_error($query));
+		$args['telegrams'] = $query->fetchAll(PDO::FETCH_ASSOC);
+	}
+
 	if (hasPermission($config['mod']['modlog_ip'])) {
 		$query = prepare("SELECT `username`, `mod`, `ip`, `board`, `time`, `text` FROM ``modlogs`` LEFT JOIN ``mods`` ON `mod` = ``mods``.`id` WHERE `text` LIKE :search ORDER BY `time` DESC LIMIT 50");
-		$query->bindValue(':search', '%' . $ip . '%');
+		$query->bindValue(':search', '%' . $cip . '%');
 		$query->execute() or error(db_error($query));
 		$args['logs'] = $query->fetchAll(PDO::FETCH_ASSOC);
 	} else {
 		$args['logs'] = array();
 	}
 	
-	$args['security_token'] = make_secure_link_token('IP/' . $ip);
+	$args['security_token'] = make_secure_link_token('IP/' . $cip);
 	
-	mod_page(sprintf('%s: %s', _('IP'), htmlspecialchars($ip)), $config['file_mod_view_ip'], $args, $args['hostname']);
+	mod_page(sprintf('%s: %s', _('IP'), htmlspecialchars($cip)), $config['file_mod_view_ip'], $args, $args['hostname']);
 }
 
 function mod_ban() {
@@ -974,7 +1035,7 @@ function mod_ban_appeals() {
 			error(_('Ban appeal not found!'));
 		}
 		
-		$ban['mask'] = Bans::range_to_string(array($ban['ipstart'], $ban['ipend']));
+		$ban['mask'] = cloak_mask(Bans::range_to_string(array($ban['ipstart'], $ban['ipend'])));
 		
 		if (isset($_POST['unban'])) {
 			modLog('Accepted ban appeal #' . $ban['id'] . ' for ' . $ban['mask']);
@@ -1335,7 +1396,7 @@ function mod_move($originBoard, $postID) {
 			$query = prepare('SELECT `target` FROM ``cites`` WHERE `target_board` = :board AND `board` = :board AND `post` = :post');
 			$query->bindValue(':board', $originBoard);
 			$query->bindValue(':post', $post['id'], PDO::PARAM_INT);
-			$query->execute() or error(db_error($qurey));
+			$query->execute() or error(db_error($query));
 			
 			// correct >>X links
 			while ($cite = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -1472,7 +1533,7 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 		if (isset($_POST['ip']))
 			$ip = $_POST['ip'];
 		
-		Bans::new_ban($_POST['ip'], $_POST['reason'], $_POST['length'], $_POST['board'] == '*' ? false : $_POST['board'],
+		Bans::new_ban($ip, $_POST['reason'], $_POST['length'], $_POST['board'] == '*' ? false : $_POST['board'],
 			false, $config['ban_show_post'] ? $_post : false);
 		
 		if (isset($_POST['public_message'], $_POST['message'])) {
@@ -1751,7 +1812,8 @@ function mod_deletebyip($boardName, $post, $global = false) {
 	}
 	
 	// Record the action
-	modLog("Deleted all posts by IP address: <a href=\"?/IP/$ip\">$ip</a>");
+	$cip = cloak_ip($ip);
+	modLog("Deleted all posts by IP address: <a href=\"?/IP/$cip\">$cip</a>");
 	
 	// Redirect
 	header('Location: ?/' . sprintf($config['board_path'], $boardName) . $config['file_index'], true, $config['redirect_http']);
@@ -2210,7 +2272,7 @@ function mod_reports() {
 	$reports = $query->fetchAll(PDO::FETCH_ASSOC);
 	
 	$report_queries = array();
-	foreach ($reports as $report) {
+	foreach ($reports as &$report) {
 		if (!isset($report_queries[$report['board']]))
 			$report_queries[$report['board']] = array();
 		$report_queries[$report['board']][] = $report['post'];
@@ -2308,9 +2370,9 @@ function mod_report_dismiss($id, $all = false) {
 	}
 	$query->execute() or error(db_error($query));
 	
-	
+	$cip = cloak_ip($ip);
 	if ($all)
-		modLog("Dismissed all reports by <a href=\"?/IP/$ip\">$ip</a>");
+		modLog("Dismissed all reports by <a href=\"?/IP/$cip\">$cip</a>");
 	else
 		modLog("Dismissed a report for post #{$id}", $board);
 	
@@ -2750,9 +2812,9 @@ function mod_edit_page($id) {
 		$query->bindValue(':id', $id);
 		$query->execute() or error(db_error($query));
 
-		$fn = ($board['uri'] ? ($board['uri'] . '/') : '') . $page['name'] . '.html';
+		$fn = (isset($board['uri']) ? ($board['uri'] . '/') : '') . $page['name'] . '.html';
 		$body = "<div class='ban'>$write</div>";
-		$html = Element($config['file_page_template'], array('config' => $config, 'body' => $body, 'title' => utf8tohtml($page['title'])));
+		$html = Element($config['file_page_template'], array('config' => $config, 'boardlist' => createBoardlist(), 'body' => $body, 'title' => utf8tohtml($page['title'])));
 		file_write($fn, $html);
 	}
 

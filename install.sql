@@ -346,6 +346,21 @@ CREATE TABLE IF NOT EXISTS `captchas` (
   PRIMARY KEY (`cookie`,`extra`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `telegrams`
+--
+
+CREATE TABLE IF NOT EXISTS `telegrams` (
+    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `mod_id` int(11) unsigned NOT NULL,
+    `ip` varchar(39) CHARACTER SET ascii NOT NULL,
+    `message` text NOT NULL,
+    `seen` tinyint(1) NOT NULL DEFAULT FALSE,
+    `created_at` INT(11),
+    PRIMARY KEY(`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

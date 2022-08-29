@@ -16,7 +16,7 @@
 	// Wrap functions in a class so they don't interfere with normal Tinyboard operations
 	class RSSRecentPosts {
 		public function build($action, $settings) {
-			global $config, $_theme;
+			global $config;
 			
 			/*if ($action == 'all') {
 				copy('templates/themes/recent/' . $settings['basecss'], $config['dir']['home'] . $settings['css']);

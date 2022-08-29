@@ -25,7 +25,7 @@ function load_captcha(provider, extra) {
   $(function() {
     $(".captcha>td").html("<input class='captcha_text' type='text' name='captcha_text' size='32' maxlength='6' autocomplete='off'>"+
 			  "<input class='captcha_cookie' name='captcha_cookie' type='hidden'>"+
-			  "<div class='captcha_html'></div>");
+			  "<div class='captcha_html'><img src='/static/clickme.gif'></div>");
 
     $("#quick-reply .captcha .captcha_text").prop("placeholder", _("Verification"));
 

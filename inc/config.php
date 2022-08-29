@@ -37,7 +37,7 @@
 	$config['blotter'] = &$config['global_message'];
 
 	// Automatically check if a newer version of Tinyboard is available when an administrator logs in.
-	$config['check_updates'] = true;
+	$config['check_updates'] = false;
 	// How often to check for updates
 	$config['check_updates_time'] = 43200; // 12 hours
 
@@ -45,6 +45,9 @@
 	$config['debug'] = false;
 	// For development purposes. Displays (and "dies" on) all errors and warnings. Turn on with the above.
 	$config['verbose_errors'] = true;
+	// Warn about deprecations? See vichan-devel/vichan#363 and https://www.youtube.com/watch?v=9crnlHLVdno
+	$config['deprecation_errors'] = false;
+
 	// EXPLAIN all SQL queries (when in debug mode).
 	$config['debug_explain'] = false;
 
@@ -196,11 +199,11 @@
 
 	// Prevents most Tor exit nodes from making posts. Recommended, as a lot of abuse comes from Tor because
 	// of the strong anonymity associated with it.
-	// Example: $config['dnsbl'][] = 'another.blacklist.net'; // 
+	// Example: $config['dnsbl'][] = 'another.blacklist.net';
 	// $config['dnsbl'][] = array('tor.dnsbl.sectoor.de', 1); //sectoor.de site is dead. the number stands for (an) ip adress(es) I guess. 
-	
+
 	// Replacement for sectoor.de
-	$config['dnsbl'][] = array('rbl.efnet.org', 4);
+	$config['dnsbl'][] = array('rbl.efnetrbl.org', 4);
 
 	// http://www.sorbs.net/using.shtml
 	// $config['dnsbl'][] = array('dnsbl.sorbs.net', array(2, 3, 4, 5, 6, 7, 8, 9));
@@ -222,7 +225,7 @@
 
 	// Skip checking certain IP addresses against blacklists (for troubleshooting or whatever)
 	$config['dnsbl_exceptions'][] = '127.0.0.1';
-	
+
 	// To prevent bump atacks; returns the thread to last position after the last post is deleted. 
 	$config['anti_bump_flood'] = false;
 
@@ -255,7 +258,7 @@
 
 	// How soon after regeneration do hashes expire (in seconds)?
 	$config['spam']['hidden_inputs_expire'] = 60 * 60 * 3; // three hours
-	
+
 	// Whether to use Unicode characters in hidden input names and values.
 	$config['spam']['unicode'] = true;
 
@@ -309,8 +312,8 @@
 	$config['recaptcha_private'] = '6LcXTcUSAAAAAOGVbVdhmEM1_SyRF4xTKe8jbzf_';
 
 	// Enable Custom Captcha you need to change a couple of settings 
-	//Read more at: /captcha/instructions.md
-	 $config['captcha'] = array();
+	//Read more at: /inc/captcha/readme.md
+	$config['captcha'] = array();
 
 	// Enable custom captcha provider
 	$config['captcha']['enabled'] = false;
@@ -318,7 +321,7 @@
 	//New thread captcha
  	//Require solving a captcha to post a thread. 
  	//Default off.
- 	 $config['new_thread_capt'] = false;
+ 	$config['new_thread_capt'] = false;
 
 	// Custom captcha get provider path (if not working get the absolute path aka your url.)
 	$config['captcha']['provider_get'] = '../inc/captcha/entrypoint.php';
@@ -326,7 +329,7 @@
 	$config['captcha']['provider_check'] = '../inc/captcha/entrypoint.php';
 
 	// Custom captcha extra field (eg. charset)
-	 $config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
+	$config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
 	
 	// Ability to lock a board for normal users and still allow mods to post.  Could also be useful for making an archive board
 	$config['board_locked'] = false;
@@ -472,7 +475,7 @@
  */
 
 	// Do you need a body for your reply posts?
-	$config['force_body'] = false;
+	$config['force_body'] = true;
 	// Do you need a body for new threads?
 	$config['force_body_op'] = true;
 	// Require an image for threads?
@@ -610,7 +613,7 @@
 	// that you will have to disable BOTH country_flags and contry_flags_condensed optimization (at least on a board
 	// where they are enabled).
 	$config['user_flag'] = false;
-	
+
 	// List of user_flag the user can choose. Flags must be placed in the directory set by $config['uri_flags']
 	$config['user_flags'] = array();
 	/* example: 
@@ -627,7 +630,7 @@
 
 	// Use semantic URLs for threads, like /b/res/12345/daily-programming-thread.html
 	$config['slugify'] = false;
-	
+
 	// Max size for slugs
 	$config['slug_max_size'] = 80;
 
@@ -676,10 +679,15 @@
 	// "/```([a-z0-9-]{0,20})\n(.*?)\n?```\n?/s"
 	$config['markup_code'] = false;
 
-	// Repair markup with HTML Tidy. This may be slower, but it solves nesting mistakes. Tinyboad, at the
+	// Repair markup with HTML Tidy. This may be slower, but it solves nesting mistakes. Tinyboard, at the
 	// time of writing this, can not prevent out-of-order markup tags (eg. "**''test**'') without help from
 	// HTML Tidy.
 	$config['markup_repair_tidy'] = false;
+
+	// Use 'bare' config option of tidy::repairString.
+	// This option replaces some punctuation marks with their ASCII counterparts.
+	// Dashes are replaced with (single) hyphens, for example.
+	$config['markup_repair_tidy_bare'] = true;
 
 	// Always regenerate markup. This isn't recommended and should only be used for debugging; by default,
 	// Tinyboard only parses post markup when it needs to, and keeps post-markup HTML in the database. This
@@ -844,6 +852,7 @@
 	$config['image_identification_imgops'] = true;
 	$config['image_identification_exif'] = true;
 	$config['image_identification_google'] = true;
+	$config['image_identification_yandex'] = true;
 	// Anime/manga search engine.
 	$config['image_identification_iqdb'] = false;
 	
@@ -1073,27 +1082,23 @@
 	$config['embedding'] = array(
 		array(
 			'/^https?:\/\/(\w+\.)?youtube\.com\/watch\?v=([a-zA-Z0-9\-_]{10,11})(&.+)?$/i',
-			'<iframe style="float: left;margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" id="ytplayer" src="http://www.youtube.com/embed/$2"></iframe>'
+			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" id="ytplayer" src="https://www.youtube.com/embed/$2"></iframe>'
 		),
 		array(
 			'/^https?:\/\/(\w+\.)?vimeo\.com\/(\d{2,10})(\?.+)?$/i',
-			'<iframe style="float: left;margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" src="https://player.vimeo.com/video/$2" frameborder="0"></iframe>'
+			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" src="https://player.vimeo.com/video/$2"></iframe>'
 		),
 		array(
 			'/^https?:\/\/(\w+\.)?dailymotion\.com\/video\/([a-zA-Z0-9]{2,10})(_.+)?$/i',
-			'<object style="float: left;margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%"><param name="movie" value="http://www.dailymotion.com/swf/video/$2"><param name="allowFullScreen" value="true"><param name="allowScriptAccess" value="always"><param name="wmode" value="transparent"><embed type="application/x-shockwave-flash" src="http://www.dailymotion.com/swf/video/$2" width="%%tb_width%%" height="%%tb_height%%" wmode="transparent" allowfullscreen="true" allowscriptaccess="always"></object>'
+			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" src="https://www.dailymotion.com/embed/video/$2" allowfullscreen></iframe>'
 		),
 		array(
 			'/^https?:\/\/(\w+\.)?metacafe\.com\/watch\/(\d+)\/([a-zA-Z0-9_\-.]+)\/(\?[^\'"<>]+)?$/i',
-			'<div style="float:left;margin:10px 20px;width:%%tb_width%%px;height:%%tb_height%%px"><embed flashVars="playerVars=showStats=no|autoPlay=no" src="http://www.metacafe.com/fplayer/$2/$3.swf" width="%%tb_width%%" height="%%tb_height%%" wmode="transparent" allowFullScreen="true" allowScriptAccess="always" name="Metacafe_$2" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash"></div>'
+			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0"  src="https://www.metacafe.com/embed/$2/$3/" allowfullscreen></iframe>'
 		),
 		array(
-			'/^https?:\/\/video\.google\.com\/videoplay\?docid=(\d+)([&#](.+)?)?$/i',
-			'<embed src="http://video.google.com/googleplayer.swf?docid=$1&hl=en&fs=true" style="width:%%tb_width%%px;height:%%tb_height%%px;float:left;margin:10px 20px" allowFullScreen="true" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>'
-		),
-		array(
-			'/^https?:\/\/(\w+\.)?vocaroo\.com\/i\/([a-zA-Z0-9]{2,15})$/i',
-			'<object style="float: left;margin: 10px 20px;" width="148" height="44"><param name="movie" value="http://vocaroo.com/player.swf?playMediaID=$2&autoplay=0"><param name="wmode" value="transparent"><embed src="http://vocaroo.com/player.swf?playMediaID=$2&autoplay=0" width="148" height="44" wmode="transparent" type="application/x-shockwave-flash"></object>'
+                        '/^https?:\/\/(\w+\.)?vocaroo\.com\/([a-zA-Z0-9]{2,12})$/i',
+                        '<iframe style="float: left; margin: 10px 20px;" width="300" height="60" frameborder="0" src="https://vocaroo.com/embed/$2"></iframe>'
 		)
 	);
 
@@ -1146,7 +1151,7 @@
 	$config['error']['webmerror'] 		= _('There was a problem processing your webm.');//Is this error used anywhere ?
 	$config['error']['invalidwebm'] 	= _('Invalid webm uploaded.');
 	$config['error']['webmhasaudio'] 	= _('The uploaded webm contains an audio or another type of additional stream.');
-	$config['error']['webmtoolong'] 	= _('The uploaded webm is longer than ' . $config['webm']['max_length'] . ' seconds.');
+	$config['error']['webmtoolong']		=_('The uploaded webm is longer than %d seconds.');
 	$config['error']['fileexists']		= _('That file <a href="%s">already exists</a>!');
 	$config['error']['fileexistsinthread']	= _('That file <a href="%s">already exists</a> in this thread!');
 	$config['error']['delete_too_soon']	= _('You\'ll have to wait another %s before deleting that.');
@@ -1203,6 +1208,7 @@
 	// Location of primary files.
 	$config['file_index'] = 'index.html';
 	$config['file_page'] = '%d.html'; // NB: page is both an index page and a thread
+	$config['file_catalog'] = 'catalog.html';
 	$config['file_page50'] = '%d+50.html';
 	$config['file_page_slug'] = '%d-%s.html';
 	$config['file_page50_slug'] = '%d-%s+50.html';
@@ -1611,6 +1617,12 @@
 	$config['mod']['create_notes'] = $config['mod']['view_notes'];
 	// Remote notes
 	$config['mod']['remove_notes'] = ADMIN;
+	// View telegrams
+	$config['mod']['view_telegrams'] = JANITOR;
+	// Create telegrams
+	$config['mod']['create_telegrams'] = $config['mod']['view_telegrams'];
+	// Remove telegrams
+	$config['mod']['remove_telegrams'] = ADMIN;
 	// Create a new board
 	$config['mod']['newboard'] = ADMIN;
 	// Manage existing boards (change title, etc)
@@ -1927,3 +1939,13 @@
 
 	// Allowed HTML tags in ?/edit_pages.
 	$config['allowed_html'] = 'a[href|title],p,br,li,ol,ul,strong,em,u,h2,b,i,tt,div,img[src|alt|title],hr';
+
+	// Secret passphrase for IP cloaking
+	// Disabled if empty.
+	$config['ipcrypt_key'] = '';
+
+	// IP cloak prefix
+	$config['ipcrypt_prefix'] = 'Cloak';
+
+	// Whether to append domain names to IP cloaks
+	$config['ipcrypt_dns'] = false;

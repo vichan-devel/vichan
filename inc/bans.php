@@ -1,9 +1,5 @@
 <?php
 
-require 'inc/lib/IP/Lifo/IP/IP.php';
-require 'inc/lib/IP/Lifo/IP/BC.php';
-require 'inc/lib/IP/Lifo/IP/CIDR.php';
-
 use Lifo\IP\CIDR;
 
 class Bans {
@@ -142,6 +138,7 @@ class Bans {
 				if ($ban['post'])
 					$ban['post'] = json_decode($ban['post'], true);
 				$ban['mask'] = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
+				$ban['cmask'] = cloak_mask($ban['mask']);
 				$ban_list[] = $ban;
 			}
 		}
@@ -161,8 +158,9 @@ class Bans {
 
 		$end = end($bans);
 
-                foreach ($bans as &$ban) {
-                        $ban['mask'] = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
+		foreach ($bans as &$ban) {
+			$uncloaked_mask = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
+			$ban['mask'] = cloak_mask($uncloaked_mask);
 
 			if ($ban['post']) {
 				$post = json_decode($ban['post']);
@@ -174,11 +172,11 @@ class Bans {
 				$ban['access'] = true;
 			}
 
-			if (filter_var($ban['mask'], FILTER_VALIDATE_IP) !== false) {
+			if (filter_var($uncloaked_mask, FILTER_VALIDATE_IP) !== false) {
 				$ban['single_addr'] = true;
 			}
 			if ($filter_staff || ($board_access !== false && !in_array($ban['board'], $board_access))) {
-				$ban['username'] = '?';				
+				$ban['username'] = '?';
 			}
 			if ($filter_ips || ($board_access !== false && !in_array($ban['board'], $board_access))) {
 				@list($ban['mask'], $subnet) = explode("/", $ban['mask']);
@@ -200,7 +198,7 @@ class Bans {
 			}
 		}
 
-                $out ? fputs($out, "]") : print("]");
+		$out ? fputs($out, "]") : print("]");
 
 	}
 	
@@ -230,9 +228,10 @@ class Bans {
 		                error($config['error']['noaccess']);
 			
 			$mask = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
+			$cloaked_mask = cloak_mask($mask);
 			
 			modLog("Removed ban #{$ban_id} for " .
-				(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask));
+				(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$cloaked_mask\">$cloaked_mask</a>" : $cloaked_mask));
 		}
 		
 		query("DELETE FROM ``bans`` WHERE `id` = " . (int)$ban_id) or error(db_error());
@@ -242,7 +241,9 @@ class Bans {
 		return true;
 	}
 	
-	static public function new_ban($mask, $reason, $length = false, $ban_board = false, $mod_id = false, $post = false) {
+	static public function new_ban($cloaked_mask, $reason, $length = false, $ban_board = false, $mod_id = false, $post = false) {
+		$mask = uncloak_mask($cloaked_mask);
+
 		global $mod, $pdo, $board;
 		
 		if ($mod_id === false) {
@@ -251,6 +252,7 @@ class Bans {
 				
 		$range = self::parse_range($mask);
 		$mask = self::range_to_string($range);
+		$cloaked_mask = cloak_mask($mask);
 		
 		$query = prepare("INSERT INTO ``bans`` VALUES (NULL, :ipstart, :ipend, :time, :expires, :board, :mod, :reason, 0, :post)");
 		
@@ -293,14 +295,13 @@ class Bans {
 			$query->bindValue(':post', null, PDO::PARAM_NULL);
 		
 		$query->execute() or error(db_error($query));
-		
 		if (isset($mod['id']) && $mod['id'] == $mod_id) {
 			modLog('Created a new ' .
 				($length > 0 ? preg_replace('/^(\d+) (\w+?)s?$/', '$1-$2', until($length)) : 'permanent') .
 				' ban on ' .
 				($ban_board ? '/' . $ban_board . '/' : 'all boards') .
 				' for ' .
-				(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$mask\">$mask</a>" : $mask) .
+				(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$cloaked_mask\">$cloaked_mask</a>" : $cloaked_mask) .
 				' (<small>#' . $pdo->lastInsertId() . '</small>)' .
 				' with ' . ($reason ? 'reason: ' . utf8tohtml($reason) . '' : 'no reason'));
 		}

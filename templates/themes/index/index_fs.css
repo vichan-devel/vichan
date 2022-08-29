@@ -20,18 +20,17 @@
 	margin: 0;
 }
 .box.left {
-    background: #FDF6AF;
-    color: #9E914F;
-    border: 1px solid #9E914F;
+	background: #FDF6AF;
+	color: #9E914F;
+	border: 1px solid #9E914F;
 	float: left;
 }
 .box.right {
-    background: #F2DCE5;
-    color: #525;
-    border: 1px solid #CA759E;
+	background: #F2DCE5;
+	color: #525;
+	border: 1px solid #CA759E;
 	float: right;
 }
-
 .box h2 {
 	padding: 3px 7px;
 	font-size: 12pt;
@@ -41,17 +40,16 @@
 	margin: 10px auto;
 }
 .box.left h2 {
-    background: #FEE78F;
-    color: #9E914F;
+	background: #FEE78F;
+	color: #9E914F;
 }
 .box.right h2 {
-    background: #EB81B4;
-    color: #F8F8F8;
+	background: #EB81B4;
+	color: #F8F8F8;
 }
-
 body {
-    background: #F7F8F9;
+	background: #F7F8F9;
 }
 header div.subtitle, h1 {
-    color: #888A8C;
+	color: #888A8C;
 }

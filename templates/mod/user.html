@@ -98,7 +98,7 @@
 		{% for log in logs %}
 			<tr>
 				<td class="minimal">
-					<a href="?/IP/{{ log.ip }}">{{ log.ip }}</a>
+					<a href="?/IP/{{ log.ip|cloak_ip }}">{{ log.ip|cloak_ip }}</a>
 				</td>
 				<td class="minimal">
 					<span title="{{ log.time|date(config.post_date) }}">{{ log.time|ago }}</span>

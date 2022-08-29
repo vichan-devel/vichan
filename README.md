@@ -1,18 +1,21 @@
 vichan - A lightweight and full featured PHP imageboard.
 ========================================================
 
-**Vichan has next to no active development, however you can still pay for support. Basic support costs $40/hr, and is only payable in BTC. New features depend on what you want. Email COPYPASTE &lt;AT&gt; KITTENS &lt;DOT&gt; PH if you're interested&mdash;Vichan forks such as OpenIB are included in this offer.**
+**Vichan has next to no active development<!--, however you can still pay for support. Basic support costs $40/hr, and is only payable in BTC. New features depend on what you want. Email COPYPASTE &lt;AT&gt; KITTENS &lt;DOT&gt; PH if you're interested&mdash;Vichan forks such as OpenIB are included in this offer-->.**
 
 About
 ------------
 vichan is a free light-weight, fast, highly configurable and user-friendly
 imageboard software package. It is written in PHP and has few dependencies.
 
-In November 2017, Marcin Łabanowski (@czaks) retired as maintainer for personal reasons. His retirement may be temporary, but in his absence, Fredrick Brennan (@ctrlcctrlv), co-maintainer since 2013, and #3 in terms of number of commits, took his place as interim sole maintianer and point of contact. (See [issue #266](https://github.com/vichan-devel/vichan/issues/266))
-
-*Security problems can be reported to Fredrick Brennan at his email: COPYPASTE \<AT\> KITTENS \<DOT\> PH.*
+*Security problems can be reported to the development team: DEVELOPMENT \<AT\> VICHAN \<DOT\> NET.*
 	
-Vichan is still accepting patches, but there is at the moment no active development besides fixing security problems and other serious bugs as they emerge. Given the lack of active development, we strongly urge you to consider other imageboard packages. It is the opinion of the vichan development team that no new vichan imageboards should be deployed, and other imageboard packages, such as lynxchan, used instead.
+While there is currently no active development besides fixing security problems, we don't exclude the possibility to refactor the code in order to meet today's standards and continue our work from the point where [@czaks](https://github.com/czaks) retired in 2017.
+Before this milestone is achieved though, we strongly urge you to consider other imageboard packages. It is the opinion of the vichan development team that no new vichan imageboards should be deployed at the moment, and other imageboard packages used instead.
+
+For support, feel free to join our [IRC channel](https://webchat.6an.org/?channels=vichan-dev) at irc.6an.org.
+
+Some documentation may be found on our [wiki](https://github.com/vichan-devel/vichan/wiki). (feel free to contribute)
 
 History
 ------------
@@ -20,7 +23,11 @@ vichan is a fork of (now defunc'd) [Tinyboard](http://github.com/savetheinternet
 a great imageboard package, actively building on it and adding a lot of features and other
 improvements.
 
-Some documentation may be found on our [wiki](https://github.com/vichan-devel/vichan/wiki). (feel free to contribute)
+### Maintainer timeline
+1. [@h00j](https://github.com/h00j) (2021 - present)
+2. [@ctrlcctrlv](https://github.com/ctrlcctrlv) (2017 - 2021)
+3. [@czaks](https://github.com/czaks) (2014 - 2017) (The author of vichan fork)
+4. [@savetheinternet](https://github.com/savetheinternet) (2010 - 2014) (The creator of Tinyboard)
 
 Requirements
 ------------
@@ -38,8 +45,9 @@ We try to make sure vichan is compatible with all major web servers. vichan does
 1.	MySQL/MariaDB server >= 5.5.3
 2.	ImageMagick (command-line ImageMagick or GraphicsMagick preferred).
 3.	[APC (Alternative PHP Cache)](http://php.net/manual/en/book.apc.php),
-	[XCache](http://xcache.lighttpd.net/) or
-	[Memcached](http://www.php.net/manual/en/intro.memcached.php)
+	[XCache](http://xcache.lighttpd.net/),
+	[Memcached](http://www.php.net/manual/en/intro.memcached.php) or
+	[Redis](https://redis.io/docs/about/)
 
 Contributing
 ------------
@@ -54,10 +62,11 @@ Installation
 	development version with:
 
         git clone git://github.com/vichan-devel/vichan.git
-	
-2.	Navigate to ```install.php``` in your web browser and follow the
+
+2.	run ```composer install``` inside the directory	
+3.	Navigate to ```install.php``` in your web browser and follow the
 	prompts.
-3.	vichan should now be installed. Log in to ```mod.php``` with the
+4.	vichan should now be installed. Log in to ```mod.php``` with the
 	default username and password combination: **admin / password**.
 
 Please remember to change the administrator account password.
@@ -74,6 +83,15 @@ backup your ```inc/instance-config.php```, replace all your files in place
 finally run ```install.php```.
 
 To migrate from a Kusaba X board, use http://github.com/vichan-devel/Tinyboard-Migration
+
+Demo
+--------
+Demo with the most updated version of [Vichan](https://vichan.27chan.org).
+
+1. PHP 7.2
+2. MySQL 5.7
+3. KeyDB 6.2.1 (Redis)
+4. NGINX 1.14.0
 
 Support
 --------

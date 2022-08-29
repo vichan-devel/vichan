@@ -103,7 +103,7 @@ function mysql_version() {
 	$v = explode('.', $version);
 	if (count($v) != 3)
 		return false;
-	return (int) sprintf("%02d%02d%02d", $v[0], $v[1], $v[2]);
+	return (int) sprintf("%02d%02d%02d", $v[0], $v[1], is_int($v[2]) ? (int)$v[2] : 0);
 }
 
 function prepare($query) {

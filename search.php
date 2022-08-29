@@ -1,5 +1,5 @@
 <?php
-	require 'inc/functions.php';
+	require 'inc/bootstrap.php';
 	
 	if (!$config['search']['enable']) {
 		die(_("Post search is disabled"));
@@ -170,5 +170,6 @@
 	echo Element($config['file_page_template'], Array(
 		'config'=>$config,
 		'title'=>_('Search'),
+		'boardlist'=>createBoardlist(),
 		'body'=>'' . $body
 	));

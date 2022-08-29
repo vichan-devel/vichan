@@ -4,12 +4,11 @@
  *  Copyright (c) 2010-2014 Tinyboard Development Group
  */
 
-require_once 'inc/functions.php';
+require_once 'inc/bootstrap.php';
 
 if ($config['debug'])
 	$parse_start_time = microtime(true);
 
-require_once 'inc/bans.php';
 require_once 'inc/mod/pages.php';
 
 check_login(true);
@@ -60,7 +59,8 @@ $pages = array(
 	
 	'/IP/([\w.:]+)'				=> 'secure_POST ip',		// view ip address
 	'/IP/([\w.:]+)/remove_note/(\d+)'	=> 'secure ip_remove_note',	// remove note from ip address
-	
+	'/IP/([\w.:-]+)/remove_telegram/(\d+)'	=> 'secure ip_remove_telegram',	// remove telegram from ip address
+
 	'/ban'					=> 'secure_POST ban',		// new ban
 	'/bans'					=> 'secure_POST bans',		// ban list
 	'/bans.json'				=> 'secure bans_json',		// ban list JSON
@@ -102,6 +102,7 @@ $pages = array(
 	// This should always be at the end:
 	'/(\%b)/'										=> 'view_board',
 	'/(\%b)/' . preg_quote($config['file_index'], '!')					=> 'view_board',
+	'/(\%b)/' . preg_quote($config['file_catalog'], '!')					=> 'view_catalog',
 	'/(\%b)/' . str_replace('%d', '(\d+)', preg_quote($config['file_page'], '!'))		=> 'view_board',
 	'/(\%b)/' . preg_quote($config['dir']['res'], '!') .
 			str_replace('%d', '(\d+)', preg_quote($config['file_page50'], '!'))	=> 'view_thread50',
@@ -179,7 +180,12 @@ foreach ($pages as $uri => $handler) {
 			);
 			$debug['time']['parse_mod_req'] = '~' . round((microtime(true) - $parse_start_time) * 1000, 2) . 'ms';
 		}
-		
+
+		if (is_array($matches)) {
+			// we don't want to call named parameters (PHP 8)
+			$matches = array_values($matches);
+		}
+
 		if (is_string($handler)) {
 			if ($handler[0] == ':') {
 				header('Location: ' . substr($handler, 1),  true, $config['redirect_http']);

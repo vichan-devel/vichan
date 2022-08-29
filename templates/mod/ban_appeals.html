@@ -16,7 +16,7 @@
 		{% if mod|hasPermission(config.mod.show_ip, board.uri) %}
 			<tr>
 				<th>{% trans 'IP' %}</th>
-				<td>{{ ban.mask }}</td>
+				<td>{{ ban.mask|cloak_mask }}</td>
 			</tr>
 		{% endif %}
 		<tr>

@@ -31,8 +31,8 @@
 			$overflow = array();
 			$board = array(
 				'url' => $this->settings['uri'],
-				'name' => $this->settings['title'],
-				'title' => sprintf($this->settings['subtitle'], $this->settings['thread_limit'])
+				'title' => $this->settings['title'],
+				'subtitle' => sprintf($this->settings['subtitle'], $this->settings['thread_limit'])
 			);
 
 			$query = '';

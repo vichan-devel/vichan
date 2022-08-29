@@ -2286,6 +2286,9 @@ msgstr "usuń"
 #: ../../../../templates/cache/b1/4c/16a427b0d49ecf353c259d9fb606841783484eca9d790e766fdf0e3e9754.php:208
 msgid "New note"
 msgstr "Nowa notka"
+ 	
+msgid "New telegram"
+msgstr "Nowa depesza"
 
 #. line 94
 #. line 7
@@ -3510,3 +3513,6 @@ msgstr "Pokazuj bany tylko z boardów, które moderuję"
 #: ../../../../templates/cache/ba/55/2553cc018aecf7d29a62331aec4bedc71b646817c7e4c4e7d1a885263676.php:55
 msgid "Show only active bans"
 msgstr "Pokazuj tylko aktywne bany"
+
+msgid "Important message from Moderation"
+msgstr "Ważna wiadomość od Moderacji"

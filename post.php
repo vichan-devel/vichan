@@ -3,9 +3,7 @@
  *  Copyright (c) 2010-2014 Tinyboard Development Group
  */
 
-require_once 'inc/functions.php';
-require_once 'inc/anti-bot.php';
-require_once 'inc/bans.php';
+require_once 'inc/bootstrap.php';
 
 $dropped_post = false;
 
@@ -171,6 +169,11 @@ elseif (isset($_GET['Newsgroups'])) {
 	error("NNTPChan: NNTPChan support is disabled");
 }
 
+session_start();
+if (!isset($_POST['captcha_cookie']) && isset($_SESSION['captcha_cookie'])) {
+	$_POST['captcha_cookie'] = $_SESSION['captcha_cookie'];
+}
+
 if (isset($_POST['delete'])) {
 	// Delete
 	
@@ -300,12 +303,14 @@ if (isset($_POST['delete'])) {
 	}
 
 	if ($config['report_captcha']) {
-		$resp = file_get_contents($config['captcha']['provider_check'] . "?" . http_build_query([
+		$ch = curl_init($config['domain'].'/'.$config['captcha']['provider_check'] . "?" . http_build_query([
 			'mode' => 'check',
 			'text' => $_POST['captcha_text'],
 			'extra' => $config['captcha']['extra'],
 			'cookie' => $_POST['captcha_cookie']
 		]));
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		$resp = curl_exec($ch);
 
 		if ($resp !== '1') {
                         error($config['error']['captcha']);
@@ -404,20 +409,23 @@ if (isset($_POST['delete'])) {
 			if (!$resp['success']) {
 				error($config['error']['captcha']);
 			}
+		}
 		// Same, but now with our custom captcha provider
  		if (($config['captcha']['enabled']) || (($post['op']) && ($config['new_thread_capt'])) ) {
-		$resp = file_get_contents($config['captcha']['provider_check'] . "?" . http_build_query([
+		$ch = curl_init($config['domain'].'/'.$config['captcha']['provider_check'] . "?" . http_build_query([
 			'mode' => 'check',
 			'text' => $_POST['captcha_text'],
 			'extra' => $config['captcha']['extra'],
 			'cookie' => $_POST['captcha_cookie']
 		]));
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		$resp = curl_exec($ch);
+
 		if ($resp !== '1') {
                         error($config['error']['captcha'] .
 			'<script>if (actually_load_captcha !== undefined) actually_load_captcha("'.$config['captcha']['provider_get'].'", "'.$config['captcha']['extra'].'");</script>');
 		}
 	}
-}
 
 		if (!(($post['op'] && $_POST['post'] == $config['button_newtopic']) ||
 			(!$post['op'] && $_POST['post'] == $config['button_reply'])))
@@ -735,9 +743,8 @@ if (isset($_POST['delete'])) {
 	
 	if (!$dropped_post)
 	if (($config['country_flags'] && !$config['allow_no_country']) || ($config['country_flags'] && $config['allow_no_country'] && !isset($_POST['no_country']))) {
-		require 'inc/lib/geoip/geoip.inc';
-		$gi=geoip\geoip_open('inc/lib/geoip/GeoIPv6.dat', GEOIP_STANDARD);
-	
+		$gi=geoip_open('inc/lib/geoip/GeoIPv6.dat', GEOIP_STANDARD);
+
 		function ipv4to6($ip) {
 			if (strpos($ip, ':') !== false) {
 				if (strpos($ip, '.') > 0)
@@ -750,10 +757,10 @@ if (isset($_POST['delete'])) {
 			return '::ffff:'.$part7.':'.$part8;
 		}
 	
-		if ($country_code = geoip\geoip_country_code_by_addr_v6($gi, ipv4to6($_SERVER['REMOTE_ADDR']))) {
+		if ($country_code = geoip_country_code_by_addr_v6($gi, ipv4to6($_SERVER['REMOTE_ADDR']))) {
 			if (!in_array(strtolower($country_code), array('eu', 'ap', 'o1', 'a1', 'a2')))
 				$post['body'] .= "\n<tinyboard flag>".strtolower($country_code)."</tinyboard>".
-				"\n<tinyboard flag alt>".geoip\geoip_country_name_by_addr_v6($gi, ipv4to6($_SERVER['REMOTE_ADDR']))."</tinyboard>";
+				"\n<tinyboard flag alt>".geoip_country_name_by_addr_v6($gi, ipv4to6($_SERVER['REMOTE_ADDR']))."</tinyboard>";
 		}
 	}
 
@@ -959,6 +966,8 @@ if (isset($_POST['delete'])) {
 			
 				$thumb->_destroy();
 			}
+
+			$dont_copy_file = false;
 			
 			if ($config['redraw_image'] || (!@$file['exif_stripped'] && $config['strip_exif'] && ($file['extension'] == 'jpg' || $file['extension'] == 'jpeg'))) {
 				if (!$config['redraw_image'] && $config['use_exiftool']) {
@@ -981,6 +990,7 @@ if (isset($_POST['delete'])) {
 					$config['file_icons'][$file['extension']] : $config['file_icons']['default']));
 			$file['thumbwidth'] = $size[0];
 			$file['thumbheight'] = $size[1];
+			$dont_copy_file = false;
 		}
 
 		if ($config['tesseract_ocr'] && $file['thumb'] != 'file') { // Let's OCR it!
@@ -1011,7 +1021,7 @@ if (isset($_POST['delete'])) {
 			}
 		}
 		
-		if (!isset($dont_copy_file) || !$dont_copy_file) {
+		if (!$dont_copy_file) {
 			if (isset($file['file_tmp'])) {
 				if (!@rename($file['tmp_name'], $file['file']))
 					error($config['error']['nomove']);
@@ -1204,6 +1214,15 @@ if (isset($_POST['delete'])) {
 	
 	if (!$post['mod']) header('X-Associated-Content: "' . $redirect . '"');
 
+	// Any telegrams to show?
+	$query = prepare('SELECT * FROM ``telegrams`` WHERE ``ip`` = :ip AND ``seen`` = 0');
+	$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
+	$query->execute() or error(db_error($query));
+	$telegrams = $query->fetchAll(PDO::FETCH_ASSOC);
+
+	if (count($telegrams) > 0)
+		goto skip_redirect;
+
 	if (!isset($_POST['json_response'])) {
 		header('Location: ' . $redirect, true, $config['redirect_http']);
 	} else {
@@ -1214,7 +1233,9 @@ if (isset($_POST['delete'])) {
 			'id' => $id
 		));
 	}
-	
+	skip_redirect:
+
+
 	if ($config['try_smarter'] && $post['op'])
 		$build_pages = range(1, $config['max_pages']);
 	
@@ -1224,6 +1245,20 @@ if (isset($_POST['delete'])) {
 	event('post-after', $post);
 	
 	buildIndex();
+	
+	if (count($telegrams) > 0) {
+		$ids = implode(', ', array_map(function($x) { return (int)$x['id']; }, $telegrams));
+		query("UPDATE ``telegrams`` SET ``seen`` = 1 WHERE ``id`` IN({$ids})") or error(db_error());
+		die(Element('page.html', array(
+			'title' => _('Important message from Moderation'),
+			'config' => $config,
+			'body' => Element('important.html', array(
+				'config' => $config,
+				'redirect' => $redirect,
+				'telegrams' => $telegrams,
+			))
+		)));
+	}
 
 	// We are already done, let's continue our heavy-lifting work in the background (if we run off FastCGI)
 	if (function_exists('fastcgi_finish_request'))

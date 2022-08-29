@@ -38,7 +38,7 @@ if(!getenv('TINYBOARD_PATH')) {
 
 putenv('TINYBOARD_PATH=' . getcwd());
 
-require 'inc/functions.php';
+require 'inc/bootstrap.php';
 
 $mod = Array(
 	'id' => -1,

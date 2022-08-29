@@ -1,0 +1,12 @@
+<div class="ban">
+    {% for telegram in telegrams %}
+    <div style="padding: 10px;">
+        <cite><time datetime="{{ telegram.created_at|date('%Y-%m-%dT%H:%M:%S') }}{{ timezone() }}">{{ post.time|date(config.post_date) }}</time></cite>
+        <p>{{ telegram.message }}</p>
+    </div>
+    <hr>
+    {% endfor %}
+    <div style="padding:20px;text-align:center;">
+        <a href="{{ redirect }}">{%trans 'Return' %}</a>
+    </div>
+</div>

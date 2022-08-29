@@ -21,7 +21,7 @@
 		{% for note in results %}
 			<tr>
 				<td class="minimal">
-					<a href="?/IP/{{ note.ip }}#notes">{{ note.ip }}</a>
+					<a href="?/IP/{{ note.ip|cloak_ip }}#notes">{{ note.ip|cloak_ip }}</a>
 				</td>
 				<td class="minimal">
 					{% if note.username %}
@@ -57,9 +57,9 @@
 			<tr{% if ban.expires != 0 and ban.expires < time() %} style="text-decoration:line-through"{% endif %}>
 				<td style="white-space: nowrap">
 					{% if ban.single_addr %}
-						<a href="?/IP/{{ ban.mask }}#bans">{{ ban.mask }}</a>
+						<a href="?/IP/{{ ban.mask|cloak_mask }}#bans">{{ ban.mask|cloak_mask }}</a>
 					{% else %}
-						{{ ban.mask|e }}
+						{{ ban.mask|cloak_mask|e }}
 					{% endif %}
 				</td>
 				<td>
@@ -148,7 +148,7 @@
 					{% endif %}
 				</td>
 				<td class="minimal">
-					<a href="?/IP/{{ log.ip }}">{{ log.ip }}</a>
+					<a href="?/IP/{{ log.ip|cloak_ip }}">{{ log.ip|cloak_ip }}</a>
 				</td>
 				<td class="minimal">
 					<span title="{{ log.time|date(config.post_date) }}">{{ log.time|ago }}</span>
@@ -210,8 +210,8 @@
 				</td>
 				<td class="minimal">
 					{% if mod|hasPermission(config.mod.show_ip, post.board) %}
-						<a href="?/IP/{{ post.ip }}">
-							{{ post.ip }}
+						<a href="?/IP/{{ post.ip|cloak_ip }}">
+							{{ post.ip|cloak_ip }}
 						</a>
 					{% else %}
 						<em>hidden</em>
