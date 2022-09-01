@@ -118,7 +118,7 @@
 			$element = Element('themes/catalog/catalog.html', Array(
 				'settings' => $settings,
 				'config' => $config,
-				'boardlist' => createBoardlist(),
+				'boardlist' => createBoardlist($mod),
 				'recent_images' => $recent_images,
 				'recent_posts' => $recent_posts,
 				'stats' => $stats,
@@ -130,13 +130,13 @@
 			if ($mod) {
 				return $element;
 			} else {
-			file_write($config['dir']['home'] . $board_name . '/catalog.html', $element);
+				file_write($config['dir']['home'] . $board_name . '/catalog.html', $element);
 
-			file_write($config['dir']['home'] . $board_name . '/index.rss', Element('themes/catalog/index.rss', Array(
-				'config' => $config,
-				'recent_posts' => $recent_posts,
-				'board' => $board
-			)));
-		}
+				file_write($config['dir']['home'] . $board_name . '/index.rss', Element('themes/catalog/index.rss', Array(
+					'config' => $config,
+					'recent_posts' => $recent_posts,
+					'board' => $board
+				)));
+			}
 		}
 	};
