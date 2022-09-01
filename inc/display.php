@@ -105,7 +105,7 @@ function error($message, $priority = true, $debug_stuff = false) {
 	}
 
 	$pw = $config['db']['password'];
-	$debug_callback = function(&$item) use (&$debug_callback, $pw) {
+	$debug_callback = function($item) use (&$debug_callback, $pw) {
 		if (is_array($item)) {
 			$item = array_filter($item, $debug_callback);
 		}
