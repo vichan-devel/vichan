@@ -132,7 +132,7 @@ foreach ($pages as $key => $callback) {
 	if (is_string($callback) && preg_match('/^secure /', $callback))
 		$key .= '(/(?P<token>[a-f0-9]{8}))?';
 	$key = str_replace('\%b', '?P<board>' . sprintf(substr($config['board_path'], 0, -1), $config['board_regex']), $key);
-	$new_pages[@$key[0] == '!' ? $key : '!^' . $key . '(?:&[^&=]+=[^&]*)*$!u'] = $callback;
+	$new_pages[(!empty($key) and $key[0] == '!') ? $key : '!^' . $key . '(?:&[^&=]+=[^&]*)*$!u'] = $callback;
 }
 $pages = $new_pages;
 
