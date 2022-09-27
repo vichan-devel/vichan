@@ -108,8 +108,8 @@ function loadConfig() {
 			$config[$key] = array();
 		}
 
-		if (!file_exists('inc/secrets.php'))
-			$error('Tinyboard is not configured! Create inc/secrets.php.');
+		if (!file_exists('inc/instance-config.php'))
+			$error('vichan is not configured! Create inc/instance-config.php.');
 
 		// Initialize locale as early as possible
 
