@@ -4,22 +4,22 @@
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  *  
  *  WARNING: This is a project-wide configuration file and is overwritten when upgrading to a newer
- *  version of Tinyboard. Please leave this file unchanged, or it will be a lot harder for you to upgrade.
- *  If you would like to make instance-specific changes to your own setup, please use instance-config.php.
+ *  version of vichan. Please leave this file unchanged, or it will be a lot harder for you to upgrade.
+ *  If you would like to make instance-specific changes to your own setup, please use secrets.php.
  *
  *  This is the default configuration. You can copy values from here and use them in
- *  your instance-config.php
+ *  your secrets.php
  *
  *  You can also create per-board configuration files. Once a board is created, locate its directory and
- *  create a new file named config.php (eg. b/config.php). Like instance-config.php, you can copy values
+ *  create a new file named config.php (eg. b/config.php). Like secrets.php, you can copy values
  *  from here and use them in your per-board configuration files.
  *
  *  Some directives are commented out. This is either because they are optional and examples, or because
- *  they are "optionally configurable", and given their default values by Tinyboard's code later if unset.
+ *  they are "optionally configurable", and given their default values by vichan's code later if unset.
  *
- *  More information: https://web.archive.org/web/20121003095922/http://tinyboard.org/docs/?p=Config
+ *  More information: https://github.com/vichan-devel/vichan/wiki/config
  *
- *  Tinyboard documentation: https://web.archive.org/web/20121003095807/http://tinyboard.org/docs/?p=Main_Page
+ *  vichan documentation: https://github.com/vichan-devel/vichan/wiki/
  *
  */
 
@@ -36,7 +36,7 @@
 	// $config['global_message'] = 'This is an important announcement!';
 	$config['blotter'] = &$config['global_message'];
 
-	// Automatically check if a newer version of Tinyboard is available when an administrator logs in.
+	// Automatically check if a newer version of vichan is available when an administrator logs in.
 	$config['check_updates'] = false;
 	// How often to check for updates
 	$config['check_updates_time'] = 43200; // 12 hours
@@ -84,7 +84,7 @@
  */
 
 	// Database driver (http://www.php.net/manual/en/pdo.drivers.php)
-	// Only MySQL is supported by Tinyboard at the moment, sorry.
+	// Only MySQL is supported by vichan at the moment, sorry.
 	$config['db']['type'] = 'mysql';
 	// Hostname, IP address or Unix socket (prefixed with ":")
 	$config['db']['server'] = 'localhost';
@@ -93,7 +93,7 @@
 	// Login
 	$config['db']['user'] = '';
 	$config['db']['password'] = '';
-	// Tinyboard database
+	// vichan database
 	$config['db']['database'] = '';
 	// Table prefix (optional)
 	$config['db']['prefix'] = '';
@@ -115,7 +115,7 @@
 	 * designed to minimize SQL queries and can significantly increase speed when posting or using the 
 	 * moderator interface. APC is the recommended method of caching.
 	 *
-	 * https://web.archive.org/web/20121003095626/http://tinyboard.org/docs/?p=Config/Cache
+	 * https://github.com/vichan-devel/vichan/wiki/cache
 	 */
 
 	$config['cache']['enabled'] = 'php';
@@ -128,7 +128,7 @@
 	// Timeout for cached objects such as posts and HTML.
 	$config['cache']['timeout'] = 60 * 60 * 48; // 48 hours
 
-	// Optional prefix if you're running multiple Tinyboard instances on the same machine.
+	// Optional prefix if you're running multiple vichan instances on the same machine.
 	$config['cache']['prefix'] = '';
 
 	// Memcached servers to use. Read more: http://www.php.net/manual/en/memcached.addservers.php
@@ -137,8 +137,8 @@
 	);
 
 	// Redis server to use. Location, port, password, database id.
-	// Note that Tinyboard may clear the database at times, so you may want to pick a database id just for
-	// Tinyboard to use.
+	// Note that vichan may clear the database at times, so you may want to pick a database id just for
+	// vichan to use.
 	$config['cache']['redis'] = array('localhost', 6379, '', 1);
 
 	// EXPERIMENTAL: Should we cache configs? Warning: this changes board behaviour, i'd say, a lot.
@@ -194,7 +194,7 @@
 	 * addresses published through the Internet Domain Name Service (DNS) either as a zone file that can be
 	 * used by DNS server software, or as a live DNS zone that can be queried in real-time.
 	 *
-	 * Read more: https://web.archive.org/web/20121003095945/http://tinyboard.org/docs/?p=Config/DNSBL
+	 * Read more: https://github.com/vichan-devel/vichan/wiki/dnsbl
 	 */
 
 	// Prevents most Tor exit nodes from making posts. Recommended, as a lot of abuse comes from Tor because
@@ -230,22 +230,22 @@
 	$config['anti_bump_flood'] = false;
 
 	/*
-	 * Introduction to Tinyboard's spam filter:
+	 * Introduction to vichan's spam filter:
 	 *
 	 * In simple terms, whenever a posting form on a page is generated (which happens whenever a
-	 * post is made), Tinyboard will add a random amount of hidden, obscure fields to it to
+	 * post is made), vichan will add a random amount of hidden, obscure fields to it to
 	 * confuse bots and upset hackers. These fields and their respective obscure values are
 	 * validated upon posting with a 160-bit "hash". That hash can only be used as many times
 	 * as you specify; otherwise, flooding bots could just keep reusing the same hash.
 	 * Once a new set of inputs (and the hash) are generated, old hashes for the same thread
 	 * and board are set to expire. Because you have to reload the page to get the new set
 	 * of inputs and hash, if they expire too quickly and more than one person is viewing the
-	 * page at a given time, Tinyboard would return false positives (depending on how long the
+	 * page at a given time, vichan would return false positives (depending on how long the
 	 * user sits on the page before posting). If your imageboard is quite fast/popular, set
 	 * $config['spam']['hidden_inputs_max_pass'] and $config['spam']['hidden_inputs_expire'] to
 	 * something higher to avoid false positives.
 	 *
-	 * See also: https://web.archive.org/web/20121003095610/http://tinyboard.org/docs/?p=Your_request_looks_automated
+	 * See also: https://github.com/vichan-devel/vichan/wiki/your_request_looks_automated
 	 *
 	 */
 
@@ -262,7 +262,7 @@
 	// Whether to use Unicode characters in hidden input names and values.
 	$config['spam']['unicode'] = true;
 
-	// These are fields used to confuse the bots. Make sure they aren't actually used by Tinyboard, or it won't work.
+	// These are fields used to confuse the bots. Make sure they aren't actually used by vichan, or it won't work.
 	$config['spam']['hidden_input_names'] = array(
 		'user',
 		'username',
@@ -353,7 +353,7 @@
 	 * it still is, as long as you leave the relevant $config['filters'] intact. These old config variables
 	 * still exist for backwards-compatability and general convenience.
 	 *
-	 * Read more: https://web.archive.org/web/20121003095807/http://tinyboard.org/docs/?p=Config/Flood_filters
+	 * Read more: https://github.com/vichan-devel/vichan/wiki/flood_filters
 	 */
 
 	// Minimum time between between each post by the same IP address.
@@ -462,7 +462,7 @@
 	
 	// Filter flood prevention conditions ("flood-match") depend on a table which contains a cache of recent
 	// posts across all boards. This table is automatically purged of older posts, determining the maximum
-	// "age" by looking at each filter. However, when determining the maximum age, Tinyboard does not look
+	// "age" by looking at each filter. However, when determining the maximum age, vichan does not look
 	// outside the current board. This means that if you have a special flood condition for a specific board
 	// (contained in a board configuration file) which has a flood-time greater than any of those in the
 	// global configuration, you need to set the following variable to the maximum flood-time condition value.
@@ -525,10 +525,10 @@
 	$config['robot_enable'] = false;
 	// Strip repeating characters when making hashes.
 	$config['robot_strip_repeating'] = true;
-	// Enabled mutes? Tinyboard uses ROBOT9000's original 2^x implementation where x is the number of times
+	// Enabled mutes? vichan uses ROBOT9000's original 2^x implementation where x is the number of times
 	// you have been muted in the past.
 	$config['robot_mute'] = true;
-	// How long before Tinyboard forgets about a mute?
+	// How long before vichan forgets about a mute?
 	$config['robot_mute_hour'] = 336; // 2 weeks
 	// If you want to alter the algorithm a bit. Default value is 2.
 	$config['robot_mute_multiplier'] = 2; // (n^x where x is the number of previous mutes)
@@ -543,7 +543,7 @@
 	$config['link_prefix'] = ''; 
 	$config['url_ads'] = &$config['link_prefix'];	 // leave alias
 	
-	// Allow "uploading" images via URL as well. Users can enter the URL of the image and then Tinyboard will
+	// Allow "uploading" images via URL as well. Users can enter the URL of the image and then vichan will
 	// download it. Not usually recommended.
 	$config['allow_upload_by_url'] = false;
 	// The timeout for the above, in seconds.
@@ -650,7 +650,7 @@
 	// a link to an email address or IRC chat room to appeal the ban.
 	$config['ban_page_extra'] = '';
 
-	// Allow users to appeal bans through Tinyboard.
+	// Allow users to appeal bans through vichan.
 	$config['ban_appeals'] = false;
 
 	// Do not allow users to appeal bans that are shorter than this length (in seconds).
@@ -679,7 +679,7 @@
 	// "/```([a-z0-9-]{0,20})\n(.*?)\n?```\n?/s"
 	$config['markup_code'] = false;
 
-	// Repair markup with HTML Tidy. This may be slower, but it solves nesting mistakes. Tinyboard, at the
+	// Repair markup with HTML Tidy. This may be slower, but it solves nesting mistakes. vichan, at the
 	// time of writing this, can not prevent out-of-order markup tags (eg. "**''test**'') without help from
 	// HTML Tidy.
 	$config['markup_repair_tidy'] = false;
@@ -690,7 +690,7 @@
 	$config['markup_repair_tidy_bare'] = true;
 
 	// Always regenerate markup. This isn't recommended and should only be used for debugging; by default,
-	// Tinyboard only parses post markup when it needs to, and keeps post-markup HTML in the database. This
+	// vichan only parses post markup when it needs to, and keeps post-markup HTML in the database. This
 	// will significantly impact performance when enabled.
 	$config['always_regenerate_markup'] = false;
 
@@ -732,7 +732,7 @@
 	 * Thumbnailing method:
 	 *
 	 *   'gd'		   PHP GD (default). Only handles the most basic image formats (GIF, JPEG, PNG).
-	 *				  GD is a prerequisite for Tinyboard no matter what method you choose.
+	 *				  GD is a prerequisite for vichan no matter what method you choose.
 	 *
 	 *   'imagick'	  PHP's ImageMagick bindings. Fast and efficient, supporting many image formats. 
 	 *				  A few minor bugs. http://pecl.php.net/package/imagick
@@ -911,7 +911,7 @@
  * ====================
  */
 
-	// Tinyboard has been translated into a few langauges. See inc/locale for available translations.
+	// vichan has been translated into a few langauges. See inc/locale for available translations.
 	$config['locale'] = 'en'; // (en, ru_RU.UTF-8, fi_FI.UTF-8, pl_PL.UTF-8)
 
 	// Timezone to use for displaying dates/times.
@@ -974,7 +974,7 @@
 	 * and bottom of board pages. They can be a list of links to boards and/or other pages such as status
 	 * blogs and social network profiles/pages.
 	 *
-	 * "Groups" in the boardlinks are marked with square brackets. Tinyboard allows for infinite recursion
+	 * "Groups" in the boardlinks are marked with square brackets. vichan allows for infinite recursion
 	 * with groups. Each array() in $config['boards'] represents a new square bracket group.
 	 */
 
@@ -1028,7 +1028,7 @@
 	// Location of post flags/icons (where "%s" is the flag name). Defaults to static/flags/%s.png.
 	// $config['uri_flags'] = 'http://static.example.org/flags/%s.png';
 
-	// Width and height (and more?) of post flags. Can be overridden with the Tinyboard post modifier:
+	// Width and height (and more?) of post flags. Can be overridden with the vichan post modifier:
 	// <tinyboard flag style>.
 	$config['flag_style'] = 'width:16px;height:11px;';
 
@@ -1056,7 +1056,7 @@
 	// $config['additional_javascript'][] = 'js/captcha.js';
 
 	// Where these script files are located on the web. Defaults to $config['root'].
-	// $config['additional_javascript_url'] = 'http://static.example.org/tinyboard-javascript-stuff/';
+	// $config['additional_javascript_url'] = 'http://static.example.org/vichan-javascript-stuff/';
 
 	// Compile all additional scripts into one file ($config['file_script']) instead of including them seperately.
 	$config['additional_javascript_compile'] = false;
@@ -1187,7 +1187,7 @@
  * =========================
  */
 
-	// The root directory, including the trailing slash, for Tinyboard.
+	// The root directory, including the trailing slash, for vichan.
 	// Examples: '/', 'http://boards.chan.org/', '/chan/'.
 	if (isset($_SERVER['REQUEST_URI'])) {
 		$request_uri = $_SERVER['REQUEST_URI'];
@@ -1293,7 +1293,7 @@
 
 	// Where to store the .html templates. This folder and the template files must exist.
 	$config['dir']['template'] = getcwd() . '/templates';
-	// Location of Tinyboard "themes".
+	// Location of vichan "themes".
 	$config['dir']['themes'] = getcwd() . '/templates/themes';
 	// Same as above, but a URI (accessable by web interface).
 	$config['dir']['themes_uri'] = 'templates/themes';
@@ -1773,7 +1773,7 @@
  * ====================
  */
 
-	// https://web.archive.org/web/20121003095551/http://tinyboard.org/docs/?p=Events
+	// https://github.com/vichan-devel/vichan/wiki/events
 
 	// event_handler('post', function($post) {
 	// 	// do something
@@ -1847,7 +1847,7 @@
  */
 
 	// Meta keywords. It's probably best to include these in per-board configurations.
-	// $config['meta_keywords'] = 'chan,anonymous discussion,imageboard,tinyboard';
+	// $config['meta_keywords'] = 'chan,anonymous discussion,imageboard,vichan';
 
 	// Link imageboard to your Google Analytics account to track users and provide traffic insights.
 	// $config['google_analytics'] = 'UA-xxxxxxx-yy';
@@ -1859,8 +1859,8 @@
 	// $config['statcounter_project'] = '1234567';
 	// $config['statcounter_security'] = 'acbd1234';
 
-	// If you use Varnish, Squid, or any similar caching reverse-proxy in front of Tinyboard, you can
-	// configure Tinyboard to PURGE files when they're written to.
+	// If you use Varnish, Squid, or any similar caching reverse-proxy in front of vichan, you can
+	// configure vichan to PURGE files when they're written to.
 	// $config['purge'] = array(
 	// 	array('127.0.0.1', 80)
 	// 	array('127.0.0.1', 80, 'example.org')

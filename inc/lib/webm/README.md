@@ -14,13 +14,13 @@ Be aware that this is beta software.  Please report any bugs you find.
 Installation
 ------------
 
-Add these lines to inc/instance-config.php:
+Add these lines to inc/secrets.php:
 
     $config['allowed_ext_files'][] = 'webm';
     $config['additional_javascript'][] = 'js/webm-settings.js';
     $config['additional_javascript'][] = 'js/expand-video.js';
 
-If you have an [FFmpeg](https://www.ffmpeg.org/) binary on your server and you wish to generate real thumbnails (the webm thumbnails created with the original implementation reportedly cause users' browsers to crash), add the following to inc/instance-config.php as well:
+If you have an [FFmpeg](https://www.ffmpeg.org/) binary on your server and you wish to generate real thumbnails (the webm thumbnails created with the original implementation reportedly cause users' browsers to crash), add the following to inc/secrets.php as well:
 
     $config['webm']['use_ffmpeg'] = true;
 

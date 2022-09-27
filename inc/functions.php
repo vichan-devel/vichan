@@ -108,8 +108,8 @@ function loadConfig() {
 			$config[$key] = array();
 		}
 
-		if (!file_exists('inc/instance-config.php'))
-			$error('Tinyboard is not configured! Create inc/instance-config.php.');
+		if (!file_exists('inc/secrets.php'))
+			$error('Tinyboard is not configured! Create inc/secrets.php.');
 
 		// Initialize locale as early as possible
 
@@ -122,7 +122,7 @@ function loadConfig() {
 		else {
 			$config['locale'] = 'en';
 
-			$configstr = file_get_contents('inc/instance-config.php');
+			$configstr = file_get_contents('inc/secrets.php');
 
 			if (isset($board['dir']) && file_exists($board['dir'] . '/config.php')) {
 				$configstr .= file_get_contents($board['dir'] . '/config.php');
