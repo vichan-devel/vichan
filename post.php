@@ -401,7 +401,7 @@ if (isset($_POST['delete'])) {
 				error($config['error']['bot']);	
 
 			// Check what reCAPTCHA has to say...
-			$resp = json_decode(file_get_contents(sprintf('https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s&remoteip=%s',
+			$resp = json_decode(file_get_contents(sprintf('https://www.recaptcha.net/recaptcha/api/siteverify?secret=%s&response=%s&remoteip=%s',
 				$config['recaptcha_private'],
 				urlencode($_POST['g-recaptcha-response']),
 				$_SERVER['REMOTE_ADDR'])), true);
