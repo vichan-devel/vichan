@@ -59,12 +59,51 @@ You can contribute to vichan by:
 *	Providing feedback and suggestions
 *	Writing/editing documentation
 
-Installation
+Installation for ubuntu 20.04
 -------------
 1.	Download and extract vichan to your web directory or get the latest
 	development version with:
 
         git clone git://github.com/vichan-devel/vichan.git
+```	
+sudo apt-get update
+ 
+sudo apt-get install apache2
+ 
+sudo apt-get install php7.2 libapache2-mod-php7.2 php7.2-common php7.2-curl php7.2-mbstring php7.2-xmlrpc php7.2-mysql php7.2-gd php7.2-xml php7.2-intl php7.2-ldap php7.2-imagick php7.2-json php7.2-cli
+ 
+a2enmod php7.2
+ 
+sudo apt update
+ 
+sudo apt-get install git
+ 
+git clone https://github.com/vichan-devel/vichan
+ 
+cd /var/www/html/vichan
+ 
+sudo apt-get install composer
+ 
+apt install php7.2-bcmath
+ 
+composer install
+ 
+sudo apt install mysql-server
+ 
+sudo mysql_secure_installation
+ 
+you can press Y and then ENTER
+ 
+mysql > CREATE USER 'lol'@'localhost' IDENTIFIED BY 'password';
+mysql > CREATE DATABASE vichan;
+mysql > GRANT ALL PRIVILEGES ON vichan . * TO 'lol'@'localhost';
+mysql > FLUSH PRIVILEGES;
+```
+ 
+make sure to create a dir for cache and chmod 777 for vichan follow the instructions in /install.php it would require you to create a cache directory etc.
+ 
+head to yourdomain.com/install.php
+
 
 2.	run ```composer install``` inside the directory	
 3.	Navigate to ```install.php``` in your web browser and follow the
