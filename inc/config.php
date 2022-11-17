@@ -940,12 +940,12 @@
 	// Characters used to generate a random password (with Javascript).
 	$config['genpassword_chars'] = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+';
 
-	// Optional banner image at the top of every page.
-	// $config['url_banner'] = '/banner.php';
-	// Banner dimensions are also optional. As the banner loads after the rest of the page, everything may be
-	// shifted down a few pixels when it does. Making the banner a fixed size will prevent this.
-	// $config['banner_width'] = 300;
-	// $config['banner_height'] = 100;
+	// Banner settings.
+	// Banners are rotating, random images displayed to users at the top of thread pages and the catalog.
+	$config['url_banner'] = '/b.php';	// Custom script may be used.
+	// Setting the banner dimensions stops the page shifting as it loads. If you have banners of various different sizes, unset these.
+	$config['banner_width'] = 300;
+	$config['banner_height'] = 100;
 
 	// Custom stylesheets available for the user to choose. See the "stylesheets/" folder for a list of
 	// available stylesheets (or create your own).
