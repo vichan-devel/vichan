@@ -1,5 +1,5 @@
 <?php
-$dir = "banners/";
+$dir = "static/banners/";
 $files = scandir($dir);
 $images = array_diff($files, array('.', '..'));
 $name = $images[array_rand($images)];

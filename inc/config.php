@@ -942,6 +942,7 @@
 
 	// Banner settings.
 	// Banners are rotating, random images displayed to users at the top of thread pages and the catalog.
+	// You should upload your banners to static/banners.
 	$config['url_banner'] = '/b.php';	// Custom script may be used.
 	// Setting the banner dimensions stops the page shifting as it loads. If you have banners of various different sizes, unset these.
 	$config['banner_width'] = 300;
