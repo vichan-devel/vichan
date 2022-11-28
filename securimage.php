@@ -56,8 +56,9 @@ switch ($mode) {
 
 		$ary = $query->fetchAll();
 
-		if (!$ary) {
+		if (!$ary) { // captcha expired
 			echo "0";
+			break;
 		} else {
 			$query = prepare("DELETE FROM `captchas` WHERE `cookie` = ? AND `extra` = ?");
 			$query->execute([$_GET['cookie'], $_GET['extra']]);
