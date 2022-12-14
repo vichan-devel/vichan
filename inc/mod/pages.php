@@ -1257,11 +1257,9 @@ function mod_move_reply($originBoard, $postID) {
 
 		// build index
 		buildIndex();
-		if ($post['op']) {
-			// build new thread
-			buildThread($newID);
-		}
-
+		// build new thread
+		buildThread($newID);
+		
 		// trigger themes
 		rebuildThemes('post', $targetBoard);
 		// mod log
