@@ -69,7 +69,7 @@
 			<td>
 				<ul style="list-style:none;padding:2px 5px">
 					<li>
-						<input type="radio" name="board" value="*" id="ban-allboards" {% if edit_ban and not current_board %}checked{% elseif not edit_ban %}checked{% endif %}>
+						<input type="radio" name="board" value="*" id="ban-allboards" {% if (edit_ban and not current_board) or not edit_ban %}checked{% endif %}>
 						<label style="display:inline" for="ban-allboards">
 							<em>{% trans 'all boards' %}</em>
 						</label>
