@@ -842,6 +842,14 @@ function mod_page_ip($cip) {
 		header('Location: ?/IP/' . $cip . '#bans', true, $config['redirect_http']);
 		return;
 	}
+
+	if (isset($_POST['ban_id'], $_POST['edit_ban'])) {
+		if (!hasPermission($config['mod']['edit_ban']))
+			error($config['error']['noaccess']);
+
+		header('Location: ?/edit_ban/' . $_POST['ban_id'], true, $config['redirect_http']);
+		return;
+	}
 	
 	if (isset($_POST['note'])) {
 		if (!hasPermission($config['mod']['create_notes']))
@@ -945,6 +953,57 @@ function mod_page_ip($cip) {
 	
 	mod_page(sprintf('%s: %s', _('IP'), htmlspecialchars($cip)), $config['file_mod_view_ip'], $args, $args['hostname']);
 }
+
+function mod_edit_ban($ban_id) {
+	global $mod, $config;
+
+	if (!hasPermission($config['mod']['edit_ban']))
+		error($config['error']['noaccess']);
+
+	$args['bans'] = Bans::find($ban_id, false, true, true);
+	$args['ban_id'] = $ban_id;
+	$args['boards'] = listBoards();
+	$args['current_board'] = isset($args['bans'][0]['board']) ? $args['bans'][0]['board'] : false;
+
+	if (!$args['bans'])
+		error($config['error']['404']);
+
+	if (isset($_POST['new_ban'])) {
+
+		$new_ban['mask'] = $args['bans'][0]['mask'];
+		$new_ban['post'] = isset($args['bans'][0]['post']) ? $args['bans'][0]['post'] : false;
+		$new_ban['board'] = $args['current_board'];
+
+		if (isset($_POST['reason']))
+			$new_ban['reason'] = $_POST['reason'];
+		else
+			$new_ban['reason'] = $args['bans'][0]['reason'];
+
+		if (isset($_POST['ban_length']) && !empty($_POST['ban_length']))
+			$new_ban['length'] = $_POST['ban_length'];
+		else
+			$new_ban['length'] = false;
+
+		if (isset($_POST['board'])) {
+			if ($_POST['board'] == '*')
+				$new_ban['board'] = false;
+			else
+				$new_ban['board'] = $_POST['board'];
+		}
+
+		Bans::new_ban($new_ban['mask'], $new_ban['reason'], $new_ban['length'], $new_ban['board'], false, $new_ban['post']);
+		Bans::delete($ban_id);
+
+		header('Location: ?/', true, $config['redirect_http']);
+
+	}
+
+	$args['token'] = make_secure_link_token('edit_ban/' . $ban_id);
+
+	mod_page(_('Edit ban'), 'mod/edit_ban.html', $args);
+
+}
+
 
 function mod_ban() {
 	global $config;

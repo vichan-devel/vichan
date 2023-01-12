@@ -1,5 +1,7 @@
 {% if post and board %}
 	{% set action = '?/' ~ board ~ '/ban/' ~ post %}
+{% elseif edit_ban %}
+	{% set action = '' %}
 {% else %}
 	{% set action = '?/ban' %}
 {% endif %}
@@ -14,7 +16,7 @@
 	{% endif %}
 	
 	<table>
-		
+	{% if not edit_ban %}
 		<tr>
 			<th>
 				<label for="ip">{% trans 'IP' %} <span class="unimportant">{% trans '(or subnet)' %}</span></label>
@@ -27,6 +29,7 @@
 				{% endif %}
 			</td>
 		</tr>
+	{% endif %}
 		<tr>
 			<th>
 				<label for="reason">{% trans 'Reason' %}</label>
@@ -66,7 +69,7 @@
 			<td>
 				<ul style="list-style:none;padding:2px 5px">
 					<li>
-						<input type="radio" name="board" value="*" id="ban-allboards" checked> 
+						<input type="radio" name="board" value="*" id="ban-allboards" {% if edit_ban and not current_board %}checked{% elseif not edit_ban %}checked{% endif %}>
 						<label style="display:inline" for="ban-allboards">
 							<em>{% trans 'all boards' %}</em>
 						</label>
@@ -74,7 +77,7 @@
 					
 					{% for board in boards %}
 						<li>
-							<input type="radio" name="board" value="{{ board.uri }}" id="ban-board-{{ board.uri }}"> 
+							<input type="radio" name="board" value="{{ board.uri }}" id="ban-board-{{ board.uri }}" {% if edit_ban and current_board == board.uri %}checked{% endif %}>
 							<label style="display:inline" for="ban-board-{{ board.uri }}">
 								{{ config.board_abbreviation|sprintf(board.uri) }} - {{ board.title|e }}
 							</label>
@@ -85,7 +88,7 @@
 		</tr>
 		<tr>
 			<td></td>
-			<td><input name="new_ban" type="submit" value="{% trans 'New Ban' %}"></td>
+			<td><input name="new_ban" type="submit" value="{% if edit_ban %}{% trans 'Edit Ban' %}{% else %}{% trans 'New Ban' %}{% endif %}"></td>
 		</tr>
 	</table>
 </form>

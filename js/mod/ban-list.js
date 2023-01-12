@@ -37,7 +37,7 @@ var banlist_init = function(token, my_boards, inMod) {
 	}
 	return pre+f.mask;
       } },
-      reason: {name: _("Reason"), width: "calc(100% - 715px - 6 * 4px)", fmt: function(f) {
+      reason: {name: _("Reason"), width: "calc(100% - 770px - 6 * 4px)", fmt: function(f) {
 	var add = "", suf = '';
         if (f.seen == 1) add += "<i class='fa fa-check' title='"+_("Seen")+"'></i>";
 	if (f.message) {
@@ -73,7 +73,12 @@ var banlist_init = function(token, my_boards, inMod) {
 	  un = "<em>"+_("system")+"</em>";
 	}
 	return pre + un + suf;
-      } }
+      } },
+      id: {
+         name: (inMod)?"Edit":"&nbsp;", width: (inMod)?"35px":"0px", fmt: function(f) {
+	 if (!inMod) return '';
+         return "<a href=?/edit_ban/"+f.id+">Edit</a>";
+       } }
     }, {}, t);
 
     $("#select-all").click(function(e) {

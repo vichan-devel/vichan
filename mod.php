@@ -64,6 +64,7 @@ $pages = array(
 	'/ban'					=> 'secure_POST ban',		// new ban
 	'/bans'					=> 'secure_POST bans',		// ban list
 	'/bans.json'				=> 'secure bans_json',		// ban list JSON
+	'/edit_ban/(\d+)'			=> 'secure_POST edit_ban',
 	'/ban-appeals'				=> 'secure_POST ban_appeals',	// view ban appeals
 	
 	'/recent/(\d+)'				=> 'recent_posts',		// view recent posts
