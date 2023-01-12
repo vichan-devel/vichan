@@ -192,7 +192,7 @@ function purge_flood_table() {
 	// aware of flood filters in other board configurations. You can solve this problem by settings the
 	// config variable $config['flood_cache'] (seconds).
 	
-	if (isset($config['flood_cache'])) {
+	if ($config['flood_cache'] != -1) {
 		$max_time = &$config['flood_cache'];
 	} else {
 		$max_time = 0;
