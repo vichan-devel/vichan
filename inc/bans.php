@@ -113,25 +113,22 @@ class Bans {
 		return array($ipstart, $ipend);
 	}
 	
-	static public function find($ip, $board = false, $get_mod_info = false, $banid = false) {
+	static public function find($ip, $board = false, $get_mod_info = false, $banid = null) {
 		global $config;
-
-		if (!$banid)
-			$search = '(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)))';
-		else
-			$search = '(``bans``.`id` = :ip))';
 
 		$query = prepare('SELECT ``bans``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``bans``
 		' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
 		WHERE
 			(' . ($board !== false ? '(`board` IS NULL OR `board` = :board) AND' : '') . '
-		' . $search . '
+		(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)) OR (``bans``.id = :id))
 		ORDER BY `expires` IS NULL, `expires` DESC');
 		
 		if ($board !== false)
 			$query->bindValue(':board', $board, PDO::PARAM_STR);
 		
-		$query->bindValue(':ip', (!$banid) ? inet_pton($ip) : $ip);
+		$query->bindValue(':id', $banid);
+		$query->bindValue(':ip', inet_pton($ip));
+
 		$query->execute() or error(db_error($query));
 		
 		$ban_list = array();

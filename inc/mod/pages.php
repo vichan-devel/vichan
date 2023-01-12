@@ -960,7 +960,7 @@ function mod_edit_ban($ban_id) {
 	if (!hasPermission($config['mod']['edit_ban']))
 		error($config['error']['noaccess']);
 
-	$args['bans'] = Bans::find($ban_id, false, true, true);
+	$args['bans'] = Bans::find(null, false, true, $ban_id);
 	$args['ban_id'] = $ban_id;
 	$args['boards'] = listBoards();
 	$args['current_board'] = isset($args['bans'][0]['board']) ? $args['bans'][0]['board'] : false;
