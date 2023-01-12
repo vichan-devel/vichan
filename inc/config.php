@@ -1567,7 +1567,7 @@
 	// Spoiler image
 	$config['mod']['spoilerimage'] = JANITOR;
 	// Edit bans
-	$config['mod']['edit_ban'] = JANITOR;
+	$config['mod']['edit_ban'] = &$config['mod']['ban'];
 	// Delete file (and keep post)
 	$config['mod']['deletefile'] = JANITOR;
 	// Delete all posts by IP
