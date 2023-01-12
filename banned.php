@@ -1,6 +1,4 @@
 <?php
-  require_once 'inc/functions.php';
-  require_once 'inc/bans.php';
   require_once 'inc/bootstrap.php';
   checkBan();
 
