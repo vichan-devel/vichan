@@ -979,8 +979,8 @@ function mod_edit_ban($ban_id) {
 		else
 			$new_ban['reason'] = $args['bans'][0]['reason'];
 
-		if (isset($_POST['ban_length']) && !empty($_POST['ban_length']))
-			$new_ban['length'] = $_POST['ban_length'];
+		if (isset($_POST['length']) && !empty($_POST['length']))
+			$new_ban['length'] = $_POST['length'];
 		else
 			$new_ban['length'] = false;
 
