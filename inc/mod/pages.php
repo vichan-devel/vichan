@@ -2433,7 +2433,7 @@ function mod_report_dismiss($id, $all = false) {
 	if ($all)
 		modLog("Dismissed all reports by <a href=\"?/IP/$cip\">$cip</a>");
 	else
-		modLog("Dismissed a report for post #{$id}", $board);
+		modLog("Dismissed a report for post #{$post} <small>(#{$id})</small>", $board);
 	
 	header('Location: ?/reports', true, $config['redirect_http']);
 }
