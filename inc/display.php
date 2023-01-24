@@ -348,8 +348,18 @@ class Post {
 			$this->{$key} = $value;
 		}
 
-		if (isset($this->files) && $this->files)
-			$this->files = @json_decode($this->files);
+		if (isset($this->files) && $this->files) {
+			$this->files = is_string($this->files) ? json_decode($this->files) : $this->files;
+			// Compatibility for posts before individual file hashing
+			foreach ($this->files as $i => &$file) {
+				if (empty($file)) {
+					unset($this->files[$i]);
+					continue;
+				}
+				if (!isset($file->hash))
+					$file->hash = $this->filehash;
+			}
+		}
 		
 		$this->subject = utf8tohtml($this->subject);
 		$this->name = utf8tohtml($this->name);
@@ -399,7 +409,7 @@ class Thread {
 		}
 		
 		if (isset($this->files))
-			$this->files = @json_decode($this->files);
+			$this->files = is_string($this->files) ? json_decode($this->files) : $this->files;
 		
 		$this->subject = utf8tohtml($this->subject);
 		$this->name = utf8tohtml($this->name);
