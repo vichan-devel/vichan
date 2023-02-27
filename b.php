@@ -10,8 +10,9 @@ $fp = fopen($dir . $name, 'rb');
 header('Cache-Control: no-cache, no-store, must-revalidate'); // HTTP 1.1
 header('Pragma: no-cache'); // HTTP 1.0
 header('Expires: 0'); // Proxies
-header('Content-Type: ' . $fp['type']);
-header('Content-Length: ' . $fp['bytes']);
+$fstat = fstat($fp);
+header('Content-Type: ' . mime_content_type($dir . $name));
+header('Content-Length: ' . $fstat['size']);
 
 // dump the picture and stop the script
 fpassthru($fp);
