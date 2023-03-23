@@ -1,0 +1,447 @@
+body {
+	background-color: #171C4E;
+	background-image: url('img/luna_bg1.png'), url('img/luna_bg2.png');
+	background-repeat: no-repeat, repeat-x;
+	background-attachment: fixed, scroll;
+	background-position: right bottom, 0% 0%;
+	font-family: sans-serif;
+	font-size: 12px;
+	color:#ffffff;
+	margin: 0 8px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+table * {
+	margin: 0;
+}
+a, a:visited {
+	text-decoration: none;
+	color: #0091ff;;
+}
+a, a:selected {
+	text-decoration: bold;
+	color: #ffffff;
+}
+a:hover, .intro a.post_no:hover {
+	color: #ffffff;
+}
+a.post_no {
+	text-decoration: none;
+	margin: 0;
+	padding: 0;
+}
+.intro a.post_no {
+	color: inherit;
+}
+.intro a.post_no, p.intro a.email {
+	margin: 0;
+}
+.intro a.email span.name {
+	color: #0091ff;
+}
+.intro a.email:hover span.name {
+	color: #ffffff;
+}
+.intro label {
+	display: inline;
+}
+h2 {
+	color: #0091ff;
+	font-size: 11pt;
+	margin: 0;
+	padding: 0;
+}
+header {
+	margin: 1em 0;
+}
+h1 {
+	color: #0091ff;
+	letter-spacing: -2px;
+	font-size: 20pt;
+	margin: 0;
+}
+header div.subtitle, h1 {
+	color: #FFFFFF;
+	text-align: center;
+}
+header div.subtitle {
+	font-size: 8pt;
+}
+form {
+	margin-bottom: 4em;
+}
+form table {
+	margin: auto;
+}
+form table input {
+	height: auto;
+}
+input[type="text"], input[type="password"], textarea {
+	border: 1px solid #a9a9a9;
+	text-indent: 0;
+	text-shadow: none;
+	text-transform: none;
+	word-spacing: normal;
+	box-shadow: 3px 3px 3px #111;
+	border-radius: 10px;
+}
+form table tr td {
+	text-align: left;
+	margin: 0;
+	padding: 0;
+}
+form table.mod tr td {
+	padding: 2px;
+}
+form table tr th {
+	text-align: left;
+	padding: 4px;
+}
+form table tr th {
+	background: #000000;
+}
+form table tr td div {
+	text-align: center;
+	float: left;
+	padding-left: 3px;
+}
+form table tr td div input {
+	display: block;
+	margin: 2px auto 0 auto;
+	border-radius: 10px;
+}
+form table tr td div label {
+	font-size: 10px;
+}
+.unimportant, .unimportant * {
+	font-size: 10px;
+}
+p.fileinfo {
+	display: block;
+	margin: 0;
+	padding-right: 7em;
+	border-radius: 10px;
+}
+div.banner {
+	background-color: #000000;
+	font-size: 12pt;
+	font-weight: bold;
+	text-align: center;
+	margin: 1em 0;
+}
+div.banner, div.banner a {
+	color: #aaa;
+}
+div.banner a:hover {
+	color: #000000;
+	text-decoration: none;
+}
+img.banner, img.board_image {
+	float: none;
+	border: 1px solid #a9a9a9;
+	margin: 12px auto 0 auto;
+}
+img {
+	display: block;
+	float: left;
+	margin: 10px 20px;
+	border: none;
+}
+div.post img {
+	padding: 5px;
+	margin: 5px 20px 0 0;
+}
+div.post img.icon {
+	display: inline;
+	float: none;
+	margin: 0 5px;
+	padding: 0;
+}
+div.post.op {
+	margin-right: 20px;
+	margin-bottom: 5px;
+	border-radius: 10px;
+}
+div.post.op hr {
+	border-color: #040934;
+}
+.intro {
+	margin: 0.5em 0;
+	padding: 0;
+	padding-bottom: 0.2em;
+}
+input.delete {
+	float: left;
+	margin: 1px 6px 0 0;
+}
+.intro span.subject {
+	color: #CCCCEE;
+	font-weight: bold;
+}
+.intro span.name {
+	color: #BBBBDD;
+	font-weight: bold;
+}
+.intro span.capcode, p.intro a.capcode, p.intro a.nametag {
+	color: #CCCCEE;
+	margin-left: 0;
+}
+.intro a {
+	margin-left: 8px;
+}
+div.delete {
+	float: right;
+}
+div.post.reply p {
+	margin: 0.3em 0 0 0;
+}
+div.post.reply div.body {
+	margin-left: 1.8em;
+	margin-top: 0.8em;
+	padding-right: 3em;
+	padding-bottom: 0.3em;
+}
+div.post.reply.highlighted {
+	background: #000000;
+}
+div.post.reply div.body a {
+	color: #0091FF;
+}
+div.post {
+	max-width: 97%;
+}
+div.post div.body {
+	word-wrap: break-word;
+	white-space: pre-wrap;
+}
+div.post.reply {
+	margin-right: 20px;
+	margin-bottom: 5px;
+	padding: 5px;
+	border: 1px #353868 solid;
+	background: rgba(53, 56, 104, 0.6) !important;
+	box-shadow: 2px 2px 2px #353868;
+	display: inline-block;
+	border-radius: 10px;
+}
+span.trip {
+	color: #DDDDDD;
+}
+span.quote {
+	color: #5AE22F;
+}
+span.omitted {
+	display: block;
+	margin-top: 1em;
+}
+br.clear {
+	clear: left;
+	display: block;
+}
+span.controls {
+	float: right;
+	margin: 0;
+	padding: 0;
+	font-size: 80%;
+}
+span.controls.op {
+	float: none;
+	margin-left: 10px;
+}
+span.controls a {
+	margin: 0;
+}
+div#wrap {
+	width: 900px;
+	margin:0 auto;
+}
+div.ban {
+	background: #070C3E;
+	border: 1px solid #00;
+	max-width: 700px;
+	margin: 30px auto;
+}
+div.ban p, div.ban h2 {
+	padding: 3px 7px;
+}
+div.ban h2 {
+	background: #000;
+	color: #FFF;
+	font-size: 12pt;
+}
+div.ban p {
+	font-size: 12px;
+	margin-bottom: 12px;
+}
+div.ban p.reason {
+	font-weight: bold;
+}
+span.heading {
+	color: #000;
+	font-size: 11pt;
+	font-weight: bold;
+}
+span.spoiler {
+	background: black;
+	color: black;
+	padding: 0px 1px;
+}
+div.post.reply div.body span.spoiler a {
+	color: black;
+}
+span.spoiler:hover, div.post.reply div.body span.spoiler:hover a {
+	color: white;
+}
+div.styles {
+	color: #B7C5D9;
+	background: #353868;
+	display: inline;
+	padding: 8px;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	float: right;
+}
+div.styles a {
+	text-decoration: none;
+}
+div.styles a.selected {
+	color: #FFF;
+	font-weight: bolder;
+}
+div.styles form {
+	margin: 0;
+	padding: 0;
+	display: inline;
+}
+table.test {
+	width: 100%;
+}
+table.test td, table.test th {
+	text-align: left;
+	padding: 5px;
+}
+table.test tr.h th {
+	background: #000;
+}
+table.test td img {
+	margin: 0;
+}
+fieldset label {
+	display: block;
+}
+fieldset legend {
+	background: black;
+	color: white;
+	border: 1px solid #000
+}
+div.pages {
+	color: #B7C5D9;
+	background: #353868;
+	display: inline;
+	padding: 8px;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+}
+div.pages a.selected {
+	color: #FFF;
+	font-weight: bolder;
+}
+div.pages a {
+	text-decoration: none;
+}
+div.pages form {
+	margin: 0;
+	padding: 0;
+	display: inline;
+}
+div.pages form input {
+	margin: 0 5px;
+	display: inline;
+}
+hr {
+	border: none;
+	border-top: 1px solid #000000;
+	height: 0;
+	clear: left;
+}
+div.boardlist {
+	color: #B7C5D9;
+	background: #353868;
+	padding: 4px;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	text-align: center;
+}
+div.boardlist.bottom {
+	margin-top: 20px;
+}
+div.boardlist a {
+	text-decoration: none;
+}
+div.boardlist a.selected {
+	color: #FFF;
+	font-weight: bolder;
+}
+div.report {
+	color: #333;
+}
+table.modlog {
+	margin: auto;
+	width: 100%;
+}
+table.modlog tr td {
+	text-align: left;
+	margin: 0;
+	padding: 4px 15px 0 0;
+}
+table.modlog tr th {
+	text-align: left;
+	padding: 4px 15px 5px 5px;
+	white-space: nowrap;
+}
+table.modlog tr th {
+	background: #000;
+}
+td.minimal, th.minimal {
+	width: 1%;
+	white-space: nowrap;
+}
+div.top_notice {
+	text-align: center;
+	margin: 5px auto;
+}
+span.public_ban {
+	display: block;
+	color: red;
+	font-weight: bold;
+	margin-top: 15px;
+}
+span.toolong {
+	display: block;
+	margin-top: 15px;
+}
+div.blotter {
+	color: red;
+	font-weight: bold;
+	text-align: center;
+}
+table.mod.config-editor {
+	font-size: 9pt;
+	width: 100%;
+}
+table.mod.config-editor td {
+	text-align: left;
+	padding: 5px;
+	border-bottom: 1px solid #000;
+}
+table.mod.config-editor input[type="text"] {
+	width: 98%;
+}
+
+.desktop-style div.boardlist:nth-child(1):hover, .desktop-style div.boardlist:nth-child(1).cb-menu {
+  background-color: inherit;
+}
+
+.desktop-style .sub {
+  background: none;
+}

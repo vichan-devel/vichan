@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+<channel>
+	<title>/{{ board.uri }}/ - {{ board.title|e }}</title>
+	<link>{{ config.root }}{{ board.uri }}/</link>
+	<description>Live feed of new threads on the board /{{ board.uri }}/ - {{ board.title|e }}.</description>
+	<atom:link href="{{ config.root }}{{ board.uri }}/index.rss" rel="self" type="application/rss+xml"/>
+	{% for post in recent_posts %}
+	<item>
+		<title>{% if post.subject %}{{ post.subject|e }}{% else %}{{ post.body_nomarkup[:256]|remove_modifiers|e }}{% endif %}</title>
+		<link>{{ config.root }}{{ board.uri }}/res/{{ post.id }}.html</link>
+		<guid>{{ config.root }}{{ board.uri }}/res/{{ post.id }}.html</guid>
+		<comments>{{ config.root }}{{ board.uri }}/res/{{ post.id }}.html</comments>
+		<pubDate>{{ post.pubdate }}</pubDate>
+		<description><![CDATA[ <a href='{{ config.root }}{{ board.uri }}/res/{{ post.id }}.html' target=_blank><img style='float:left;margin:8px' border=0 src='{% if not config.uri_thumb %}{{ config.root }}{% endif %}{{ post.file }}'></a> {{ post.body }} ]]></description>
+	</item>
+	{% endfor %}
+</channel>
+</rss>

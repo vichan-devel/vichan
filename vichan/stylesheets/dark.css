@@ -1,0 +1,196 @@
+/**
+ * dark.css
+ * For AwsumChan by Circlepuller
+ */
+body {
+	background: #1E1E1E;
+	color: #999999;
+	font-family: sans-serif;
+	font-size: 12px;
+}
+span.quote {
+    color:#B8D962;
+}
+h1 {
+	font-size: 20pt;
+	text-align: center;
+	letter-spacing: 0px;
+}
+div.title, h1 {
+	color: #32DD72;
+	font-family: Arial, Helvetica, sans-serif;
+}
+div.title p {
+	font-size: 10px;
+}
+a:link, a:visited, .intro a.email span.name {
+	color: #CCCCCC;
+	text-decoration: none;
+	font-family: sans-serif;
+}
+a:link:hover, a:visited:hover {
+	color: #fff;
+	font-family: sans-serif;
+	text-decoration: none;
+
+}
+a.post_no {
+	color: #AAAAAA;
+	text-decoration: none;
+}
+a.post_no:hover {
+	color: #32DD72 !important;
+	text-decoration: underline overline;
+}
+div.post.reply {
+	background: #333333;
+	border: #555555 1px solid;
+        -webkit-border-radius: 10px;
+        -khtml-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+
+}
+div.post.reply.highlighted {
+	background: #555;
+	border: transparent 1px solid;
+}
+div.post.reply div.body a:link, div.post.reply div.body a:visited {
+	color: #CCCCCC;
+}
+div.post.reply div.body a:link:hover, div.post.reply div.body a:visited:hover {
+	color: #32DD72;
+}
+.intro span.subject {
+	font-size: 12px;
+	font-family: sans-serif;
+	color: #446655;
+	font-weight: 800;
+}
+.intro span.name {
+	color: #32DD72;
+	font-weight: 800;
+}
+.intro a.capcode, p.intro a.nametag {
+	color: magenta;
+	margin-left: 0;
+}
+.intro a.email, p.intro a.email span.name, p.intro a.email:hover, p.intro a.email:hover span.name {
+	color: #32ddaf;
+}
+input[type="text"], textarea, select {
+	background: #333333;
+	color: #CCCCCC;
+	border: #666666 1px solid;
+	padding-left: 5px;
+	padding-right: -5px;
+	font-family: sans-serif;
+	font-size: 10pt;
+}
+input[type="password"] {
+	background: #333333;
+	color: #CCCCCC;
+	border: #666666 1px solid;
+}
+form table tr th {
+	background: #333333;
+	color: #AAAAAA;
+	font-weight: 800;
+	text-align: left;
+	padding: 0;
+}
+div.banner {
+	background: #32DD72;
+	color: #000;
+	text-align: center;
+	width: 250px;
+	padding: 4px;
+	padding-left: 12px;
+	padding-right: 12px;
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 12px;
+}
+div.banner a {
+    color:#000;
+}
+input[type="submit"] {
+	background: #333333;
+	border: #888888 1px solid;
+	color: #CCCCCC;
+}
+input[type="submit"]:hover {
+	background: #555555;
+	border: #888888 1px solid;
+	color: #32DD72;
+}
+input[type="text"]:focus {
+    border:#aaa 1px solid;
+}
+p.fileinfo a:hover {
+	text-decoration: underline;
+}
+span.trip {
+	color: #AAAAAA;
+}
+div.pages {
+	color: #AAAAAA;
+	background: #333333;
+	border: #666666 1px solid;
+	font-family: sans-serif;
+	font-size: 10pt;
+}
+div.pages a.selected {
+	color: #CCCCCC;
+}
+hr {
+	height: 1px;
+	border: #333333 1px solid;
+}
+div.boardlist {
+	color: #999999;
+    background-color: rgba(12%, 12%, 12%, 0.10);
+}
+
+div.ban {
+	background-color: transparent;
+	border: transparent 0px solid;
+}
+div.ban h2 {
+	background: transparent;
+	color: lime;
+	font-size: 12px;
+}
+table.modlog tr th {
+	background: #333333;
+	color: #AAAAAA;
+}
+
+.desktop-style div.boardlist:not(.bottom) {
+  text-shadow: black 1px 1px 1px, black -1px -1px 1px, black -1px 1px 1px, black 1px -1px 1px;
+  background-color: #666666;
+}
+
+
+.desktop-style div.boardlist:not(.bottom):hover, .desktop-style div.boardlist:not(.bottom).cb-menu {
+  background-color: rgba(30%, 30%, 30%, 0.65);
+}
+
+div.report {
+	color: #666666;
+}
+
+/* options.js */
+#options_div, #alert_div {
+	background: #333333;
+}
+.options_tab_icon {
+	color: #AAAAAA;
+}
+.options_tab_icon.active {
+	color: #FFFFFF;
+}
+
+#quick-reply table {
+	background: none repeat scroll 0% 0% #333 !important;
+}

@@ -1,0 +1,10 @@
+{% if post.files and mod %}
+<span class="controls">
+{% if file.file != 'deleted' and mod|hasPermission(config.mod.deletefile, board.uri) %}
+{{ secure_link_confirm(config.mod.link_deletefile, 'Delete file'|trans, 'Are you sure you want to delete this file?'|trans, board.dir ~ 'deletefile/' ~ post.id ~ '/' ~ loop.index0 ) }}&nbsp;
+{% endif %}
+{% if file.file and file.file != 'deleted' and file.thumb != 'spoiler' and mod|hasPermission(config.mod.spoilerimage, board.uri) %}
+{{ secure_link_confirm(config.mod.link_spoilerimage, 'Spoiler file'|trans, 'Are you sure you want to spoiler this file?'|trans, board.dir ~ 'spoiler/' ~ post.id ~ '/' ~ loop.index0 ) }}
+{% endif %}
+</span>
+{% endif %}

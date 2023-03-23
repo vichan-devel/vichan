@@ -1,0 +1,402 @@
+/**
+ * wasabi.css
+ * For AwsumChan by Circlepuller
+ */
+body {
+	background: #F7F9B0 url('img/fade-yellow.png') repeat-x 50% 0%;
+	color: black;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 10pt;
+	margin: 0 8px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+table * {
+	margin: 0;
+}
+a:link, a:visited {
+	text-decoration: underline;
+	color: #400040;
+}
+a:link:hover, a:visited:hover {
+	color: limegreen;
+}
+a.post_no {
+	color: black;
+	text-decoration: none;
+	margin: 0;
+	padding: 0;
+}
+.intro a.post_no, p.intro a.email {
+	margin: 0;
+}
+.intro a.email span.name {
+	color: #34345C;
+}
+.intro a.email:hover span.name {
+	color: #ff0000;
+}
+.intro label {
+	display: inline;
+}
+h2 {
+	color: #AF0A0F;
+	font-size: 11pt;
+	margin: 0px;
+	padding: 0px;
+}
+h1 {
+	font-family: tahoma;
+	letter-spacing: -2px;
+	font-size: 20pt;
+	margin-bottom: 0;
+}
+h1.logo img {
+	display: inline;
+	float: none;
+	background-image: url('/static/logo_bg.gif');
+	background-repeat: no-repeat;
+	background-position: center;
+}
+div.title, h1 {
+	color: #AF0A0F;
+	text-align: center;
+}
+div.title {
+	font-size: 8pt;
+	margin-bottom: 2em;
+}
+form {
+	margin-bottom: 4em;
+}
+form table {
+	margin: auto;
+}
+form table input {
+	height: auto;
+}
+input[type="text"], input[type="password"], textarea {
+	border: 1px solid #a9a9a9;
+	text-indent: 0px;
+	text-shadow: none;
+	text-transform: none;
+	word-spacing: normal;
+}
+form table tr td {
+	text-align: left;
+	margin: 0px;
+	padding: 0px;
+}
+form table tr th {
+	text-align: left;
+	padding: 4px;
+}
+form table tr th {
+	background: #D7FE85;
+}
+form table tr td div {
+	text-align: center;
+	float: left;
+	padding-left: 3px;
+}
+form table tr td div input {
+	display: block;
+	margin: 2px auto 0 auto;
+}
+form table tr td div label {
+	font-size: 10px;
+}
+.unimportant, .unimportant * {
+	font-size: 10px;
+}
+p.fileinfo {
+	display: block;
+	margin: 0px;
+	padding-right: 7em;
+}
+div.banner {
+	background-color: #400040;
+	font-size: 12pt;
+	font-weight: bold;
+	text-align: center;
+	margin: 1em 0;
+}
+div.banner, div.banner a {
+	color: white;
+}
+div.banner a:hover {
+	color: #EEF2FF;
+	text-decoration: none;
+}
+img.banner, img.board_image {
+	float: none;
+	margin: 4px auto 0 auto;
+}
+img {
+	display: block;
+	float: left;
+	margin: 10px 20px;
+	border: none;
+}
+div.post img {
+	padding: 5px;
+	margin: 5px 20px 0 0;
+}
+div.post img.icon {
+	display: inline;
+	float: none;
+	margin: 0 5px;
+	padding: 0;
+}
+div.post.op {
+	margin-right: 20px;
+	margin-bottom: 5px;
+}
+div.post.op hr {
+	border-color: #D9BFB7;
+}
+.intro {
+	margin: 0.5em 0;
+	padding: 0;
+	padding-bottom: 0.2em;
+}
+input.delete {
+	float: left;
+	margin: 1px 6px 0 0;
+}
+.intro span.subject {
+	color: #0F0C5D;
+	font-weight: bold;
+}
+.intro span.name {
+	color: #117743;
+	font-weight: bold;
+}
+.intro a.capcode, p.intro a.nametag {
+	color: #F00000;
+	margin-left: 0;
+}
+.intro a {
+	margin-left: 8px;
+}
+div.delete {
+	float: right;
+}
+div.post.reply p {
+	margin: 0.3em 0 0 0;
+}
+div.post.reply div.body {
+	margin-left: 1.8em;
+	margin-top: 0.8em;
+	padding-right: 3em;
+	padding-bottom: 0.3em;
+}
+div.post.reply.highlighted {
+	background-color: #FFF;
+	border-color: #CCC;
+}
+div.post.reply div.body a {
+	color: #D00;
+}
+div.post {
+	max-width: 97%;
+}
+div.post div.body {
+	word-wrap: break-word;
+}
+div.post.reply {
+	background: #D7FE85;
+	margin: 0.2em 16px;
+	padding: 0.2em 0.3em 0.5em 0.6em;
+	border-width: 1px;
+	border-style: none solid solid none;
+	border-color: lightgreen;
+	display: inline-block;
+}
+span.trip {
+	color: #228854;
+}
+span.quote {
+	color: #3C6D8A;
+}
+span.omitted {
+	display: block;
+	margin-top: 1em;
+}
+br.clear {
+	clear: left;
+}
+span.controls {
+	float: right;
+	margin: 0;
+	padding: 0;
+	font-size: 80%;
+}
+span.controls.op {
+	float: none;
+	margin-left: 10px;
+}
+span.controls a {
+	margin: 0;
+}
+div#wrap {
+	width: 900px;
+	margin:0 auto;
+}
+div.ban {
+	background-color: white;
+	border: 1px solid #400040;
+	max-width: 700px;
+	margin: 30px auto;
+}
+div.ban p, div.ban h2 {
+	padding: 3px 7px;
+}
+div.ban h2 {
+	background: #D7FE85;
+	color: #400040;
+	font-size: 12pt;
+}
+div.ban p {
+	font-size: 12px;
+	margin-bottom: 12px;
+}
+div.ban p.reason {
+	font-weight: bold;
+}
+span.heading {
+	color: #AF0A0F;
+	font-size: 11pt;
+	font-weight: bold;
+	display: block;
+}
+span.spoiler {
+	background: black;
+	color: black;
+}
+div.post.reply div.body span.spoiler a {
+	color: black;
+}
+span.spoiler:hover, div.post.reply div.body span.spoiler:hover a {
+	color: white;
+}
+div.styles {
+	float: right;
+	padding-bottom: 20px;
+}
+div.styles a {
+	margin: 0 10px;
+}
+div.styles a.selected {
+	text-decoration: none;
+}
+table.test {
+	width: 100%;
+}
+table.test td, table.test th {
+	text-align: left;
+	padding: 5px;
+}
+table.test tr.h th {
+	background: #98E;
+}
+table.test td img {
+	margin: 0;
+}
+fieldset label {
+	display: block;
+}
+div.pages {
+	color: limegreen;
+	background: #D7FE85;
+	display: inline;
+	padding: 8px;
+	border-right: 1px solid limegreen;
+	border-bottom: 1px solid limegreen;
+}
+div.pages a.selected {
+	color: black;
+	font-weight: bolder;
+}
+div.pages a:link {
+	text-decoration: none;
+}
+div.pages form {
+	margin: 0;
+	padding: 0;
+	display: inline;
+}
+div.pages form input {
+	margin: 0 5px;
+	display: inline;
+}
+hr {
+	border: none;
+	border-top: 1px solid limegreen;
+	height: 0px;
+}
+div.boardlist {
+	color: limegreen;
+	font-size: 9pt;
+	margin-top: 3px;
+}
+div.boardlist.bottom {
+	margin-top: 20px;
+}
+div.boardlist a {
+	text-decoration: none;
+    color:#ffff22;
+    text-shadow: #000 1px 1px 1px, #000 -1px -1px 1px, #950000 1px 1px 2px, #009500 -1px -1px 2px;
+}
+div.report {
+	color: #333;
+}
+table.modlog {
+	margin: auto;
+	width: 100%;
+}
+table.modlog tr td {
+	text-align: left;
+	margin: 0px;
+	padding: 4px 15px 0 0;
+}
+table.modlog tr th {
+	text-align: left;
+	padding: 4px 15px 5px 5px;
+	white-space: nowrap;
+}
+table.modlog tr th {
+	background: #D7FE85;
+}
+td.minimal, th.minimal {
+	width: 1%;
+	white-space: nowrap;
+}
+div.top_notice {
+	text-align: center;
+	margin: 5px auto;
+}
+span.public_ban {
+	display: block;
+	color: red;
+	font-weight: bold;
+	margin-top: 15px;
+}
+span.toolong {
+	display: block;
+	margin-top: 15px;
+}
+div.blotter {
+	color: red;
+	font-weight: bold;
+	text-align: center;
+}
+
+.desktop-style div.boardlist:nth-child(1) {
+ 
+}
+
+
+.desktop-style div.boardlist:nth-child(1):hover, .desktop-style div.boardlist:nth-child(1).cb-menu {
+  background-color: rgba(100%, 100%, 30%, 0.35);
+}

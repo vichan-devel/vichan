@@ -1,0 +1,482 @@
+@import url(//fonts.googleapis.com/css?family=Ubuntu);
+
+body {
+  background: #000112;
+  background-image: url('img/dark_roach_top.png'), url('img/dark_roach_bg.png');
+	background-repeat: repeat-x, no-repeat;
+    background-attachment: fixed, fixed;
+	background-position: top, right bottom;
+	color: #999999;
+	font-family: Ubuntu;
+	font-size: 10pt;
+	margin: 0 8px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+table * {
+	margin: 0;
+}
+a, a:visited {
+	text-decoration: none;
+	color: #9999CC;
+}
+a:hover, .intro a.post_no:hover {
+	color: #996699
+}
+a.post_no {
+	text-decoration: none;
+	margin: 0;
+	padding: 0;
+}
+.intro a.post_no {
+	color: inherit;
+}
+.intro a.post_no, p.intro a.email {
+	margin: 0;
+}
+.intro a.email span.name {
+	color: #666699;
+}
+.intro a.email:hover span.name {
+	color: #663366;
+}
+.intro label {
+	display: inline;
+}
+h2 {
+	color: #CC0000;
+	font-size: 11pt;
+	margin: 0;
+	padding: 0;
+}
+header {
+	margin: 1em 0;
+}
+h1 {
+	font-family: Ubuntu;
+	letter-spacing: -2px;
+	font-size: 20pt;
+	margin: 0;
+}
+header div.subtitle, h1 {
+	color: #990000;
+	text-align: center;
+}
+header div.subtitle {
+	font-size: 8pt;
+}
+form {
+	margin-bottom: 4em;
+}
+form table {
+	margin: auto;
+}
+form table input {
+	height: auto;
+}
+input[type="text"], input[type="password"], textarea {
+	border: 1px solid #000000;
+	text-indent: 0;
+	text-shadow: none;
+	text-transform: none;
+	word-spacing: normal;
+	background: #333333;
+	color: #999999;
+}
+form table tr td {
+	text-align: left;
+	margin: 0;
+	padding: 0;
+}
+form table.mod tr td {
+	padding: 2px;
+}
+form table tr th {
+	text-align: left;
+	padding: 4px;
+}
+form table tr th {
+	background: #333333;
+}
+form table tr td div.center {
+	text-align: center;
+	float: left;
+	padding-left: 3px;
+}
+form table tr td div input {
+	display: block;
+	margin: 2px auto 0 auto;
+}
+form table tr td div label {
+	font-size: 10px;
+}
+.unimportant, .unimportant * {
+	font-size: 10px;
+}
+p.fileinfo {
+	display: block;
+	margin: 0;
+	padding-right: 7em;
+}
+div.banner {
+	background-color: #000000;
+	font-size: 12pt;
+	font-weight: bold;
+	text-align: center;
+	margin: 1em 0;
+}
+div.banner, div.banner a {
+	color: white;
+}
+div.banner a:hover {
+	color: #000000;
+	text-decoration: none;
+}
+img.banner, img.board_image {
+	display: block;
+	border: 1px solid #000000;
+	margin: 12px auto 0 auto;
+}
+img.post-image {
+	display: block;
+	float: left;
+	margin: 10px 20px;
+	border: none;
+}
+div.post img.post-image {
+	padding: 5px;
+	margin: 5px 20px 0 0;
+}
+div.post img.icon {
+	display: inline;
+	margin: 0 5px;
+	padding: 0;
+}
+div.post i.icon {
+	margin: 0 4px;
+	font-size: 16px;
+}
+div.post.op {
+	margin-right: 20px;
+	margin-bottom: 5px;
+}
+div.post.op hr {
+	border-color: #000000;
+}
+.intro {
+	margin: 0.5em 0;
+	padding: 0;
+	padding-bottom: 0.2em;
+}
+input.delete {
+	float: left;
+	margin: 1px 6px 0 0;
+}
+.intro span.subject {
+	color: #336699;
+	font-weight: bold;
+}
+.intro span.name {
+	color: #336600;
+	font-weight: bold;
+}
+.intro span.capcode, p.intro a.capcode, p.intro a.nametag {
+	color: #CC0000;
+	margin-left: 0;
+}
+.intro a {
+	margin-left: 8px;
+}
+div.delete {
+	float: right;
+}
+div.post.reply p {
+	margin: 0.3em 0 0 0;
+}
+div.post.reply div.body {
+	margin-left: 1.8em;
+	margin-top: 0.8em;
+	padding-right: 3em;
+	padding-bottom: 0.3em;
+}
+div.post.reply.highlighted {
+	background: #333366;
+}
+div.post.reply div.body a {
+	color: #669900;
+}
+div.post {
+	max-width: 97%;
+}
+div.post div.body {
+	word-wrap: break-word;
+	white-space: pre-wrap;
+}
+div.post.reply {
+	background: #333333;
+	margin: 0.2em 16px;
+	padding: 0.2em 0.3em 0.5em 0.6em;
+	border-width: 0px;
+	border-style: none solid solid none;
+	border-color: #333333;
+	display: inline-block;
+}
+span.trip {
+	color: #CC0000;
+}
+span.quote {
+	color: #669900;
+}
+span.omitted {
+	display: block;
+	margin-top: 1em;
+}
+br.clear {
+	clear: left;
+	display: block;
+}
+span.controls {
+	float: right;
+	margin: 0;
+	padding: 0;
+	font-size: 80%;
+}
+span.controls.op {
+	float: none;
+	margin-left: 10px;
+}
+span.controls a {
+	margin: 0;
+}
+div#wrap {
+	width: 900px;
+	margin:0 auto;
+}
+div.ban {
+	background: #333333;
+	border: 1px solid #333366;
+	max-width: 700px;
+	margin: 30px auto;
+}
+div.ban p, div.ban h2 {
+	padding: 3px 7px;
+}
+div.ban h2 {
+	background: #333366;
+	color: #999999;
+	font-size: 12pt;
+}
+div.ban p {
+	font-size: 12px;
+	margin-bottom: 12px;
+}
+div.ban p.reason {
+	font-weight: bold;
+}
+span.heading {
+	color: #CC0000;
+	font-size: 11pt;
+	font-weight: bold;
+}
+span.spoiler {
+	background: #000000;
+	color: #000000;
+	padding: 0px 1px;
+}
+div.post.reply div.body span.spoiler a {
+	color: #000000;
+}
+span.spoiler:hover, div.post.reply div.body span.spoiler:hover a {
+	color: #999999;
+}
+div.styles {
+	float: right;
+	padding-bottom: 20px;
+
+}
+div.styles a {
+	margin: 0 10px;
+}
+div.styles a.selected {
+	text-decoration: none;
+}
+table.test {
+	width: 100%;
+}
+table.test td, table.test th {
+	text-align: left;
+	padding: 5px;
+}
+table.test tr.h th {
+	background: #669900;
+}
+table.test td img {
+	margin: 0;
+}
+fieldset label {
+	display: block;
+}
+div.pages {
+	color: #999999;
+	background: #333333;
+	display: inline;
+	padding: 8px;
+	border-right: 0px;
+	border-bottom: 0px;
+}
+div.pages a.selected {
+	color: #996699;
+	font-weight: bolder;
+}
+div.pages a {
+	text-decoration: none;
+}
+div.pages form {
+	margin: 0;
+	padding: 0;
+	display: inline;
+}
+div.pages form input {
+	margin: 0 5px;
+	display: inline;
+}
+hr {
+	border: none;
+	border-top: 1px solid #333333;
+	height: 0;
+	clear: left;
+}
+div.boardlist {
+	color: #999999;
+	font-size: 9pt;
+	margin-top: 3px;
+}
+div.boardlist.bottom {
+	margin-top: 20px;
+}
+div.boardlist a {
+	text-decoration: none;
+}
+div.report {
+	color: #999999;
+}
+table.modlog {
+	margin: auto;
+	width: 100%;
+}
+table.modlog tr td {
+	text-align: left;
+	margin: 0;
+	padding: 4px 15px 0 0;
+}
+table.modlog tr th {
+	text-align: left;
+	padding: 4px 15px 5px 5px;
+	white-space: nowrap;
+}
+table.modlog tr th {
+	background: #333333;
+}
+td.minimal, th.minimal {
+	width: 1%;
+	white-space: nowrap;
+}
+div.top_notice {
+	text-align: center;
+	margin: 5px auto;
+}
+span.public_ban {
+	display: block;
+	color: #FF0000;
+	font-weight: bold;
+	margin-top: 15px;
+}
+span.toolong {
+	display: block;
+	margin-top: 15px;
+}
+div.blotter {
+	color: #FF0000;
+	font-weight: bold;
+	text-align: center;
+}
+table.mod.config-editor {
+	font-size: 9pt;
+	width: 100%;
+}
+
+
+table.mod.config-editor td {
+	text-align: left;
+	padding: 5px;
+	border-bottom: 1px solid #333333;
+}
+table.mod.config-editor input[type="text"] {
+	width: 98%;
+}
+.desktop-style div.boardlist:nth-child(1) {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  /*text-shadow: white 1px 0px 6px, white 1px 0px 6px, black 1px 0px 3px;*/
+  margin-top: 0px;
+  z-index: 30;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.desktop-style div.boardlist:nth-child(1):hover, .desktop-style div.boardlist:nth-child(1).cb-menu {
+  background-color: rgba(0, 0, 0, 1);
+}
+
+.desktop-style body {
+  padding-top: 20px;
+}
+
+.desktop-style .sub {
+  background: inherit;
+}
+
+#attention_bar {
+  height: 1.5em;
+  width: 100%;
+  text-align: center;
+}
+#attention_bar_form {
+  display: none;
+  padding: 0;
+  margin: 0;
+}
+#attention_bar_input {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+#attention_bar:hover {
+  background-color: #333333;
+  opacity: 0.8;
+}
+.intro.thread-hidden {
+	margin: 0px;
+	padding: 0px;
+}
+input[type="submit"], select {
+background: #333333;
+border: 1px solid #666666;
+color: #999999;
+}
+input[type="submit"]:hover 
+{
+	color: #9999CC;
+}
+
+/* options.js */
+#options_div, #alert_div {
+        background: #333333;
+}
+.options_tab_icon {
+        color: #AAAAAA;
+}
+.options_tab_icon.active {
+        color: #FFFFFF;
+}

@@ -1,0 +1,91 @@
+/**
+ * burichan.css
+ * For 55ch adapted from kusaba by sinuca
+ */
+body {
+	font-family: serif;
+	background: #EEF2FF;
+	color: #000000;
+	font-size: 12pt;
+}
+
+h1 {
+	font-family: serif;
+	font-size: 24pt;
+	font-weight: normal;
+}
+
+header div.subtitle {
+	font-size: 16px;
+	font-weight: bold;
+	margin: 1em 0;
+}
+
+a, a:visited {
+	text-decoration: none;
+	font-family: sans-serif;
+}
+
+a:hover {
+	color: #DD0000;
+}
+
+div.banner {
+	background-color: #0010E0;
+	color: #FFF;
+	font-weight: normal;
+}
+
+.intro span.name {
+	font-family: serif;
+	font-size: 12px;
+}
+
+p.fileinfo {
+	text-decoration: underline;
+}
+
+p.fileinfo span.unimportant, p.fileinfo a {
+	font-size: 12px;
+}
+
+div.post.reply {
+	border: none;
+	font-family: serif;
+}
+
+div.post.reply.post-hover {
+	border-width: 1px;
+	border-style: none solid solid none;
+	border-color: #B7C5D9;
+}
+
+div.post.reply div.body a {
+	color: #34345C;
+}
+
+div.post.reply div.body a:hover {
+	color: #DD0000;
+}
+
+hr {
+	border-top: 1px groove #666;
+}
+
+div.boardlist {
+	font-size: 12pt;
+	color: #000;
+}
+
+div.boardlist a {
+	text-decoration: none;
+	padding: 0.2em 0.1em;
+}
+
+div#playerW {
+	display: none!important;
+}
+
+img.board_image {
+	border:0px;
+}

@@ -1,0 +1,268 @@
+<fieldset style="margin-bottom:20px">
+	<legend>{% trans 'Search' %}</legend>
+
+	<ul>
+		<li>
+			{% include 'mod/search_form.html' %}
+		</li>
+	</ul>
+</fieldset>
+
+<p style="text-align:center">Showing {{ result_count }} result{% if result_count != 1 %}s{% endif %}.</p>
+
+{% if search_type == 'IP_notes' %}
+	<table class="modlog">
+		<tr>
+			<th>{% trans 'IP address' %}</th>
+			<th>{% trans 'Staff' %}</th>
+			<th>{% trans 'Note' %}</th>
+			<th>{% trans 'Date' %}</th>
+		</tr>
+		{% for note in results %}
+			<tr>
+				<td class="minimal">
+					<a href="?/IP/{{ note.ip|cloak_ip }}#notes">{{ note.ip|cloak_ip }}</a>
+				</td>
+				<td class="minimal">
+					{% if note.username %}
+						<a href="?/new_PM/{{ note.username|e }}">{{ note.username|e }}</a>
+					{% else %}
+						<em>{% trans 'deleted?' %}</em>
+					{% endif %}
+				</td>
+				<td>
+					{{ note.body }}
+				</td>
+				<td class="minimal">
+					{{ note.time|date(config.post_date) }}
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+{% endif %}
+
+{% if search_type == 'bans' %}
+	<table class="modlog" style="width:100%">
+		<tr>
+			<th>{% trans 'IP address/mask' %}</th>
+			<th>{% trans 'Reason' %}</th>
+			<th>{% trans 'Board' %}</th>
+			<th>{% trans 'Set' %}</th>
+			<th>{% trans 'Duration' %}</th>
+			<th>{% trans 'Expires' %}</th>
+			<th>{% trans 'Seen' %}</th>
+			<th>{% trans 'Staff' %}</th>
+		</tr>
+		{% for ban in results %}
+			<tr{% if ban.expires != 0 and ban.expires < time() %} style="text-decoration:line-through"{% endif %}>
+				<td style="white-space: nowrap">
+					{% if ban.single_addr %}
+						<a href="?/IP/{{ ban.mask|cloak_mask }}#bans">{{ ban.mask|cloak_mask }}</a>
+					{% else %}
+						{{ ban.mask|cloak_mask|e }}
+					{% endif %}
+				</td>
+				<td>
+					{% if ban.reason %}
+						{{ ban.reason }}
+					{% else %}
+						-
+					{% endif %}
+				</td>
+				<td  style="white-space: nowrap">
+					{% if ban.board %}
+						{{ config.board_abbreviation|sprintf(ban.board) }}
+					{% else %}
+						<em>{% trans 'all boards' %}</em>
+					{% endif %}					
+				</td>
+				<td style="white-space: nowrap">
+					<span title="{{ ban.created|date(config.post_date) }}">
+						{{ ban.created|ago }} ago
+					</span>
+				</td>
+				<td style="white-space: nowrap">
+					{% if ban.expires == 0 %}
+						-
+					{% else %}
+						{{ (ban.expires - ban.created + time()) | until }}
+					{% endif %}
+				</td>
+				<td style="white-space: nowrap">
+					{% if ban.expires == 0 %}
+						<em>{% trans 'never' %}</em>
+					{% else %}
+						{{ ban.expires|date(config.post_date) }}
+						{% if ban.expires > time() %}
+							 <small>(in {{ ban.expires|until }})</small>
+						{% endif %}
+					{% endif %}
+				</td>
+				<td>
+					{%  if ban.seen %}
+						{% trans 'Yes' %}
+					{%  else %}
+						{% trans 'No' %}
+					{%  endif %}
+				</td>
+				<td>
+					{% if ban.username %}
+						{% if mod|hasPermission(config.mod.view_banstaff) %}
+							<a href="?/new_PM/{{ ban.username|e }}">{{ ban.username|e }}</a>
+						{% else %}
+							{% if mod|hasPermission(config.mod.view_banquestionmark) %}
+								<em>?</em>
+							{% else %}
+						
+							{% endif %}
+						{% endif %}
+					{% elseif ban.creator == -1 %}
+						<em>system</em>
+					{% else %}
+						<em>{% trans 'deleted?' %}</em>
+					{% endif %}
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+{% endif %}
+
+{% if search_type == 'log' %}
+	<table class="modlog">
+		<tr>
+			<th>{% trans 'Staff' %}</th>
+			<th>{% trans 'IP address' %}</th>
+			<th>{% trans 'Time' %}</th>
+			<th>{% trans 'Board' %}</th>
+			<th>{% trans 'Action' %}</th>
+		</tr>
+		{% for log in results %}
+			<tr>
+				<td class="minimal">
+					{% if log.username %}
+						<a href="?/log:{{ log.username|e }}">{{ log.username|e }}</a>
+					{% elseif log.mod == -1 %}
+						<em>system</em>
+					{% else %}
+						<em>{% trans 'deleted?' %}</em>
+					{% endif %}
+				</td>
+				<td class="minimal">
+					<a href="?/IP/{{ log.ip|cloak_ip }}">{{ log.ip|cloak_ip }}</a>
+				</td>
+				<td class="minimal">
+					<span title="{{ log.time|date(config.post_date) }}">{{ log.time|ago }}</span>
+				</td>
+				<td class="minimal">
+					{% if log.board %}
+						<a href="?/{{ config.board_path|sprintf(log.board) }}{{ config.file_index }}">{{ config.board_abbreviation|sprintf(log.board) }}</a>
+					{% else %}
+						-
+					{% endif %}
+				</td>
+				<td>
+					{{ log.text }}
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+{% endif %}
+
+{% if search_type == 'posts' %}
+	<table class="modlog" style="word-wrap: break-word;">
+		<tr>
+			<th>Time</th>
+			<th>Board</th>
+			<th>ID</th>
+			<th>Thread</th>
+			<th>IP</th>
+			<th>Name</th>
+			<th>Subject</th>
+			<th>File</th>
+			<th>Body (snippet)</th>
+		</tr>
+		{% for post in results %}
+			<tr>
+				<td class="minimal">
+					<small>{{ post.time | ago }} ago</small>
+				</td>
+				<td class="minimal">
+					<a href="?/{{ config.board_path|sprintf(post.board) }}{{ config.file_index }}">{{ config.board_abbreviation|sprintf(post.board) }}</a>
+				</td>
+				<td class="minimal">
+					{% if post.thread %}
+						{% set thread = post.thread %}
+					{% else %}
+						{% set thread = post.id %}
+					{% endif %}
+					<a href="?/{{ post.board ~ '/' ~ config.dir.res}}{{ link_for(post) }}#{{ post.id }}">
+						{{ post.id }}
+					</a>
+				</td>
+				<td class="minimal">
+					<small>
+						{% if post.thread %}
+							{{ post.thread }}
+						{% else %}
+							(OP)
+						{% endif %}
+					</small>
+				</td>
+				<td class="minimal">
+					{% if mod|hasPermission(config.mod.show_ip, post.board) %}
+						<a href="?/IP/{{ post.ip|cloak_ip }}">
+							{{ post.ip|cloak_ip }}
+						</a>
+					{% else %}
+						<em>hidden</em>
+					{% endif %}
+				</td>
+				<td style="max-width:100px">
+					<small>
+						{% if post.email|length > 0 %}
+							{# start email #}
+							<a class="email" href="mailto:{{ post.email }}">
+						{% endif %}
+						{% set capcode = post.capcode|capcode %}
+						<span {% if capcode.name %}style="{{ capcode.name }}" {% endif %}class="name">{{ post.name|e }}</span>
+						{% if post.trip|length > 0 %}
+							<span {% if capcode.trip %}style="{{ capcode.trip }}" {% endif %}class="trip">{{ post.trip }}</span>
+						{% endif %}
+						{% if post.email|length > 0 %}
+							{# end email #}
+							</a>
+						{% endif %}
+						{% if capcode %}
+							{{ capcode.cap }}
+						{% endif %}
+					</small>
+				</td>
+				<td style="max-width:250px">
+					{% if post.subject %}
+						<small>{{ post.subject|e }}</small>
+					{% else %}
+						&ndash;
+					{% endif %}
+				</td>
+				<td style="max-width:200px">
+					{% if post.file %}
+						<small>{{ post.filename }} ({{ post.filesize | filesize }})</small>
+					{% else %}
+						&ndash;
+					{% endif %}
+				</td>
+				<td>
+					<small><em>{{ post.snippet }}</em></small>
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+{% endif %}
+
+{% if result_count > results|count %}
+	<p class="unimportant" style="text-align:center;word-wrap:break-word">
+		{% for i in range(0, (result_count - 1) / config.mod.search_page) %}
+			<a href="?/search/{{ search_type }}/{{ search_query_escaped }}/{{ i + 1 }}">[{{ i + 1 }}]</a> 
+		{% endfor %}
+	</p>
+{% endif %}

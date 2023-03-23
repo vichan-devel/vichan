@@ -1,0 +1,150 @@
+body {
+	background: #050505;
+	color: #00FF00;
+	font-family: monospace;
+	font-size: 11px;
+}
+h1 {
+	font-size: 20pt;
+	text-align: center;
+	letter-spacing: 0px;
+}
+div.title, h1 {
+	color: #00FF00;
+	font-family: Arial, Helvetica, sans-serif;
+}
+div.title p {
+	font-size: 13px;
+}
+a:link, a:visited, .intro a.email span.name {
+	color: #16C816;
+	text-decoration: underline;
+	font-family: monospace;
+}
+a:link:hover, a:visited:hover {
+	color: #003C00;
+	font-family: monospace;;
+	text-decoration: underline overline;
+}
+a.post_no {
+	color: #464646;
+	text-decoration: none;
+}
+a.post_no:hover {
+	color: maroon;
+	text-decoration: underline overline;
+}
+div.post.reply {
+	background: #0E0E0E;
+	border: #414141 2px solid !important;
+}
+.de-pview {
+		background: rgba(14, 14, 14, 0.84) !important;
+}
+div.post.reply.highlighted {
+	background: transparent;
+	border: #414141 2px solid;
+}
+div.post.reply div.body a:link, div.post.reply div.body a:visited {
+	color: #646464;
+}
+div.post.reply div.body a:link:hover, div.post.reply div.body a:visited:hover {
+	color: #00FF00;
+}
+.intro span.subject {
+	font-size: 12px;
+	font-family: monospace;
+	color: #446655;
+	font-weight: 800;
+}
+.intro span.name {
+	color: #008200;
+	font-weight: 900;
+}
+.intro a.capcode, p.intro a.nametag {
+	color: magenta;
+	margin-left: 0;
+}
+.intro a.email, p.intro a.email span.name, p.intro a.email:hover, p.intro a.email:hover span.name {
+	color: #00CC64;
+	font-family: monospace;
+}
+input[type="text"], textarea, select {
+	background: #333333;
+	color: #CCCCCC;
+	border: #666666 1px solid;
+	padding-left: 5px;
+	padding-right: -5px;
+	font-family: monospace;
+	font-size: 10pt;
+}
+input[type="password"] {
+	background: #333333;
+	color: #8B8B8B;
+	border: #666666 1px solid;
+}
+form table tr th {
+	background: #333333;
+	color: #828282;
+	font-weight: 800;
+	text-align: left;
+	padding: 0;
+}
+div.banner {
+	background: #00AA00;
+	color: #646464;
+	text-align: center;
+	width: 250px;
+	padding: 4px;
+	padding-left: 12px;
+	padding-right: 12px;
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 12px;
+}
+input[type="submit"] {
+	background: #333333;
+	border: #888888 1px solid;
+	color: #A0A0A0;
+}
+input[type="submit"]:hover {
+	background: #555555;
+	border: #888888 1px solid;
+	color: #00FF00;
+}
+p.fileinfo a:hover {
+	text-decoration: underline;
+}
+span.trip {
+	color: #AAAAAA;
+}
+div.pages {
+	color: #AAAAAA;
+	background: #333333;
+	border: #666666 1px solid;
+	font-family: sans-serif;
+	font-size: 10pt;
+}
+div.pages a.selected {
+	color: #8C8C8C;
+}
+hr {
+	height: 1px;
+	border: #333333 1px solid;
+}
+div.boardlist {
+	color: #999999;
+}
+div.ban {
+	background-color: transparent;
+	border: transparent 0px solid;
+}
+div.ban h2 {
+	background: transparent;
+	color: lime;
+	font-size: 12px;
+}
+table.modlog tr th {
+	background: #00FF00;
+	color: #AAAAAA;
+}

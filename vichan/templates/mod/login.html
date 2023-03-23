@@ -1,0 +1,27 @@
+{% if error %}<h2 style="text-align:center">{{ error }}</h2>{% endif %}
+{% if config.url_banner %}<img class="board_image" src="{{ config.url_banner }}" {% if config.banner_width or config.banner_height %}style="{% if config.banner_width %}width:{{ config.banner_width }}px{% endif %};{% if config.banner_width %}height:{{ config.banner_height }}px{% endif %}" {% endif %}alt="" />{% endif %}
+<form action="" method="post">
+<table style="margin-top:25px;">
+	<tr>
+		<th>
+			{% trans 'Username' %}
+		</th>
+		<td>
+			<input type="text" name="username" size="20" maxlength="30" value="{{ username|e }}">
+		</td>
+	</tr>
+	<tr>
+		<th>
+			{% trans 'Password' %}
+		</th>
+		<td>
+			<input type="password" name="password" size="20" maxlength="30" value="">
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>
+			<input type="submit" name="login" value="{% trans %}Continue{% endtrans %}" />
+		</td>
+</table>
+</form>

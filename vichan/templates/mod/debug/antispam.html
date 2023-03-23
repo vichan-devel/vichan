@@ -1,0 +1,121 @@
+<p style="text-align:center">
+	Most recent:
+</p>
+<table class="modlog" style="width:700px;margin:auto">
+	<tr>
+		<th>Board</th>
+		<th>Thread</th>
+		<th>Hash (SHA1)</th>
+		<th>Created</th>
+		<th>Expires</th>
+		<th>Passed</th>
+	</tr>
+	{% for hash in recent %}
+		<tr>
+			<td>{{ config.board_abbreviation|sprintf(hash.board) }}</td>
+			<td>
+				{% if hash.thread > 0 %}
+					{{ hash.thread }}
+				{% elseif hash.thread < 0 %}
+					Index (page {{ - hash.thread }})
+				{% else %}
+					-
+				{% endif %}
+			</td>
+			<td>
+				<small><code>{{ hash.hash }}</code></small>
+			</td>
+			<td>
+				<span title="{{ hash.created|date(config.post_date) }}">{{ hash.created|ago }} ago</span>
+			</td>
+			<td>
+				{% if hash.expires %}
+					<span title="{{ hash.expires|date(config.post_date) }}">
+						{% if hash.expires < time() %}
+							{{ hash.expires|ago }} ago
+						{% else %}
+							{{ hash.expires|until }}
+						{% endif %}
+					</span>
+				{% else %}
+					-
+				{% endif %}
+			</td>
+			<td>{{ hash.passed }}</td>
+		</tr>
+	{% endfor %}
+</table>
+
+<p style="text-align:center">
+	Most used (in active):
+</p>
+<table class="modlog" style="width:700px;margin:auto">
+	<tr>
+		<th>Board</th>
+		<th>Thread</th>
+		<th>Hash (SHA1)</th>
+		<th>Created</th>
+		<th>Expires</th>
+		<th>Passed</th>
+	</tr>
+	{% for hash in top %}
+		<tr>
+			<td>{{ config.board_abbreviation|sprintf(hash.board) }}</td>
+			<td>
+				{% if hash.thread > 0 %}
+					{{ hash.thread }}
+				{% elseif hash.thread < 0 %}
+					Index (page {{ - hash.thread }})
+				{% else %}
+					-
+				{% endif %}
+			</td>
+			<td>
+				<small><code>{{ hash.hash }}</code></small>
+			</td>
+			<td>
+				<span title="{{ hash.created|date(config.post_date) }}">{{ hash.created|ago }} ago</span>
+			</td>
+			<td>
+				{% if hash.expires %}
+					<span title="{{ hash.expires|date(config.post_date) }}">
+						{% if hash.expires < time() %}
+							{{ hash.expires|ago }} ago
+						{% else %}
+							{{ hash.expires|until }}
+						{% endif %}
+					</span>
+				{% else %}
+					-
+				{% endif %}
+			</td>
+			<td>{{ hash.passed }}</td>
+		</tr>
+	{% endfor %}
+</table>
+
+<p style="text-align:center">
+	Total: <strong>{{ total }}</strong> (<strong>{{ expiring }}</strong> set to expire)
+</p>
+
+<form method="post" action="?/debug/antispam">
+	<table class="modlog" style="width:1%;white-space:nowrap;margin:auto">
+		<tr>
+			<th>Board</th>
+			<th>Thread</th>
+			<th></th>
+		</tr>
+		<tr>
+			<td>
+				<input type="text" name="board" style="width:90px" value="{{ board }}">
+			</td>
+			<td>
+				<input type="text" name="thread" style="width:90px" value="{{ thread }}">
+			</td>
+			<td>
+				<input type="submit" name="filter" value="Filter"> 
+				<input type="submit" name="purge" value="Purge">
+			</td>
+		</tr>
+	</table>
+</form>

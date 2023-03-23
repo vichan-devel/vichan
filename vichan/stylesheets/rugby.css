@@ -1,0 +1,48 @@
+/* rugby.css */
+body {
+  background:
+	 url(img/rugby_rugbysta.png) no-repeat bottom right fixed,
+url(img/rugby_background2.jpg) no-repeat center center fixed;
+/*    -moz-linear-gradient(top, #cfe7fa 0%, #6393c1 100%) fixed,
+    linear-gradient(to bottom, #cfe7fa 0%,#6393c1 100%) fixed; */
+  background-size: auto, cover;
+}
+
+.desktop-style div.boardlist:nth-child(1), div.post.reply, div.pages {
+background: #ebf1f6; /* Old browsers */
+
+background: -moz-linear-gradient(top,  #ebf1f6 0%, #abd3ee 50%, #89c3eb 51%, #d5ebfb 100%); /* FF3.6+ */
+
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ebf1f6), color-stop(50%,#abd3ee), color-stop(51%,#89c3eb), color-stop(100%,#d5ebfb)); /* Chrome,Safari4+ */
+
+background: -webkit-linear-gradient(top,  #ebf1f6 0%,#abd3ee 50%,#89c3eb 51%,#d5ebfb 100%); /* Chrome10+,Safari5.1+ */
+
+background: -o-linear-gradient(top,  #ebf1f6 0%,#abd3ee 50%,#89c3eb 51%,#d5ebfb 100%); /* Opera 11.10+ */
+
+background: -ms-linear-gradient(top,  #ebf1f6 0%,#abd3ee 50%,#89c3eb 51%,#d5ebfb 100%); /* IE10+ */
+
+background: linear-gradient(to bottom,  #ebf1f6 0%,#abd3ee 50%,#89c3eb 51%,#d5ebfb 100%); /* W3C */
+
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ebf1f6', endColorstr='#d5ebfb',GradientType=0 ); /* IE6-9 */
+border-bottom: 1px solid #e9af32;
+}
+div.post.reply, div.pages {
+border-radius: 20px 20px;
+border: 1px solid #e9af32;
+}
+
+form table tr th {
+background: #e9af32 !important;
+}
+
+hr {
+border-color: #e9af32;
+}
+
+h1, header div.subtitle {
+color: #ec3150;
+}
+
+.desktop-style .sub {
+  background: none;
+}

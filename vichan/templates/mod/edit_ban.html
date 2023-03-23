@@ -1,0 +1,14 @@
+<p style="text-align: center">
+{% trans %}The previous ban will be replaced by the edited ban and the ban duration will start from the time of the edit.<br/>
+The ban public message will <strong>not</strong> be changed.{% endtrans %}
+</p>
+<hr>
+{% for ban in bans %}
+	<h2 style="text-align:center">{% trans %}Current ban{% endtrans %}</h2>
+	<form style="text-align:center; margin-bottom: unset"> {# dummy form to trigger css rules #}
+		{% include 'mod/ban_history.html' %}
+	</form>
+	<hr>
+	<h2 style="text-align:center">{% trans %}New ban{% endtrans %}</h2>
+		{% include 'mod/ban_form.html' with {'edit_ban': true} %}
+{% endfor %}

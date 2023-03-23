@@ -1,0 +1,28 @@
+{% filter remove_whitespace %}
+{# tabs and new lines will be ignored #}
+<div class="post reply" id="reply_{{ post.id }}">
+<p class="intro">
+	{% if not index %}<a id="{{ post.id }}" class="post_anchor"></a>{% endif %}
+	<input type="checkbox" class="delete" name="delete_{{ post.id }}" id="delete_{{ post.id }}" />
+	<label for="delete_{{ post.id }}">
+		{% include 'post/subject.html' %}
+		{% include 'post/name.html' %}
+		{% include 'post/ip.html' %}
+		{% include 'post/flag.html' %}
+		{% include 'post/time.html' %}
+	</label>
+	{% include 'post/poster_id.html' %}&nbsp;
+	<a class="post_no" id="post_no_{{ post.id }}" onclick="highlightReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('', '50') }}{% else %}{{ post.link }}{% endif %}">No.</a>
+	<a class="post_no" onclick="citeReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('q', '50') }}{% else %}{{ post.link('q') }}{% endif %}">{{ post.id }}</a>
+	</p>
+    {% include 'post/fileinfo.html' %} 
+    {% include 'post/post_controls.html' %}
+	<div class="body" {% if post.files|length > 1 %}style="clear:both"{% endif %}>
+		{% endfilter %}{% if index %}{{ post.body|truncate_body(post.link) }}{% else %}{{ post.body }}{% endif %}{% filter remove_whitespace %}
+		{% if post.modifiers['ban message'] %}
+			{{ config.mod.ban_message|sprintf(post.modifiers['ban message']) }}
+		{% endif %}
+	</div>
+</div>
+<br/>
+{% endfilter %}

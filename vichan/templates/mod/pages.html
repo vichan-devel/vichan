@@ -1,0 +1,34 @@
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<div style="text-align:center">
+<p class="unimportant">
+{% if board %}
+{% set page_max = config.pages_max %}
+{% trans %}This page allows you to create static pages for your board. The limit is {{ page_max }} pages per board. You will still have to link to your pages somewhere in your board, for example in a sticky or in the board's announcement. To make links in the board's announcement, use &lt;a&gt; HTML tags.{% endtrans %}
+{% else %}
+{% trans %}This page allows you to create static pages for your imageboard.{% endtrans %}
+{% endif %}
+<h2>{% trans %}Existing pages{% endtrans %}</h2>
+{% if pages %}
+<form>
+<table style="margin:auto">
+<tr><th>{% trans %}URL{% endtrans %}</th><th>{% trans %}Title{% endtrans %}</th><th>{% trans %}Edit{% endtrans %}</th><th>{% trans %}Delete{% endtrans %}</tr>
+{% for page in pages %}
+<tr><td>{{ page.name }}</td><td>{{ page.title }}</td><td><a href="?/edit_page/{{ page.id }}">{% trans %}Edit{% endtrans %}</a></td><td><a href="?/edit_pages/delete/{{ page.name }}{% if board %}/{{ board }}{% endif %}/{{ page.delete_token }}">{% trans %}Delete{% endtrans %}</a></td>
+{% endfor %}
+{% else %}
+<em>No pages yet!</em>
+{% endif %}
+</table>
+</form>
+<hr/>
+<h2>{% trans %}Create a new page{% endtrans %}</h2>
+<form method="POST">
+	<input type="hidden" name="token" value="{{ token }}">
+<table>
+<tr><th>{% trans %}URL{% endtrans %}</th><th>{% trans %}Title{% endtrans %}</th></tr>
+<tr><td><input type="text" name="page"></td><td><input type="text" name="title"></td>
+</table>	
+<input type="submit" value="{% trans %}Create{% endtrans %}">
+</form>
+
+</div>

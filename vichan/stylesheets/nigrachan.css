@@ -1,0 +1,146 @@
+/**
+ * nigrachan.css
+ * For 55ch adapted from kusaba by sinuca
+ */
+body {
+	background: #000000;
+	color: #909090;
+}
+* {
+font-family: "Trebuchet MS", Tahoma, Verdana, Arial, sans-serif;
+font-size: 10pt;
+}
+
+h1 {
+	color: #FFFFFF;
+	font-size: 24pt;
+}
+
+header div.subtitle {
+	font-size: 16px;
+	color: #FFFFFF;
+	font-weight: bold;
+	margin: 1em 0;
+}
+
+a, a:visited {
+	text-decoration: none;
+	color: #FFFFFF;
+}
+
+a:hover {
+	color: #A0A0A0;
+	text-decoration: underline;
+}
+
+div.banner {
+	background-color: #000000;
+	color: #909090;
+	font-weight: normal;
+}
+
+form table tr th {
+	background: #202020;
+	color: #FFF;
+	padding: 2px 5px;
+	border: 1px solid #303030;
+}
+
+input[type="text"], input[type="password"], textarea, input[type="submit"], input[type="file"] {
+	background-color: #101010;
+	color: #FFF;
+	border: 1px solid #202020;
+}
+
+.intro span.name {
+	font-size: 11pt;
+	color: #505050;
+	font-weight: bold;
+}
+
+p.fileinfo span.unimportant, p.fileinfo a {
+	font-size: 10pt;
+}
+
+div.post.reply {
+	background: #202020;
+	border: none;
+	color: #A0A0A0;
+	border: 1px solid #101010;
+}
+
+div.post.reply.post-hover {
+	border-width: 1px;
+	border-style: none solid solid none;
+	border-color: #101010;
+}
+
+div.post.reply div.body a {
+	color: #FFFFFF;
+}
+
+div.post.reply div.body a:hover {
+	color: #A0A0A0;
+	text-decoration: underline;
+}
+
+div.post.reply.highlighted {
+	background: #111111;
+}
+
+.intro a.email span.name {
+	color: #FFFFFF;
+}
+
+.intro a.email:hover span.name {
+	color: #A0A0A0;
+	text-decoration: underline;
+}
+
+.intro span.subject {
+    color: #606060;
+}
+
+div.pages {
+	background: transparent;
+	border: 2px groove #303030;
+	color: #FFFFFF;
+}
+
+div.pages a.selected {
+    color: #A0A0A0;
+}
+
+div.pages a:hover {
+	text-decoration: underline;
+}
+
+hr {
+	border-top: 2px groove #666;
+}
+
+div.boardlist {
+	font-size: 10pt;
+	color: #FFF;
+	padding: 8px;
+}
+
+div.boardlist a:hover {
+	text-decoration: underline;
+}
+
+div#playerW {
+	display: none!important;
+}
+
+.desktop-style div.boardlist:nth-child(1):hover, .desktop-style div.boardlist.cb-menu:nth-child(1) {
+    background-color: rgba(50, 50, 50, 0.6);
+}
+
+.desktop-style .sub {
+	background: none;
+}
+
+img.board_image {
+	border:0px;
+}

@@ -1,0 +1,79 @@
+.box-wrap {
+	max-width: 670px;
+	min-width: 300px;
+	margin: 30px auto;
+	padding: 0;
+}
+.box {
+	background: white;
+	border: 1px solid #98E;
+	width: 330px;
+	margin: 8px 0;
+	padding: 0;
+}
+.box h2 {
+	padding: 3px 7px;
+	font-size: 12pt;
+}
+.box ul li {
+	list-style: none;
+	margin: 0;
+}
+.mainBox {
+	background: transparent;
+	border: 1px solid #008080;
+	width: 100%;
+	margin-bottom: 5px;
+}
+.mainBox h2 {
+	background: #59A;
+	color: white;
+}
+.box.image {
+	background: transparent;
+	border: none;
+	width: 100%;
+	min-height: 250px;
+	max-height: 400px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+.box img {
+	float: left;
+	margin: 5px;
+	width: auto !important;
+	height: 100px !important;
+	border-radius: 10px;
+}
+.icon {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 100px;
+}
+.imageofnow {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 300px;
+}
+.videoofnow {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 500px;
+	max-height: 300px;
+}
+.quoteofnow {
+	text-align: center;
+	font-size: 20px;
+	font-family: -WEBKIT-PICTOGRAPH;
+}
+.description {
+	text-align: center;
+	font-weight: bolder;
+}
+.boardlinksurl {
+	float: left;
+	margin-right: 100px;
+}

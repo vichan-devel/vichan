@@ -1,0 +1,29 @@
+<div style="text-align:center">
+<form method="POST">
+	<input name="token" value="{{ token }}" type="hidden">
+	<table>
+		<tr>
+		<th>{% trans %}Markup method{% endtrans %}
+			{% set allowed_html = config.allowed_html %}
+			{% trans %}<p class="unimportant">"markdown" is provided by <a href="http://parsedown.org/">parsedown</a>. Note: images disabled.</p>
+			<p class="unimportant">"html" allows the following tags:<br/>{{ allowed_html }}</p>
+			<p class="unimportant">"infinity" is the same as what is used in posts.</p>
+			<p class="unimportant">This page will not convert between formats,<br/>choose it once or do the conversion yourself!</p>{% endtrans %}
+		</th>
+		<td>
+			<select name="method">
+				{% for markup in ['markdown', 'html', 'infinity'] %}
+				<option value="{{ markup }}" {% if page.type == markup %}selected{% endif %}>{{ markup }}</option>
+				{% endfor %}
+			</select>
+		</td></tr>
+		<tr><th>{% trans %}Page content{% endtrans %}
+		<br/>
+		<span class="unimportant">{% trans %}Page will appear at:{% endtrans %} 
+		{% if board %} <a href="/{{ board.uri }}/{{ page.name }}.html">{{ config.domain }}/{{ board.uri }}/{{ page.name }}.html</a>
+		{% else %} <a href="/{{ page.name }}.html">{{ config.site }}/{{ page.name }}.html</a>
+		{% endif %}</span></th><td><textarea name="content" style="height:500px;width:500px">{{content}}</textarea></td><tr>
+	</table>
+	<input type="submit" value="Save page">
+</form>
+</div>

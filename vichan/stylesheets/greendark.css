@@ -1,0 +1,222 @@
+/* greenddark.css by Z Blanche */
+body {
+	 background:#1b1b1b;
+	 background-image: url(''), url('');
+         background-repeat: no-repeat;
+         background-attachment: fixed, scroll;
+         background-position: right bottom, 100% 100%;
+	 font-family: arial,helvetica,sans-serif; 
+	 font-size: 12pt;
+	 color: #C0C0C0; 
+	 cursor: default;
+	 margin: 0 8px;
+	 padding-left: 5px;
+         padding-right: 5px;
+} 
+div.boardlist {
+         text-align: center;
+}
+div.post.reply {
+	 margin-right:   px;
+         margin-bottom:  px;
+         background: #222; 
+         border: 0; 
+         padding: 6px; 
+         border-radius: 6px;
+         box-shadow:
+         display:
+}
+/*media screen*/
+a, a:visited {
+    text-decoration: underline;
+    color:#008080
+} 
+button, input[type=submit], input[type=button] { 
+         cursor: pointer; 
+         border-radius: 5px; 
+         border: 0; 
+         padding: 6px; 
+}
+h1, .subtitle a, .subtitle { 
+         color: #0df211!important; 
+}
+input[type="text"], textarea, input[type=password] {
+	 background: #32d23; 
+	 border-radius: 25px; 
+} 
+form table tr th { 
+         background: transparent; 
+}
+.post { 
+         padding: 6px; 
+}
+img { 
+         border-radius: 22px; }
+hr {
+	 opacity:0.2;
+}
+label, .subject{
+	 color:#AAA!important;
+}
+.name{
+	 color:#!important;
+}
+div.pages {
+         border:0;
+         background:none;
+         color: #fff!important;
+}
+div.pages a.selected { 
+         color: #ff69b4!important; 
+         padding: 4px; 
+         text-decoration: none; 
+}
+div.pages a { 
+         color: #fafafa!important; 
+         padding: 4px; 
+         text-decoration: none; 
+}
+.subtitle a {  
+         display: block; 
+         margin: 7px auto 7px auto; 
+         font-size: 15px; 
+         text-decoration: none; 
+         border: 1px solid #0df211; 
+         padding: 5px; 
+         border-radius: 7px; 
+         max-width: 100px; 
+}
+input[type=text], input[type=password] { 
+         padding: 5px; 
+         font-size: 15px; 
+}
+textarea { 
+         resize:vertical; 
+         max-height: 400px; 
+         width: 250px; 
+         padding: 5px; 
+         font-size: 15px; 
+}
+@-webkit-keyframes Pulse {
+	 from { background-color: #007d9a; 
+	-webkit-box-shadow: 0 0 9px #333; }
+	 50% { background-color: #2daebf; 
+	-webkit-box-shadow: 0 0 18px #2daebf; }
+	 to { background-color: #007d9a; 
+	-webkit-box-shadow: 0 0 9px #333; }
+}
+.board_image {
+        -webkit-animation-name: Pulse;
+        -webkit-animation-duration: 3s;
+        -webkit-animation-iteration-count: infinite;
+        -webkit-transform: rotate(5deg);
+}
+@-webkit-keyframes shakey {
+	 0% { -webkit-transform: translate(2px, 1px) rotate(0deg); }
+	10% { -webkit-transform: translate(-1px, -2px) rotate(-1deg); }
+	20% { -webkit-transform: translate(-3px, 0px) rotate(1deg); }
+	30% { -webkit-transform: translate(0px, 2px) rotate(0deg); }
+	40% { -webkit-transform: translate(1px, -1px) rotate(1deg); }
+	50% { -webkit-transform: translate(-1px, 2px) rotate(-1deg); }
+	60% { -webkit-transform: translate(-3px, 1px) rotate(0deg); }
+	70% { -webkit-transform: translate(2px, 1px) rotate(-1deg); }
+	80% { -webkit-transform: translate(-1px, -1px) rotate(1deg); }
+	90% { -webkit-transform: translate(2px, 2px) rotate(0deg); }
+   100% { -webkit-transform: translate(1px, -2px) rotate(-1deg); }
+}
+button:hover, input[type=submit]:hover, input[type=button]:hover,
+button:focus, input[type=submit]:focus, input[type=button]:focus 
+{
+    -webkit-animation-name: shakey;
+    -webkit-animation-duration: 0.1s;
+    -webkit-transform-origin:50% 50%;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+     background-color: #2daebf;
+}
+button, input[type=submit], input[type=button] {
+    -webkit-animation-name: Pulse;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-iteration-count: infinite;
+     color: #ffd;
+}
+div.ban {
+     background: #222;
+     background-image: url(''), url('');
+     background-repeat: no-repeat;
+     background-attachment: fixed, scroll;
+     background-position: right bottom, 100% 100%;
+     color:#fff;
+     border: 0;
+     border-radius: 6px;
+     padding: 6px;
+}
+.desktop-style div.boardlist, .desktop-style div.boardlist:hover {
+     background:#333!important;
+     border: 0!important;
+}
+.theme-catalog div.grid-size-small:hover {
+     background: #333!important;
+}
+#options_div {
+     background: #222!important;
+}
+select {
+     background:#333;
+     color:#eee;
+     cursor:pointer;
+     border-radius: 4px;
+     border: 1px #222 solid;
+     padding: 4px;
+}
+  ::-webkit-scrollbar {
+     width: 6px;
+     height: 8px;
+     background: #333;
+     box-shadow: none;
+}
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: none; 
+     background: none;
+}
+  ::-webkit-scrollbar-thumb { 
+     background: #ddd;
+     width: 6px;
+     padding: 4px;
+     border-radius: 10px;
+    -webkit-box-shadow: 0 0 6px rgba(0,0,0,0.5); 
+}
+header div.subtitle {
+     font-size: 12pt
+}
+.desktop-style div.boardlist, .desktop-style div.boardlist:hover {
+     background: #1b1b1b!important;
+}
+div.post.reply.highlighted {
+     background: #FFFFFF;
+}
+div.banner {
+     background-color: #1b1b1b;
+}
+
+div.blotter {
+  color: green;
+  font-weight: bold;
+  text-align: center;
+}
+div.post.reply div.body a {
+  color: #AAA;
+}
+p.intro a.email span.name {
+  color: #cdaf95;
+}
+div.post.reply div.body a:link:hover, div.post.reply div.body a:visited:hover {
+  color: #32DD72;
+}
+p.intro span.capcode,p.intro a.capcode,p.intro a.nametag {
+  color: #F00000;
+  margin-left: 0;
+}
+table tbody tr:nth-of-type( even ) {
+	background-color: #1b1b1b;
+}

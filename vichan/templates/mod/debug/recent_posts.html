@@ -1,0 +1,128 @@
+<p style="text-align:center">
+	Flood prevention cache:
+</p>
+<table class="modlog" style="width:1%;">
+	<tr>
+		<th>#</th>
+		<th>Time</th>
+		<th>Board</th>
+		<th>Post hash</th>
+		<th>File hash</th>
+	</tr>
+	{% for post in flood_posts %}
+		<tr>
+			<td class="minimal">{{ post.id }}</td>
+			<td class="minimal"{% if post.in_flood_table %} style="color:red" title="Still in flood prevention cache."{% endif %}>
+				<small>{{ post.time | ago }} ago</small>
+			</td>
+			<td class="minimal">
+				<a href="?/{{ config.board_path|sprintf(post.board) }}{{ config.file_index }}">
+					{{ config.board_abbreviation|sprintf(post.board) }}
+				</a>
+			</td>
+			<td><code>{{ post.posthash }}</code></td>
+			<td>
+				{% if post.filehash %}
+					<code>{{ post.filehash }}</code>
+				{% else %}
+					<em>No file</em>
+				{% endif %}
+			</td>
+		</tr>
+	{% endfor %}
+</table>
+
+<p style="text-align:center">
+	Most recent {{ posts|count }} posts:
+</p>
+<table class="modlog" style="word-wrap: break-word;">
+	<tr>
+		<th>Time</th>
+		<th>Board</th>
+		<th>ID</th>
+		<th>Thread</th>
+		<th>IP</th>
+		<th>Name</th>
+		<th>Subject</th>
+		<th>File</th>
+		<th>Body (snippet)</th>
+	</tr>
+	{% for post in posts %}
+		<tr>
+			<td class="minimal"{% if post.in_flood_table %} style="color:red" title="Still in flood prevention cache."{% endif %}>
+				<small>{{ post.time | ago }} ago</small>
+			</td>
+			<td class="minimal">
+				<a href="?/{{ config.board_path|sprintf(post.board) }}{{ config.file_index }}">
+					{{ config.board_abbreviation|sprintf(post.board) }}
+				</a>
+			</td>
+			<td class="minimal" >
+				{% if post.thread %}
+					{% set thread = post.thread %}
+				{% else %}
+					{% set thread = post.id %}
+				{% endif %}
+				<a href="?/{{ post.board ~ '/' ~ config.dir.res}}{{ link_for(post) }}#{{ post.id }}">
+					{{ post.id }}
+				</a>
+			</td>
+			<td class="minimal">
+				<small>
+					{% if post.thread %}
+						{{ post.thread }}
+					{% else %}
+						(OP)
+					{% endif %}
+				</small>
+			</td>
+			<td class="minimal">
+				{% if mod|hasPermission(config.mod.show_ip, post.board) %}
+					<a href="?/IP/{{ post.ip }}">
+						{{ post.ip }}
+					</a>
+				{% else %}
+					<em>hidden</em>
+				{% endif %}
+			</td>
+			<td class="minimal" >
+				<small>
+					{% if post.email|length > 0 %}
+						{# start email #}
+						<a class="email" href="mailto:{{ post.email }}">
+					{% endif %}
+					{% set capcode = post.capcode|capcode %}
+					<span {% if capcode.name %}style="{{ capcode.name }}" {% endif %}class="name">{{ post.name }}</span>
+					{% if post.trip|length > 0 %}
+						<span {% if capcode.trip %}style="{{ capcode.trip }}" {% endif %}class="trip">{{ post.trip }}</span>
+					{% endif %}
+					{% if post.email|length > 0 %}
+						{# end email #}
+						</a>
+					{% endif %}
+					{% if capcode %}
+						{{ capcode.cap }}
+					{% endif %}
+				</small>
+			</td>
+			<td class="minimal" >
+				{% if post.subject %}
+					<small>{{ post.subject }}</small>
+				{% else %}
+					&ndash;
+				{% endif %}
+			</td>
+			<td class="minimal">
+				{% if post.file %}
+					<small>{{ post.file }} ({{ post.filesize | filesize }})</small>
+				{% else %}
+					&ndash;
+				{% endif %}
+			</td>
+			<td>
+				<small><em>{{ post.snippet }}</em></small>
+			</td>
+		</tr>
+	{% endfor %}
+</table>
+

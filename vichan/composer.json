@@ -1,0 +1,51 @@
+{
+    "name": "vichan-devel/vichan",
+    "description": "vichan imageboard",
+    "type": "project",
+    "require": {
+        "ext-mbstring": ">=5.4",
+        "ext-gd": ">=5.4",
+        "ext-pdo": ">=5.4",
+        "twig/twig": "^1.44.2",
+        "lifo/ip": "^1.0",
+        "gettext/gettext": "^1.0",
+        "mrclay/minify": "^2.1.6",
+        "geoip/geoip": "^1.17",
+        "dapphp/securimage": "^4.0"
+    },
+    "autoload": {
+        "classmap": ["inc/"],
+        "files": [
+            "inc/bootstrap.php",
+            "inc/display.php",
+            "inc/template.php",
+            "inc/database.php",
+            "inc/events.php",
+            "inc/api.php",
+            "inc/mod/auth.php",
+            "inc/lock.php",
+            "inc/queue.php",
+            "inc/polyfill.php",
+            "inc/functions.php"
+        ]
+    },
+    "license": "Tinyboard + vichan",
+    "authors": [
+        {
+            "name": "savetheinternet",
+            "homepage": "https://github.com/savetheinternet"
+        },
+        {
+            "name": "czaks",
+            "homepage": "https://github.com/czaks"
+        },
+        {
+            "name": "ctrlcctrlv",
+            "homepage": "https://github.com/ctrlcctrlv"
+        },
+        {
+            "name": "h00j",
+            "homepage": "https://github.com/h00j"
+        }
+    ]
+}

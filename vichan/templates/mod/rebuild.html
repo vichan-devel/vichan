@@ -1,0 +1,72 @@
+<form style="width:300px;margin:auto" action="?/rebuild" method="post">
+	<input type="hidden" name="token" value="{{ token }}">
+	<ul id="rebuild">
+		<li style="margin-bottom:8px">
+			<input type="checkbox" name="rebuild_all" id="rebuild_all" onchange="toggleall(this.checked)"> 
+			<label for="rebuild_all"><strong>{% trans 'Toggle all' %}</strong></label>
+			<script>
+				function toggleall(val) {
+					/* TODO: something more suitable for all browsers? */
+					var elements = document.getElementById('rebuild').querySelectorAll('input');
+					for (i in elements) {
+						elements[i].checked = val;
+					}
+				}
+			</script>
+		</li>
+		<li>
+			<input type="checkbox" name="rebuild_cache" id="rebuild_cache" checked> 
+			<label for="rebuild_cache">{% trans 'Flush cache' %}</label>
+		</li>
+		<li>
+			<input type="checkbox" name="rebuild_javascript" id="rebuild_javascript" checked> 
+			<label for="rebuild_javascript">{% trans 'Rebuild Javascript' %}</label>
+		</li>
+		<li>
+			<input type="checkbox" name="rebuild_index" id="rebuild_index" checked> 
+			<label for="rebuild_index">{% trans 'Rebuild index pages' %}</label>
+		</li>
+		<li>
+			<input type="checkbox" name="rebuild_thread" id="rebuild_thread" checked> 
+			<label for="rebuild_thread">{% trans 'Rebuild thread pages' %}</label>
+		</li>
+		<li>
+			<input type="checkbox" name="rebuild_themes" id="rebuild_themes" checked> 
+			<label for="rebuild_themes">{% trans 'Rebuild themes' %}</label>
+		</li>
+		<li>
+			<input type="checkbox" name="rebuild_posts" id="rebuild_posts"> 
+			<label for="rebuild_posts">{% trans 'Rebuild replies' %}</label>
+		</li>
+	</ul>
+	
+	<hr>
+	
+	<ul id="boards">
+		<li style="margin-bottom:8px">
+			<input type="checkbox" name="boards_all" id="boards_all" onchange="toggleallboards(this.checked)" checked> 
+			<label for="boards_all"><strong>{% trans 'All boards' %}</strong></label>
+			<script>
+				function toggleallboards(val) {
+					/* TODO: something more suitable for all browsers? */
+					var elements = document.getElementById('boards').querySelectorAll('input');
+					for (i in elements) {
+						elements[i].checked = val;
+					}
+				}
+			</script>
+		</li>
+		{% for board in boards %}
+			<li>
+				<input type="checkbox" name="board_{{ board.uri }}" id="board-{{ board.uri }}" checked> 
+				<label for="board-{{ board.uri }}">
+					{{ config.board_abbreviation|sprintf(board.uri) }} - {{ board.title|e }}
+				</label>
+			</li>
+		{% endfor %}
+	</ul>
+	
+	<p style="text-align:center">
+		<input type="submit" value="{% trans 'Rebuild' %}" name="rebuild">
+	</p>
+</form>

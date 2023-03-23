@@ -1,0 +1,145 @@
+/**
+ * confraria.css
+ * For 55chan adapted from kusaba by sinuca
+ */
+body{
+	font-family: arial,helvetica,sans-serif;
+	font-size: 10pt;
+	background-image: url('img/confraria_hatstand.png'), url('img/confraria_foot.png'), url('img/confraria_bg.png');
+	background-repeat: no-repeat, repeat-x, repeat;
+	background-attachment: fixed, fixed, fixed;
+	background-position: 75% bottom, bottom center, top left;
+	color: #C5C8C6;
+	margin-left: 0;
+	margin-right: 0;
+	margin-top: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+h1 {
+	color: #C5C8C6;
+	font-family: Tahoma, sans-serif;
+	font-size: 28px;
+	letter-spacing: -2px;
+}
+
+header div.subtitle {
+	font-size: 16px;
+	color: #C5C8C6;
+	font-weight: bold;
+	margin: 1em 0;
+}
+
+a, a:visited {
+	color: rgb(129, 162, 190);
+}
+
+a:hover {
+	color: rgb(95, 137, 172);
+}
+
+div.banner {
+	background-color: #282A2E;
+	color: #C5C8C6;
+	padding: 1px;
+	font-size: larger;
+	margin-top: 8px;
+	border: 1px solid #111;
+}
+
+form table tr th {
+	background: #282A2E;
+	color: #C5C8C6;
+	border: 1px solid #111;
+	padding: 0px 5px;
+}
+
+.intro span.name {
+	color: #C5C8C6;
+}
+
+.intro span.subject {
+    color: #CC1105;
+    font-weight: bold;
+}
+
+p.fileinfo span.unimportant, p.fileinfo a {
+	font-size: 10pt;
+}
+
+div.post.reply {
+	background: #282A2E;
+	border: 1px solid #282A2E;
+}
+
+
+div.post.reply.post-hover {
+	border-width: 0px;
+}
+
+div.post.reply div.body a {
+	color: rgb(129, 162, 190);
+}
+
+div.post.reply div.body a:hover {
+	color: rgb(95, 137, 172);
+}
+
+div.post.reply.highlighted {
+	background: #4A4C4F;
+}
+
+.intro a.email span.name {
+	color: rgb(129, 162, 190);
+}
+
+.intro a.email:hover span.name {
+	color: rgb(95, 137, 172);
+}
+
+div.pages {
+	background: transparent;
+	border: 2px groove;
+	color: #FFFFFF;
+}
+
+div.pages a {
+	text-decoration: underline;
+}
+
+div.pages a.selected {
+    color: #FFFFFF;
+    font-weight: bolder;
+}
+
+hr {
+	border-width: 1px medium medium;
+	border-style: solid none none;
+	border-color: #282A2E
+}
+
+div.boardlist {
+	font-size: 9pt;
+	padding: 8px;
+}
+
+div.boardlist a {
+	padding: 0.2em 0.1em;
+}
+
+.desktop-style div.boardlist:nth-child(1):hover, .desktop-style div.boardlist.cb-menu:nth-child(1) {
+    background-color: rgba(50, 50, 50, 0.7);
+}
+
+.desktop-style .sub {
+	background: none;
+}
+
+div#playerW {
+	display: none!important;
+}
+
+img.board_image {
+	border:0px;
+}

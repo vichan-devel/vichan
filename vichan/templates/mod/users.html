@@ -1,0 +1,75 @@
+<table class="modlog" style="width:auto">
+	<tr>
+		<th>{% trans 'ID' %}</th>
+		<th>{% trans 'Username' %}</th>
+		<th>{% trans 'Type' %}</th>
+		<th>{% trans 'Boards' %}</th>
+		{% if mod|hasPermission(config.mod.modlog) %}
+			<th>{% trans 'Last action' %}</th>
+		{% endif %}
+		<th>&hellip;</th>
+	</tr>
+	
+	{% for user in users %}
+		<tr>
+			<td><small>{{ user.id }}</small></td>
+			<td>{{ user.username|e }}</td>
+			<td>
+				{% if config.mod.groups[user.type] %}
+					{{ config.mod.groups[user.type] }}
+				{% else %}
+					<em>{% trans 'Unknown' %}</em> ({{ user.type }})
+				{% endif %}
+			</td>
+			<td>
+				{% if user.boards == '' %}
+					<em>{% trans 'none' %}</em>
+				{% elseif user.boards == '*' %}
+					<em>{% trans 'all boards' %}</em>
+				{% else %}
+					{# This is really messy, but IMO it beats doing it in PHP. #}
+					{% set boards = user.boards|split(',') %}
+					{% set _boards = [] %}
+					{% for board in boards %}
+						{% set _boards = _boards|push(board == '*' ? '*' : config.board_abbreviation|sprintf(board)) %}
+					{% endfor %}
+					{% set _boards = _boards|sort %}
+					{{ _boards|join(', ') }}
+				{% endif %}
+			</td>
+			{% if mod|hasPermission(config.mod.modlog) %}
+				<td>
+					{% if user.last %}
+						<span title="{{ user.action|e }}">{{ user.last|ago }}</span>
+					{% else %}
+						<em>{% trans 'never' %}</em>
+					{% endif %}
+				</td>
+			{% endif %}
+			<td>
+				{% if mod|hasPermission(config.mod.promoteusers) and user.type < constant(config.mod.groups[0:-1]|last|upper) %}
+					<a style="float:left;text-decoration:none" href="?/users/{{ user.id }}/promote/{{ user.promote_token }}" title="{% trans 'Promote' %}">&#9650;</a> 
+				{% endif %}
+				{% if mod|hasPermission(config.mod.promoteusers) and user.type > constant(config.mod.groups|first|upper) %}
+					<a style="float:left;text-decoration:none" href="?/users/{{ user.id }}/demote/{{ user.demote_token }}" title="{% trans 'Demote' %}"{% if mod.id == user.id %} onclick="return confirm('{% trans 'Are you sure you want to demote yourself?' %}')"{% endif %}>&#9660;</a> 
+				{% endif %}
+				{% if mod|hasPermission(config.mod.modlog) %}
+					<a class="unimportant" style="margin-left:5px;float:right" href="?/log:{{ user.username|e }}">[{% trans 'log' %}]</a> 
+				{% endif %}
+				{% if mod|hasPermission(config.mod.editusers) or (mod|hasPermission(config.mod.change_password) and mod.id == user.id) %}
+					<a class="unimportant" style="margin-left:5px;float:right" href="?/users/{{ user.id }}">[{% trans 'edit' %}]</a> 
+				{% endif %}
+				{% if mod|hasPermission(config.mod.create_pm) %}
+					<a class="unimportant" style="margin-left:5px;float:right" href="?/new_PM/{{ user.username|e }}">[{% trans 'PM' %}]</a>
+				{% endif %}
+			</td>
+		</tr>
+	{% endfor %}
+</table>
+
+{% if mod|hasPermission(config.mod.createusers) %}
+	<p style="text-align:center">
+		<a href="?/users/new">Create a new user</a>
+	</p>
+{% endif %}
+

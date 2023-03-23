@@ -1,0 +1,28 @@
+{% filter remove_whitespace %}
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/"
+     version="2.0">
+  <channel>
+    <description>
+      <![CDATA[{{ settings.subtitle }}]]>
+    </description>
+    <title>{{ settings.title }}</title>
+    <generator>Tinyboard {{ config.version }}</generator>
+    <link>{{ settings.base_url }}{{ config.root }}{{ settings.html }}</link>
+    {% for post in recent_posts %}
+    <item>
+      <title>{{ post.board_name }}</title>
+      <description>
+	<![CDATA[
+		 <a href="{{ settings.base_url }}{{ post.link }}">
+		 {{ post.snippet }}
+		 </a>
+	]]>
+      </description>
+      <link>{{ settings.base_url }}{{ post.link }}</link>
+      <guid>{{ settings.base_url }}{{ post.link }}</guid>
+    </item>
+    {% endfor %}
+  </channel>
+</rss>
+{% endfilter %}

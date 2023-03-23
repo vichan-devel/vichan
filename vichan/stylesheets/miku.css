@@ -1,0 +1,97 @@
+/**
+ * miku.css
+ * For AwsumChan by Circlepuller
+ */
+body {
+	background: #D2FFEE url('img/fade-miku.png') top repeat-x;
+}
+
+a:link, a:visited {
+	text-decoration: none;
+	color: #00637B;
+}
+
+a:link:hover, a:visited:hover {
+	color: #DD0000;
+}
+
+a.post_no {
+	color: #000033;
+}
+
+.intro a.email span.name {
+	color: #0093AB;
+}
+
+.intro a.email:hover span.name {
+	color: #DD0000;
+}
+
+h2, div.title, h1 {
+	color: #800000;
+}
+
+form table tr th {
+	background: #95D2D3;
+}
+
+div.banner {
+	background-color: #E04000;
+}
+
+div.post.op hr {
+	border-color: #B7C9D5;
+}
+
+.intro span.subject {
+	color: #117743;
+	font-weight: 800;
+}
+
+.intro span.name {
+	color: #117743;
+	font-weight: 800;
+}
+
+div.post.reply.highlighted {
+	background: #a9d8ff;
+}
+
+div.post.reply {
+	background: #B6DDDE;
+	border-color: #8FCCCD;
+}
+
+div.ban {
+	border: 1px solid #0093AB;
+}
+
+div.ban h2 {
+	background: #B6DDDE;
+	color: #0093AB;
+}
+
+div.pages {
+	color: #8899AA;
+	background: #B6DDDE;
+	border-right: 1px solid #8FCCCD;
+	border-bottom: 1px solid #8FCCCD;
+}
+
+hr {
+	border-color: #B7D9C5;
+}
+
+div.boardlist {
+	color: #0093AB;
+    background-color: rgba(65%, 85%, 95%, 0.2);
+}
+
+.desktop-style div.boardlist:nth-child(1) {
+  text-shadow: #D2FFEE 1px 1px 1px, #D2FFEE -1px -1px 1px;
+}
+
+
+.desktop-style div.boardlist:nth-child(1):hover, .desktop-style div.boardlist:nth-child(1).cb-menu {
+  background-color: rgba(70%, 95%, 100%, 0.45);
+}

@@ -1,0 +1,18 @@
+{% if config.display_flags and post.modifiers.flag %}
+	 <img
+		{% if config.country_flags_condensed %}
+			 class="flag flag-{{ post.modifiers.flag }}" src="{{ config.image_blank }}"
+		{% else %}
+			 class="flag" src="{{ config.uri_flags|sprintf(post.modifiers.flag) }}"
+		{% endif %}
+		 style="{% if post.modifiers['flag style'] %}
+				{{ post.modifiers['flag style'] }}
+			{% else %}
+				{{ config.flag_style }}
+			{% endif %}"
+
+		{% if post.modifiers['flag alt'] %} alt="{{ post.modifiers['flag alt'] | e('html_attr') }}"
+			 title="{{ post.modifiers['flag alt'] | e('html_attr') }}"
+		{% endif %}
+	>
+{% endif %}

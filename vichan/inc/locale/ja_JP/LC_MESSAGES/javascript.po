@@ -1,0 +1,848 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# anon, 2014
+# よるさん <l0laph3x@gmail.com>, 2014
+msgid ""
+msgstr ""
+"Project-Id-Version: vichan\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-10-18 13:47+0200\n"
+"PO-Revision-Date: 2014-10-18 11:48+0000\n"
+"Last-Translator: Marcin Łabanowski <marcin@6irc.net>\n"
+"Language-Team: Japanese (Japan) (http://www.transifex.com/projects/p/tinyboard-vichan-devel/language/ja_JP/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja_JP\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../../../../js/style-select.js:40 ../../../../js/style-select.js:41
+msgid "Style: "
+msgstr "スタイル"
+
+#: ../../../../js/hide-images.js:50 ../../../../js/upload-selection.js:51
+#: ../../../../js/quick-post-controls.js:30 ../../../../js/hide-images.js:51
+#: ../../../../js/quick-post-controls.js:32
+#: ../../../../js/upload-selection.js:61 ../../../../js/upload-selection.js:69
+msgid "File"
+msgstr "ファイル"
+
+#: ../../../../js/hide-images.js:50 ../../../../js/hide-images.js:51
+msgid "hide"
+msgstr "隠す"
+
+#: ../../../../js/hide-images.js:56 ../../../../js/hide-images.js:57
+#: ../../../../js/hide-images.js:63
+msgid "show"
+msgstr "表現する"
+
+#: ../../../../js/toggle-locked-threads.js:39
+#: ../../../../js/toggle-locked-threads.js:54
+#: ../../../../js/toggle-locked-threads.js:40
+#: ../../../../js/toggle-locked-threads.js:55
+#: ../../../../js/toggle-locked-threads.js:41
+#: ../../../../js/toggle-locked-threads.js:56
+#: ../../../../js/toggle-locked-threads.js:53
+#: ../../../../js/toggle-locked-threads.js:70
+msgid "Show locked threads"
+msgstr ""
+
+#: ../../../../js/toggle-locked-threads.js:39
+#: ../../../../js/toggle-locked-threads.js:54
+#: ../../../../js/toggle-locked-threads.js:40
+#: ../../../../js/toggle-locked-threads.js:55
+#: ../../../../js/toggle-locked-threads.js:41
+#: ../../../../js/toggle-locked-threads.js:56
+#: ../../../../js/toggle-locked-threads.js:44
+#: ../../../../js/toggle-locked-threads.js:53
+#: ../../../../js/toggle-locked-threads.js:70
+msgid "Hide locked threads"
+msgstr ""
+
+#: ../../../../js/upload-selection.js:32 ../../../../js/upload-selection.js:45
+#: ../../../../js/upload-selection.js:53
+msgid "URL"
+msgstr "URL"
+
+#: ../../../../js/upload-selection.js:50 ../../../../js/upload-selection.js:60
+#: ../../../../js/upload-selection.js:68
+msgid "Select"
+msgstr "選択"
+
+#: ../../../../js/upload-selection.js:53 ../../../../js/upload-selection.js:63
+#: ../../../../js/upload-selection.js:71
+msgid "Remote"
+msgstr ""
+
+#: ../../../../js/upload-selection.js:56 ../../../../js/upload-selection.js:66
+#: ../../../../js/upload-selection.js:74
+msgid "Embed"
+msgstr ""
+
+#: ../../../../js/upload-selection.js:59 ../../../../js/upload-selection.js:69
+#: ../../../../js/upload-selection.js:77
+msgid "Oekaki"
+msgstr "お絵描き"
+
+#: ../../../../js/toggle-images.js:41 ../../../../js/toggle-images.js:42
+#: ../../../../js/toggle-images.js:45
+msgid "hidden"
+msgstr ""
+
+#: ../../../../js/toggle-images.js:57 ../../../../js/toggle-images.js:70
+#: ../../../../js/toggle-images.js:58 ../../../../js/toggle-images.js:71
+#: ../../../../js/toggle-images.js:86
+msgid "Show images"
+msgstr "画像を表現する"
+
+#: ../../../../js/toggle-images.js:57 ../../../../js/toggle-images.js:70
+#: ../../../../js/toggle-images.js:58 ../../../../js/toggle-images.js:71
+#: ../../../../js/toggle-images.js:63 ../../../../js/toggle-images.js:86
+msgid "Hide images"
+msgstr "画像を隠す"
+
+#: ../../../../js/quick-post-controls.js:27
+#: ../../../../js/quick-post-controls.js:29
+msgid "Password"
+msgstr "パスワード"
+
+#: ../../../../js/quick-post-controls.js:29
+#: ../../../../js/quick-post-controls.js:31
+msgid "Delete file only"
+msgstr "ファイルだけ消す"
+
+#: ../../../../js/quick-post-controls.js:31
+#: ../../../../js/quick-post-controls.js:33
+msgid "Delete"
+msgstr "削除"
+
+#: ../../../../js/quick-post-controls.js:35
+#: ../../../../js/quick-post-controls.js:37 ../../../../js/mod/ban-list.js:40
+msgid "Reason"
+msgstr "理由"
+
+#: ../../../../js/quick-post-controls.js:37
+#: ../../../../js/quick-post-controls.js:39
+msgid "Report"
+msgstr ""
+
+#: ../../../../js/expand.js:20 ../../../../js/expand.js:22
+msgid "Click reply to view."
+msgstr "全て読むには返信ボタンを押してください。"
+
+#: ../../../../js/expand.js:20 ../../../../js/expand.js:22
+#: ../../../../js/live-index.js:72 ../../../../js/live-index.js:83
+msgid "Click to expand"
+msgstr ""
+
+#: ../../../../js/expand.js:44 ../../../../js/expand.js:46
+#: ../../../../js/expand.js:50
+msgid "Hide expanded replies"
+msgstr ""
+
+#: ../../../../js/oekaki.js:10
+msgid "Brush size"
+msgstr "ブラシ幅"
+
+#: ../../../../js/oekaki.js:10
+msgid "Set text"
+msgstr ""
+
+#: ../../../../js/oekaki.js:10
+msgid "Clear"
+msgstr ""
+
+#: ../../../../js/oekaki.js:10
+msgid "Save"
+msgstr "セーブ "
+
+#: ../../../../js/oekaki.js:10
+msgid "Load"
+msgstr "ロード"
+
+#: ../../../../js/oekaki.js:11
+msgid "Toggle eraser"
+msgstr ""
+
+#: ../../../../js/oekaki.js:11
+msgid "Get color"
+msgstr ""
+
+#: ../../../../js/oekaki.js:11
+msgid "Fill"
+msgstr ""
+
+#: ../../../../js/oekaki.js:12
+msgid "Use oekaki instead of file?"
+msgstr ""
+
+#: ../../../../js/oekaki.js:21
+msgid "Edit in oekaki"
+msgstr ""
+
+#: ../../../../js/oekaki.js:152
+msgid "Enter some text"
+msgstr ""
+
+#: ../../../../js/oekaki.js:153
+msgid "Enter font or leave empty"
+msgstr ""
+
+#: ../../../../js/forced-anon.js:59 ../../../../js/forced-anon.js:65
+#: ../../../../js/forced-anon.js:69 ../../../../js/forced-anon.js:60
+#: ../../../../js/forced-anon.js:66 ../../../../js/forced-anon.js:70
+#: ../../../../js/forced-anon.js:61 ../../../../js/forced-anon.js:67
+#: ../../../../js/forced-anon.js:71 ../../../../js/forced-anon.js:73
+#: ../../../../js/forced-anon.js:81 ../../../../js/forced-anon.js:85
+msgid "Forced anonymity"
+msgstr ""
+
+#: ../../../../js/forced-anon.js:59 ../../../../js/forced-anon.js:65
+#: ../../../../js/forced-anon.js:60 ../../../../js/forced-anon.js:66
+#: ../../../../js/forced-anon.js:61 ../../../../js/forced-anon.js:67
+#: ../../../../js/forced-anon.js:73 ../../../../js/forced-anon.js:81
+msgid "enabled"
+msgstr ""
+
+#: ../../../../js/forced-anon.js:59 ../../../../js/forced-anon.js:69
+#: ../../../../js/forced-anon.js:60 ../../../../js/forced-anon.js:70
+#: ../../../../js/forced-anon.js:61 ../../../../js/forced-anon.js:71
+#: ../../../../js/forced-anon.js:73 ../../../../js/forced-anon.js:85
+msgid "disabled"
+msgstr ""
+
+#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
+#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
+msgid "Sun"
+msgstr "日"
+
+#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
+#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
+msgid "Mon"
+msgstr "月"
+
+#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
+#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
+msgid "Tue"
+msgstr "火"
+
+#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
+#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
+msgid "Wed"
+msgstr "水"
+
+#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
+#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
+msgid "Thu"
+msgstr "木"
+
+#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
+#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
+msgid "Fri"
+msgstr "金"
+
+#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
+#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
+msgid "Sat"
+msgstr "土"
+
+#: ../../../../js/catalog-link.js:21 ../../../../js/catalog-link.js:32
+#: ../../../../js/catalog-link.js:40 ../../../../js/catalog-link.js:33
+#: ../../../../js/catalog-link.js:44 ../../../../js/catalog-link.js:52
+#: ../../../../js/catalog-link.js:28 ../../../../js/catalog-link.js:39
+#: ../../../../js/catalog-link.js:47
+msgid "Catalog"
+msgstr "掲示板一覧"
+
+#: ../../../../js/quick-reply.js:21 ../../../../js/quick-reply-old.js:21
+#: ../../../../js/quick-reply-old.js:23
+msgid "Submit"
+msgstr "書き込む"
+
+#: ../../../../js/quick-reply.js:31 ../../../../js/quick-reply-old.js:31
+#: ../../../../js/quick-reply-old.js:33
+msgid "Quick reply"
+msgstr ""
+
+#: ../../../../js/quick-reply.js:33 ../../../../js/quick-reply-old.js:33
+#: ../../../../js/quick-reply-old.js:35
+#, python-brace-format
+msgid "Posting mode: Replying to <small>&gt;&gt;{0}</small>"
+msgstr ""
+
+#: ../../../../js/quick-reply.js:33 ../../../../js/quick-reply-old.js:33
+#: ../../../../js/quick-reply-old.js:35
+msgid "Return"
+msgstr "  掲示板に戻る"
+
+#: ../../../../js/expand-all-images.js:20
+#: ../../../../js/expand-all-images.js:21
+#: ../../../../js/expand-all-images.js:22
+#: ../../../../js/expand-all-images.js:23
+msgid "Expand all images"
+msgstr ""
+
+#: ../../../../templates/main.js:6
+msgid "Hello!"
+msgstr "こんにちは！"
+
+#: ../../../../templates/main.js:18
+#, python-brace-format
+msgid "{0} users"
+msgstr "{0} ユーザー"
+
+#: ../../../../templates/themes/ukko/ukko.js:28
+#: ../../../../templates/themes/ukko/ukko.js:39
+#: ../../../../templates/themes/ukko/ukko.js:29
+#: ../../../../templates/themes/ukko/ukko.js:40
+#: ../../../../templates/themes/ukko/ukko.js:52
+#: ../../../../templates/themes/ukko/ukko.js:63
+msgid "(hide threads from this board)"
+msgstr "(この板からスレを隠す)"
+
+#: ../../../../templates/themes/ukko/ukko.js:32
+#: ../../../../templates/themes/ukko/ukko.js:44
+#: ../../../../templates/themes/ukko/ukko.js:33
+#: ../../../../templates/themes/ukko/ukko.js:45
+#: ../../../../templates/themes/ukko/ukko.js:56
+#: ../../../../templates/themes/ukko/ukko.js:68
+msgid "(show threads from this board)"
+msgstr "(この板からスレを表現する)"
+
+#: ../../../../templates/themes/ukko/ukko.js:57
+#: ../../../../templates/themes/ukko/ukko.js:58
+#: ../../../../templates/themes/ukko/ukko.js:81
+msgid "No more threads to display"
+msgstr ""
+
+#: ../../../../templates/themes/ukko/ukko.js:79
+#: ../../../../templates/themes/ukko/ukko.js:80
+#: ../../../../templates/themes/ukko/ukko.js:103
+#: ../../../../js/infinite-scroll.js:48
+msgid "Loading..."
+msgstr "読み込み中 …"
+
+#: ../../../../js/download-original.js:32
+#: ../../../../js/download-original.js:33
+msgid "Save as original filename"
+msgstr ""
+
+#: ../../../../js/ajax-post-controls.js:43
+msgid "Reported post(s)."
+msgstr ""
+
+#: ../../../../js/ajax-post-controls.js:53
+msgid "An unknown error occured!"
+msgstr ""
+
+#: ../../../../js/ajax-post-controls.js:60
+msgid "Something went wrong... An unknown error occured!"
+msgstr ""
+
+#: ../../../../js/ajax-post-controls.js:68
+msgid "Working..."
+msgstr ""
+
+#: ../../../../js/ajax.js:42 ../../../../js/ajax.js:45
+msgid "Posting... (#%)"
+msgstr ""
+
+#: ../../../../js/ajax.js:104 ../../../../js/ajax.js:109
+msgid "Posted..."
+msgstr ""
+
+#: ../../../../js/ajax.js:106 ../../../../js/ajax.js:111
+msgid "An unknown error occured when posting!"
+msgstr ""
+
+#: ../../../../js/ajax.js:130 ../../../../js/ajax.js:135
+msgid "Posting..."
+msgstr ""
+
+#: ../../../../js/quick-reply.js:223 ../../../../js/quick-reply.js:224
+#: ../../../../js/quick-reply.js:225
+msgid "Upload URL"
+msgstr ""
+
+#: ../../../../js/quick-reply.js:266 ../../../../js/quick-reply.js:267
+#: ../../../../js/quick-reply.js:268
+msgid "Spoiler Image"
+msgstr ""
+
+#: ../../../../js/quick-reply.js:277 ../../../../js/quick-reply.js:278
+#: ../../../../js/quick-reply.js:279 ../../../../js/quick-reply.js:281
+msgid "Comment"
+msgstr "コメント"
+
+#: ../../../../js/quick-reply.js:285 ../../../../js/quick-reply.js:406
+#: ../../../../js/quick-reply.js:286 ../../../../js/quick-reply.js:407
+#: ../../../../js/quick-reply.js:287 ../../../../js/quick-reply.js:408
+#: ../../../../js/quick-reply.js:289 ../../../../js/quick-reply.js:410
+msgid "Quick Reply"
+msgstr ""
+
+#: ../../../../js/watch.js:249 ../../../../js/watch.js:250
+#: ../../../../js/watch.js:288 ../../../../js/watch.js:289
+#: ../../../../js/watch.js:330 ../../../../js/watch.js:331
+#: ../../../../js/watch.js:361 ../../../../js/watch.js:362
+msgid "Stop watching this thread"
+msgstr ""
+
+#: ../../../../js/watch.js:249 ../../../../js/watch.js:250
+#: ../../../../js/watch.js:288 ../../../../js/watch.js:289
+#: ../../../../js/watch.js:330 ../../../../js/watch.js:331
+#: ../../../../js/watch.js:361 ../../../../js/watch.js:362
+msgid "Watch this thread"
+msgstr "このスレッドを見守る"
+
+#: ../../../../js/watch.js:260 ../../../../js/watch.js:261
+#: ../../../../js/watch.js:269 ../../../../js/watch.js:299
+#: ../../../../js/watch.js:300 ../../../../js/watch.js:308
+#: ../../../../js/watch.js:341 ../../../../js/watch.js:342
+#: ../../../../js/watch.js:350 ../../../../js/watch.js:372
+#: ../../../../js/watch.js:373 ../../../../js/watch.js:381
+msgid "Unpin this board"
+msgstr ""
+
+#: ../../../../js/watch.js:260 ../../../../js/watch.js:261
+#: ../../../../js/watch.js:269 ../../../../js/watch.js:299
+#: ../../../../js/watch.js:300 ../../../../js/watch.js:308
+#: ../../../../js/watch.js:341 ../../../../js/watch.js:342
+#: ../../../../js/watch.js:350 ../../../../js/watch.js:372
+#: ../../../../js/watch.js:373 ../../../../js/watch.js:381
+msgid "Pin this board"
+msgstr ""
+
+#: ../../../../js/watch.js:262 ../../../../js/watch.js:267
+#: ../../../../js/watch.js:268 ../../../../js/watch.js:301
+#: ../../../../js/watch.js:306 ../../../../js/watch.js:307
+#: ../../../../js/watch.js:343 ../../../../js/watch.js:348
+#: ../../../../js/watch.js:349 ../../../../js/watch.js:374
+#: ../../../../js/watch.js:379 ../../../../js/watch.js:380
+msgid "Stop watching this board"
+msgstr ""
+
+#: ../../../../js/watch.js:262 ../../../../js/watch.js:267
+#: ../../../../js/watch.js:268 ../../../../js/watch.js:301
+#: ../../../../js/watch.js:306 ../../../../js/watch.js:307
+#: ../../../../js/watch.js:343 ../../../../js/watch.js:348
+#: ../../../../js/watch.js:349 ../../../../js/watch.js:374
+#: ../../../../js/watch.js:379 ../../../../js/watch.js:380
+msgid "Watch this board"
+msgstr "この板を見守る"
+
+#: ../../../../js/wpaint.js:113
+msgid "Click on any image on this site to load it into oekaki applet"
+msgstr ""
+
+#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
+msgid "Sunday"
+msgstr "日曜日"
+
+#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
+msgid "Monday"
+msgstr "月曜日"
+
+#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
+msgid "Tuesday"
+msgstr "火曜日"
+
+#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
+msgid "Wednesday"
+msgstr "水曜日"
+
+#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
+msgid "Thursday"
+msgstr "木曜日"
+
+#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
+msgid "Friday"
+msgstr "金曜日"
+
+#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
+msgid "Saturday"
+msgstr "土曜日"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "January"
+msgstr "一月"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "February"
+msgstr "二月"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "March"
+msgstr "三月"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "April"
+msgstr "四月"
+
+#: ../../../../js/local-time.js:31 ../../../../js/local-time.js:32
+#: ../../../../templates/main.js:64 ../../../../templates/main.js:65
+msgid "May"
+msgstr "五月"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "June"
+msgstr "六月"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "July"
+msgstr "七月"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "August"
+msgstr "八月"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "September"
+msgstr "九月"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "October"
+msgstr "十月"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "November"
+msgstr "十一月"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "December"
+msgstr "十二月"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Jan"
+msgstr "一月"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Feb"
+msgstr "二月"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Mar"
+msgstr "三月"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Apr"
+msgstr "四月"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Jun"
+msgstr "六月"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Jul"
+msgstr "七月"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Aug"
+msgstr "八月"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Sep"
+msgstr "九月"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Oct"
+msgstr "十月"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Nov"
+msgstr "十一月"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Dec"
+msgstr "十二月"
+
+#: ../../../../js/local-time.js:33 ../../../../templates/main.js:66
+msgid "AM"
+msgstr "午前"
+
+#: ../../../../js/local-time.js:34 ../../../../templates/main.js:67
+msgid "PM"
+msgstr "午後"
+
+#: ../../../../js/local-time.js:35 ../../../../templates/main.js:68
+msgid "am"
+msgstr "午前"
+
+#: ../../../../js/local-time.js:36 ../../../../templates/main.js:69
+msgid "pm"
+msgstr "午後"
+
+#: ../../../../js/expand-video.js:45 ../../../../js/expand-video.js:48
+msgid "Your browser does not support HTML5 video."
+msgstr ""
+
+#: ../../../../js/expand-video.js:189 ../../../../js/expand-video.js:192
+#: ../../../../js/expand-video.js:193
+msgid "[play once]"
+msgstr "[一度再生する]"
+
+#: ../../../../js/expand-video.js:190 ../../../../js/expand-video.js:193
+#: ../../../../js/expand-video.js:194
+msgid "[loop]"
+msgstr "[ループする]"
+
+#: ../../../../js/webm-settings.js:42 ../../../../js/webm-settings.js:45
+msgid "WebM Settings"
+msgstr "WebM 設定"
+
+#: ../../../../js/webm-settings.js:44 ../../../../js/webm-settings.js:54
+msgid "Expand videos inline"
+msgstr ""
+
+#: ../../../../js/webm-settings.js:45 ../../../../js/webm-settings.js:55
+msgid "Play videos on hover"
+msgstr ""
+
+#: ../../../../js/webm-settings.js:46 ../../../../js/webm-settings.js:56
+msgid "Default volume"
+msgstr ""
+
+#: ../../../../js/treeview.js:18
+msgid "Tree view"
+msgstr ""
+
+#: ../../../../js/expand-all-images.js:32
+#: ../../../../js/expand-all-images.js:35
+msgid "Shrink all images"
+msgstr ""
+
+#: ../../../../js/no-animated-gif.js:33 ../../../../js/no-animated-gif.js:37
+#: ../../../../js/no-animated-gif.js:40
+msgid "Animate GIFs"
+msgstr "GIFsを動く"
+
+#: ../../../../js/no-animated-gif.js:42 ../../../../js/no-animated-gif.js:48
+#: ../../../../js/no-animated-gif.js:47 ../../../../js/no-animated-gif.js:57
+#: ../../../../js/no-animated-gif.js:62 ../../../../js/no-animated-gif.js:50
+#: ../../../../js/no-animated-gif.js:60 ../../../../js/no-animated-gif.js:65
+msgid "Unanimate GIFs"
+msgstr "GIFsを動くない"
+
+#: ../../../../js/webm-settings.js:41
+msgid "WebM"
+msgstr "WebM"
+
+#: ../../../../js/live-index.js:25 ../../../../js/live-index.js:84
+msgid "No new posts."
+msgstr "新レスがありません。"
+
+#: ../../../../js/live-index.js:30 ../../../../js/live-index.js:73
+msgid "No new threads."
+msgstr "新スレッドがありません。"
+
+#: ../../../../js/live-index.js:72
+#, python-brace-format
+msgid "There are {0} new threads."
+msgstr "{0}新スレッドがあります。"
+
+#: ../../../../js/live-index.js:83
+#, python-brace-format
+msgid "There are {0} new posts in this thread."
+msgstr "このスレッドに{0} 新レスがあります。"
+
+#: ../../../../js/options.js:106
+msgid "Options"
+msgstr ""
+
+#: ../../../../js/options/general.js:15
+msgid "General"
+msgstr ""
+
+#: ../../../../js/options/general.js:18
+msgid "Storage: "
+msgstr ""
+
+#: ../../../../js/options/general.js:21
+msgid "Export"
+msgstr ""
+
+#: ../../../../js/options/general.js:27
+msgid "Import"
+msgstr ""
+
+#: ../../../../js/options/general.js:28
+msgid "Paste your storage data"
+msgstr ""
+
+#: ../../../../js/options/general.js:40
+msgid "Erase"
+msgstr ""
+
+#: ../../../../js/options/general.js:41
+msgid ""
+"Are you sure you want to erase your storage? This involves your hidden "
+"threads, watched threads, post password and many more."
+msgstr ""
+
+#: ../../../../js/options/user-css.js:14
+msgid "User CSS"
+msgstr ""
+
+#: ../../../../js/options/user-css.js:23
+msgid "Update custom CSS"
+msgstr ""
+
+#: ../../../../js/options/user-css.js:45
+msgid "Enter here your own CSS rules..."
+msgstr ""
+
+#: ../../../../js/options/user-css.js:46
+msgid ""
+"If you want to make a redistributable style, be sure to\n"
+"   have a Yotsuba B theme selected."
+msgstr ""
+
+#: ../../../../js/options/user-css.js:47
+msgid "You can include CSS files from remote servers, for example:"
+msgstr ""
+
+#: ../../../../js/options/user-js.js:14
+msgid "User JS"
+msgstr ""
+
+#: ../../../../js/options/user-js.js:23
+msgid "Update custom Javascript"
+msgstr ""
+
+#: ../../../../js/options/user-js.js:54
+msgid "Enter here your own Javascript code..."
+msgstr ""
+
+#: ../../../../js/options/user-js.js:55
+msgid ""
+"Have a backup of your storage somewhere, as messing here\n"
+"   may render you this website unusable."
+msgstr ""
+
+#: ../../../../js/options/user-js.js:56
+msgid "You can include JS files from remote servers, for example:"
+msgstr ""
+
+#: ../../../../js/id_colors.js:6 ../../../../js/id_colors.js:12
+msgid "Color IDs"
+msgstr ""
+
+#: ../../../../js/auto-reload.js:33
+msgid "Update"
+msgstr ""
+
+#: ../../../../js/mod/ban-list.js:29
+msgid "IP address"
+msgstr ""
+
+#: ../../../../js/mod/ban-list.js:42
+msgid "Seen"
+msgstr ""
+
+#: ../../../../js/mod/ban-list.js:44
+msgid "Message for which user was banned is included"
+msgstr ""
+
+#: ../../../../js/mod/ban-list.js:45
+msgid "Message:"
+msgstr ""
+
+#: ../../../../js/mod/ban-list.js:53
+msgid "Board"
+msgstr ""
+
+#: ../../../../js/mod/ban-list.js:55
+msgid "all"
+msgstr ""
+
+#: ../../../../js/mod/ban-list.js:57
+msgid "Set"
+msgstr ""
+
+#: ../../../../js/mod/ban-list.js:58
+msgid " ago"
+msgstr ""
+
+#: ../../../../js/mod/ban-list.js:61
+msgid "Expires"
+msgstr ""
+
+#: ../../../../js/mod/ban-list.js:62
+msgid "never"
+msgstr ""
+
+#: ../../../../js/mod/ban-list.js:64
+msgid "in "
+msgstr ""
+
+#: ../../../../js/mod/ban-list.js:66
+msgid "Staff"
+msgstr ""
+
+#: ../../../../js/mod/ban-list.js:73
+msgid "system"
+msgstr ""
+
+#: ../../../../js/auto-reload.js:33
+msgid "Auto"
+msgstr ""
+
+#: ../../../../js/auto-reload.js:141
+msgid "Updating..."
+msgstr ""
+
+#: ../../../../js/auto-reload.js:183
+#, python-brace-format
+msgid "Thread updated with {0} new post(s)"
+msgstr ""
+
+#: ../../../../js/auto-reload.js:185
+msgid "No new posts found"
+msgstr ""
+
+#: ../../../../js/auto-reload.js:191
+msgid "Thread deleted or pruned"
+msgstr ""
+
+#: ../../../../js/auto-reload.js:199
+msgid "Error: "
+msgstr ""
+
+#: ../../../../js/auto-reload.js:201
+msgid "Unknown error"
+msgstr ""
+
+#: ../../../../js/infinite-scroll.js:47
+msgid "Page"
+msgstr ""
+
+#: ../../../../js/infinite-scroll.js:82
+msgid "All"
+msgstr ""
+
+#: ../../../../templates/main.js:29 ../../../../templates/main.js:47
+msgid "second(s)"
+msgstr ""
+
+#: ../../../../templates/main.js:31 ../../../../templates/main.js:49
+msgid "minute(s)"
+msgstr ""
+
+#: ../../../../templates/main.js:33 ../../../../templates/main.js:51
+msgid "hour(s)"
+msgstr ""
+
+#: ../../../../templates/main.js:35 ../../../../templates/main.js:53
+msgid "day(s)"
+msgstr ""
+
+#: ../../../../templates/main.js:37 ../../../../templates/main.js:55
+msgid "week(s)"
+msgstr ""
+
+#: ../../../../templates/main.js:39 ../../../../templates/main.js:57
+msgid "year(s)"
+msgstr ""

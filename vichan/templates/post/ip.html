@@ -1,0 +1,3 @@
+{% if post.mod and post.mod|hasPermission(config.mod.show_ip, board.uri) %}  
+	 [<a class="ip-link" style="margin:0;" href="?/IP/{{ post.ip|cloak_ip }}">{{ post.ip|cloak_ip }}</a>]
+{% endif %}

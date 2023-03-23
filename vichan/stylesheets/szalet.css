@@ -1,0 +1,203 @@
+/* szalet 1.2 */
+
+body {
+	font-family: sans-serif;
+	font-size: 12px;
+	color: #99938D;
+	
+	background-color: #1e1e1e;
+	background-image: url('img/szalet_bg.png');
+	background-repeat:  repeat;
+}
+
+.desktop-style .bl-menu{
+background-image: url('img/szalet_bg.png');
+background-repeat:  repeat;
+/*background-color: #200000;*/
+} 
+
+.boardlist .board a {
+background-color: #200000;
+}
+
+.intro span.capcode, p.intro a.capcode, p.intro a.nametag {
+color: #26899C;
+}
+
+ div.pages a.selected {
+color: #FFFCFC !important;}
+
+ 
+a:link, a:visited, div.post.reply p.body a {
+        color: #7A422C!important;
+        text-decoration: none;
+}
+a:link:hover, a:visited:hover, div.post.reply p.body a:hover {
+        color: #8A8A23!important;
+}
+ 
+a.email span.name {
+        color: #4B4B4B  !important;
+ 
+}
+ 
+input {
+        color: #8A7656;
+        background: none !important;
+}
+textarea {
+        background: #dedede url('img/testorange_textarea_bg.gif') repeat-x;
+}
+input, textarea {
+background:  #200000;
+color: #99938D;
+}
+ 
+hr {
+        height: 3px;
+border-width: 0px;
+background: url('img/szalet_hr.png') center no-repeat;
+background-size: 100% 100%;
+        overflow: hidden;
+}
+ 
+.reflink a:hover{
+        font-weight: bold;
+}
+.adminbar {
+        text-align:right;
+        clear:both;
+        float:right;
+}
+h1 {
+        clear:both;
+        text-align:center;
+        font-size: 2.5em;
+        color: #583E28;
+        width:100%;
+}
+div.title {
+        color: #AF8C5D;
+}
+div.banner, .replymode, .catalogmode {
+        text-align:center;
+        margin: 5px 0 5px 0;
+        padding: 5px 2px 5px 2px;
+        color: #583E28;
+        font-weight: bold;
+        width:100%;
+}
+.postblock, form table th {
+        color: #583E28;
+        font-size: 11px;
+        font-weight: bold;
+        text-align: center !important;
+}
+ 
+.postarea {
+}
+.rules {
+        width: 468px;
+        font-size: 10px;
+}
+.rules li {
+        margin-left: 1em;
+}
+.footer {
+        text-align:center;
+        font-size:12px;
+}
+.passvalid {
+        text-align:center;
+        width:100%;
+        color:#ffffff;
+}
+.dellist {
+        font-weight: bold;
+        text-align:center;
+}
+.delbuttons {
+        text-align:center;
+        padding-bottom:4px;
+ 
+}
+.managehead {
+        background-color: #1e1e1e;
+        color: #bebebe;
+        padding:0px;
+}
+.postlists {
+        background: #000;
+        width:100%;
+        padding:0px;
+        color: #bebebe;
+}
+.row1 {
+        background-color: #1e1e1e;
+        color: #bebebe;
+}
+.row2 {
+        background: #1e1e1e;
+        color: #bebebe;
+}
+.unkfunc {
+        background:inherit;
+        color:#789922;
+}
+.filesize {
+        text-decoration:none;
+}
+.filetitle {
+        background:inherit;
+        font-size:1.2em;
+        color: #bebebe;
+        font-weight:800;
+}
+ 
+.intro span.subject {
+color: #771018;
+font-weight: bold;
+}
+ 
+ 
+span.name, .postername {
+        color: #8A775B !important;
+        font-weight:bold;
+}
+span.trip, .postertrip {
+        color: #B88146;
+}
+.oldpost {
+        color:#CC1105;
+        font-weight:800;
+}
+span.omitted, .omittedposts {
+        color: #A39E96;
+}
+div.post.reply {
+        padding: 5px;
+        border: 1px #583E28 solid !important;
+        background: #200000;
+       
+        -webkit-border-radius: 10px;
+        -khtml-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+}
+div.post.reply.highlighted {
+background: #583E28;
+}
+
+.replyhl {
+        background-color: #1e1e1e;
+        color: #bebebe;
+}
+form table th, div.banner, div.pages, .replymode, .postblock, .passvalid, .catalogmode {
+        background: #200000!important;
+        border: 1px solid #583E28;
+}
+div.pages {
+        color: rgb(143, 139, 139);
+        border: 0;
+        background: none !important;
+}

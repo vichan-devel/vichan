@@ -1,0 +1,98 @@
+<form action="?step=3" method="post" autocomplete="off">
+	<fieldset>
+	<legend>Database (MySQL)</legend>
+		<label for="db_server">Server:</label> 
+		<input type="text" id="db_server" name="db[server]" value="{{ config.db.server }}">
+
+		<label for="db_db">Database:</label> 
+		<input type="text" id="db_db" name="db[database]" value="{{ config.db.database }}">
+
+		<label for="db_prefix">Table prefix (optional):</label> 
+		<input type="text" id="db_prefix" name="db[prefix]" value="{{ config.db.prefix }}">
+
+		<label for="db_user">Username:</label> 
+		<input type="text" id="db_user" name="db[user]" value="{{ config.db.user }}">
+
+		<label for="db_pass">Password:</label> 
+		<input type="password" id="db_pass" name="db[password]" value="">
+	</fieldset>
+	<p style="text-align:center" class="unimportant">The following is all later configurable. For more options, <a href="http://tinyboard.org/docs/?p=Config">edit your configuration files</a> after installing.</p>
+	<fieldset>
+	<legend>Cookies</legend>
+		<label for="cookies_mod">Moderator cookie:</label> 
+		<input type="text" id="cookies_mod" name="cookies[mod]" value="{{ config.cookies.mod }}">
+
+		<label for="cookies_salt">Secure salt:</label> 
+		<input type="text" id="cookies_salt" name="cookies[salt]" value="{{ config.cookies.salt }}" size="40">
+	</fieldset>
+
+	<fieldset>
+	<legend>Flood control</legend>
+		<label for="flood_time">Seconds before each post:</label> 
+		<input type="text" id="flood_time" name="flood_time" value="{{ config.flood_time }}">
+
+		<label for="flood_time_ip">Seconds before you can repost something (post the exact same text):</label> 
+		<input type="text" id="flood_time_ip" name="flood_time_ip" value="{{ config.flood_time_ip }}">
+
+		<label for="flood_time_same">Same as above, but with a different IP address:</label> 
+		<input type="text" id="flood_time_same" name="flood_time_same" value="{{ config.flood_time_same }}">
+
+		<label for="max_body">Maximum post body length:</label> 
+		<input type="text" id="max_body" name="max_body" value="{{ config.max_body }}">
+
+		<label for="reply_limit">Replies in a thread before it can no longer be bumped:</label> 
+		<input type="text" id="reply_limit" name="reply_limit" value="{{ config.reply_limit }}">
+
+		<label for="max_links">Maximum number of links in a single post:</label> 
+		<input type="text" id="max_links" name="max_links" value="{{ config.max_links }}">			
+	</fieldset>
+
+	<fieldset>
+	<legend>Images</legend>
+		<label for="max_filesize">Maximum image filesize (bytes):</label> 
+		<input type="text" id="max_filesize" name="max_filesize" value="{{ config.max_filesize }}">
+
+		<label for="thumb_width">Thumbnail width:</label> 
+		<input type="text" id="thumb_width" name="thumb_width" value="{{ config.thumb_width }}">
+
+		<label for="thumb_height">Thumbnail height:</label> 
+		<input type="text" id="thumb_height" name="thumb_height" value="{{ config.thumb_height }}">
+
+		<label for="max_width">Maximum image width:</label> 
+		<input type="text" id="max_width" name="max_width" value="{{ config.max_width }}">
+
+		<label for="max_height">Maximum image height:</label> 
+		<input type="text" id="max_height" name="max_height" value="{{ config.max_height }}">
+	</fieldset>
+
+	<fieldset>
+	<legend>Display</legend>
+		<label for="threads_per_page">Threads per page:</label> 
+		<input type="text" id="threads_per_page" name="threads_per_page" value="{{ config.threads_per_page }}">
+
+		<label for="max_pages">Page limit:</label> 
+		<input type="text" id="max_pages" name="max_pages" value="{{ config.max_pages }}">
+
+		<label for="threads_preview">Number of replies to show per thread on the index page:</label> 
+		<input type="text" id="threads_preview" name="threads_preview" value="{{ config.threads_preview }}">
+	</fieldset>
+
+	<fieldset>
+	<legend>Directories</legend>
+		<label for="root">Root URI (include trailing slash):</label> 
+		<input type="text" id="root" name="root" value="{{ config.root }}" size="40">
+	</fieldset>
+
+	<fieldset>
+	<legend>Miscellaneous</legend>
+		<label for="secure_trip_salt">Secure trip (##) salt:</label> 
+		<input type="text" id="secure_trip_salt" name="secure_trip_salt" value="{{ config.secure_trip_salt }}" size="40">
+
+		<label for="more">Additional configuration:</label>
+		<textarea id="more" name="more">{{ more }}</textarea>
+	</fieldset>
+
+	<p style="text-align:center">
+		<input type="submit" value="Complete installation">
+	</p>
+</form>

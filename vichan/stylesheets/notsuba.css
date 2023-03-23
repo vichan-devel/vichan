@@ -1,0 +1,88 @@
+/**
+* notsuba.css
+* Tagechan is the best
+* you are forbidden by law from making any unauthorized edits to this file. I-I'll sue! ;_;
+*/
+body {
+background: #f2edd0
+}
+
+a:link, a:visited {
+text-decoration: none;
+color: #608673;
+}
+
+a:link:hover, a:visited:hover {
+color: #DD0000;
+}
+
+a.post_no {
+color: #000033;
+}
+
+.intro a.email span.name {
+color: #608673;
+}
+
+.intro a.email:hover span.name {
+color: #DD0000;
+}
+
+h2, div.title, h1 {
+color: #800000;
+}
+
+form table tr th {
+background: #ded8b7;
+}
+
+div.banner {
+background-color: #E04000;
+}
+
+div.post.op hr {
+border-color: #608673;
+}
+
+.intro span.subject {
+color: #8a2e2e;
+font-weight: 800;
+}
+
+.intro span.name {
+color: #117743;
+font-weight: 800;
+}
+
+div.post.reply.highlighted {
+background: #dcae9b;
+}
+
+div.post.reply {
+background: #e9d1be;
+border-color: #dcae9b;
+}
+
+div.ban {
+border: 1px solid #B0C2B9;
+}
+
+div.ban h2 {
+background: #e9d1be;
+color: #608673;
+}
+
+div.pages {
+color: #8899AA;
+background: #e9d1be;
+border-right: 1px solid #8FCCCD;
+border-bottom: 1px solid #8FCCCD;
+}
+
+hr {
+border-color: #B0C2B9;
+}
+
+div.boardlist {
+color: #608673;
+}

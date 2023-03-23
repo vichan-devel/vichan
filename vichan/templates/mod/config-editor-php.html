@@ -1,0 +1,64 @@
+<div style="max-width:800px;margin:auto">
+	<p>
+		Any changes you make here will simply be appended to <code>{{ file }}</code>. If you wish to make the most of Tinyboard's customizability, you can instead edit the file directly. This page is intended for making quick changes and for those who don't have a basic understanding of PHP code.
+	</p>
+	{% if boards|count %}
+		<ul>
+			{% if board %}
+				<li><a href="?/config">Edit site-wide config</a></li>
+			{% endif %}
+			{% for _board in boards if _board.uri != board %}
+				<li>
+					<a href="?/config/{{ _board.uri }}">Edit config for {{ config.board_abbreviation|sprintf(_board.uri) }}</a>
+				</li>
+			{% endfor %}
+		</ul>
+	{% endif %}
+	
+	{% if readonly %}
+		<p>Tinyboard does not have the required permissions to edit <code>{{ file }}</code>. To make changes, you will need to change the file's permissions first or manually edit the code.</p>
+	{% endif %}
+	
+	
+	{% if not readonly %}<form method="post" action="">{% endif %}
+		<input type="hidden" name="token" value="{{ token }}">
+		<textarea name="code" id="code" style="margin:auto;width:100%;height:500px{% if readonly %};background:#eee" readonly{% else %}"{% endif %}>
+		{{ php }}
+		</textarea>
+		
+		<ul style="padding:0;text-align:center;list-style:none">
+			<li><input name="save" type="submit" value="{% trans 'Save changes' %}"{% if readonly %} disabled{% endif %}></li>
+		</ul>
+	{% if not readonly %}</form>{% endif %}
+</div>
+
+<script type="text/javascript">
+var observe;
+if (window.attachEvent) {
+	observe = function (element, event, handler) {
+		element.attachEvent('on'+event, handler);
+	};
+}
+else {
+	observe = function (element, event, handler) {
+		element.addEventListener(event, handler, false);
+	};
+}
+
+var text = document.getElementById('code');
+function resize () {
+	text.style.height = 'auto';
+	text.style.height = text.scrollHeight+'px';
+}
+/* 0-timeout to get the already changed text */
+function delayedResize () {
+	window.setTimeout(resize, 0);
+}
+observe(text, 'change',  resize);
+observe(text, 'cut',     delayedResize);
+observe(text, 'paste',   delayedResize);
+observe(text, 'drop',    delayedResize);
+observe(text, 'keydown', delayedResize);
+
+resize();
+</script>

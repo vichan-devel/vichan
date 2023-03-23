@@ -1,0 +1,26 @@
+<div class="report">
+	<hr>
+	{% trans 'Board' %}: <a href="?/{{ report.board }}/{{ config.file_index }}">{{ config.board_abbreviation|sprintf(report.board) }}</a>
+	<br>
+	{% trans 'Reason' %}: {{ report.reason }}
+	<br>
+	{% trans 'Report date' %}: {{ report.time|date(config.post_date) }}
+	<br>
+	{% if mod|hasPermission(config.mod.show_ip, report.board) %}
+		{% trans 'Reported by' %}: <a href="?/IP/{{ report.ip|cloak_ip }}">{{ report.ip|cloak_ip }}</a>
+		<br>
+	{% endif %}
+	{% if mod|hasPermission(config.mod.report_dismiss, report.board) or mod|hasPermission(config.mod.report_dismiss_ip, report.board) %}
+		<hr>
+		{% if mod|hasPermission(config.mod.report_dismiss, report.board) %}
+			<a title="{% trans 'Discard abuse report' %}" href="?/reports/{{ report.id }}/dismiss/{{ token }}">Dismiss</a>
+		{% endif %}
+		{% if mod|hasPermission(config.mod.report_dismiss_ip, report.board) %}
+			{% if mod|hasPermission(config.mod.report_dismiss, report.board) %}
+			 | 
+			{% endif %}
+			<a title="{% trans 'Discard all abuse reports by this IP address' %}" href="?/reports/{{ report.id }}/dismissall/{{ token_all }}">Dismiss+</a>
+		{% endif %}
+	{% endif %}
+</div>
+

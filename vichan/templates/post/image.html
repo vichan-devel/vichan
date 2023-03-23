@@ -1,0 +1,45 @@
+<a href="
+	{% if post.file|extension == 'webm' or post.file|extension == 'mp4' %}
+		{{ config.root }}player.php?v={{ config.uri_img }}{{ post.file }}&amp;t={{ post.filename|e('url') }}&amp;loop=1
+	{% else %}
+		{{ config.uri_img }}{{ post.file }}
+	{% endif %}
+	"
+	 target="_blank"
+	{% if post.thumb == 'file' or post.modifiers['is_file'] == '1' or post.filename|extension == 'webm' or post.file|extension == 'mp4' %}
+		 class="file"
+	{% endif %}
+>
+	{% if post.thumb|extension == 'webm' or post.thumb|extension == 'mp4' %}
+		<video autoplay class="post-image" src="{{ config.uri_thumb }}{{ post.thumb }}"
+			 poster="
+				{{ config.root }}
+				{% if config.file_icons[post.filename|extension] %}
+					{{ config.file_thumb|sprintf(config.file_icons[post.filename|extension]) }}
+				{% else %}
+					{{ config.file_thumb|sprintf(config.file_icons.default) }}
+				{% endif %}
+			"
+			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px"
+		>
+		</video>
+	{% else %}
+		<img class="post-image" 
+			src="
+				{% if post.thumb == 'file' %}
+					{{ config.root }}
+					{% if config.file_icons[post.filename|extension] %}
+						{{ config.file_thumb|sprintf(config.file_icons[post.filename|extension]) }}
+					{% else %}
+						{{ config.file_thumb|sprintf(config.file_icons.default) }}
+					{% endif %}
+				{% elseif post.thumb == 'spoiler' %}
+					{{ config.root }}{{ config.spoiler_image }}
+				{% else %}
+					{{ config.uri_thumb }}{{ post.thumb }}
+				{% endif %}
+			"
+			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px" alt="" 
+		/>
+	{% endif %}
+</a>

@@ -1,0 +1,9 @@
+{% if message %}
+	<div style="border:1px dashed maroon;padding:20px;margin:auto;max-width:800px">{{ message }}</div>
+{% endif %}
+
+{% if result %}
+	<p style="text-align:center">{% trans 'Successfully installed and built theme.' %}</p>
+{% endif %}
+
+<p style="text-align:center"><a href="?/themes">{% trans 'Go back to themes' %}</a>.</p>

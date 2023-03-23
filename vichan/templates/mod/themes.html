@@ -1,0 +1,40 @@
+{% if themes|count == 0 %}
+	<p style="text-align:center" class="unimportant">({% trans 'There are no themes available.' %})</p>
+{% else %}
+	<table class="modlog">
+		{% for theme_name, theme in themes %}
+			<tr>
+				<th class="minimal">{% trans 'Name' %}</th>
+					<td>{{ theme.name }}</td>
+				</tr>
+				<tr>
+					<th class="minimal">{% trans 'Version' %}</th>
+					<td>{{ theme.version }}</td>
+				</tr>
+				<tr>
+					<th class="minimal">{% trans 'Description' %}</th>
+					<td>{{ theme.description }}</td>
+				</tr>
+				<tr>
+					<th class="minimal">{% trans 'Thumbnail' %}</th>
+					<td>
+						<img style="float:none;margin:4px{% if theme_name in themes_in_use %};border:2px solid red;padding:4px{% endif %}" src="{{ config.dir.themes_uri }}/{{ theme_name }}/thumb.png" />
+					</td>
+				</tr>
+				<tr>
+					<th class="minimal">{% trans 'Actions' %}</th>
+					<td><ul style="padding:0 20px">
+						<li><a title=" {% trans 'Use theme' %}" href="?/themes/{{ theme_name }}">
+							{% if theme_name in themes_in_use %}{% trans 'Reconfigure' %}{% else %}{% trans 'Install' %}{% endif %}
+						</a></li>
+						{% if theme_name in themes_in_use %}
+							<li><a href="?/themes/{{ theme_name }}/rebuild/{{ theme.rebuild_token }}">{% trans 'Rebuild' %}</a></li>
+							<li><a href="?/themes/{{ theme_name }}/uninstall/{{ theme.uninstall_token }}" onclick="return confirm('Are you sure you want to uninstall this theme?');">{% trans 'Uninstall' %}</a></li>
+						{% endif %}
+					</ul></td>
+				</tr>
+				<tr style="height:40px"><td colspan="2"><hr/></td></tr>
+			</tr>
+		{% endfor %}
+	</table>
+{% endif %}

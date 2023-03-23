@@ -1,0 +1,42 @@
+{% filter remove_whitespace %}
+{# tabs and new lines will be ignored #}
+
+{# we are intentionally breaking the thread_ID convention: the jses need to handle this case differently #}
+<tr id="filethread_{{ post.id }}" class="intro" data-board="{{ board.uri }}">
+
+<td><input type="checkbox" class="delete" name="delete_{{ post.id }}" id="delete_{{ post.id }}" />
+<td><a class="post_no" onclick="citeReply({{ post.id }})" href="{{ post.link('q') }}">{{ post.id }}</a>
+<td>{% include 'post/name.html' %}
+    {% include 'post/flag.html' %}
+<td>[<a href="{{ config.uri_img }}{{ post.files[0].file }}">{{ post.files[0].filename|e|bidi_cleanup }}</a>]
+<td>{% if post.modifiers['tag'] %}[{{ post.modifiers['tag']|e }}]{% endif %}
+<td>{% include 'post/subject.html' %}
+	{% if post.sticky %}
+		{% if config.font_awesome %}
+			<i class="fa fa-thumb-tack"></i>
+		{% else %}
+			<img class="icon" title="Sticky" src="{{ config.image_sticky }}" alt="Sticky" />
+		{% endif %}
+	{% endif %}
+	{% if post.locked %}
+		{% if config.font_awesome %}
+			<i class="fa fa-lock"></i>
+		{% else %}
+			<img class="icon" title="Locked" src="{{ config.image_locked }}" alt="Locked" />
+		{% endif %}
+	{% endif %}
+	{% if post.bumplocked and (config.mod.view_bumplock < 0 or (post.mod and post.mod|hasPermission(config.mod.view_bumplock, board.uri))) %}
+		{% if config.font_awesome %}
+			<i class="fa fa-anchor"></i>
+		{% else %}
+			<img class="icon" title="Bumplocked" src="{{ config.image_bumplocked }}" alt="Bumplocked" />
+		{% endif %}
+	{% endif %}
+<td>{{ post.files[0].size|filesize }}
+<td>{% include 'post/time.html' %}
+<td>{{ post.omitted }}
+<td>{% include 'post/post_controls.html' %}
+    <a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post) }}">[{% trans %}Reply{% endtrans %}]</a>
+
+</tr>
+{% endfilter %}

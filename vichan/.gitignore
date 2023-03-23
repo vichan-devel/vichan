@@ -1,0 +1,48 @@
+# static html and json
+/*/*.html
+/*/*.json
+/*/res
+/*/src
+/*/thumb
+/*/config.php
+/*.html
+
+# include some files though
+!/templates/*.html
+!/inc/config.php
+
+# instance-config
+/inc/secrets.php
+
+# .installed
+/.installed
+
+# script file
+/main.js
+
+# templates cache
+/templates/cache
+
+# other stuff
+.DS_Store
+.htaccess
+thumbs.db
+Icon?
+Thumbs.db
+*.patch
+*.diff
+*.rej
+*.orig
+*~
+
+# tmp filesystem
+/tmp/cache/*
+/tmp/locks/*
+!/tmp/cache/.gitkeep
+!/tmp/locks/.gitkeep
+
+#vichan custom
+favicon.ico
+/static/spoiler.png
+
+/vendor/

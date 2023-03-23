@@ -1,0 +1,63 @@
+<table class="modlog">
+	<tr>
+		<th>{% trans 'Staff' %}</th>
+		<th>{% trans 'IP address' %}</th>
+		<th>{% trans 'Time' %}</th>
+		<th>{% trans 'Board' %}</th>
+		<th>{% trans 'Action' %}</th>
+	</tr>
+	{% for log in logs %}
+		<tr>
+			<td class="minimal">
+				{% if log.username %}
+					{% if hide_names %}
+						<em>hidden</em>
+					{% else %}
+						{% if not mod|hasPermission(config.mod.modlog) %}
+							<a href="?/new_PM/{{ log.username|e }}">{{ log.username|e }}</a>
+						{% else %}
+							<a href="?/log:{{ log.username|e }}">{{ log.username|e }}</a>
+						{% endif %}
+					{% endif %}
+				{% elseif log.mod == -1 %}
+					<em>system</em>
+				{% else %}
+					<em>{% trans 'deleted?' %}</em>
+				{% endif %}
+			</td>
+			<td class="minimal">
+				{% if mod|hasPermission(config.mod.show_ip_modlog) %}
+					<a href="?/IP/{{ log.ip|cloak_ip }}">{{ log.ip|cloak_ip }}</a>
+				{% else %}
+					<em>hidden</em>
+				{% endif %}
+			</td>
+			<td class="minimal">
+				<span title="{{ log.time|date(config.post_date) }}">{{ log.time|ago }}</span>
+			</td>
+			<td class="minimal">
+				{% if log.board %}
+					<a href="?/{{ config.board_path|sprintf(log.board) }}{{ config.file_index }}">{{ config.board_abbreviation|sprintf(log.board) }}</a>
+				{% else %}
+					-
+				{% endif %}
+			</td>
+			<td>
+				{{ log.text }}
+			</td>
+		</tr>
+	{% endfor %}
+</table>
+
+{% if count > logs|count %}
+	<p class="unimportant" style="text-align:center;word-wrap:break-word">
+		{% for i in range(0, (count - 1) / config.mod.modlog_page) %}
+			{% if public %}
+				<a href="?page={{ i + 1 }}&amp;board={{ board|url_encode }}">[{{ i + 1 }}]</a> 
+			{% else %}
+				<a href="?/log{% if username %}:{{ username }}{% elseif board %}:b:{{ board }}{% endif %}/{{ i + 1 }}">[{{ i + 1 }}]</a> 
+			{% endif %}
+		{% endfor %}
+	</p>
+{% endif %}
+

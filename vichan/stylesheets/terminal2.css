@@ -1,0 +1,170 @@
+body {
+	background: #000000;
+	color: #00FF00;
+	font-family: sans-serif;
+	font-size: 12px;
+}
+h1 {
+	font-size: 20pt;
+	text-align: center;
+	letter-spacing: 0px;
+}
+div.title, h1 {
+	color: lime;
+	font-family: sans-serif;
+}
+div.title p {
+	font-size: 10px;
+}
+a:link, a:visited, .intro a.email span.name {
+	color: #00FF00;
+	text-decoration: underline;
+	font-family: sans-serif;
+}
+a:link:hover, a:visited:hover {
+	color: #00FF00;
+	font-family: sans-serif;
+	text-decoration: underline overline;
+}
+a.post_no {
+	color: #00FF00;
+	text-decoration: none;
+}
+a.post_no:hover {
+	color: #00FF00;
+	text-decoration: underline overline;
+}
+div.post.reply {
+	background: #000000;
+	border: 1px dashed;
+	border-color:#00FF00;
+}
+div.post.reply.highlighted {
+	background: transparent;
+	border: transparent 1px dashed;
+	border-color:#00FF00;
+}
+div.post.reply div.body a:link, div.post.reply div.body a:visited {
+	color: #00FF00;
+}
+div.post.reply div.body a:link:hover, div.post.reply div.body a:visited:hover {
+	color: #00FF00;
+}
+.intro span.subject {
+	font-size: 12px;
+	font-family: sans-serif;
+	color: #446655;
+	font-weight: 800;
+}
+.intro span.name {
+	color: #00FF00;
+	font-weight: 800;
+}
+.intro a.capcode, p.intro a.nametag {
+	color: #00FF00;
+	margin-left: 0;
+}
+.intro a.email, p.intro a.email span.name, p.intro a.email:hover, p.intro a.email:hover span.name {
+	color: #00FF00;
+}
+input[type="text"], textarea, select {
+	background: #000000;
+	color: #00FF00;
+	border: 1px dashed;
+	border-color:#00FF00;
+	padding-left: 5px;
+	padding-right: -5px;
+	font-family: sans-serif;
+	font-size: 10pt;
+}
+input[type="password"] {
+	background: #000000;
+	color: #00FF00;
+	border: 1px dashed;
+	border-color:#00FF00;
+}
+
+form table tr th {
+	background: #000000;
+	color: #00FF00;
+	font-weight: 800;
+	text-align: left;
+	padding: 0;
+	border: #00FF00 1px dashed;
+	border-color:#00FF00;
+}
+div.banner {
+	background: #00AA00;
+	color: #FFFFFF;
+	text-align: center;
+	width: 250px;
+	padding: 4px;
+	padding-left: 12px;
+	padding-right: 12px;
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 12px;
+}
+input[type="submit"] {
+	background: #000000;
+	border: 1px dashed;
+	border-color:#00FF00;
+	color: #00FF00;
+}
+input[type="submit"]:hover {
+	background: #000000;
+	border: 1px dashed;
+	border-color:#00FF00;
+	color: #00FF00;
+}
+p.fileinfo a:hover {
+	text-decoration: underline;
+}
+span.trip {
+	color: #00FF00;
+}
+div.pages {
+	color: #00FF00;
+	background: #000000;
+	border: 1px dashed;
+	border-color:#00FF00;
+	font-family: sans-serif;
+	font-size: 10pt;
+}
+div.pages a.selected {
+	color: #00FF00;
+}
+hr {
+	height: 1px;
+	border: 1px dashed;
+	border-color:#00FF00;
+}
+div.boardlist {
+	color: #00FF00;
+}
+div.ban {
+	border: transparent 0px dashed;
+	border-color:#00FF00;
+}
+div.ban h2 {
+	background: transparent;
+	color: lime;
+	font-size: 12px;
+}
+table.modlog tr th {
+	background: #000000;
+	color: #00FF00;
+}
+
+.desktop-style div.boardlist:nth-child(1) {
+  background-color: black;
+  border-bottom: #00FF00 1px dashed;
+}
+.desktop-style div.boardlist:nth-child(1):hover, .desktop-style div.boardlist:nth-child(1).cb-menu {
+  background-color: black;
+}
+
+.desktop-style .sub {
+  background: none;
+}
+

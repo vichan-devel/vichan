@@ -1,0 +1,6 @@
+{% if config.attention_bar %}
+<div id="attention_bar"></div>
+<form method="post" action="{{ config.root }}attentionbar.php" id="attention_bar_form">
+  <input id="attention_bar_input" name="text" value="" type="text">
+</form>
+{% endif %}

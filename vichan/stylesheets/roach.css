@@ -1,0 +1,262 @@
+html, body {
+	background:#FFFEED !important;
+      background-image: url('img/bghead.png'), url('img/roachtlo.png') !important;
+      background-repeat: repeat-x, no-repeat !important;
+      background-attachment: fixed, fixed !important;
+	  background-position:top, right bottom !important;
+	color:#835B36 !important;
+      font-family: sans-serif !important;
+      font-size: 90% !important;
+}
+a {
+	color:#888 !important;
+	text-decoration: none !important;
+}
+a:hover {
+	color:#000 !important;
+}
+.reflink a:hover{
+	font-weight: bold !important;
+}
+input, textarea {
+background-color: #fff !important;
+color: #000 !important;
+border: 1px solid #CCC !important;
+}
+input:focus, textarea:focus
+{
+background-color: #fff !important;
+}
+.adminbar {
+	text-align:right !important;
+	clear:both !important;
+	float:right !important;
+	font-size: 13px !important;
+}
+.navbar {
+	font-size: 13px !important;
+}
+header {
+	clear:both !important;
+	text-align:center !important;
+	font-size:1.7em !important;
+	color:#455736 !important;
+	width:100% !important;
+}
+header div.subtitle, h1 {
+	color:#455736 !important;
+}
+div.banner {
+	background:#F3DBA7 !important;
+	text-align:center !important;
+	padding:2px !important;
+	color:#835B36 !important;
+	width:100% !important;
+	margin: 0 !important;
+	font-weight: normal !important;
+	font-size: 90% !important;
+}
+.catalogmode {
+	background:#0040E0 !important;
+	text-align:center !important;
+	padding:2px !important;
+	color:#FFFFFF !important;
+	width:100% !important;
+}
+.postarea {
+        background:inherit !important;
+}
+.rules {
+	/*font-size:0.7em !important;*/
+	width: 468px !important;
+	font-size: 10px !important;
+	font-family: sans-serif !important;
+}
+.rules li {
+	margin-left: 1em !important;
+	/*text-indent: 0em !important;*/
+}
+form table tr th, form table th, .postblock {
+	background:#CDC8A3 !important;
+	color:#455736 !important;
+	font-weight:800 !important;
+	text-align: left !important;
+	padding-left: 3px !important;
+	padding-right: 3px !important;
+	border: none !important;
+}
+.footer {
+	text-align:center !important;
+	font-size:12px !important;
+	font-family:serif !important;
+}
+.passvalid {
+	background:#F3DBA7 !important;
+	text-align:center !important;
+	width:100% !important;
+	color:#ffffff !important;
+}
+.dellist {
+	font-weight: bold !important;
+	text-align:center !important;
+}
+.delbuttons {
+	text-align:center !important;
+	padding-bottom:4px !important;
+
+}
+.managehead {
+	background:#AAAA66 !important;
+	color:#400000 !important;
+	padding:0px !important;
+}
+.postlists {
+	background:#FFFFFF !important;
+	width:100% !important;
+	padding:0px !important;
+	color:#FFF !important;
+}
+.row1 {
+	background:#EEEECC !important;
+	color:#FFF !important;
+}
+.row2 {
+	background:#DDDDAA !important;
+	color:#FFF !important;
+}
+.unkfunc {
+	background:inherit !important;
+	color:#789922 !important;
+}
+.filesize {
+	text-decoration:none !important;
+}
+.filetitle {
+	background:inherit !important;
+	font-size:1.2em !important;
+	color:#6D9E55 !important;
+	font-weight:800 !important;
+}
+.postername {
+	color:#117743 !important;
+	font-weight:bold !important;
+}
+.postertrip {
+	color:#117743 !important;
+}
+.oldpost {
+	color:#6D9E55 !important;
+	font-weight:800 !important;
+}
+.omittedposts {
+	color:#707070 !important;
+}
+
+.reply {
+    background: rgba(210,140,0,0.3) !important;
+	color: #835B36 !important;
+	-moz-border-radius: 5px !important;
+	-webkit-border-radius: 5px !important;
+	padding: 5px !important;
+	border-style: none !important;
+}
+.post-hover {
+	background: rgba(241,219,165,1) !important;
+	border-style: none !important;
+	border: 1px dashed #000000 !important;
+}
+.replyhl {
+	background: #F0C0B0 !important;
+	color: #FFF !important;
+}
+.doubledash {
+	vertical-align:top !important;
+	clear:both !important;
+	float:left !important;
+}
+.replytitle {
+	font-size: 1.0em !important;
+	color:#6D9E55 !important;
+	font-weight:800 !important;
+}
+.commentpostername {
+	color:#117743 !important;
+	font-weight:800 !important;
+}
+.thumbnailmsg {
+	font-size: small !important;
+	color:#FFF !important;
+}
+.abbrev {
+	color:#707070 !important;
+}
+.highlighted {
+	background:#F3DBA7 !important;
+	color:#707070 !important;
+	border: 2px dashed #707070 !important;
+}
+#watchedthreads {
+	background-color: #F3DBa7 !important;
+}
+
+.hidethread {
+	background: transparent url('./icons/blueplus/icons.gif') -32px -16px no-repeat !important;
+}
+
+.unhidethread {
+	background: transparent url('./icons/blueplus/icons.gif') -48px 0px no-repeat !important;
+}
+
+.watchthread {
+	background: transparent url('./icons/blueplus/icons.gif') -32px 0px no-repeat !important;
+}
+
+.expandthread {
+	background: transparent url('./icons/blueplus/icons.gif') 0px -16px no-repeat !important;
+}
+
+.quickreply {
+	background: transparent url('./icons/blueplus/icons.gif') 0px 0px no-repeat !important;
+}
+
+.hidewatchedthreads {
+	background: transparent url('./icons/blueplus/icons.gif') -48px -16px no-repeat !important;
+}
+
+.refreshwatchedthreads {
+	background: transparent url('./icons/blueplus/icons.gif') -16px -16px no-repeat !important;
+}
+
+.restorewatchedthreads {
+	background: transparent url('./icons/blueplus/icons.gif') -16px 0px no-repeat !important;
+}
+.reflinkpreview {
+	background-color: #F3DBA7 !important;
+}
+div.pages {
+background: none;
+border-right: none;
+border-bottom: none;
+display: inline;
+padding: 4px;
+border: 4px double #000;
+border-collapse: separate;
+border-spacing: 2px;
+border-color: gray;
+color: #835B36 !important;
+}
+hr {
+border-top: 1px solid #835B36 !important;
+}
+.desktop-style div.boardlist:nth-child(1) {
+	background: none repeat scroll 0 0 #FFFFFF !important;
+}
+.desktop-style div.boardlist:nth-child(1):hover, .desktop-style div.boardlist:nth-child(1).cb-menu {
+	background: none repeat scroll 0 0 #FFFFFF;
+}
+
+/* options.js */ 
+#options_div, #alert_div { 
+        background: white; 
+}
+

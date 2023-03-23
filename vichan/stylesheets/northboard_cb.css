@@ -1,0 +1,249 @@
+/**
+* northboard.css
+* for circleboard by kotiakrobaatti
+*/
+
+body {
+    background: #191919;
+    color: #d4d4d4;
+    font-size: 13px;
+    font: 12px/1.5em Verdana,"DejaVu Sans",Sans-serif;
+}
+
+a:link, a:visited, .intro a.email {
+    color: #60a0dc !important;
+    text-decoration: none;
+}
+
+a:link:hover {
+    outline: 0;
+    color: #82c2fe !important;
+}
+
+a.post_no, a.watchThread {
+    color: #60a0dc;
+}
+
+div.post.reply {
+    background: #343439;
+    border-color: #3070A9;
+    border-top: 1px solid #3070A9;
+    border-left: 1px solid #3070A9;
+    border-radius: 3px;
+    padding: 0px;
+}
+
+div.post.reply.highlighted {
+    background: #44444f;
+    border: 3px dashed #3070a9;
+}
+
+div.post.reply div.body a, .mentioned {
+    color: 60a0dc;
+    text-decoration: underline;
+}
+
+div.post.reply div.body a:hover {
+    color: #82c2fe !important;
+    text-decoration: underline !important;
+}
+
+div.body a:hover, a.watchThread:hover, a.email span.name:hover {
+    color: #82c2fe !important;
+}
+
+.intro span.subject {
+    color: #60a0dc !important;
+    font-weight: 700;
+    font-size: 1.4em;
+    line-height: 35px;
+    height: 35px;
+    padding: 0 5px;
+}
+
+form table tr th {
+    background: #333;
+    border: 1px solid #444;
+    color: #60a0dc;
+}
+
+div.ban h2 {
+    background: #333;
+    color: inherit;
+}
+
+div.ban {
+    border-color: #800;
+}
+
+div.ban p {
+    color: black;
+}
+
+div.pages {
+    background: #343439;
+    border: 1px solid #3070a9;
+    border-radius: 5px;
+}
+
+div.pages a.selected {
+    color: #ccc;
+}
+
+div.boardlist {
+    color: #aaa;
+}
+
+div.boardlist a {
+    color: #ccc;
+}
+
+table.modlog tr th {
+    background: #333;
+}
+
+/* options.js */
+
+#options_div, #alert_div {
+    background: #44444f;
+}
+
+.desktop-style div.boardlist:nth-child(1) {
+    background-color: #bbb;
+}
+
+span.name {
+    color: #93e3ff !important;
+}
+
+span.trip {
+    color: #ffffff;
+}
+
+span.quote {
+    color: green;
+}
+
+[id^=thread] {
+    background: #1C1C1C;
+    margin-bottom: 1em ;
+    padding: 1em 1em 0 1em ;
+    border: 1px solid #333333;
+}
+
+[id^=thread] hr {
+    display: none ;
+}
+
+html body hr {
+    border-color: #9B9B9B;
+    border-width: 1px;
+}
+
+p.intro {
+    background-color: #44444F;
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-top: 0px!important;
+    display: box;
+    margin: intial;
+    border-bottom: 1px solid #1c1c1c;
+    box-shadow: 0 5px 5px -5px #1c1c1c;
+}
+
+div.post.op p.intro {
+    background-color: #252525;
+    min-height: 30px;
+}
+
+span.omitted {
+    color: #707070;
+    font-size: .9em;
+    margin: 5 5px 0px;
+}
+
+h1 {
+    font-size: 3em;
+    font-weight: 300;
+    margin: .3em 0;
+    color: #60a0dc;
+}
+
+div.subtitle {
+    font-style: oblique;
+    font-size: 1.25em!important;
+    font-weight: 400!important;
+    color: #ccc!important;
+}
+
+tr td input, #body {
+    background-color: #AAA;
+    border-color: #888;
+    border-width: 1px;
+    padding-top: 3px;
+    padding-right: 2px;
+    padding-bottom: 3px;
+    padding-left: 2px;
+}
+
+#upload_file {
+    color: #ccc;
+    background-color: transparent;
+}
+
+div.blotter {
+    color: #ccc!important;
+}
+
+div.banner, a.unimportant {
+    background-color: #60a0dc;
+    color: #000!important;
+    border-radius: 3px;
+    min-height: 25px;
+    padding-top: 5px;
+}
+
+div.thread:hover {
+    background: #44444f;
+    border-color: #1c1c1c;
+}
+
+span.heading {
+    color: red;
+    text-shadow: 0 0 3px #000, 0 0 3px #000;
+}
+
+#expand-all-images,
+#shrink-all-images,
+#treeview{
+  right: 1em !important;
+  position: absolute !important;
+}
+ 
+#expand-all-images{
+  margin-top: 4em !important;
+}
+ 
+#treeview{
+  margin-top: 5em !important;
+}
+ 
+#shrink-all-images{
+  margin-top: 6em !important;
+}
+ 
+#expand-all-images + hr,
+#shrink-all-images + hr{
+  opacity: 0 !important;
+  margin: 0 !important;
+}
+ 
+#treeview + hr{
+  opacity: 0 !important;
+  clear: both !important;
+}
+ 
+#options_handler{
+  margin-top: 3em !important;
+}

@@ -1,0 +1,867 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-10-18 13:47+0200\n"
+"PO-Revision-Date: 2016-06-19 17:30+0300\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Last-Translator: kotobenko <aniguysubs@gmail.com>\n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.8\n"
+
+#: ../../../../js/style-select.js:40 ../../../../js/style-select.js:41
+msgid "Style: "
+msgstr "Стиль:"
+
+#: ../../../../js/hide-images.js:50 ../../../../js/upload-selection.js:51
+#: ../../../../js/quick-post-controls.js:30 ../../../../js/hide-images.js:51
+#: ../../../../js/quick-post-controls.js:32
+#: ../../../../js/upload-selection.js:61
+#: ../../../../js/upload-selection.js:69
+msgid "File"
+msgstr "Файл"
+
+#: ../../../../js/hide-images.js:50 ../../../../js/hide-images.js:51
+msgid "hide"
+msgstr "приховати"
+
+#: ../../../../js/hide-images.js:56 ../../../../js/hide-images.js:57
+#: ../../../../js/hide-images.js:63
+msgid "show"
+msgstr "показати"
+
+#: ../../../../js/toggle-locked-threads.js:39
+#: ../../../../js/toggle-locked-threads.js:54
+#: ../../../../js/toggle-locked-threads.js:40
+#: ../../../../js/toggle-locked-threads.js:55
+#: ../../../../js/toggle-locked-threads.js:41
+#: ../../../../js/toggle-locked-threads.js:56
+#: ../../../../js/toggle-locked-threads.js:53
+#: ../../../../js/toggle-locked-threads.js:70
+msgid "Show locked threads"
+msgstr "Показати закріплені нитки"
+
+#: ../../../../js/toggle-locked-threads.js:39
+#: ../../../../js/toggle-locked-threads.js:54
+#: ../../../../js/toggle-locked-threads.js:40
+#: ../../../../js/toggle-locked-threads.js:55
+#: ../../../../js/toggle-locked-threads.js:41
+#: ../../../../js/toggle-locked-threads.js:56
+#: ../../../../js/toggle-locked-threads.js:44
+#: ../../../../js/toggle-locked-threads.js:53
+#: ../../../../js/toggle-locked-threads.js:70
+msgid "Hide locked threads"
+msgstr "Приховати закріплені нитки"
+
+#: ../../../../js/upload-selection.js:32
+#: ../../../../js/upload-selection.js:45
+#: ../../../../js/upload-selection.js:53
+msgid "URL"
+msgstr "URL"
+
+#: ../../../../js/upload-selection.js:50
+#: ../../../../js/upload-selection.js:60
+#: ../../../../js/upload-selection.js:68
+msgid "Select"
+msgstr "Вибрати"
+
+#: ../../../../js/upload-selection.js:53
+#: ../../../../js/upload-selection.js:63
+#: ../../../../js/upload-selection.js:71
+msgid "Remote"
+msgstr ""
+
+#: ../../../../js/upload-selection.js:56
+#: ../../../../js/upload-selection.js:66
+#: ../../../../js/upload-selection.js:74
+msgid "Embed"
+msgstr "Вбудувати"
+
+#: ../../../../js/upload-selection.js:59
+#: ../../../../js/upload-selection.js:69
+#: ../../../../js/upload-selection.js:77
+msgid "Oekaki"
+msgstr "Оекакі"
+
+#: ../../../../js/toggle-images.js:41 ../../../../js/toggle-images.js:42
+#: ../../../../js/toggle-images.js:45
+msgid "hidden"
+msgstr ""
+
+#: ../../../../js/toggle-images.js:57 ../../../../js/toggle-images.js:70
+#: ../../../../js/toggle-images.js:58 ../../../../js/toggle-images.js:71
+#: ../../../../js/toggle-images.js:86
+msgid "Show images"
+msgstr "Показати зображення"
+
+#: ../../../../js/toggle-images.js:57 ../../../../js/toggle-images.js:70
+#: ../../../../js/toggle-images.js:58 ../../../../js/toggle-images.js:71
+#: ../../../../js/toggle-images.js:63 ../../../../js/toggle-images.js:86
+msgid "Hide images"
+msgstr "Приховати зображення"
+
+#: ../../../../js/quick-post-controls.js:27
+#: ../../../../js/quick-post-controls.js:29
+msgid "Password"
+msgstr "Пароль"
+
+#: ../../../../js/quick-post-controls.js:29
+#: ../../../../js/quick-post-controls.js:31
+msgid "Delete file only"
+msgstr "Видалити тільки файл"
+
+#: ../../../../js/quick-post-controls.js:31
+#: ../../../../js/quick-post-controls.js:33
+msgid "Delete"
+msgstr "Видалити"
+
+#: ../../../../js/quick-post-controls.js:35
+#: ../../../../js/quick-post-controls.js:37
+#: ../../../../js/mod/ban-list.js:40
+msgid "Reason"
+msgstr "Причина"
+
+#: ../../../../js/quick-post-controls.js:37
+#: ../../../../js/quick-post-controls.js:39
+msgid "Report"
+msgstr "Повідомити адміністрацію"
+
+#: ../../../../js/expand.js:20 ../../../../js/expand.js:22
+msgid "Click reply to view."
+msgstr "Натисніть «Відповісти», щоб переглянути нитку повністю"
+
+#: ../../../../js/expand.js:20 ../../../../js/expand.js:22
+#: ../../../../js/live-index.js:72 ../../../../js/live-index.js:83
+msgid "Click to expand"
+msgstr "Показати повністю"
+
+#: ../../../../js/expand.js:44 ../../../../js/expand.js:46
+#: ../../../../js/expand.js:50
+msgid "Hide expanded replies"
+msgstr "Приховати розгорнуті дописи"
+
+#: ../../../../js/oekaki.js:10
+msgid "Brush size"
+msgstr "Розмір пензля"
+
+#: ../../../../js/oekaki.js:10
+msgid "Set text"
+msgstr "Додати текст"
+
+#: ../../../../js/oekaki.js:10
+msgid "Clear"
+msgstr "Очистити"
+
+#: ../../../../js/oekaki.js:10
+msgid "Save"
+msgstr "Зберегти"
+
+#: ../../../../js/oekaki.js:10
+msgid "Load"
+msgstr "Завантажити"
+
+#: ../../../../js/oekaki.js:11
+msgid "Toggle eraser"
+msgstr "Увімкнути стирачку"
+
+#: ../../../../js/oekaki.js:11
+msgid "Get color"
+msgstr "Отримати колір"
+
+#: ../../../../js/oekaki.js:11
+msgid "Fill"
+msgstr "Залити"
+
+#: ../../../../js/oekaki.js:12
+msgid "Use oekaki instead of file?"
+msgstr "Використати оекакі замість файла?"
+
+#: ../../../../js/oekaki.js:21
+msgid "Edit in oekaki"
+msgstr "Відкрити в редакторі оекакі"
+
+#: ../../../../js/oekaki.js:152
+msgid "Enter some text"
+msgstr "Введіть текст"
+
+#: ../../../../js/oekaki.js:153
+msgid "Enter font or leave empty"
+msgstr "Введіть назву шрифту або залиште порожнім"
+
+#: ../../../../js/forced-anon.js:59 ../../../../js/forced-anon.js:65
+#: ../../../../js/forced-anon.js:69 ../../../../js/forced-anon.js:60
+#: ../../../../js/forced-anon.js:66 ../../../../js/forced-anon.js:70
+#: ../../../../js/forced-anon.js:61 ../../../../js/forced-anon.js:67
+#: ../../../../js/forced-anon.js:71 ../../../../js/forced-anon.js:73
+#: ../../../../js/forced-anon.js:81 ../../../../js/forced-anon.js:85
+msgid "Forced anonymity"
+msgstr "Примусова анонімність"
+
+#: ../../../../js/forced-anon.js:59 ../../../../js/forced-anon.js:65
+#: ../../../../js/forced-anon.js:60 ../../../../js/forced-anon.js:66
+#: ../../../../js/forced-anon.js:61 ../../../../js/forced-anon.js:67
+#: ../../../../js/forced-anon.js:73 ../../../../js/forced-anon.js:81
+msgid "enabled"
+msgstr "увімкнено"
+
+#: ../../../../js/forced-anon.js:59 ../../../../js/forced-anon.js:69
+#: ../../../../js/forced-anon.js:60 ../../../../js/forced-anon.js:70
+#: ../../../../js/forced-anon.js:61 ../../../../js/forced-anon.js:71
+#: ../../../../js/forced-anon.js:73 ../../../../js/forced-anon.js:85
+msgid "disabled"
+msgstr "вимкнено"
+
+#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
+#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
+msgid "Sun"
+msgstr "НД"
+
+#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
+#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
+msgid "Mon"
+msgstr "ПН"
+
+#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
+#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
+msgid "Tue"
+msgstr "ВТ"
+
+#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
+#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
+msgid "Wed"
+msgstr "СР"
+
+#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
+#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
+msgid "Thu"
+msgstr "ЧТ"
+
+#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
+#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
+msgid "Fri"
+msgstr "ПТ"
+
+#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
+#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
+msgid "Sat"
+msgstr "СБ"
+
+#: ../../../../js/catalog-link.js:21 ../../../../js/catalog-link.js:32
+#: ../../../../js/catalog-link.js:40 ../../../../js/catalog-link.js:33
+#: ../../../../js/catalog-link.js:44 ../../../../js/catalog-link.js:52
+#: ../../../../js/catalog-link.js:28 ../../../../js/catalog-link.js:39
+#: ../../../../js/catalog-link.js:47
+msgid "Catalog"
+msgstr "Каталог"
+
+#: ../../../../js/quick-reply.js:21 ../../../../js/quick-reply-old.js:21
+#: ../../../../js/quick-reply-old.js:23
+msgid "Submit"
+msgstr "Розмістити"
+
+#: ../../../../js/quick-reply.js:31 ../../../../js/quick-reply-old.js:31
+#: ../../../../js/quick-reply-old.js:33
+msgid "Quick reply"
+msgstr "Відповісти швидко"
+
+#: ../../../../js/quick-reply.js:33 ../../../../js/quick-reply-old.js:33
+#: ../../../../js/quick-reply-old.js:35
+#, python-brace-format
+msgid "Posting mode: Replying to <small>&gt;&gt;{0}</small>"
+msgstr "Режим розміщення: Відповідь <small>&gt;&gt;{0}</small>"
+
+#: ../../../../js/quick-reply.js:33 ../../../../js/quick-reply-old.js:33
+#: ../../../../js/quick-reply-old.js:35
+msgid "Return"
+msgstr "Повернутися"
+
+#: ../../../../js/expand-all-images.js:20
+#: ../../../../js/expand-all-images.js:21
+#: ../../../../js/expand-all-images.js:22
+#: ../../../../js/expand-all-images.js:23
+msgid "Expand all images"
+msgstr "Розгорнути всі зображення"
+
+#: ../../../../templates/main.js:6
+msgid "Hello!"
+msgstr "Привіт!"
+
+#: ../../../../templates/main.js:18
+#, python-brace-format
+msgid "{0} users"
+msgstr "{0} користувачів"
+
+#: ../../../../templates/themes/ukko/ukko.js:28
+#: ../../../../templates/themes/ukko/ukko.js:39
+#: ../../../../templates/themes/ukko/ukko.js:29
+#: ../../../../templates/themes/ukko/ukko.js:40
+#: ../../../../templates/themes/ukko/ukko.js:52
+#: ../../../../templates/themes/ukko/ukko.js:63
+msgid "(hide threads from this board)"
+msgstr "(приховати нитки цієї дошки)"
+
+#: ../../../../templates/themes/ukko/ukko.js:32
+#: ../../../../templates/themes/ukko/ukko.js:44
+#: ../../../../templates/themes/ukko/ukko.js:33
+#: ../../../../templates/themes/ukko/ukko.js:45
+#: ../../../../templates/themes/ukko/ukko.js:56
+#: ../../../../templates/themes/ukko/ukko.js:68
+msgid "(show threads from this board)"
+msgstr "(показати нитки цієї дошки)"
+
+#: ../../../../templates/themes/ukko/ukko.js:57
+#: ../../../../templates/themes/ukko/ukko.js:58
+#: ../../../../templates/themes/ukko/ukko.js:81
+msgid "No more threads to display"
+msgstr "Було показано всі нитки"
+
+#: ../../../../templates/themes/ukko/ukko.js:79
+#: ../../../../templates/themes/ukko/ukko.js:80
+#: ../../../../templates/themes/ukko/ukko.js:103
+#: ../../../../js/infinite-scroll.js:48
+msgid "Loading..."
+msgstr "Завантаження…"
+
+#: ../../../../js/download-original.js:32
+#: ../../../../js/download-original.js:33
+msgid "Save as original filename"
+msgstr "Зберегти з початковим іменем файла"
+
+#: ../../../../js/ajax-post-controls.js:43
+msgid "Reported post(s)."
+msgstr "Допис(и), про які повідомлено."
+
+#: ../../../../js/ajax-post-controls.js:53
+msgid "An unknown error occured!"
+msgstr "Сталася невідома помилка!"
+
+#: ../../../../js/ajax-post-controls.js:60
+msgid "Something went wrong... An unknown error occured!"
+msgstr "Щось пішло не так… Сталася невідома помилка!"
+
+#: ../../../../js/ajax-post-controls.js:68
+msgid "Working..."
+msgstr ""
+
+#: ../../../../js/ajax.js:42 ../../../../js/ajax.js:45
+msgid "Posting... (#%)"
+msgstr "Розміщення… (#%)"
+
+#: ../../../../js/ajax.js:104 ../../../../js/ajax.js:109
+msgid "Posted..."
+msgstr "Розміщено…"
+
+#: ../../../../js/ajax.js:106 ../../../../js/ajax.js:111
+msgid "An unknown error occured when posting!"
+msgstr "Під час розміщення сталася невідома помилка!"
+
+#: ../../../../js/ajax.js:130 ../../../../js/ajax.js:135
+msgid "Posting..."
+msgstr "Розміщення…"
+
+#: ../../../../js/quick-reply.js:223 ../../../../js/quick-reply.js:224
+#: ../../../../js/quick-reply.js:225
+msgid "Upload URL"
+msgstr "Адреса завантаження"
+
+#: ../../../../js/quick-reply.js:266 ../../../../js/quick-reply.js:267
+#: ../../../../js/quick-reply.js:268
+msgid "Spoiler Image"
+msgstr "Спойлерне зображення"
+
+#: ../../../../js/quick-reply.js:277 ../../../../js/quick-reply.js:278
+#: ../../../../js/quick-reply.js:279 ../../../../js/quick-reply.js:281
+msgid "Comment"
+msgstr "Коментувати"
+
+#: ../../../../js/quick-reply.js:285 ../../../../js/quick-reply.js:406
+#: ../../../../js/quick-reply.js:286 ../../../../js/quick-reply.js:407
+#: ../../../../js/quick-reply.js:287 ../../../../js/quick-reply.js:408
+#: ../../../../js/quick-reply.js:289 ../../../../js/quick-reply.js:410
+msgid "Quick Reply"
+msgstr "Швидка відповідь"
+
+#: ../../../../js/watch.js:249 ../../../../js/watch.js:250
+#: ../../../../js/watch.js:288 ../../../../js/watch.js:289
+#: ../../../../js/watch.js:330 ../../../../js/watch.js:331
+#: ../../../../js/watch.js:361 ../../../../js/watch.js:362
+msgid "Stop watching this thread"
+msgstr "Припинити стеження за ниткою"
+
+#: ../../../../js/watch.js:249 ../../../../js/watch.js:250
+#: ../../../../js/watch.js:288 ../../../../js/watch.js:289
+#: ../../../../js/watch.js:330 ../../../../js/watch.js:331
+#: ../../../../js/watch.js:361 ../../../../js/watch.js:362
+msgid "Watch this thread"
+msgstr "Стежити за ниткою"
+
+#: ../../../../js/watch.js:260 ../../../../js/watch.js:261
+#: ../../../../js/watch.js:269 ../../../../js/watch.js:299
+#: ../../../../js/watch.js:300 ../../../../js/watch.js:308
+#: ../../../../js/watch.js:341 ../../../../js/watch.js:342
+#: ../../../../js/watch.js:350 ../../../../js/watch.js:372
+#: ../../../../js/watch.js:373 ../../../../js/watch.js:381
+msgid "Unpin this board"
+msgstr "Відкріпити дошку"
+
+#: ../../../../js/watch.js:260 ../../../../js/watch.js:261
+#: ../../../../js/watch.js:269 ../../../../js/watch.js:299
+#: ../../../../js/watch.js:300 ../../../../js/watch.js:308
+#: ../../../../js/watch.js:341 ../../../../js/watch.js:342
+#: ../../../../js/watch.js:350 ../../../../js/watch.js:372
+#: ../../../../js/watch.js:373 ../../../../js/watch.js:381
+msgid "Pin this board"
+msgstr "Прикріпити дошку"
+
+#: ../../../../js/watch.js:262 ../../../../js/watch.js:267
+#: ../../../../js/watch.js:268 ../../../../js/watch.js:301
+#: ../../../../js/watch.js:306 ../../../../js/watch.js:307
+#: ../../../../js/watch.js:343 ../../../../js/watch.js:348
+#: ../../../../js/watch.js:349 ../../../../js/watch.js:374
+#: ../../../../js/watch.js:379 ../../../../js/watch.js:380
+msgid "Stop watching this board"
+msgstr "Не стежити за дошкою"
+
+#: ../../../../js/watch.js:262 ../../../../js/watch.js:267
+#: ../../../../js/watch.js:268 ../../../../js/watch.js:301
+#: ../../../../js/watch.js:306 ../../../../js/watch.js:307
+#: ../../../../js/watch.js:343 ../../../../js/watch.js:348
+#: ../../../../js/watch.js:349 ../../../../js/watch.js:374
+#: ../../../../js/watch.js:379 ../../../../js/watch.js:380
+msgid "Watch this board"
+msgstr "Стежити за дошкою"
+
+#: ../../../../js/wpaint.js:113
+msgid "Click on any image on this site to load it into oekaki applet"
+msgstr ""
+"Клацніть по будь-якому зображенні на сторінці, щоб завантажити його до "
+"аплету оекакі"
+
+#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
+msgid "Sunday"
+msgstr "Неділя"
+
+#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
+msgid "Monday"
+msgstr "Понеділок"
+
+#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
+msgid "Tuesday"
+msgstr "Вівторок"
+
+#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
+msgid "Wednesday"
+msgstr "Середа"
+
+#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
+msgid "Thursday"
+msgstr "Четвер"
+
+#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
+msgid "Friday"
+msgstr "Пʼятниця"
+
+#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
+msgid "Saturday"
+msgstr "Субота"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "January"
+msgstr "Січень"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "February"
+msgstr "Лютий"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "March"
+msgstr "Березень"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "April"
+msgstr "Квітень"
+
+#: ../../../../js/local-time.js:31 ../../../../js/local-time.js:32
+#: ../../../../templates/main.js:64 ../../../../templates/main.js:65
+msgid "May"
+msgstr "Травень"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "June"
+msgstr "Червень"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "July"
+msgstr "Липень"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "August"
+msgstr "Серпень"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "September"
+msgstr "Вересень"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "October"
+msgstr "Жовтень"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "November"
+msgstr "Листопад"
+
+#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
+msgid "December"
+msgstr "Грудень"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Jan"
+msgstr "Січ"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Feb"
+msgstr "Лют"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Mar"
+msgstr "Бер"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Apr"
+msgstr "Кві"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Jun"
+msgstr "Чер"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Jul"
+msgstr "Лип"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Aug"
+msgstr "Сер"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Sep"
+msgstr "Вер"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Oct"
+msgstr "Жов"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Nov"
+msgstr "Лис"
+
+#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
+msgid "Dec"
+msgstr "Гру"
+
+#: ../../../../js/local-time.js:33 ../../../../templates/main.js:66
+msgid "AM"
+msgstr "AM"
+
+#: ../../../../js/local-time.js:34 ../../../../templates/main.js:67
+msgid "PM"
+msgstr "PM"
+
+#: ../../../../js/local-time.js:35 ../../../../templates/main.js:68
+msgid "am"
+msgstr "am"
+
+#: ../../../../js/local-time.js:36 ../../../../templates/main.js:69
+msgid "pm"
+msgstr "pm"
+
+#: ../../../../js/expand-video.js:45 ../../../../js/expand-video.js:48
+msgid "Your browser does not support HTML5 video."
+msgstr "Ваш браузер не підтримує відео HTML5"
+
+#: ../../../../js/expand-video.js:189 ../../../../js/expand-video.js:192
+#: ../../../../js/expand-video.js:193
+msgid "[play once]"
+msgstr "[відтворити раз]"
+
+#: ../../../../js/expand-video.js:190 ../../../../js/expand-video.js:193
+#: ../../../../js/expand-video.js:194
+msgid "[loop]"
+msgstr "[зациклити]"
+
+#: ../../../../js/webm-settings.js:42 ../../../../js/webm-settings.js:45
+msgid "WebM Settings"
+msgstr "Налаштування WebM"
+
+#: ../../../../js/webm-settings.js:44 ../../../../js/webm-settings.js:54
+msgid "Expand videos inline"
+msgstr "Розгорнути відео на місці"
+
+#: ../../../../js/webm-settings.js:45 ../../../../js/webm-settings.js:55
+msgid "Play videos on hover"
+msgstr "Відтворити відео в пливучому віконці"
+
+#: ../../../../js/webm-settings.js:46 ../../../../js/webm-settings.js:56
+msgid "Default volume"
+msgstr "Гучність за промовчанням"
+
+#: ../../../../js/treeview.js:18
+msgid "Tree view"
+msgstr "Перегляд деревом"
+
+#: ../../../../js/expand-all-images.js:32
+#: ../../../../js/expand-all-images.js:35
+msgid "Shrink all images"
+msgstr "Позгортати всі зображення"
+
+#: ../../../../js/no-animated-gif.js:33 ../../../../js/no-animated-gif.js:37
+#: ../../../../js/no-animated-gif.js:40
+msgid "Animate GIFs"
+msgstr "Увімкнути анімацію GIF"
+
+#: ../../../../js/no-animated-gif.js:42 ../../../../js/no-animated-gif.js:48
+#: ../../../../js/no-animated-gif.js:47 ../../../../js/no-animated-gif.js:57
+#: ../../../../js/no-animated-gif.js:62 ../../../../js/no-animated-gif.js:50
+#: ../../../../js/no-animated-gif.js:60 ../../../../js/no-animated-gif.js:65
+msgid "Unanimate GIFs"
+msgstr "Вимкнути анімацію GIF"
+
+#: ../../../../js/webm-settings.js:41
+msgid "WebM"
+msgstr "WebM"
+
+#: ../../../../js/live-index.js:25 ../../../../js/live-index.js:84
+msgid "No new posts."
+msgstr "Немає нових дописів."
+
+#: ../../../../js/live-index.js:30 ../../../../js/live-index.js:73
+msgid "No new threads."
+msgstr "Немає нових ниток."
+
+#: ../../../../js/live-index.js:72
+#, python-brace-format
+msgid "There are {0} new threads."
+msgstr "{0} нових ниток."
+
+#: ../../../../js/live-index.js:83
+#, python-brace-format
+msgid "There are {0} new posts in this thread."
+msgstr "{0} нових дописів у цій нитці."
+
+#: ../../../../js/options.js:106
+msgid "Options"
+msgstr "Налаштування"
+
+#: ../../../../js/options/general.js:15
+msgid "General"
+msgstr "Основні"
+
+#: ../../../../js/options/general.js:18
+msgid "Storage: "
+msgstr "Сховище:"
+
+#: ../../../../js/options/general.js:21
+msgid "Export"
+msgstr "Експортувати"
+
+#: ../../../../js/options/general.js:27
+msgid "Import"
+msgstr "Імпортувати"
+
+#: ../../../../js/options/general.js:28
+msgid "Paste your storage data"
+msgstr "Вставити дані зі сховища"
+
+#: ../../../../js/options/general.js:40
+msgid "Erase"
+msgstr "Очистити"
+
+#: ../../../../js/options/general.js:41
+msgid ""
+"Are you sure you want to erase your storage? This involves your hidden "
+"threads, watched threads, post password and many more."
+msgstr ""
+"Ви впевнені, що хочете очистити своє сховище? Списки прихованих і "
+"переглянутих ниток, пароль дописування та багато іншого буде анульовано."
+
+#: ../../../../js/options/user-css.js:14
+msgid "User CSS"
+msgstr "Користувацький CSS"
+
+#: ../../../../js/options/user-css.js:23
+msgid "Update custom CSS"
+msgstr "Оновити користувацький CSS"
+
+#: ../../../../js/options/user-css.js:45
+msgid "Enter here your own CSS rules..."
+msgstr "Введіть власні правила CSS…"
+
+#: ../../../../js/options/user-css.js:46
+msgid ""
+"If you want to make a redistributable style, be sure to\n"
+"   have a Yotsuba B theme selected."
+msgstr ""
+"Якщо хочете, щоб ваш стиль був переносним,\n"
+"впевніться, що обрано тему Yotsuba B."
+
+#: ../../../../js/options/user-css.js:47
+msgid "You can include CSS files from remote servers, for example:"
+msgstr "Ви можете включати файли CSS із віддалених серверів, наприклад:"
+
+#: ../../../../js/options/user-js.js:14
+msgid "User JS"
+msgstr "Користувацький JS"
+
+#: ../../../../js/options/user-js.js:23
+msgid "Update custom Javascript"
+msgstr "Оновити користувацький JS"
+
+#: ../../../../js/options/user-js.js:54
+msgid "Enter here your own Javascript code..."
+msgstr "Введіть власний код Javascript…"
+
+#: ../../../../js/options/user-js.js:55
+msgid ""
+"Have a backup of your storage somewhere, as messing here\n"
+"   may render you this website unusable."
+msgstr ""
+"Створіть десь в іншому місці резервну копію сховища,\n"
+"бо може статись, що після змін тут ви будете не в змозі користуватися цим "
+"сайтом."
+
+#: ../../../../js/options/user-js.js:56
+msgid "You can include JS files from remote servers, for example:"
+msgstr "Ви можете включати файли CSS із віддалених серверів, наприклад:"
+
+#: ../../../../js/id_colors.js:6 ../../../../js/id_colors.js:12
+msgid "Color IDs"
+msgstr ""
+
+#: ../../../../js/auto-reload.js:33
+msgid "Update"
+msgstr "Оновлення"
+
+#: ../../../../js/mod/ban-list.js:29
+msgid "IP address"
+msgstr "IP адреса"
+
+#: ../../../../js/mod/ban-list.js:42
+msgid "Seen"
+msgstr ""
+
+#: ../../../../js/mod/ban-list.js:44
+msgid "Message for which user was banned is included"
+msgstr "Повідомлення, за яке користувача заблоковано, додається"
+
+#: ../../../../js/mod/ban-list.js:45
+msgid "Message:"
+msgstr "Повідомлення:"
+
+#: ../../../../js/mod/ban-list.js:53
+msgid "Board"
+msgstr "Дошка"
+
+#: ../../../../js/mod/ban-list.js:55
+msgid "all"
+msgstr "все"
+
+#: ../../../../js/mod/ban-list.js:57
+msgid "Set"
+msgstr "Встановити"
+
+#: ../../../../js/mod/ban-list.js:58
+msgid " ago"
+msgstr " тому"
+
+#: ../../../../js/mod/ban-list.js:61
+msgid "Expires"
+msgstr ""
+"Сплива\n"
+"є"
+
+#: ../../../../js/mod/ban-list.js:62
+msgid "never"
+msgstr "ніколи"
+
+#: ../../../../js/mod/ban-list.js:64
+msgid "in "
+msgstr "в"
+
+#: ../../../../js/mod/ban-list.js:66
+msgid "Staff"
+msgstr "Модератор"
+
+#: ../../../../js/mod/ban-list.js:73
+msgid "system"
+msgstr "система"
+
+#: ../../../../js/auto-reload.js:33
+msgid "Auto"
+msgstr "Авто"
+
+#: ../../../../js/auto-reload.js:141
+msgid "Updating..."
+msgstr "Оновлення…"
+
+#: ../../../../js/auto-reload.js:183
+#, python-brace-format
+msgid "Thread updated with {0} new post(s)"
+msgstr "Нитку оновлено, зʼявилось {0} допис(ів)"
+
+#: ../../../../js/auto-reload.js:185
+msgid "No new posts found"
+msgstr "Нових дописів немає"
+
+# Що мається на увазі під «pruned»?
+#: ../../../../js/auto-reload.js:191
+msgid "Thread deleted or pruned"
+msgstr "Нитку видалено або вилучено"
+
+#: ../../../../js/auto-reload.js:199
+msgid "Error: "
+msgstr "Помилка:"
+
+#: ../../../../js/auto-reload.js:201
+msgid "Unknown error"
+msgstr "Невідома помилка"
+
+#: ../../../../js/infinite-scroll.js:47
+msgid "Page"
+msgstr "Сторінка"
+
+#: ../../../../js/infinite-scroll.js:82
+msgid "All"
+msgstr "Всі"
+
+#: ../../../../templates/main.js:29 ../../../../templates/main.js:47
+msgid "second(s)"
+msgstr "секунд(и)"
+
+#: ../../../../templates/main.js:31 ../../../../templates/main.js:49
+msgid "minute(s)"
+msgstr "хвилин(и)"
+
+#: ../../../../templates/main.js:33 ../../../../templates/main.js:51
+msgid "hour(s)"
+msgstr "годин(и)"
+
+#: ../../../../templates/main.js:35 ../../../../templates/main.js:53
+msgid "day(s)"
+msgstr "день(дні)"
+
+#: ../../../../templates/main.js:37 ../../../../templates/main.js:55
+msgid "week(s)"
+msgstr "тиждень(тижнів)"
+
+#: ../../../../templates/main.js:39 ../../../../templates/main.js:57
+msgid "year(s)"
+msgstr "рік(років)"

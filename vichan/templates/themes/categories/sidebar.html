@@ -1,0 +1,54 @@
+{% filter remove_whitespace %}
+<!doctype html>
+<html>
+<head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title>{{ settings.title }}</title>
+	<link rel="stylesheet" media="screen" href="{{ config.url_stylesheet }}"/>
+	<style type="text/css">
+		fieldset{margin:10px 0}
+		legend{width:100%;margin-left:-15px;background:#98E;border:1px solid white;color:white;font-weight:bold;padding:5px 5px}
+		ul{margin:0;padding:0}
+		li{list-style:none;padding:0 4px;margin: 0 4px}
+		li a.system{font-weight:bold}
+	</style>
+	<base target="main"/>
+</head>
+<body>
+	<fieldset>
+		<legend>{{ settings.title }}</legend>
+		<ul>
+			<li>
+				<a class="system" href="{{ settings.file_news }}">[News]</a>
+			</li>
+		</ul>
+	</fieldset>
+	
+	{% for category, boards in categories %}
+		<fieldset>
+			<legend>
+				{{ category }}
+			</legend>
+			{% for board in boards %}
+				<li>
+					<a href="{{ board.uri }}">{{ board.title|e }}</a>
+				</li>
+			{% endfor %}
+		</fieldset>
+	{% endfor %}
+	
+	{% for category, links in config.custom_categories %}
+		<fieldset>
+			<legend>
+				{{ category }}
+			</legend>
+			{% for title, uri in links %}
+				<li>
+					<a href="{{ uri }}">{{ title }}</a>
+				</li>
+			{% endfor %}
+		</fieldset>
+	{% endfor %}
+</body>
+</html>
+{% endfilter %}

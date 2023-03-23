@@ -1,0 +1,39 @@
+/* This file is dedicated to the public domain; you may do as you wish with it. */
+body {
+    background: black;
+    color: white;
+    margin: 0px;
+}
+#playerheader {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    height: 24px;
+    padding: 0px 4px;
+    text-align: right;
+    font-size: 16px;
+}
+#playerheader a {
+    color: white;
+    text-decoration: none;
+}
+span.settings div {
+    background: black;
+    z-index: 1;
+    padding-right: 4px;
+}
+#playercontent {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 24px;
+    bottom: 0px;
+}
+video {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+    max-height: 100%;
+}

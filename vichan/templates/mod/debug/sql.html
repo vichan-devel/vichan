@@ -1,0 +1,32 @@
+<form action="" method="post">
+	<input type="hidden" name="token" value="{{ security_token }}">
+	<textarea style="display:block;margin:5px auto;width:90%;max-width:600px" rows="3" name="query">{{ query | e }}</textarea>
+	<input style="display:block;margin:5px auto" type="submit" value="Query">
+</form>
+
+{% if result == 'empty' %}
+	<p style="text-align:center">Query successful (no result).</p>
+{% elseif result %}
+	<table class="modlog">
+		<tr>
+			{% for key in keys %}
+				<th>{{ key | e }}</th>
+			{% endfor %}
+		</tr>
+		{% for row in result %}
+			<tr>
+				{% for col in row %}
+					<td>
+						{% if col != null %}
+							{{ col | e }}
+						{% else %}
+							<em>NULL</em>
+						{% endif %}
+					</td>
+				{% endfor %}
+			</tr>
+		{% endfor %}
+	</table>
+{% elseif error %}
+	<p style="text-align:center;color:#d00">{{ error | e }}</p>
+{% endif %}

@@ -1,0 +1,70 @@
+<table style="width:400px;margin-bottom:10px;border-bottom:1px solid #ddd;padding:5px">
+	<tr>
+		<th>{% trans 'Status' %}</th>
+		<td>
+			{% if config.mod.view_banexpired and ban.expires != 0 and ban.expires < time() %}
+				{% trans 'Expired' %}
+			{% else %}
+				{% trans 'Active' %}
+			{% endif %}
+		</td>
+	</tr>
+	<tr>
+		<th>{% trans 'IP' %}</th>
+		<td>{{ ban.cmask }}</td>
+	</tr>
+	<tr>
+		<th>{% trans 'Reason' %}</th>
+		<td>
+			{% if ban.reason %}
+				{{ ban.reason }}
+			{% else %}
+				<em>{% trans 'no reason' %}</em>
+			{% endif %}
+		</td>
+	</tr>
+	<tr>
+		<th>{% trans 'Board' %}</th>
+		<td>
+			{% if ban.board %}
+				{{ config.board_abbreviation|sprintf(ban.board) }}
+			{% else %}
+				<em>{% trans 'all boards' %}</em>
+			{% endif %}
+		</td>
+	</tr>
+	<tr>
+		<th>{% trans 'Set' %}</th>
+		<td>{{ ban.created|date(config.post_date) }}</td>
+	</tr>
+	<tr>
+		<th>{% trans 'Expires' %}</th>
+		<td>
+			{% if ban.expires %}
+				{{ ban.expires|date(config.post_date) }}
+			{% else %}
+				<em>{% trans 'never' %}</em>
+			{% endif %}
+		</td>
+	</tr>
+	<tr>
+		<th>{% trans 'Seen' %}</th>
+		<td>
+			{%  if ban.seen %}
+				{% trans 'Yes' %}
+			{%  else %}
+				{% trans 'No' %}
+			{%  endif %}
+		</td>
+	</tr>
+	<tr>
+		<th>{% trans 'Staff' %}</th>
+		<td>
+			{% if ban.username %}
+				{{ ban.username|e }}
+			{% else %}
+				<em>{% trans 'deleted?' %}</em>
+			{% endif %}
+		</td>
+	</tr>
+</table>

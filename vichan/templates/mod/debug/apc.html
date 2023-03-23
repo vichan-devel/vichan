@@ -1,0 +1,18 @@
+<table class="modlog">
+	<tr>
+		<th class="minimal">Key</th>
+		<th class="minimal">Hits</th>
+		<th class="minimal">Created</th>
+		<th class="minimal">Expires</th>
+		<th class="minimal">Size</th>
+	</tr>
+	{% for var in cached_vars if (var.ctime is defined ? var.ctime : var.creation_time) + var.ttl > time() %}
+		<tr>
+			<td class="minimal">{{ var.key is defined ? var.key : var.info }}</td>
+			<td class="minimal">{{ var.nhits is defined ? var.nhits : var.num_hits }}</td>
+			<td class="minimal">{{ (var.ctime is defined ? var.ctime : var.creation_time)|ago }} ago</td>
+			<td class="minimal">{{ ((var.ctime is defined ? var.ctime : var.creation_time) + var.ttl)|until }} (ttl: {{ (time() + var.ttl)|until }})</td>
+			<td class="minimal">{{ var.mem_size }} bytes</td>
+		</tr>
+	{% endfor %}
+</table>

@@ -1,0 +1,71 @@
+/**
+ * stripes.css
+ * for vichan by klaczy
+ */
+body {
+	background: url('img/stripes_bg.png');
+	color: #BBB;
+	font-family: 'Hevletica', sans-serif;
+	font-size: 12px;
+}
+div.boardlist:nth-child(1):hover {
+	background: #222 !important;
+}
+div.boardlist:nth-child(1) .boardlist {
+	background: #222 !important;
+}
+div.reply, div.pages {
+	background: -moz-linear-gradient(bottom, #323232  40%, #2E2E2E 75%) !important;
+	background: linear-gradient(to top, #323232  40%, #2E2E2E 75%) !important;
+	border: 1px solid #2D2D2D !important;
+	box-shadow: 0px 0px 10px #2C2C2C;
+	color: #BBB !important;
+}
+.reply {
+	margin-top: 0.5em !important;
+}
+.body a, a:hover, a:visited:hover {
+	color: #FF6666;
+}
+table th { background: none !important }
+a, a:visited {
+	color: #BBB;
+}
+hr {
+	border: 0 !important;
+	height: 1px !important;
+	background-color: #AAA !important;
+	margin: 1.5em 0 1.5em !important;
+}
+.name, .body a {
+	color: #FF6666 !important;
+}
+.subject, h1, .subtitle, .selected {
+	color: #FF6699 !important;
+}
+.capcode {
+	color: #FF66CC !important;
+}
+input, textarea {
+	background: url('img/stripes_textarea.png');
+	border: 1px #CCC;
+	border-radius: 3px;
+	padding: 3px;
+}
+input[type="text"] { width: 200px }
+textarea { 
+	background-size: 100% 100%;
+	background-color: #FCFCFC;
+	background-repeat: repeat-x;
+	width: 100%;
+	height: 200px;
+}
+input[type="submit"] {
+	border: 1px solid rgb(204, 204, 204);
+	background: url('img/stripes_submit.png');
+	height: 23px;
+	margin-left: 0.5em;
+}
+.delete {
+	margin-top: 0.5em;
+}

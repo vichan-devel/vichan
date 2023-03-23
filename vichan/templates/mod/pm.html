@@ -1,0 +1,44 @@
+<form action="" method="post">
+	<table>
+		<tr>
+			<th>{% trans 'From' %}</th>
+			{% if username %}
+				<td><a href="?/new_PM/{{ username|e }}">{{ username|e }}</a></td>
+			{% else %}
+				<td><em>{% trans 'deleted?' %}</em></td>
+			{% endif %}
+		</tr>
+		{% if to != mod.id %}
+			<tr>
+				<th>To</th>
+				{% if to_username %}
+					<td><a href="?/new_PM/{{ to_username|e }}">{{ to_username|e }}</a></td>
+				{% else %}
+					<td><em>{% trans 'deleted?' %}</em></td>
+				{% endif %}
+			</tr>
+		{% endif %}
+		<tr>
+			<th>{% trans 'Date' %}</th>
+			<td>{{ time|date(config.post_date) }} <small>({{ time|ago }} ago)</small></td>
+			
+		</tr>
+		<tr>
+			<th>{% trans 'Message' %}</th>
+			<td>{{ message }}</td>
+		</tr>
+	</table>
+	
+	<ul style="list-style:none;text-align:center;padding:0">
+		<li style="padding:5px 0">
+			<input type="submit" name="delete" value="{% trans 'Delete forever' %}">
+		</li>
+		{% if mod|hasPermission(config.mod.create_pm) %}
+			<li style="padding:5px 0">
+				<a href="?/PM/{{ id }}/reply">
+					{% trans 'Reply with quote' %}
+				</a>
+			</li>
+		{% endif %}
+	</ul>
+</form>

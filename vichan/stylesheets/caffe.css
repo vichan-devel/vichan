@@ -1,0 +1,396 @@
+/*Caffe style*/
+
+
+.floatiframe{
+float:left;
+padding:10px;
+}
+
+
+div.boardlist {
+    color: #261712;
+    font-size: 12pt;
+    margin-top: 0px;
+    background-color:  #261712;
+    border: 1px solid #39241d;
+    margin-top: 0;
+    padding: 0px;
+    position: fixed;
+    top: 0;
+}
+div.boardlist.bottom {
+    margin-top: 20px;
+    position: inherit;
+    background:inherit;
+}
+
+
+
+.return1 a{
+float:left;
+font-size: inherit;
+
+}
+
+div.blotter {
+    background: none repeat scroll 0 0 rgba(88, 53, 41, 0.1);
+    border: 1px solid #39241d;
+    border-radius: 5px 5px 5px 5px;
+    clear: both;
+    color: #8f6658;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    padding: 2px;
+    text-align: center;
+}
+
+
+
+div.title {
+    margin-bottom: 0px;
+    clear: both;
+    color: #39241d;
+    font-size: 2em;
+    font-weight: bold;
+
+}
+
+div.ban h2 {
+    border-radius: 6px 6px 6px 6px;
+        background: none repeat scroll 0 0  #261712;
+        color: #8f6658;
+}
+
+div.ban {
+    background: none repeat scroll 0 0  #261712;
+    border: 1px solid #8f6658;
+    margin: 30px auto;
+    max-width: 700px;
+    border-radius: 7px;
+
+}
+
+form {
+    margin-bottom: 0px;
+}
+
+
+form {
+    margin-bottom: 0px;
+}
+
+span.heading {
+    color: #FFAB3F;
+    display: block;
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+textarea#body{
+    height: 136px;
+    width: 518px;
+}
+
+
+
+html, body {
+        background:#261712 url('img/caffe_bg.png') repeat fixed center; 
+        color: #8e6152;
+        font-family: "Trebuchet MS",Trebuchet,serif;
+        font-size: 12pt;
+        text-shadow: 0 0 0.9em #000000;
+}
+a {
+        color: #755144;
+}
+a:hover, a:visited:hover {
+        color: #a47a6b;
+}
+.adminbar {
+        clear:both;
+        float:right;
+        font-size: .8em;
+}
+.desktop-style div.boardlist:nth-child(1) .boardlist {
+background-color: #261712;   
+}
+.desktop-style div.boardlist:nth-child(1):hover {
+background-color: #261712;
+}
+
+
+.adminbar a {
+        font-weight: bold;
+}
+.logo {
+        clear:both;
+        text-align:left;
+        font-size:2em;
+        font-weight: bold;
+        color:#a47a6b;
+        /*width:100%;*/
+}
+.theader, .passvalid {
+       
+        text-align:center;
+        padding:2px;
+        color:#39241d;
+        clear: both;
+        font-weight: bold;
+        margin-bottom: .5em;
+        border: solid 1px #a47a6b;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+}
+.postarea {
+}
+.rules {
+        font-size:0.7em;
+}
+.postblock {
+        background:transparent;
+        color:#a47a6b;
+        font-weight:bold;
+}
+.footer {
+        text-align:center;
+        font-size:12px;
+        font-family:serif;
+        margin: 2em 0 0 0;
+}
+.dellist {
+        font-weight: bold;
+        text-align:center;
+}
+.delbuttons {
+        text-align:center;
+        padding-bottom:4px;
+}
+.managehead {
+        background:#8f6658;
+        color:#39241d;
+        padding:0px;
+}
+.postlists {
+        background:#8f6658;
+        width:100%;
+        padding:0px;
+        color:#a47a6b;
+}
+.row1 {
+        background:#8f6658;
+        color:#8f6658;
+}
+.row2 {
+        background:#8f6658;
+        color:#8f6658;
+}
+.unkfunc {
+        background:inherit;
+        color:#8e6152;
+}
+.reflink {
+        font-size: .8em;
+        font-weight: bold;
+}
+.filesize {
+        text-decoration:none;
+        color: #8e6152;
+        font-size: .8em;
+}
+.filetitle {
+        background:inherit;
+        font-size:1.2em;
+        color:#8f6658;
+        font-weight:bold;
+}
+.postername {
+        color:#8f6658;
+        font-weight:bold;
+}
+.postertrip {
+        color:#FF3300;
+}
+.oldpost {
+        color:#8f6658;
+        font-weight:bold;
+}
+.omittedposts {
+        color:#a47a6b;
+}
+.reply {
+          
+        background:#a47a6b url('img/caffe_reply.png') repeat center; 
+        border: solid 1px #a47a6b;
+        padding: 0;
+        margin: 0;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+}
+blockquote {
+        margin: .5em .5em .5em 1em;
+}
+blockquote p {
+        margin: 0;
+        padding: 0;
+}
+.reply blockquote {
+        margin: .5em;
+}
+.doubledash {
+        display: none;
+         vertical-align:top;
+        clear:both;
+        float:left;
+}
+.replytitle {
+        font-size: 1.2em;
+        color:#002244;
+        font-weight:bold;
+}
+.commentpostername {
+        color:#8f6658;
+        font-weight:800;
+}
+.thumbnailmsg {
+        font-size: .8em;
+        color:#8e6152;
+}
+hr {
+        border-style: solid none none none;
+        border-width: 1px;
+        border-color: #8f6658;
+}
+table {
+        border-style: none;
+}
+table td {
+        border-style: none;
+}
+.nothumb {
+        background-color: #8e6152;
+        border-style: dotted;
+        margin: .3em .5em;
+}
+
+.abbrev {
+        color:#8e6152;
+}
+.highlight {
+        background:#261712;
+        color:#8e6152;
+        border: 2px dashed #EE6600;
+}
+
+
+div.banner, div.banner a {
+    color: inherit;
+}
+div.banner {
+    background-color: inherit;
+}
+form table tr th {
+    background: none;
+}
+
+div.post.reply {
+    background:#922a01 url('img/caffe_reply2.png') repeat fixed center; 
+        color: #8e6152;
+    border: 1px solid rgba(88, 53, 41, 0.6);
+    border-radius: 5px 5px 5px 5px;
+}
+div.title,h1 {
+    color: #8e6152;
+    font-size: 32px;
+    font-weight: bold;
+}
+div.title p {
+    font-size: 26px;
+    margin: 0;
+}
+
+h1 {
+    letter-spacing: inherit;
+}
+
+.pages {
+    background: rgba(88, 53, 41, 0.32) !important;
+    width:100%;
+    color: #8e6152 !important;
+}
+
+div.banner {
+    background: none repeat scroll 0 0 #251611;
+    border: 1px solid #2c1b16;
+    clear: both;
+    color: #8e6152;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    padding: 2px;
+    text-align: center;
+}
+
+form table tr td div {
+    padding-left: 0px;
+
+}
+.recaptchatable .recaptcha_image_cell {
+    padding: 0px !important;
+}
+
+div.post.reply.highlighted {
+background: rgba(88, 53, 41, 0.3);
+}
+#quick-reply table {
+border-collapse: collapse;
+background:#000 url('img/caffe_reply2.png') repeat fixed center; 
+border-style: solid;
+border-width: 1px;
+border-color: rgba(88, 53, 41, 0.6);
+margin: 0;
+width: 100%;
+}
+#attention_bar:hover {
+background-color: rgba(88, 53, 41, 0.3);
+}
+.intro a.email span.name {
+color: #8e6152;
+}
+a.post_no:hover {
+color: #755144;
+}
+div.post.reply div.body a {
+color: #755144;
+}
+#quick-reply table {
+border-collapse: collapse;
+background:#000 url('img/caffe_reply2.png') repeat fixed center; 
+}
+a, a:visited {
+text-decoration: underline;
+color: #755144;
+}
+.cb-menuitem span {
+padding: 5px;
+display: table-cell;
+text-align: left;
+border-top: 1px solid rgba(0, 0, 0, 1);
+}
+div.boardlist {
+color:  rgba(0, 0, 0, 1);
+font-size: 9pt;
+}
+
+/* options.js */
+#options_div, #alert_div {
+  background: #a47a6b url('img/caffe_reply.png') repeat center;
+  border: solid 1px #a47a6b;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+.options_tab_icon {
+  color: inherit;
+}
+#options_tablist {
+  border-color: #a47a6b;
+}

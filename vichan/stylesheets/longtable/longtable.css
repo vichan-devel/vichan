@@ -1,0 +1,31 @@
+.longtable {
+  display: block;
+  position: relative;
+  box-sizing: border-box;
+}
+.longtable > tbody {
+  display: block;
+  box-sizing: border-box;
+}
+.longtable > tbody > tr {
+  display: block;
+  box-sizing: border-box;
+  clear: left;
+  width: 100%;
+}
+.longtable > tbody > tr > td {
+  display: block;
+  box-sizing: border-box;
+  float: left;
+  padding: 0;
+}
+.longtable > tbody > tr > th {
+  display: block;
+  box-sizing: border-box;
+  float: left;
+  padding: 0;
+}
+.longtable > tbody > tr > th.sortable {
+  cursor: pointer;
+}
+

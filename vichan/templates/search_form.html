@@ -1,0 +1,19 @@
+<div class="ban">
+	<h2>{% trans %}Search{% endtrans %}</h2>
+	<form style="display:inline" action="" method="get">
+		<p>
+			<label style="display:inline" for="search">{% trans %}Phrase:{% endtrans %}</label> 
+			<input id="search" name="search" type="text" size="40" value="{{ search }}">
+			<select name="board">
+				<option value="none">{% trans %}Select board{% endtrans %}&hellip;</option>
+				{% for b in boards %}
+					<option value="{{ b }}"{% if b == board %} selected{% endif %}>/{{ b }}/</option>
+				{% endfor %}
+			</select>
+			<input type="submit" value="{% trans %}Search{% endtrans %}" />
+		</p>
+	</form>
+	<p style="font-size:8pt;margin:5px">
+		{% trans %}Search is case-insensitive and based on keywords. To match exact phrases, use "quotes". Use an asterisk (*) for wildcard.</p><p style="font-size:8pt;margin:5px">You may apply the following filters to your searches: <strong>id</strong>, <strong>thread</strong>, <strong>subject</strong>, and <strong>name</strong>. To apply a filter, simply add to your query, for example, <em>name:Anonymous</em> or <em>subject:"Some Thread"</em>. Wildcards cannot be used in filters.{% endtrans %}
+	</p>
+</div>

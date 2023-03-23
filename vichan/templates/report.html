@@ -1,0 +1,22 @@
+<form action="{{ config.post_url }}" method="post" id="report_form">
+	{% if error %}
+		<div class="error">
+			<strong>{{ error|e }}</strong>
+		</div>
+	{% endif %}
+	<input type="hidden" name="board" value="{{ board.uri }}">
+	<input type="hidden" name="{{ post|e }}" value="1">
+	{% if global %}
+		<input type="hidden" name="global" value="1">
+		<div><h1>Attention!</h1><p>This form is only for reporting <strong>child pornography</strong>, <strong>bot spam</strong> and <strong>credit card numbers, social security numbers or banking information</strong>. DMCA requests and all other deletion requests <em>MUST</em> be sent via email to admin@8chan.co.</p><p>8chan is unmoderated and allows posts without collecting <em>ANY</em> information from the poster less the details of their post. Furthermore, all boards on 8chan are user created and not actively monitored by anyone but the board creator.</p><p>8chan has a small volunteer staff to handle this queue, please do not waste their time by filling it with nonsense! <em>If you made a report with this tool and the post was not deleted, <strong>do not make the report again!</strong> Email admin@8chan.co instead.</em> Abuse of the global report system could lead to address blocks against your IP from 8chan.</p><p>Again, 8chan's global volunteers <em>do not</em> handle board specific issues. You most likely want to click "Report" instead to reach the creator and volunteers he assigned to this board.</p>
+	{% endif %}
+	<p>{% trans %}Enter reason below...{% endtrans %}</p>
+	<input type="text" id="reason" name="reason" value="{{ reason_prefill|e|addslashes }}">
+	{% if config.report_captcha %}
+		<p>{% trans %}To submit your report, please fill out the CAPTCHA below.{% endtrans %}</p>
+		{{ captcha['html'] }}<br/>
+		<input class="captcha_text" name="captcha_text" size="25" maxlength="6" autocomplete="off" type="text" value="">
+		<input class="captcha_cookie" name="captcha_cookie" type="hidden" autocomplete="off" value="{{ captcha['cookie']|e }}"><br/>
+	{% endif %}
+	<input name="report" value="{% trans %}Submit{% endtrans %}" type="submit">
+</form>

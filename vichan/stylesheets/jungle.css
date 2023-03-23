@@ -1,0 +1,136 @@
+/* based on jungle.css from brchan.org */
+
+body {
+	background: #ffe;
+	background-image: url('img/jungle_bg1.png'), url('img/jungle_bg.png');
+	background-repeat: repeat-x, repeat;
+
+background-attachment: 	 scroll, scroll;
+	color: #242B23;
+	font-family: serif;
+	font-size: 16px;
+}
+div.title h1 {
+	font-size: 24px;
+}
+div.title p {
+	font-size: 10px;
+}
+a:hover {
+    color: red !important;
+}
+a.post_no {
+	color: #800000;
+}
+
+desktop-style .bl-menu{
+	background-image: url('img/jungle_bg1.png'), url('img/jungle_bg.png');
+	background-repeat: repeat-x, repeat;
+	background-attachment: 	 scroll, scroll;
+} 
+
+.boardlist .board a {
+background: #65AB6B;
+border: 1px solid #054500;
+color: #054500;
+font-weight: 600;
+}
+
+
+div.post.reply {
+	background-image: url('img/jungle_td.png');
+	border: 1px solid #E5D959;
+border-left: none;
+border-top: none;
+webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+-webkit-box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.35);
+-moz-box-shadow: 0px 2px 3px rgba(0,0,0,0.35);
+-o-box-shadow: 0px 2px 3px rgba(0,0,0,0.35);
+box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.35);
+}
+div.post.reply.highlighted {
+	background-image: url('img/jungle_td2.png');
+	border: 1px solid #E5D959;
+border-left: none;
+border-top: none;
+webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+-webkit-box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.35);
+-moz-box-shadow: 0px 2px 3px rgba(0,0,0,0.35);
+-o-box-shadow: 0px 2px 3px rgba(0,0,0,0.35);
+box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.35);
+}
+div.post.reply div.body a {
+	color: #00E;
+}
+.intro span.subject {
+	color: #d00;
+}
+form table tr th {
+	background: #65AB6B;
+border: 1px solid #054500;
+font-weight: 600;
+}
+div.ban h2 {
+	background: #FCA;
+	color: inherit;
+}
+div.ban {
+	border-color: #800;
+}
+div.ban p {
+	color: black;
+}
+div.pages {
+	padding: 7px 5px;
+	color: #054500;
+	font-size: 12pt;
+	
+	background-image: url('img/jungle_td.png');
+	border-width: 1px;
+	border-style: inset;
+
+}
+div.pages a.selected {
+	color: #800;
+}
+hr {
+	border-width: 1px;
+	border-style: inset;
+}
+div.boardlist {
+	color: #52794F;
+	font-size: 11pt;
+}
+div.boardlist a {
+	color: #195319;
+}
+.post-hover {
+    border: solid 1px #265026 !important;
+}
+unimportant, .unimportant * {
+	font-size: 13px;
+}
+table.modlog tr th {
+	background: #EA8;
+}
+
+.intro span.name {
+color: maroon;
+font-weight: 600;
+}
+
+header div.subtitle, h1 {
+color: #054500;
+}
+.desktop-style div.boardlist:nth-child(1) {
+  text-shadow: #fff 1px 1px 1px, #fff -1px -1px 1px;
+}
+
+
+.desktop-style div.boardlist:nth-child(1):hover, .desktop-style div.boardlist:nth-child(1).cb-menu {
+  background-color: rgba(90%, 90%, 90%, 0.55);
+}

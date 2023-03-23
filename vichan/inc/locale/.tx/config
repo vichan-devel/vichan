@@ -1,0 +1,13 @@
+[main]
+host = https://www.transifex.com
+
+[tinyboard-vichan-devel.javascriptpo]
+file_filter = <lang>/LC_MESSAGES/javascript.po
+source_lang = en
+type = PO
+
+[tinyboard-vichan-devel.tinyboardpo]
+file_filter = <lang>/LC_MESSAGES/tinyboard.po
+source_lang = en
+type = PO
+

@@ -1,0 +1,18 @@
+<div style="text-align:center">
+	<h2 style="margin:20px 0">{{ message }}</h2>
+	{% if board %}
+		<p>
+			<a href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.file_index }}">
+				{% trans 'Go back' %}
+			</a>
+		</p>
+	{% endif %}
+</div>
+{% if debug and config.debug %}
+	<hr>
+	<h3>{% trans 'Error information' %}</h3>
+	<pre style="white-space:pre-wrap;font-size: 10px;">
+		{{ debug }}
+	</pre>
+	<hr>
+{%  endif %}

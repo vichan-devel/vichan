@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+	{% block head %}
+	{% include 'header.html' %}
+	<title>{{ board.url }} - {{ board.name }}</title>
+	{% endblock %}
+</head>
+<body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %}" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">	
+	{{ boardlist.top }}
+	{% if pm %}<div class="top_notice">You have <a href="?/PM/{{ pm.id }}">an unread PM</a>{% if pm.waiting > 0 %}, plus {{ pm.waiting }} more waiting{% endif %}.</div><hr />{% endif %}
+	{% if config.url_banner %}<img class="banner" src="{{ config.url_banner }}" {% if config.banner_width or config.banner_height %}style="{% if config.banner_width %}width:{{ config.banner_width }}px{% endif %};{% if config.banner_width %}height:{{ config.banner_height }}px{% endif %}" {% endif %}alt="" />{% endif %}
+	<header>
+		<h1>{{ board.url }} - {{ board.name }}</h1>
+		<div class="subtitle">
+			{% if board.title %}
+				{{ board.title|e }}
+			{% endif %}
+			{% if mod %}<p><a href="?/">{% trans %}Return to dashboard{% endtrans %}</a></p>{% endif %}
+		</div>
+	</header>
+	
+	{% include 'attention_bar.html' %}
+	{% include 'post_form.html' %}
+	
+	{% if config.global_message %}<hr /><div class="blotter">{{ config.global_message }}</div>{% endif %}
+	<hr />
+	<form name="postcontrols" action="{{ config.post_url }}" method="post">
+	<input type="hidden" name="board" value="{{ board.uri }}" />
+	{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
+	{{ body }}
+	{% include 'report_delete.html' %}
+	</form>
+	<div class="pages">{{ btn.prev }} {% for page in pages %}
+		 [<a {% if page.selected %}class="selected"{% endif %}{% if not page.selected %}href="{{ page.link }}"{% endif %}>{{ page.num }}</a>]{% if loop.last %} {% endif %}
+	{% endfor %} {{ btn.next }}</div>
+	{{ boardlist.bottom }}
+	{% include 'footer.html' %}
+	<script type="text/javascript">{% verbatim %}
+		ready();
+	{% endverbatim %}</script>
+</body>
+</html>

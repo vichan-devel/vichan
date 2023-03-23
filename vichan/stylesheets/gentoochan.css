@@ -1,0 +1,70 @@
+body {
+	background: #0E0E0E url(data:image/gif;base64,R0lGODlhGAAMAKEEAOXl5ebm5vDw8PHx8SH+EUNyZWF0ZWQgd2l0aCBHSU1QACwAAAAAGAAMAAACRpQiY6cLa146MyY1EJQKjG81lNGRUPOIkgMJHtquBgIO7xwvpbrpduUSuXq8ntEC0bBEylYitdDAdM1ViaobkgKgZwyDLAAAOw==) repeat 0 0!important;
+	color: #000;
+}
+a:link, a:visited, .intro a.email span.name {
+	-webkit-transition: all ease-in 0.3s;
+	-moz-transition: all ease-in 0.3s;
+	color: rgba(0, 0, 0, 0.6);
+	text-decoration:none !important;
+}
+a:link:hover {
+	-moz-transition: all ease-in 0.5s;
+	text-shadow: 0px 0px 2px #CF6464;
+}
+a.post_no {
+	color: #fff;
+}
+.boardlist {
+	color: #ccc;
+}
+div.post.reply, input, textarea {
+	background: rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 2px;
+}
+div.post.reply.post-hover {
+	background: rgba(200, 200, 200, 0.85);
+}
+div.post.reply.highlighted {
+	background: #f0c0b0;
+	border-color: #d9bfb7;
+}
+div.post.reply p.body a {
+	color: navy;
+}
+.intro span.subject {
+	color: #000;
+}
+form table tr th {
+	background: #EA8;
+}
+div.ban h2 {
+	background: #FCA;
+	color: inherit;
+}
+div.ban {
+	border-color: #000;
+}
+div.ban p {
+	color: black;
+}
+div.pages {
+	background: #F0E0D6;
+	border-color: #D9BFB7;
+}
+div.pages a.selected {
+	color: #800;
+}
+hr {
+	border-color: rgba(0, 0, 0, 0.2);
+}
+div.boardlist {
+	color: rgba(0, 0, 0, 0.2);
+}
+div.boardlist a {
+	color: #000;
+}
+table.modlog tr th {
+	background: #EA8;
+}

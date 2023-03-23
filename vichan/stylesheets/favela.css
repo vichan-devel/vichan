@@ -1,0 +1,156 @@
+/**
+ * favela.css
+ * For 55chan adapted from kusaba by sinuca
+ */
+body {
+	font-family: sans-serif;
+	background: none repeat scroll 0 0 #EEFDFF;
+	color: #000;
+	margin: 0;
+	padding: 8px;
+	font-size: 14px;
+}
+
+h1 {
+	color: #003333;
+	font-family: sans-serif;
+	font-size: 24pt;
+	font-weight: normal;
+}
+
+header div.subtitle {
+	font-size: 16px;
+	color: #000;
+	font-weight: bold;
+	margin: 1em 0;
+}
+
+
+a, a:visited {
+	text-decoration: none;
+	color: #345456;
+}
+
+a:hover {
+	color: #FF7800;
+}
+
+div.banner {
+	background-color: #00E19A;
+	color: #FFF;
+	font-weight: normal;
+}
+
+form table tr th {
+	background: #FF7800;
+	color: #FFF;
+}
+
+.intro span.name {
+	font-family: serif;
+}
+
+p.fileinfo {
+	text-decoration: underline;
+}
+
+p.fileinfo span.unimportant, p.fileinfo a {
+	font-size: 12px;
+}
+
+div.post.reply {
+	background: #D6F0E4;
+	border: none;
+}
+
+div.post.reply.post-hover {
+	border-width: 1px;
+	border-style: none solid solid none;
+	border-color: #B7C5D9;
+}
+
+div.post.reply div.body a {
+	color: #345456;
+}
+
+div.post.reply.highlighted {
+	background: #B5FFDD;
+}
+
+div[id^="thread_"].highlighted {
+	background: #B5FFDD;
+}
+
+.intro a.email span.name {
+	color: #345456;
+}
+
+div.pages {
+	background: transparent;
+	border: none;
+}
+
+hr {
+	border-top: 1px solid #CCC;
+}
+
+div.boardlist {
+	font-size: 13px;
+	color: #000;
+}
+
+div.boardlist a {
+	text-decoration: none;
+	padding: 0.2em 0.1em;
+}
+
+div.boardlist a:hover {
+	background-color: #FF7800;
+	color: #FFF;
+}
+
+div#playerW {
+	display: none!important;
+}
+
+/*fixing an issue with the a:hover and its child post-hover thing*/
+div.boardlist a:hover div.post-hover.reply.post {
+	color: #000;
+}
+
+/* sidebar styles */
+
+h2 {
+	color: #000;
+	background: #D6F0E4;
+}
+
+div.sidebar h2 {
+	font-family: Verdana, Tahoma, sans-serif;
+	font-size: 18px;
+}
+
+div.sidebar h3 {
+	margin: 0;
+	background: #D6F0E4;
+	font-size: 100%
+}
+
+ul.fav_nav {
+	margin-top: 0;
+	padding: 0;
+	list-style: none;
+}
+
+ul.fav_nav a {
+	text-decoration: none;
+	color: #555500;
+}
+
+.sidebar a:hover {
+	text-decoration: underline;
+}
+
+img.board_image {
+	border:0px;
+}

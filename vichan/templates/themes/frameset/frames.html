@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<link rel="stylesheet" media="screen" href="{{ config.url_stylesheet }}">
+	<style type="text/css">
+		iframe{border:none;margin:0;padding:0;height:99%;position:absolute}
+		iframe#sidebar{left:0;top:0;width:15%}
+		iframe#main{border-left:1px solid black;left:15%;top:0;width:85%}
+	</style>
+	<title>{{ settings.title }}</title>
+</head>
+<body>
+	<iframe src="{{ settings.file_sidebar }}" id="sidebar" name="sidebar"></iframe>
+	<iframe src="{{ settings.file_news }}" id="main" name="main"></iframe>
+</body>
+</html>

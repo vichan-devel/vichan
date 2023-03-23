@@ -1,0 +1,18 @@
+<form style="display:inline" action="?/search" method="post">
+	<label style="display:inline" for="search">{% trans 'Phrase:' %}</label> 
+	<input id="search" name="query" type="text" size="60" value="{{ search_query|e }}">
+	<select name="type">
+		<option value="posts"{% if search_type == 'posts'%} selected{% endif %}>{% trans 'Posts' %}</option>
+		{% if mod|hasPermission(config.mod.view_notes) and mod|hasPermission(config.mod.show_ip) %}
+			<option value="IP_notes"{% if search_type == 'IP_notes'%} selected{% endif %}>{% trans 'IP address notes' %}</option>
+		{%  endif %}
+		{% if mod|hasPermission(config.mod.view_banlist) %}
+			<option value="bans"{% if search_type == 'bans'%} selected{% endif %}>{% trans 'Bans' %}</option>
+		{%  endif %}
+		{% if mod|hasPermission(config.mod.modlog) %}
+			<option value="log"{% if search_type == 'log'%} selected{% endif %}>{% trans 'Moderation log' %}</option>
+		{%  endif %}
+	</select>
+	<input type="submit" value="{% trans 'Search' %}">
+</form>
+<p class="unimportant">{% trans '(Search is case-insensitive and based on keywords. To match exact phrases, use "quotes". Use an asterisk (*) for wildcard.)' %}</p>

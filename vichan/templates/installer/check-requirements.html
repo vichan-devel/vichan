@@ -1,0 +1,54 @@
+<div style="max-width:700px;margin:auto">
+	<h2 style="text-align:center">Pre-installation tests</h2>
+	<table class="modlog" style="margin-top:10px;max-width:600px">
+		<tr>
+			<th>Category</th>
+			<th>Test</th>
+			<th>Result</th>
+		</tr>
+		{% set errors = 0 %}
+		{% set warnings = 0 %}
+		{% for test in tests %}
+			<tr>
+				<td class="minimal"><strong>{{ test.category }}</strong></td>
+				<td>{{ test.name }}</td>
+				<td class="minimal" style="text-align:center">
+					{% if test.result %}
+						<i style="font-size:11pt;color:#090" class="fa fa-check"></i>
+					{% else %}
+						{% if test.required %}
+							{%  set errors = errors + 1 %}
+							<i style="font-size:11pt;color:#d00" class="fa fa-exclamation"></i>
+						{% else %}
+							{%  set warnings = warnings + 1 %}
+							<i style="font-size:11pt;color:#f80" class="fa fa-warning"></i>
+						{% endif %}
+					{% endif %}
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+	{% if errors or warnings %}
+		<p><strong>There were {{ errors }} error(s) and {{ warnings }} warning(s).</strong></p>
+		<ul>
+			{% for test in tests if not test.result%}
+				<li style="margin-bottom:5px">
+					{% if test.required %}
+						<i style="font-size:11pt;color:#d00" class="fa fa-exclamation"></i> <strong>Error:</strong> 
+					{% else %}
+						<i style="font-size:11pt;color:#f80" class="fa fa-warning"></i> <strong>Warning:</strong> 
+					{% endif %}
+					{{ test.message }}
+				</li>
+			{% endfor %}
+		</ul>
+		{% if errors %}
+			<p style="text-align:center"><a href="?step=2">Click here to ignore errors and attempt installing anyway (not recommended).</a></p>
+		{% else %}
+			<p style="text-align:center"><a href="?step=2">Click here to proceed with installation.</a></p>
+		{% endif %}
+	{% else %}
+		<p>There were no errors or warnings. Good!</p>
+		<p style="text-align:center"><a href="?step=2">Clik here to proceed with installation.</a></p>
+	{% endif %}
+</div>

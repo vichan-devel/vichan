@@ -1,0 +1,104 @@
+/* +piwnichan style, based on futaba.css of Tinyboard */
+
+body {
+	background: #FFF0DF;
+	color: #800000;
+	font-family: sans-serif;
+	font-size: 13px;
+}
+div.title h1 {
+	font-size: 24px;
+}
+div.title p {
+	font-size: 10px;
+}
+div.pages {
+	font-size: 13px !important;
+}
+a:link, a:visited, .intro a.email span.name {
+	color: #A32615;
+	font-size: inherit;
+	text-decoration: inherit;
+}
+a:link:hover {
+	color: #d00;
+	text-decoration: inherit;
+}
+span.omitted {
+	color: gray;
+}
+a.post_no {
+	color: #800000;
+}
+div.post.reply {
+	border: 0px;
+	background: #FAE8D4;
+	border: 1px solid #E2C5B1;
+}
+div.post.reply.highlighted {
+	background: #f0c0b0;
+	border-color: #d9bfb7;
+}
+div.post.reply div.body a {
+	color: rgb(190, 79, 43);
+}
+.intro span.subject {
+	color: #AA4848;
+}
+form table tr th {
+	background: #EED1C2;
+}
+div.ban h2 {
+	background: #FCA;
+	color: inherit;
+}
+div.ban {
+	border-color: #800;
+}
+div.ban p {
+	color: black;
+}
+div.pages {
+	padding: 7px 5px;
+	color: maroon;
+	font-size: 12pt;
+	
+	background: none;
+	border-width: 1px;
+	border-style: inset;
+
+}
+div.pages a.selected {
+	color: #800;
+}
+hr {
+	border-width: 1px;
+	border-style: inset;
+}
+div.boardlist {
+	color: #B86;
+}
+div.boardlist a {
+	color: #800;
+}
+unimportant, .unimportant * {
+	font-size: 13px;
+}
+table.modlog tr th {
+	background: #EA8;
+}
+
+.desktop-style div.boardlist:nth-child(1) {
+  text-shadow: #fff 1px 1px 1px, #fff -1px -1px 1px;
+}
+
+
+.desktop-style div.boardlist:nth-child(1):hover, .desktop-style div.boardlist:nth-child(1).cb-menu {
+  background-color: rgba(90%, 90%, 90%, 0.55);
+}
+
+/* options.js */
+#options_div, #alert_div {
+  background: rgb(240, 224, 214);
+}
+
