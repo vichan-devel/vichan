@@ -1,8 +1,10 @@
+DOT=dot
+
 %.png: *.gv
-	dot -Tpng $< -v -o $@
+	$(DOT) -Tpng $< -v > $@
 
 %.svg: *.gv
-	dot -Tsvg $< -v -o $@
+	$(DOT) -Tsvg $< -v > $@
 
 .PHONY: all
 all:

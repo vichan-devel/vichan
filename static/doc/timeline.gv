@@ -1,88 +1,67 @@
 digraph {
-  graph [ranksep=1,
-         overlap=false];
   fontname="sans-serif";
-  subgraph main {
-    edge [fontname="sans-serif", fontsize=8];
-    node [fontname="sans-serif",
-          shape=box,
-          style="rounded,filled"
-    ];
-    fourchan [label=<Proprietary 4chan.org software<BR/><B><FONT POINT-SIZE="9">(@moot&nbsp;<I>et al.</I>)</FONT></B><BR/>>];
-    fourchan -> fourchon [xlabel=<inspired&nbsp;>, style=dotted, penwidth=2, color=darkred];
-    fourchon  [label=<Proprietary 4chon.net fork<BR/><B><FONT POINT-SIZE="9">(@savetheinternet)</FONT></B><BR/>2009–2014>];
-    fourchon -> tb [penwidth=2, color=darkred];
-    tb  [label=<Tinyboard<BR/><B><FONT POINT-SIZE="9">(@savetheinternet)</FONT></B><BR/>2010–2014>];
-    tb -> fourchon;
-    ponychan  [label=<Proprietary ponychan.net fork<BR/><B><FONT POINT-SIZE="9">(???)</FONT></B><BR/>2012–2015 (as MLPchan)<BR/>2015–>];
-    tb -> ponychan;
-    wiz [label=<Proprietary Wizardchan fork<BR/><B><FONT POINT-SIZE="9">(@mrpacific)</FONT></B><BR/>2011–2012>];
-    tb -> wiz;
-    wizk [label=<Production Wizardchan fork<BR/><B><FONT POINT-SIZE="9">(@copypaste)</FONT></B><BR/>2012–2013>];
-    wiz -> wizk;
-    wizk -> tb;
-    wizk -> vichan;
-    vichan -> wizk;
-    wizana [label=<Proprietary Wizardchan fork №2<BR/><B><FONT POINT-SIZE="9">(@anachronos)</FONT></B><BR/>2013–≈2016>];
-    wizk -> wizana;
-    wizchan [label=<Proprietary wizchan fork<BR/><B><FONT POINT-SIZE="9">(too many to count)</FONT></B><BR/>2016–>];
-    wizana -> wizchan;
-    vichan  [color=gold,
-      label=<vichan<BR/><B><FONT POINT-SIZE="9">(@czaks)</FONT></B><BR/>2012–>];
-    vichannet  [label=<Production vichan.net software<BR/><B><FONT POINT-SIZE="9">(Polish-language imageboard)<BR/>(@czaks)</FONT></B><BR/>2012–>];
-    tb -> vichannet [penwidth=2, color=darkred];
-    vichan -> tb;
-    vichan -> vichannet;
-    leftypol  [label=<leftypol.org<BR/><B><FONT POINT-SIZE="9">(@discomrade&nbsp;<I>et al.</I>)</FONT></B><BR/>≈2016–>];
-    vichan -> leftypol;
-    inf  [label=<infinity<BR/><B><FONT POINT-SIZE="9">(@copypaste /<BR/>★コピペ)</FONT></B><BR/>2013–2017>];
-    vichan -> inf;
-    infco  [label=<Production 8chan.co fork<BR/><B><FONT POINT-SIZE="9">(@copypaste /<BR/>★コピペ)</FONT></B><BR/>2013–2016>];
-    vichan -> infco;
-    lc  [label=<lainchan<BR/><B><FONT POINT-SIZE="9">(@appleman1234)</FONT></B><BR/>2016–>];
-    vichan -> lc;
-    npf  [label=<NPFchan<BR/><B><FONT POINT-SIZE="9">(@fallenPineapple)</FONT></B><BR/>2017–2019>];
-    vichan -> npf;
-    kuz  [label=<Proprietary KolymaNET fork<BR/><B><FONT POINT-SIZE="9">(@kuz)</FONT></B><BR/>d/b/a soyjak.party<BR/>≈2020–>];
-    vichan -> kuz;
-    vichannet -> vichan [color=darkred, penwidth=2];
-    leftypol -> vichan  [style=dashed];
-    inf -> tb  [style=dotted];
-    inf -> vichan;
-    infpl  [label=<Production 8ch.pl fork<BR/><B><FONT POINT-SIZE="9">(@czaks)</FONT></B><BR/>2014–2016>];
-    inf -> infpl;
-    oib  [label=<OpenIB<BR/><B><FONT POINT-SIZE="9">(@kormiku)</FONT></B><BR/>≈2017–2019>];
-    inf -> oib;
-    infco -> vichan  [rank=min];
-    infco -> inf;
-    infpl -> vichan  [style=dotted];
-    infpl -> inf;
-    e8ch  [label=<Proprietary 8chan software<BR/><B><FONT POINT-SIZE="9">(@kormiku)</FONT></B><BR/>≈2017–2019>];
-    oib -> e8ch;
-    e8kun  [label=<Proprietary 8kun software<BR/>≈2019–≈2022&nbsp;<B><FONT POINT-SIZE="9">(@kormiku)</FONT></B><BR/>2022–&nbsp;<B><FONT POINT-SIZE="9">(Jim Watkins)</FONT></B>>];
-    e8ch -> e8kun;
-    kuz -> vichan;
-  }
-  subgraph B {
-    subgraph title {
-      TITLE  [fontname="sans-serif",
-        fontsize=16,
-        label=<<FONT POINT-SIZE="24"><FONT FACE="monospace">vichan</FONT>&nbsp;Timeline</FONT><BR/>…as of 20230329>,
-        shape=box,
-        width=10];
-    }
-    subgraph sig {
-      graph [rank=sink];
-      SIG  [label=<<FONT FACE="serif">by ★コピペ</FONT>>,
-        labelloc=b,
-        shape=none];
-    }
+  root=fourchan;
+  overlap=scale
+  ranksep=1.5
+  edge [fontname="sans-serif", fontsize=8];
+  node [fontname="sans-serif",
+        shape=record,
+        style="rounded,filled"
+  ];
+  graph [label=<<FONT FACE="monospace">vichan</FONT>&nbsp;Timeline by ★コピペ>, labelloc=t, fontsize=24, shape=none, margin=1, color=none];
+  fourchan [label=<Proprietary 4chan.org software<BR/><B><FONT POINT-SIZE="9">(@moot&nbsp;<I>et al.</I>)</FONT></B><BR/>2003–>];
+  tb [label=<{Proprietary 4chon.net fork<BR/><B><FONT POINT-SIZE="9">(@savetheinternet)</FONT></B><BR/>2009–2014|Tinyboard<BR/><B><FONT POINT-SIZE="9">(@savetheinternet)</FONT></B><BR/>2010–2014}>];
+  fourchan -> tb [label=<<BR/>&nbsp;inspired&nbsp;>, style=dotted, penwidth=2, weight=100, color=darkred];
+  vichan  [color=gold,
+    label=<{vichan<BR/><B><FONT POINT-SIZE="9">(@czaks)</FONT></B><BR/>2012–|Production vichan.net software<BR/><B><FONT POINT-SIZE="9">(Polish-language imageboard)<BR/>(@czaks)</FONT></B><BR/>2012–}>];
+  ponychan  [label=<Proprietary ponychan.net fork<BR/><B><FONT POINT-SIZE="9">(???)</FONT></B><BR/>2012–2015 (as MLPchan)<BR/>2015–>];
+  ponychan;
+  wiz [shape=record,label=<{Proprietary Wizardchan fork<BR/><B><FONT POINT-SIZE="9">(@mrpacific)</FONT></B><BR/>2011–2012<BR/> | Production Wizardchan fork<BR/><B><FONT POINT-SIZE="9">(@copypaste)</FONT></B><BR/>2012–2013|Proprietary Wizardchan fork №2<BR/><B><FONT POINT-SIZE="9">(@anachronos)</FONT></B><BR/>2013–≈2016<BR/>|Proprietary wizchan fork<BR/><B><FONT POINT-SIZE="9">(too many to count)</FONT></B><BR/>2016–}>];
+  tb -> wiz;
+  wiz -> tb;
+  wiz -> vichan;
+  vichan -> wiz;
+  tb -> vichan;
+  vichan -> tb;
+  leftypol  [label=<leftypol.org<BR/><B><FONT POINT-SIZE="9">(@discomrade&nbsp;<I>et al.</I>)</FONT></B><BR/>≈2016–>];
+  vichan -> leftypol;
+  inf  [label=<{infinity<BR/><B><FONT POINT-SIZE="9">(@copypaste /<BR/>★コピペ)</FONT></B><BR/>2013–2017|Production 8chan.co fork<BR/><B><FONT POINT-SIZE="9">(@copypaste /<BR/>★コピペ)</FONT></B><BR/>2013–2016}>];
+  vichan -> inf;
+  tb -> ponychan;
+  lc  [label=<lainchan<BR/><B><FONT POINT-SIZE="9">(@appleman1234)</FONT></B><BR/>2016–>];
+  vichan -> lc;
+  npf  [label=<NPFchan<BR/><B><FONT POINT-SIZE="9">(@fallenPineapple)</FONT></B><BR/>2017–2019>];
+  vichan -> npf;
+  leftypol -> vichan  [style=dashed];
+  inf -> tb  [style=dotted];
+  inf -> vichan;
+  infpl  [label=<Production 8ch.pl fork<BR/><B><FONT POINT-SIZE="9">(@czaks)</FONT></B><BR/>2014–2016>];
+  inf -> infpl;
+  infpl -> vichan  [style=dotted];
+  infpl -> inf;
+  inf -> e8ch;
+  e8ch  [label=<{OpenIB<BR/><B><FONT POINT-SIZE="9">(@kormiku)</FONT></B><BR/>≈2017–2019|Proprietary 8chan software<BR/><B><FONT POINT-SIZE="9">(@kormiku)</FONT></B><BR/>≈2017–2019|Proprietary 8kun software<BR/>≈2019–≈2022&nbsp;<B><FONT POINT-SIZE="9">(@kormiku)</FONT></B><BR/>2022–&nbsp;<B><FONT POINT-SIZE="9">(Jim Watkins)</FONT></B>}>];
+  kuz  [label=<Proprietary KolymaNET fork<BR/><B><FONT POINT-SIZE="9">(@kuz)</FONT></B><BR/>d/b/a soyjak.party<BR/>≈2020–>];
+  vichan -> kuz;
+  kuz -> vichan;
+  fourchan -> tb -> vichan -> inf [style=invis];
+  /*
+  subgraph title {
+    rankdir=TB
+    page=2
+    layout=fdp
+    TITLE  [fontname="sans-serif",
+      fontsize=16,
+      label=<<FONT POINT-SIZE="24"><FONT FACE="monospace">vichan</FONT>&nbsp;Timeline</FONT><BR/>…as of 20230329<BR/><BR/><FONT FACE="'Noto CJK Serif JP', serif">by ★コピペ</FONT>>,
+      shape=box,
+      width=10];
     {
-      TITLE -> fourchan -> fourchon -> tb -> vichan -> infco -> kuz -> SIG [arrowhead=0,
+      TITLE -> fourchan [arrowhead=0,
                                                                             penwidth=0,
                                                                             weight=max];
     }
   }
+  */
 }
 
 // vim: ts=2 sw=2 et
