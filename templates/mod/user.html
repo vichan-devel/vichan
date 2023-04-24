@@ -35,7 +35,8 @@
 						{% for group_value, group_name in config.mod.groups if group_name != 'Disabled' %}
 							<li>
 								<input type="radio" name="type" id="group_{{ group_name }}" value="{{ group_value }}"> 
-								<label for="group_{{ group_name }}">{% trans group_name %}</label>
+								<label for="group_{{ group_name }}">{{ group_name|trans }}</label>
+
 							</li>
 						{% endfor %}
 					</ul>
