@@ -9,20 +9,12 @@ vichan - A lightweight and full featured PHP imageboard.
 
 As of 29 August 2022 it supports PHP8.1.
 
-##### Unapplied patches
-
-Some patches remain unapplied due to their uncertain maintenance burden. You may wish to apply them:
-
-<ul dir="auto">
-<li><a class="commit-link" href="https://github.com/vichan-devel/vichan/commit/5d31f3bab70de7f983fd56aa18817ede38d1d4f3"><tt>5d31f3b</tt></a> (<span class="reference"><a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1530457642" data-permission-text="Title is private" data-url="https://github.com/vichan-devel/vichan/issues/527" data-hovercard-type="pull_request" data-hovercard-url="/vichan-devel/vichan/pull/527/hovercard" href="https://github.com/vichan-devel/vichan/pull/527">Allow open parentheses before cite: "(&gt;&gt;1"<span class="issue-shorthand">&nbsp;#527</span></a></span>) by <a class="user-mention notranslate" href="https://github.com/discomrade">@discomrade</a></li>
-</ul>
-
-They will be collected in `static/unapplied patches` upon rejection.
-
 About
 ------------
 vichan is a free light-weight, fast, highly configurable and user-friendly
 imageboard software package. It is written in PHP and has few dependencies.
+
+**For best results, you should use a stable release from the releases page. The master branch is used for development work and testing. You may experience bugs if you use master.**
 
 For support, feel free to join our [IRC channel](https://chat.kolyma.net/#/connect?channels=vichan) at irc.kolyma.net.
 
