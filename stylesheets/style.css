@@ -1225,3 +1225,9 @@ table.fileboard .intro a {
 div.mix {
 	display: inline-block;
 }
+
+span.yellowtext {
+	color: yellow;
+	background-color: black;
+	font-weight: bold;
+}
