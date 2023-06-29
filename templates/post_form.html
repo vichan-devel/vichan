@@ -30,6 +30,7 @@
 					<option value=""></option>
 					<option value="sage">sage</option>
 					{% if not config.always_noko %}<option value="noko">noko</option>{% endif %}
+					{% if config.always_noko %}<option value="nonoko">nonoko</option>{% endif %}
 				</select>
 				{% else %}
 				<input type="text" name="email" size="25" maxlength="40" autocomplete="off">
