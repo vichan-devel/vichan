@@ -2,7 +2,6 @@
 /*
  *  Copyright (c) 2010-2014 Tinyboard Development Group
  */
-
 require_once 'inc/bootstrap.php';
 
 $dropped_post = false;
@@ -669,6 +668,10 @@ if (isset($_POST['delete'])) {
 		$noko = false;
 		$post['email'] = '';
 	} else $noko = $config['always_noko'];
+
+	//Server-side verification to set the e-mail field to false if the selectbox is there.
+	if ($config['field_email_selectbox'] && $post['email'] !== 'sage')
+		$post['email'] = '';
 	
 	if ($post['has_file']) {
 		$i = 0;
