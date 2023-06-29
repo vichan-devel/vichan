@@ -670,7 +670,7 @@ if (isset($_POST['delete'])) {
 	} else $noko = $config['always_noko'];
 
 	//Server-side verification to set the e-mail field to false if the selectbox is there.
-	if ($config['field_email_selectbox'] && $post['email'] !== 'sage')
+	if ($config['field_email_selectbox'] && strtolower($post['email']) !== 'sage')
 		$post['email'] = '';
 	
 	if ($post['has_file']) {
