@@ -841,7 +841,7 @@ function displayBan($ban) {
 	global $config, $board;
 
 	if (!$ban['seen']) {
-		Bans::seen($ban['id']);
+		Bans::updateBansTable($ban['id'], 'seen');
 	}
 
 	$ban['ip'] = $_SERVER['REMOTE_ADDR'];
@@ -904,6 +904,8 @@ function checkBan($board = false) {
 	if (event('check-ban', $board))
 		return true;
 
+	checkWarning($board);
+
 	$ips = array();
 
 	$ips[] = $_SERVER['REMOTE_ADDR'];
@@ -940,14 +942,87 @@ function checkBan($board = false) {
 	// I'm not sure where else to put this. It doesn't really matter where; it just needs to be called every
 	// now and then to keep the ban list tidy.
 	if ($config['cache']['enabled'] && $last_time_purged = cache::get('purged_bans_last')) {
-		if (time() - $last_time_purged < $config['purge_bans'] )
-			return;
+		if (time() - $last_time_purged > $config['purge_bans'] )
+			Bans::updateBansTable(null, 'purge_ban');
 	}
 	
-	Bans::purge();
 	
 	if ($config['cache']['enabled'])
 		cache::set('purged_bans_last', time());
+}
+
+function checkWarning($board = false) {
+	global $config;
+
+	if (!isset($_SERVER['REMOTE_ADDR'])) {
+		// Server misconfiguration
+		return;
+	}
+
+
+	if (event('check-warning', $board))
+		return true;
+
+	$ips = array();
+	$ips[] = $_SERVER['REMOTE_ADDR'];
+
+	if ($config['proxy_check'] && isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+		$ips = array_merge($ips, explode(", ", $_SERVER['HTTP_X_FORWARDED_FOR']));
+	}
+
+	foreach ($ips as $ip) {
+		$warnings = Bans::findWarning($ip, $config['show_modname']);
+
+		foreach ($warnings as &$warning) {
+			if (!isset($_POST['json_response'])) {
+				displayWarning($warning);
+			} else {
+				header('Content-Type: text/json');
+				die(json_encode(array('error' => true, 'banned' => true)));
+			}
+		}
+	}
+}
+
+function displayWarning($warning) {
+	global $config, $board;
+
+	// If Warning havent benseen before mark it as seen.
+	if (!$warning['seen']) {
+		Bans::updateBansTable($warning['id'], 'seen');
+	}
+
+	$warning['ip'] = $_SERVER['REMOTE_ADDR'];
+
+	if ($warning['post'] && isset($warning['post']['board'], $warning['post']['id'])) {
+		if (openBoard($warning['post']['board'])) {
+			$query = query(sprintf("SELECT `files` FROM ``posts_%s`` WHERE `id` = " .
+				(int)$warning['post']['id'], $board['uri']));
+			if ($_post = $query->fetch(PDO::FETCH_ASSOC)) {
+				$warning['post'] = array_merge($warning['post'], $_post);
+			}
+		}
+		if ($warning['post']['thread']) {
+			$post = new Post($warning['post']);
+		} else {
+			$post = new Thread($warning['post'], null, false, false);
+		}
+	}
+
+	// Show warning page and exit
+	die(
+		Element('page.html', array(
+			'title' => _('Warning!'),
+			'config' => $config,
+			'boardlist' => createBoardlist(isset($mod) ? $mod : false),
+			'body' => Element('warning.html', array(
+				'config' => $config,
+				'warning' => $warning,
+				'board' => $board,
+				'post' => isset($post) ? $post->build(true) : false
+			)
+		))
+	));
 }
 
 function threadLocked($id) {

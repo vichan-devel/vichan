@@ -1,0 +1,38 @@
+{% apply spaceless %}
+{# Automatically removes unnecessary whitespace #}
+<div class="ban">
+	<h2>{% trans %}You were issued an warning!{% endtrans %}</h2>
+	{% if warning.reason %}
+		<p>
+			{% trans %}for the following reason:{% endtrans %}
+		</p>
+		<p class="reason">
+			{{ warning.reason }}
+		</p>
+	{% endif %}
+	<p>
+		{% trans %}Your warning was filed on{% endtrans %} 
+			<strong>{{ warning.created|date(config.ban_date) }}</strong> 
+			{% if config.show_modname %}
+				{% if warning.username %}
+					{% trans %}by{% endtrans %} <strong> {{ warning.username }} </strong>
+				{% else %}
+					{% trans %}by{% endtrans %} <em> {% trans %}'system'{% endtrans %} </em>
+				{% endif %}
+			{% endif %}
+	</p>
+	<p>{% trans %}Your IP address is{% endtrans %} <strong>{{ warning.ip }}</strong>.</p>
+
+	{% if config.warning_page_extra %}
+		<p>{{ config.warning_page_extra }}</p>
+	{% endif %}
+
+	{% if post and config.warning_show_post %}
+		<hr>
+		<p>{% trans %}You were issued an warning for the following post on{% endtrans %} {{ board.url }}:</p>
+		{{ post }}
+		<br>
+	{% endif %}
+
+</div>
+{% endapply %}

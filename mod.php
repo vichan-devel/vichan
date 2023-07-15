@@ -59,7 +59,7 @@ $pages = array(
 	
 	'/IP/([\w.:]+)'				=> 'secure_POST ip',		// view ip address
 	'/IP/([\w.:]+)/remove_note/(\d+)'	=> 'secure ip_remove_note',	// remove note from ip address
-
+	'/(\%b)/warning(&delete)?/(\d+)'		=> 'secure_POST warning_post', 	// issue warning for post
 	'/ban'					=> 'secure_POST ban',		// new ban
 	'/bans'					=> 'secure_POST bans',		// ban list
 	'/bans.json'				=> 'secure bans_json',		// ban list JSON

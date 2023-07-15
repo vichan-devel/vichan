@@ -112,13 +112,58 @@ class Bans {
 		
 		return array($ipstart, $ipend);
 	}
+
+	static function findWarning($ip, $get_mod_info = false) {
+
+		$query = prepare('SELECT ``bans``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``bans``
+			' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
+			WHERE `flg_warning` = 1 AND (`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`))');
+
+		$query->bindValue(':ip', inet_pton($ip));
+		$query->execute() or error(db_error($query));
+
+		$warning_list = array();
+
+		while ($warning = $query->fetch(PDO::FETCH_ASSOC)) {
+			if ($warning['seen']) {
+				self::updateBansTable($warning['id'], 'seen');
+			} else {
+				if ($warning['post'])
+					$warning['post'] = json_decode($warning['post'], true);
+				$warning_list[] = $warning;
+			}
+		}
+
+		return $warning_list;
+	}
+
+	static public function updateBansTable($id = null, $action = null) {
+
+		switch ($action) {
+			case 'seen':
+				$query = prepare("UPDATE ``bans`` SET `seen` = 1 WHERE `id` = :id");
+				$query->bindValue(':id', $id, PDO::PARAM_INT);
+				$query->execute() or error(db_error());
+				break;
+			case 'purge_warning':
+				query("DELETE FROM ``bans`` WHERE `seen` = 1 AND `flg_warning` = 1 AND `expires` IS NULL AND `created` < UNIX_TIMESTAMP(NOW() - INTERVAL '2' DAY)") or error(db_error());
+				break;
+			case 'purge_ban':
+				query("DELETE FROM ``bans`` WHERE `seen` = 1 AND `flg_warning` = 0 AND `expires` IS NOT NULL AND `expires` < UNIX_TIMESTAMP()") or error(db_error());
+				break;
+			default:
+				break;
+		}
+		rebuildThemes('bans');
+	}
+
 	
 	static public function find($ip, $board = false, $get_mod_info = false, $banid = null) {
 		global $config;
 
 		$query = prepare('SELECT ``bans``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``bans``
 		' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
-		WHERE
+		WHERE `flg_warning` = 0 AND
 			(' . ($board !== false ? '(`board` IS NULL OR `board` = :board) AND' : '') . '
 		(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)) OR (``bans``.id = :id))
 		ORDER BY `expires` IS NULL, `expires` DESC');
@@ -151,6 +196,7 @@ class Bans {
 	static public function stream_json($out = false, $filter_ips = false, $filter_staff = false, $board_access = false) {
 		$query = query("SELECT ``bans``.*, `username` FROM ``bans``
 			LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`
+			WHERE `flg_warning` = 0
  			ORDER BY `created` DESC") or error(db_error());
                 $bans = $query->fetchAll(PDO::FETCH_ASSOC);
 
@@ -204,16 +250,6 @@ class Bans {
 
 	}
 	
-	static public function seen($ban_id) {
-		$query = query("UPDATE ``bans`` SET `seen` = 1 WHERE `id` = " . (int)$ban_id) or error(db_error());
-                rebuildThemes('bans');
-	}
-	
-	static public function purge() {
-		$query = query("DELETE FROM ``bans`` WHERE `expires` IS NOT NULL AND `expires` < " . time() . " AND `seen` = 1") or error(db_error());
-		rebuildThemes('bans');
-	}
-	
 	static public function delete($ban_id, $modlog = false, $boards = false, $dont_rebuild = false) {
 		global $config;
 
@@ -243,6 +279,65 @@ class Bans {
 		return true;
 	}
 	
+	static public function new_warning($cloaked_mask, $reason, $warning_board = false, $mod_id = false, $post = false) {
+		global $mod, $pdo, $board;
+
+		$mask = uncloak_mask($cloaked_mask);
+
+		if ($mod_id === false) {
+			$mod_id = isset($mod['id']) ? $mod['id'] : -1;
+		}
+
+		$range = self::parse_range($mask);
+		$mask = self::range_to_string($range);
+		$cloaked_mask = cloak_mask($mask);
+
+		$query = prepare("INSERT INTO ``bans`` (`ipstart`, `ipend`, `created`, `board`, `creator`, `reason`, `seen`, `post`, `flg_warning`)
+						VALUES (:ipstart, :ipend, UNIX_TIMESTAMP(), :board, :creator, :reason, 0, :post, 1)");
+
+		$query->bindValue(':ipstart', $range[0]);
+		if ($range[1] !== false && $range[1] != $range[0])
+			$query->bindValue(':ipend', $range[1]);
+		else
+			$query->bindValue(':ipend', null, PDO::PARAM_NULL);
+
+		if ($warning_board)
+			$query->bindValue(':board', $warning_board);
+		else
+			$query->bindValue(':board', null, PDO::PARAM_NULL);
+
+		$query->bindValue(':creator', $mod_id);
+
+		if ($reason !== '') {
+			$reason = escape_markup_modifiers($reason);
+			markup($reason);
+			$query->bindValue(':reason', $reason);
+		} else
+			$query->bindValue(':reason', null, PDO::PARAM_NULL);
+
+		if ($post) {
+			if (!isset($board['uri']))
+				openBoard($post['board']);
+
+			$post['board'] = $board['uri'];
+			$query->bindValue(':post', json_encode($post));
+		} else
+			$query->bindValue(':post', null, PDO::PARAM_NULL);
+
+		$query->execute() or error(db_error($query));
+
+		if (isset($mod['id']) && $mod['id'] == $mod_id) {
+			modLog('Issued a new warning in '
+					 . ($warning_board ? '/' . $warning_board . '/' : 'all boards') .
+					' for ' .
+					(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$cloaked_mask\">$cloaked_mask</a>" : $cloaked_mask) .
+					' (<small>#' . $pdo->lastInsertId() . '</small>)' .
+					' with ' . ($reason ? 'reason: ' . utf8tohtml($reason) . '' : 'no reason'));
+		}
+
+		return $pdo->lastInsertId();
+	}
+
 	static public function new_ban($cloaked_mask, $reason, $length = false, $ban_board = false, $mod_id = false, $post = false) {
 		$mask = uncloak_mask($cloaked_mask);
 
@@ -251,29 +346,23 @@ class Bans {
 		if ($mod_id === false) {
 			$mod_id = isset($mod['id']) ? $mod['id'] : -1;
 		}
-				
+		
+		// idk where to put this. doesnt matter
+		self::updateBansTable(null, 'purge_warning');
+
 		$range = self::parse_range($mask);
 		$mask = self::range_to_string($range);
 		$cloaked_mask = cloak_mask($mask);
 		
-		$query = prepare("INSERT INTO ``bans`` VALUES (NULL, :ipstart, :ipend, :time, :expires, :board, :mod, :reason, 0, :post)");
+		$query = prepare("INSERT INTO ``bans``(`ipstart`, `ipend`, `created`, `expires`, `board`, `creator`, `reason`, `seen`, `post`)
+						VALUES (:ipstart, :ipend, UNIX_TIMESTAMP(), :expires, :board, :creator, :reason, 0, :post)");
 		
 		$query->bindValue(':ipstart', $range[0]);
 		if ($range[1] !== false && $range[1] != $range[0])
 			$query->bindValue(':ipend', $range[1]);
 		else
 			$query->bindValue(':ipend', null, PDO::PARAM_NULL);
-		
-		$query->bindValue(':mod', $mod_id);
-		$query->bindValue(':time', time());
-		
-		if ($reason !== '') {
-			$reason = escape_markup_modifiers($reason);
-			markup($reason);
-			$query->bindValue(':reason', $reason);
-		} else
-			$query->bindValue(':reason', null, PDO::PARAM_NULL);
-		
+
 		if ($length) {
 			if (is_int($length) || ctype_digit($length)) {
 				$length = time() + $length;
@@ -289,6 +378,15 @@ class Bans {
 			$query->bindValue(':board', $ban_board);
 		else
 			$query->bindValue(':board', null, PDO::PARAM_NULL);
+
+		$query->bindValue(':creator', $mod_id);
+		
+		if ($reason !== '') {
+			$reason = escape_markup_modifiers($reason);
+			markup($reason);
+			$query->bindValue(':reason', $reason);
+		} else
+			$query->bindValue(':reason', null, PDO::PARAM_NULL);
 		
 		if ($post) {
 			if (!isset($board['uri']))

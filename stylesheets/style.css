@@ -1225,3 +1225,10 @@ table.fileboard .intro a {
 div.mix {
 	display: inline-block;
 }
+
+span.public_warning {
+	display: block;
+	color: #0000FF;
+	font-weight: bold;
+	margin-top: 10px;
+}

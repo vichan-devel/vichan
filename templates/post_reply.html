@@ -26,6 +26,9 @@
 		{% if post.modifiers['ban message'] %}
 			{{ config.mod.ban_message|sprintf(post.modifiers['ban message']) }}
 		{% endif %}
+		{% if post.modifiers['warning message'] %}
+			{{ config.mod.warning_message|sprintf(post.modifiers['warning message']) }}
+		{% endif %}
 	</div>
 </div>
 <br/>

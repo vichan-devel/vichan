@@ -16,7 +16,12 @@
 {% if mod|hasPermission(config.mod.bandelete, board.uri) %}
 	<a title="{% trans %}Ban & Delete{% endtrans %}" href="?/{{ board.dir }}ban&amp;delete/{{ post.id }}">{{ config.mod.link_bandelete }}</a>&nbsp;
 {% endif %}
-
+{% if mod|hasPermission(config.mod.warning, board.uri) %}
+	<a title="{% trans %}Issue Warning{% endtrans %}" href="?/{{ board.dir }}warning/{{ post.id }}">{{ config.mod.link_warning }}</a>&nbsp;
+{% endif %}
+{% if mod|hasPermission(config.mod.warning, board.uri) and mod|hasPermission(config.mod.warningdelete, board.uri) %}
+	<a title="{% trans %}Issue Warning & Delete{% endtrans %}" href="?/{{ board.dir }}warning&amp;delete/{{ post.id }}">{{ config.mod.link_warningdelete }}</a>&nbsp;
+{% endif %}
 {% if not post.thread %}
 {% if mod|hasPermission(config.mod.sticky, board.uri) %}
 	{% if post.sticky %}

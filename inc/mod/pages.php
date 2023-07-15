@@ -911,6 +911,77 @@ function mod_page_ip($cip) {
 	mod_page(sprintf('%s: %s', _('IP'), htmlspecialchars($cip)), $config['file_mod_view_ip'], $args, $args['hostname']);
 }
 
+function mod_warning_post($board, $delete, $post) {
+	global $config, $mod;
+
+	if (!openBoard($board))
+		error($config['error']['noboard']);
+
+	if (!hasPermission($config['mod']['warning'], $board))
+		error($config['error']['noaccess']);
+
+	$security_token = make_secure_link_token($board . '/warning/' . $post);
+
+	$query = prepare(sprintf('SELECT ' . ($config['warning_show_post'] ? '*' : '`ip`, `cookie`, `thread`') .
+		' FROM ``posts_%s`` WHERE `id` = :id', $board));
+	$query->bindValue(':id', $post);
+	$query->execute() or error(db_error($query));
+	if (!$_post = $query->fetch(PDO::FETCH_ASSOC))
+		error($config['error']['404']);
+
+	$thread = $_post['thread'];
+	$ip = $_post['ip'];
+
+	if (isset($_POST['new_warning'], $_POST['reason'])) {
+
+		if (isset($_POST['ip']))
+			$ip = $_POST['ip'];
+
+	 	Bans::new_warning($_post['ip'], $_POST['reason'], $board, false, $_post);
+
+
+		if (isset($_POST['public_message'], $_POST['message'])) {
+			// public ban message
+			$_POST['message'] = strtoupper(preg_replace('/[\r\n]/', '', $_POST['message']));
+			$query = prepare(sprintf('UPDATE ``posts_%s`` SET `body_nomarkup` = CONCAT(`body_nomarkup`, :body_nomarkup) WHERE `id` = :id', $board));
+			$query->bindValue(':id', $post);
+			$query->bindValue(':body_nomarkup', sprintf("\n<tinyboard warning message>%s</tinyboard>", utf8tohtml($_POST['message'])));
+			$query->execute() or error(db_error($query));
+			rebuildPost($post);
+
+			modLog("Attached a public WARNING message to post #{$post}: " . utf8tohtml($_POST['message']));
+			buildThread($thread ? $thread : $post);
+			buildIndex();
+		} elseif (isset($_POST['delete']) && (int) $_POST['delete']) {
+			if (!hasPermission($config['mod']['delete'], $board))
+				error($config['error']['noaccess']);
+
+			// Delete post
+			deletePost($post);
+			modLog("Deleted post #{$post}");
+			// Rebuild board
+			buildIndex();
+			// Rebuild themes
+			rebuildThemes('post-delete', $board);
+		}
+
+
+		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
+	}
+
+	$args = array(
+		'ip' => $ip,
+		'hide_ip' => !hasPermission($config['mod']['show_ip'], $board),
+		'post' => $post,
+		'board' => $board,
+		'delete' => (bool)$delete,
+		'boards' => listBoards(),
+		'token' => $security_token
+	);
+
+	mod_page(_('New warning'), 'mod/warning_form.html', $args);
+}
+
 function mod_edit_ban($ban_id) {
 	global $mod, $config;
 

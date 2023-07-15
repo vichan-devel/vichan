@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS `bans` (
   `reason` text,
   `seen` tinyint(1) NOT NULL,
   `post` blob,
+  `flg_warning` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `expires` (`expires`),
   KEY `ipstart` (`ipstart`,`ipend`)
