@@ -885,7 +885,8 @@ if (isset($_POST['delete'])) {
 				error($config['error']['maxsize']);
 			}
 			
-			
+			$file['exif_stripped'] = false;
+
 			if ($config['convert_auto_orient'] && ($file['extension'] == 'jpg' || $file['extension'] == 'jpeg')) {
 				// The following code corrects the image orientation.
 				// Currently only works with the 'convert' option selected but it could easily be expanded to work with the rest if you can be bothered.
@@ -968,7 +969,7 @@ if (isset($_POST['delete'])) {
 
 			$dont_copy_file = false;
 			
-			if ($config['redraw_image'] || (!@$file['exif_stripped'] && $config['strip_exif'] && ($file['extension'] == 'jpg' || $file['extension'] == 'jpeg'))) {
+			if ($config['redraw_image'] || (!$file['exif_stripped'] && $config['strip_exif'] && ($file['extension'] == 'jpg' || $file['extension'] == 'jpeg'))) {
 				if (!$config['redraw_image'] && $config['use_exiftool']) {
 					if($error = shell_exec_error('exiftool -overwrite_original -ignoreMinorErrors -q -q -all= ' .
 						escapeshellarg($file['tmp_name'])))
