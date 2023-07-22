@@ -29,7 +29,7 @@
 					{% else %}
 						<em>no subject</em>
 					{% endif %}
-					<span class="unimportant"> &mdash; by {{ entry.name }} at {{ entry.time|date(config.post_date, config.timezone) }}</span>
+					<span class="unimportant"> &mdash; by {{ entry.name }} at {{ entry.time|date(config.post_date, 'Z') }}</span>
 				</h2>
 				<p>{{ entry.body }}</p>
 			{% endfor %}

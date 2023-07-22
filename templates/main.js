@@ -388,7 +388,7 @@ function ready() {
 
 {% endverbatim %}
 
-var post_date = "{{ config.post_date }}";
+var post_date = "{{ config.post_date_js }}";
 var max_images = {{ config.max_images }};
 
 onready(init);

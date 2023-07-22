@@ -134,17 +134,13 @@ class Tinyboard extends Twig\Extension\AbstractExtension
 	}
 }
 
-function twig_timezone_function() {
-	return 'Z';
-}
-
 function twig_push_filter($array, $value) {
 	array_push($array, $value);
 	return $array;
 }
 
 function twig_date_filter($date, $format) {
-	return gmstrftime($format, $date);
+	return gmdate($format, $date);
 }
 
 function twig_hasPermission_filter($mod, $permission, $board = null) {

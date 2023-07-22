@@ -925,11 +925,16 @@
 
 	// Timezone to use for displaying dates/times.
 	$config['timezone'] = 'America/Los_Angeles';
-	// The format string passed to strftime() for displaying dates.
-	// http://www.php.net/manual/en/function.strftime.php
-	$config['post_date'] = '%m/%d/%y (%a) %H:%M:%S';
-	// Same as above, but used for "you are banned' pages.
-	$config['ban_date'] = '%A %e %B, %Y';
+	// The format string passed to date() for displaying dates.
+	// https://www.php.net/manual/en/datetime.format.php
+	$config['post_date'] = 'm/d/Y (D) H:i:s';
+	// The format string passed to JavaScript's strfdate() for displaying local dates.
+	// https://www.php.net/manual/en/function.strftime.php
+	$config['post_date_js'] = '%F (%a) %T';
+	// Same as above, but used for catalog tooltips.
+	$config['catalog_date'] = 'M d H:i';
+	// Same as above, but used for 'you are banned' pages.
+	$config['ban_date'] = 'l j F, Y';
 
 	// The names on the post buttons. (On most imageboards, these are both just "Post").
 	$config['button_newtopic'] = _('New Topic');
