@@ -16,6 +16,19 @@ $(window).ready(function() {
 	var settings = new script_settings('ajax');
 	var do_not_ajax = false;
 
+	function displayWrong() {
+							do_not_ajax = true;
+					$(form).find('input[type="submit"]').each(function() {
+						var $replacement = $('<input type="hidden">');
+						$replacement.attr('name', $(this).attr('name'));
+						$replacement.val(submit_txt);
+						$(this)
+							.after($replacement)
+							.replaceWith($('<input type="button">').val(submit_txt));
+					});
+					$(form).submit();
+	}
+
 	// Enable submit button if disabled (cache problem)
 	$('input[type="submit"]').removeAttr('disabled');
 	
@@ -57,18 +70,24 @@ $(window).ready(function() {
 				},
 				success: function(post_response) {
 					if (post_response.error) {
-						if (post_response.banned) {
-							// You are banned. Must post the form normally so the user can see the ban message.
-							do_not_ajax = true;
-							$(form).find('input[type="submit"]').each(function() {
-								var $replacement = $('<input type="hidden">');
-								$replacement.attr('name', $(this).attr('name'));
-								$replacement.val(submit_txt);
-								$(this)
-									.after($replacement)
-									.replaceWith($('<input type="button">').val(submit_txt));
-							});
-							$(form).submit();
+						if (post_response.banned || post_response.warned) {
+							switch (post_response) {
+								case !post_response.banned && post_response.warned:
+								case post_response.banned && !post_response.warned:
+								default:
+								// You are banned. Must post the form normally so the user can see the ban message.
+								do_not_ajax = true;
+								$(form).find('input[type="submit"]').each(function() {
+									var $replacement = $('<input type="hidden">');
+									$replacement.attr('name', $(this).attr('name'));
+									$replacement.val(submit_txt);
+									$(this)
+										.after($replacement)
+										.replaceWith($('<input type="button">').val(submit_txt));
+								});
+								$(form).submit();
+								break;
+							}
 						} else {
 							alert(post_response.error);
 							$(form).find('input[type="submit"]').val(submit_txt);
