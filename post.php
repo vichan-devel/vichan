@@ -1180,7 +1180,14 @@ if (isset($_POST['delete'])) {
 		// Tell it to delete the cached post for referer
 		$js->{$_SERVER['HTTP_REFERER']} = true;
 		// Encode and set cookie
-		setcookie($config['cookies']['js'], json_encode($js), 0, $config['cookies']['jail'] ? $config['cookies']['path'] : '/', null, false, false);
+		setcookie($config['cookies']['js'], json_encode($js), [
+			'expires' => 0,
+			'path' => $config['cookies']['jail'] ? $config['cookies']['path'] : '/',
+			'domain' => null,
+			'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off',
+			'httponly' => false,
+			'samesite' => 'Strict'
+		]);
 	}
 	
 	$root = $post['mod'] ? $config['root'] . $config['file_mod'] . '?/' : $config['root'];
