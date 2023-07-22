@@ -2259,6 +2259,7 @@ function escape_markup_modifiers($string) {
 }
 
 function defined_flags_accumulate($desired_flags) {
+	global $config;
 	$output_flags = 0x0;
 	foreach ($desired_flags as $flagname) {
 		if (defined($flagname)) {
