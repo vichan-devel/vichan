@@ -925,7 +925,7 @@ function checkBan($board = false) {
 						displayBan($ban);
 					} else {
 						header('Content-Type: text/json');
-						die(json_encode(array('error' => true, 'banned' => true)));
+						die(json_encode(array('error' => true, 'banned' => true, 'warned' => false)));
 					}
 				}
 			} else {
@@ -933,7 +933,7 @@ function checkBan($board = false) {
 					displayBan($ban);
 				} else {
 					header('Content-Type: text/json');
-					die(json_encode(array('error' => true, 'banned' => true)));
+					die(json_encode(array('error' => true, 'banned' => true, 'warned' => false)));
 				}
 			}
 		}
@@ -944,11 +944,9 @@ function checkBan($board = false) {
 	if ($config['cache']['enabled'] && $last_time_purged = cache::get('purged_bans_last')) {
 		if (time() - $last_time_purged > $config['purge_bans'] )
 			Bans::updateBansTable(null, 'purge_ban');
+			cache::set('purged_bans_last', time());
 	}
 	
-	
-	if ($config['cache']['enabled'])
-		cache::set('purged_bans_last', time());
 }
 
 function checkWarning($board = false) {
@@ -978,7 +976,7 @@ function checkWarning($board = false) {
 				displayWarning($warning);
 			} else {
 				header('Content-Type: text/json');
-				die(json_encode(array('error' => true, 'banned' => true)));
+				die(json_encode(array('error' => true, 'banned' => false, 'warned' => true)));
 			}
 		}
 	}
