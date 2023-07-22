@@ -922,7 +922,7 @@ function mod_warning_post($board, $delete, $post) {
 
 	$security_token = make_secure_link_token($board . '/warning/' . $post);
 
-	$query = prepare(sprintf('SELECT ' . ($config['warning_show_post'] ? '*' : '`ip`, `cookie`, `thread`') .
+	$query = prepare(sprintf('SELECT ' . ($config['warning_show_post'] ? '*' : '`ip`, `thread`') .
 		' FROM ``posts_%s`` WHERE `id` = :id', $board));
 	$query->bindValue(':id', $post);
 	$query->execute() or error(db_error($query));
