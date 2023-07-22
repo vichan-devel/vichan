@@ -71,7 +71,7 @@ function createBoardlist($mod=false) {
 	);
 }
 
-function error($message, $priority = true, $debug_stuff = false) {
+function error($message, $priority = true, $debug_stuff = []) {
 	global $board, $mod, $config, $db_error;
 	
 	if ($config['syslog'] && $priority !== false) {
