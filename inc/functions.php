@@ -2287,6 +2287,7 @@ function escape_markup_modifiers($string) {
 }
 
 function defined_flags_accumulate($desired_flags) {
+	global $config;
 	$output_flags = 0x0;
 	foreach ($desired_flags as $flagname) {
 		if (defined($flagname)) {
@@ -2304,7 +2305,7 @@ function defined_flags_accumulate($desired_flags) {
 
 function utf8tohtml($utf8) {
 	$flags = defined_flags_accumulate(['ENT_QUOTES', 'ENT_SUBSTITUTE', 'ENT_DISALLOWED']);
-	return htmlspecialchars($utf8, $flags, 'UTF-8');
+	return htmlspecialchars($utf8 ?? '', $flags, 'UTF-8');
 }
 
 function ordutf8($string, &$offset) {
