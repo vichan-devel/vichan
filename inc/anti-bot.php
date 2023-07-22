@@ -123,7 +123,7 @@ class AntiBot {
 		$html = '';
 		
 		if ($count === false) {
-			$count = mt_rand(1, abs(count($this->inputs) / 15) + 1);
+			$count = mt_rand(1,  (int) abs(count($this->inputs) / 15) + 1);
 		}
 		
 		if ($count === true) {
