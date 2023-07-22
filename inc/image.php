@@ -300,7 +300,8 @@ class ImageConvert extends ImageBase {
 		return $this->height;
 	}
 	public function destroy() {
-		@unlink($this->temp);
+		if (file_exists($this->temp))
+			unlink($this->temp);
 		$this->temp = false;
 	}
 	public function resize() {

@@ -540,10 +540,7 @@ if (isset($_POST['delete'])) {
 			error($config['error']['unknownext']);
 
 		$post['file_tmp'] = tempnam($config['tmp'], 'url');
-		function unlink_tmp_file($file) {
-			@unlink($file);
-			fatal_error_handler();
-		}
+
 		register_shutdown_function('unlink_tmp_file', $post['file_tmp']);
 		
 		$fp = fopen($post['file_tmp'], 'w');
@@ -1012,10 +1009,12 @@ if (isset($_POST['delete'])) {
                                                           'tesseract stdin '.escapeshellarg($tmpname).' '.$config['tesseract_params']);
 				$tmpname .= ".txt";
 
-				$value = @file_get_contents($tmpname);
-				@unlink($tmpname);
+				if(file_exists($tmpname)) {
+					$value = file_get_contents($tmpname);
+					unlink($tmpname);
+				}
 
-				if ($value && trim($value)) {
+				if (isset($value) && $value && trim($value)) {
 					// This one has an effect, that the body is appended to a post body. So you can write a correct
 					// spamfilter.
 					$post['body_nomarkup'] .= "<tinyboard ocr image $key>".htmlspecialchars($value)."</tinyboard>";
@@ -1024,11 +1023,11 @@ if (isset($_POST['delete'])) {
 		}
 		
 		if (!$dont_copy_file) {
-			if (isset($file['file_tmp'])) {
-				if (!@rename($file['tmp_name'], $file['file']))
+			if (isset($file['file_tmp']) && file_exists($file['tmp_name'])) {
+				if (!rename($file['tmp_name'], $file['file']))
 					error($config['error']['nomove']);
 				chmod($file['file'], 0644);
-			} elseif (!@move_uploaded_file($file['tmp_name'], $file['file']))
+			} elseif (!move_uploaded_file($file['tmp_name'], $file['file']))
 				error($config['error']['nomove']);
 			}
 		}
