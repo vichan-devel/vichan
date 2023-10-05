@@ -207,6 +207,8 @@ function loadConfig() {
 			$config['image_bumplocked'] = $config['dir']['static'] . 'sage.gif';
 		if (!isset($config['image_deleted']))
 			$config['image_deleted'] = $config['dir']['static'] . 'deleted.png';
+		if (!isset($config['image_cyclical']))
+			$config['image_cyclical'] = $config['dir']['static'] . 'cycle.png';
 
 		if (isset($board)) {
 			if (!isset($config['uri_thumb']))
@@ -2305,7 +2307,7 @@ function defined_flags_accumulate($desired_flags) {
 }
 
 function utf8tohtml($utf8) {
-	$flags = defined_flags_accumulate(['ENT_QUOTES', 'ENT_SUBSTITUTE', 'ENT_DISALLOWED']);
+	$flags = defined_flags_accumulate(['ENT_NOQUOTES', 'ENT_SUBSTITUTE', 'ENT_DISALLOWED']);
 	return htmlspecialchars($utf8 ?? '', $flags, 'UTF-8');
 }
 
@@ -3008,7 +3010,7 @@ function cloak_ip($ip) {
 	if (strlen($ipbytes) >= 16)
 		$ipbytes = substr($ipbytes, 0, 16);
 
-	$cyphertext = openssl_encrypt($ipbytes, 'rc4-40', $ipcrypt_key, OPENSSL_RAW_DATA);
+	$cyphertext = openssl_encrypt($ipbytes, 'aes-256-ctr', $ipcrypt_key, OPENSSL_RAW_DATA);
 
 	$ret = $config['ipcrypt_prefix'].':' . base32_encode($cyphertext);
 	if (isset($tld) && !empty($tld)) {
@@ -3031,7 +3033,7 @@ function uncloak_ip($ip) {
 	}
 
 	if (substr($ip, 0, strlen($config['ipcrypt_prefix']) + 1) === $config['ipcrypt_prefix'].':') {
-		$plaintext = openssl_decrypt(base32_decode($juice), 'rc4-40', $ipcrypt_key, OPENSSL_RAW_DATA);
+		$plaintext = openssl_decrypt(base32_decode($juice), 'aes-256-ctr', $ipcrypt_key, OPENSSL_RAW_DATA);
 
 		if ($plaintext === false || strlen($plaintext) == 0)
 			return '#ERROR';
@@ -3066,6 +3068,19 @@ function uncloak_mask($mask) {
 	}
 
 	return $mask;
+}
+
+function check_thread_limit($post) {
+	global $config, $board;
+	if (!isset($config['max_threads_per_hour']) || !$config['max_threads_per_hour']) return false;
+
+	if ($post['op']) {
+		$query = prepare(sprintf('SELECT COUNT(*) AS `count` FROM ``posts_%s`` WHERE `thread` IS NULL AND FROM_UNIXTIME(`time`) > DATE_SUB(NOW(), INTERVAL 1 HOUR);', $board['uri']));
+		$query->execute() or error(db_error($query));
+		$r = $query->fetch(PDO::FETCH_ASSOC);
+
+		return $r['count'] >= $config['max_threads_per_hour'];
+	}
 }
 
 function unlink_tmp_file($file) {

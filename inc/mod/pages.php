@@ -2288,7 +2288,7 @@ function mod_reports() {
 	$reports = $query->fetchAll(PDO::FETCH_ASSOC);
 	
 	$report_queries = array();
-	foreach ($reports as &$report) {
+	foreach ($reports as $report) {
 		if (!isset($report_queries[$report['board']]))
 			$report_queries[$report['board']] = array();
 		$report_queries[$report['board']][] = $report['post'];

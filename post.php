@@ -410,6 +410,31 @@ if (isset($_POST['delete'])) {
 				error($config['error']['captcha']);
 			}
 		}
+		// hCaptcha
+		if ($config['hcaptcha']) {
+			if (!isset($_POST['h-captcha-response'])) {
+				error($config['error']['bot']);
+			}
+
+			$data = array(
+				'secret' => $config['hcaptcha_private'],
+				'response' => $_POST['h-captcha-response'],
+				'remoteip' => $_SERVER['REMOTE_ADDR']
+			);
+
+			$hcaptchaverify = curl_init();
+			curl_setopt($hcaptchaverify, CURLOPT_URL, "https://hcaptcha.com/siteverify");
+			curl_setopt($hcaptchaverify, CURLOPT_POST, true);
+			curl_setopt($hcaptchaverify, CURLOPT_POSTFIELDS, http_build_query($data));
+			curl_setopt($hcaptchaverify, CURLOPT_RETURNTRANSFER, true);
+			$hcaptcharesponse = curl_exec($hcaptchaverify);
+
+			$resp = json_decode($hcaptcharesponse, true); // Decoding $hcaptcharesponse instead of $response
+
+			if (!$resp['success']) {
+				error($config['error']['captcha']);
+			}
+		}
 		// Same, but now with our custom captcha provider
  		if (($config['captcha']['enabled']) || (($post['op']) && ($config['new_thread_capt'])) ) {
 		$ch = curl_init($config['domain'].'/'.$config['captcha']['provider_check'] . "?" . http_build_query([

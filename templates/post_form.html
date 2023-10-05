@@ -84,6 +84,18 @@
 			</td>
 		</tr>
 		{% endif %}
+		{% if config.hcaptcha %}
+		<tr>
+			<th>
+				{% trans %}Verification{% endtrans %}
+				{{ antibot.html() }}
+			</th>
+			<td>
+				<div class="h-captcha" data-sitekey="{{ config.hcaptcha_public }}"></div>
+				{{ antibot.html() }}
+			</td>
+		</tr>
+		{% endif %}
 		{% if config.captcha.enabled %}
 		<tr class='captcha'>
 			<th>

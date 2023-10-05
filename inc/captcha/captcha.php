@@ -41,7 +41,7 @@ class CzaksCaptcha {
   function mutate_sizes() {
     foreach ($this->content as &$v) {
       if (!isset ($v['font-size']))
-        $v['font-size'] = rand($this->height/3 - 4, $this->height/3 + 8);
+        $v['font-size'] = rand(intval($this->height/3) - 4, intval($this->height/3) + 8);
     }
   }
   function mutate_positions() {

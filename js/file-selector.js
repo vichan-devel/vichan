@@ -8,6 +8,11 @@
  */
 function init_file_selector(max_images) {
 
+	// Temporarily block iOS
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        return;
+    }
+
 $(document).ready(function () {
 	// add options panel item
 	if (window.Options && Options.get_tab('general')) {
