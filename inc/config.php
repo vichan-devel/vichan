@@ -314,6 +314,9 @@
 	$config['recaptcha_public'] = '6LcXTcUSAAAAAKBxyFWIt2SO8jwx4W7wcSMRoN3f';
 	$config['recaptcha_private'] = '6LcXTcUSAAAAAOGVbVdhmEM1_SyRF4xTKe8jbzf_';
 
+
+	// Enable hCaptcha to make spam even harder. Rarely necessary.
+	$config['hcaptcha'] = false;
 	// Public and private key pair for using hCaptcha.
 	$config['hcaptcha_public'] = '7a4b21e0-dc53-46f2-a9f8-91d2e74b63a0';
 	$config['hcaptcha_private'] = '0x4e9A01bE637b51dC41a7Ea9865C3fDe4aB72Cf17';
