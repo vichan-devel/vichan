@@ -5,6 +5,39 @@
 
 require_once 'inc/bootstrap.php';
 
+/**
+ * Utility functions
+ */
+
+/**
+ * Get the md5 hash of the file.
+ *
+ * @param array $config instance configuration.
+ * @param string $file file to the the md5 of.
+ * @return string|false
+ */
+function md5_hash_of_file($config, $path) {
+	$cmd = false;
+	if ($config['bsd_md5']) {
+		$cmd = '/sbin/md5 -r';
+	}
+	if ($config['gnu_md5']) {
+		$cmd = 'md5sum';
+	}
+
+	if ($cmd) {
+		$output = shell_exec_error($cmd . " " . escapeshellarg($path));
+		$output = explode(' ', $output);
+		return $output[0];
+	} else {
+		return md5_file($path);
+	}
+}
+
+/**
+ * Method handling functions
+ */
+
 $dropped_post = false;
 
 // Is it a post coming from NNTP? Let's extract it and pretend it's a normal post.
@@ -837,12 +870,7 @@ if (isset($_POST['delete'])) {
 	$post['tracked_cites'] = markup($post['body'], true);
 
 
-
 	if ($post['has_file']) {
-		$md5cmd = false;
-		if ($config['bsd_md5'])  $md5cmd = '/sbin/md5 -r';
-		if ($config['gnu_md5'])  $md5cmd = 'md5sum';
-
 		$allhashes = '';
 
 		foreach ($post['files'] as $key => &$file) {
@@ -863,14 +891,7 @@ if (isset($_POST['delete'])) {
 			if (!is_readable($upload))
 				error($config['error']['nomove']);
 
-			if ($md5cmd) {
-				$output = shell_exec_error($md5cmd . " " . escapeshellarg($upload));
-				$output = explode(' ', $output);
-				$hash = $output[0];
-			}
-			else {
-				$hash = md5_file($upload);
-			}
+			$hash = md5_hash_of_file($config, $upload);
 
 			$file['hash'] = $hash;
 			$allhashes .= $hash;
