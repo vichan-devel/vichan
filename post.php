@@ -7,6 +7,7 @@ require_once 'inc/bootstrap.php';
 
 use Vichan\AppContext;
 use Vichan\Driver\HttpDriver;
+use Vichan\Service\{RemoteCaptchaQuery, NativeCaptchaQuery};
 
 /**
  * Utility functions
@@ -143,6 +144,7 @@ function ocr_image(array $config, string $img_path): string {
 
 	return trim($ret);
 }
+
 
 /**
  * Method handling functions
@@ -447,22 +449,32 @@ if (isset($_POST['delete'])) {
 	if (count($report) > $config['report_limit'])
 		error($config['error']['toomanyreports']);
 
-	if ($config['report_captcha'] && !isset($_POST['captcha_text'], $_POST['captcha_cookie'])) {
-		error($config['error']['bot']);
-	}
 
 	if ($config['report_captcha']) {
-		$ch = curl_init($config['domain'].'/'.$config['captcha']['provider_check'] . "?" . http_build_query([
-			'mode' => 'check',
-			'text' => $_POST['captcha_text'],
-			'extra' => $config['captcha']['extra'],
-			'cookie' => $_POST['captcha_cookie']
-		]));
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$resp = curl_exec($ch);
+		if (!isset($_POST['captcha_text'], $_POST['captcha_cookie'])) {
+			error($config['error']['bot']);
+		}
 
-		if ($resp !== '1') {
-			error($config['error']['captcha']);
+		try {
+			$query = new NativeCaptchaQuery(
+				$context->getHttpDriver(),
+				$config['domain'],
+				$config['captcha']['provider_check']
+			);
+			$success = $query->verify(
+				$config['captcha']['extra'],
+				$_POST['captcha_text'],
+				$_POST['captcha_cookie']
+			);
+
+			if (!$success) {
+				error($config['error']['captcha']);
+			}
+		} catch (RuntimeException $e) {
+			if ($config['syslog']) {
+				_syslog(LOG_ERR, "Native captcha IO exception: {$e->getMessage()}");
+			}
+			error($config['error']['local_io_error']);
 		}
 	}
 
@@ -552,62 +564,60 @@ if (isset($_POST['delete'])) {
 		// Check if banned
 		checkBan($board['uri']);
 
-		// Check for CAPTCHA right after opening the board so the "return" link is in there
-		if ($config['recaptcha']) {
-			if (!isset($_POST['g-recaptcha-response']))
-				error($config['error']['bot']);
+		// Check for CAPTCHA right after opening the board so the "return" link is in there.
+		try {
+			// With our custom captcha provider
+			if ($config['captcha']['enabled'] || ($post['op'] && $config['new_thread_capt'])) {
+				$query = new NativeCaptchaQuery($context->getHttpDriver(), $config['domain'], $config['captcha']['provider_check']);
+				$success = $query->verify($config['captcha']['extra'], $_POST['captcha_text'], $_POST['captcha_cookie']);
 
-			// Check what reCAPTCHA has to say...
-			$resp = json_decode(file_get_contents(sprintf('https://www.recaptcha.net/recaptcha/api/siteverify?secret=%s&response=%s&remoteip=%s',
-				$config['recaptcha_private'],
-				urlencode($_POST['g-recaptcha-response']),
-				$_SERVER['REMOTE_ADDR'])), true);
-
-			if (!$resp['success']) {
-				error($config['error']['captcha']);
+				if (!$success) {
+					error(
+						$config['error']['captcha']
+						. '<script>if (actually_load_captcha !== undefined) actually_load_captcha("'
+						. $config['captcha']['provider_get']
+						.'", "'
+						. $config['captcha']['extra']
+						. '");</script>'
+					);
+				}
 			}
-		}
-		// hCaptcha
-		if ($config['hcaptcha']) {
-			if (!isset($_POST['h-captcha-response'])) {
-				error($config['error']['bot']);
+			// Remote 3rd party captchas.
+			else {
+				// recaptcha
+				if ($config['recaptcha']) {
+					if (!isset($_POST['g-recaptcha-response'])) {
+						error($config['error']['bot']);
+					}
+					$response = $_POST['g-recaptcha-response'];
+					$query = RemoteCaptchaQuery::with_recaptcha($context->getHttpDriver(), $config['recaptcha_private']);
+				}
+				// hCaptcha
+				elseif ($config['hcaptcha']) {
+					if (!isset($_POST['h-captcha-response'])) {
+						error($config['error']['bot']);
+					}
+					$response = $_POST['g-recaptcha-response'];
+					$query = RemoteCaptchaQuery::with_hcaptcha($context->getHttpDriver(), $config['hcaptcha_private']);
+				}
+
+				$success = $query->verify($response, $_SERVER['REMOTE_ADDR']);
+				if (!$success) {
+					error($config['error']['captcha']);
+				}
 			}
-
-			$data = array(
-				'secret' => $config['hcaptcha_private'],
-				'response' => $_POST['h-captcha-response'],
-				'remoteip' => $_SERVER['REMOTE_ADDR']
-			);
-
-			$hcaptchaverify = curl_init();
-			curl_setopt($hcaptchaverify, CURLOPT_URL, "https://hcaptcha.com/siteverify");
-			curl_setopt($hcaptchaverify, CURLOPT_POST, true);
-			curl_setopt($hcaptchaverify, CURLOPT_POSTFIELDS, http_build_query($data));
-			curl_setopt($hcaptchaverify, CURLOPT_RETURNTRANSFER, true);
-			$hcaptcharesponse = curl_exec($hcaptchaverify);
-
-			$resp = json_decode($hcaptcharesponse, true); // Decoding $hcaptcharesponse instead of $response
-
-			if (!$resp['success']) {
-				error($config['error']['captcha']);
+		} catch (RuntimeException $e) {
+			if ($config['syslog']) {
+				_syslog(LOG_ERR, "Captcha IO exception: {$e->getMessage()}");
 			}
+			error($config['error']['remote_io_error']);
+		} catch (JsonException $e) {
+			if ($config['syslog']) {
+				_syslog(LOG_ERR, "Bad JSON reply to captcha: {$e->getMessage()}");
+			}
+			error($config['error']['remote_io_error']);
 		}
-		// Same, but now with our custom captcha provider
- 		if (($config['captcha']['enabled']) || (($post['op']) && ($config['new_thread_capt'])) ) {
-		$ch = curl_init($config['domain'].'/'.$config['captcha']['provider_check'] . "?" . http_build_query([
-			'mode' => 'check',
-			'text' => $_POST['captcha_text'],
-			'extra' => $config['captcha']['extra'],
-			'cookie' => $_POST['captcha_cookie']
-		]));
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$resp = curl_exec($ch);
 
-		if ($resp !== '1') {
-			error($config['error']['captcha'] .
-				'<script>if (actually_load_captcha !== undefined) actually_load_captcha("'.$config['captcha']['provider_get'].'", "'.$config['captcha']['extra'].'");</script>');
-		}
-	}
 
 		if (!(($post['op'] && $_POST['post'] == $config['button_newtopic']) ||
 			(!$post['op'] && $_POST['post'] == $config['button_reply'])))
