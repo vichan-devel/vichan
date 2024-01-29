@@ -62,6 +62,88 @@ function strip_symbols($input) {
 }
 
 /**
+ * Download the url's target with curl.
+ *
+ * @param string $url Url to the file to download.
+ * @param int $timeout Request timeout in seconds.
+ * @param File $fd File descriptor to save the content to.
+ * @return null|string Returns a string on error.
+ */
+function download_file_into($url, $timeout, $fd) {
+	$err = null;
+	$curl = curl_init();
+	curl_setopt($curl, CURLOPT_URL, $url);
+	curl_setopt($curl, CURLOPT_FAILONERROR, true);
+	curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
+	curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
+	curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
+	curl_setopt($curl, CURLOPT_USERAGENT, 'Tinyboard');
+	curl_setopt($curl, CURLOPT_FILE, $fd);
+	curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+	curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+
+	if (curl_exec($curl) === false) {
+		$err = curl_error($curl);
+	}
+
+	curl_close($curl);
+	return $err;
+}
+
+/**
+ * Download a remote file from the given url.
+ * The file is deleted at shutdown.
+ *
+ * @param string $file_url The url to download the file from.
+ * @param int $request_timeout Timeout to retrieve the file.
+ * @param array $extra_extensions Allowed file extensions.
+ * @param string $tmp_dir Temporary directory to save the file into.
+ * @param array $error_array An array with error codes, used to create exceptions on failure.
+ * @return array Returns an array describing the file on success.
+ * @throws Exception on error.
+ */
+function download_file_from_url($file_url, $request_timeout, $allowed_extensions, $tmp_dir, &$error_array) {
+	if (!preg_match('@^https?://@', $file_url)) {
+		throw new InvalidArgumentException($error_array['invalidimg']);
+	}
+
+	if (mb_strpos($file_url, '?') !== false) {
+		$url_without_params = mb_substr($file_url, 0, mb_strpos($file_url, '?'));
+	} else {
+		$url_without_params = $file_url;
+	}
+
+	$extension = strtolower(mb_substr($url_without_params, mb_strrpos($url_without_params, '.') + 1));
+
+	if (!in_array($extension, $allowed_extensions)) {
+		throw new InvalidArgumentException($error_array['unknownext']);
+	}
+
+	$tmp_file = tempnam($tmp_dir, 'url');
+	function unlink_tmp_file($file) {
+		@unlink($file);
+		fatal_error_handler();
+	}
+	register_shutdown_function('unlink_tmp_file', $tmp_file);
+
+	$fd = fopen($tmp_file, 'w');
+
+	$dl_err = download_file_into($tmp_file, $request_timeout, $fd);
+	fclose($fd);
+	if ($dl_err !== null) {
+		throw new Exception($error_array['nomove'] . '<br/>Curl says: ' . $dl_err);
+	}
+
+	return array(
+		'name' => basename($url_without_params),
+		'tmp_name' => $tmp_file,
+		'file_tmp' => true,
+		'error' => 0,
+		'size' => filesize($tmp_file)
+	);
+}
+
+/**
  * Method handling functions
  */
 
@@ -609,58 +691,18 @@ if (isset($_POST['delete'])) {
 	}
 
 	if ($config['allow_upload_by_url'] && isset($_POST['file_url']) && !empty($_POST['file_url'])) {
-		$post['file_url'] = $_POST['file_url'];
-		if (!preg_match('@^https?://@', $post['file_url']))
-			error($config['error']['invalidimg']);
+		$allowed_extensions = $config['allowed_ext_files'];
 
-		if (mb_strpos($post['file_url'], '?') !== false)
-			$url_without_params = mb_substr($post['file_url'], 0, mb_strpos($post['file_url'], '?'));
-		else
-			$url_without_params = $post['file_url'];
-
-		$post['extension'] = strtolower(mb_substr($url_without_params, mb_strrpos($url_without_params, '.') + 1));
-
+		// Add allowed extensions for OP, if enabled.
 		if ($post['op'] && $config['allowed_ext_op']) {
-			if (!in_array($post['extension'], $config['allowed_ext_op']))
-				error($config['error']['unknownext']);
+			array_merge($allowed_extensions, $config['allowed_ext_op']);
 		}
-		else if (!in_array($post['extension'], $config['allowed_ext']) && !in_array($post['extension'], $config['allowed_ext_files']))
-			error($config['error']['unknownext']);
 
-		$post['file_tmp'] = tempnam($config['tmp'], 'url');
-		function unlink_tmp_file($file) {
-			@unlink($file);
-			fatal_error_handler();
+		try {
+			$_FILES['file'] = download_file_from_url($_POST['file_url'], $config['upload_by_url_timeout'], $allowed_extensions, $config['tmp'], $config['error']);
+		} catch (Exception $e) {
+			error($e->getMessage());
 		}
-		register_shutdown_function('unlink_tmp_file', $post['file_tmp']);
-
-		$fp = fopen($post['file_tmp'], 'w');
-
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_URL, $post['file_url']);
-		curl_setopt($curl, CURLOPT_FAILONERROR, true);
-		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
-		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
-		curl_setopt($curl, CURLOPT_TIMEOUT, $config['upload_by_url_timeout']);
-		curl_setopt($curl, CURLOPT_USERAGENT, 'Tinyboard');
-		curl_setopt($curl, CURLOPT_BINARYTRANSFER, true);
-		curl_setopt($curl, CURLOPT_FILE, $fp);
-		curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
-
-		if (curl_exec($curl) === false)
-			error($config['error']['nomove'] . '<br/>Curl says: ' . curl_error($curl));
-
-		curl_close($curl);
-
-		fclose($fp);
-
-		$_FILES['file'] = array(
-			'name' => basename($url_without_params),
-			'tmp_name' => $post['file_tmp'],
-			'file_tmp' => true,
-			'error' => 0,
-			'size' => filesize($post['file_tmp'])
-		);
 	}
 
 	$post['name'] = $_POST['name'] != '' ? $_POST['name'] : $config['anonymous'];
