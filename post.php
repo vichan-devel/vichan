@@ -35,6 +35,33 @@ function md5_hash_of_file($config, $path) {
 }
 
 /**
+ * Strip the symbols incompatible with the current database version.
+ *
+ * @param string @input The input string.
+ * @return string The value stripped of incompatible symbols.
+ */
+function strip_symbols($input) {
+	if (mysql_version() >= 50503) {
+		return $input; // Assume we're using the utf8mb4 charset
+	} else {
+		// MySQL's `utf8` charset only supports up to 3-byte symbols
+		// Remove anything >= 0x010000
+
+		$chars = preg_split('//u', $input, -1, PREG_SPLIT_NO_EMPTY);
+		$ret = '';
+		foreach ($chars as $char) {
+			$o = 0;
+			$ord = ordutf8($char, $o);
+			if ($ord >= 0x010000) {
+				continue;
+			}
+			$ret .= $char;
+		}
+		return $ret;
+	}
+}
+
+/**
  * Method handling functions
  */
 
@@ -850,22 +877,7 @@ if (isset($_POST['delete'])) {
 		$post['body'] .= "\n<tinyboard proxy>".$proxy."</tinyboard>";
 	}
 
-	if (mysql_version() >= 50503) {
-		$post['body_nomarkup'] = $post['body']; // Assume we're using the utf8mb4 charset
-	} else {
-		// MySQL's `utf8` charset only supports up to 3-byte symbols
-		// Remove anything >= 0x010000
-
-		$chars = preg_split('//u', $post['body'], -1, PREG_SPLIT_NO_EMPTY);
-		$post['body_nomarkup'] = '';
-		foreach ($chars as $char) {
-			$o = 0;
-			$ord = ordutf8($char, $o);
-			if ($ord >= 0x010000)
-				continue;
-			$post['body_nomarkup'] .= $char;
-		}
-	}
+	$post['body_nomarkup'] = strip_symbols($post['body']);
 
 	$post['tracked_cites'] = markup($post['body'], true);
 
