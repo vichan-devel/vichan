@@ -25,7 +25,7 @@ class Cache {
 				self::$cache->select($config['cache']['redis'][3]) or die('cache select failure');
 				break;
 			case 'php':
-				self::$cache = array();
+				self::$cache = [];
 				break;
 		}
 	}
