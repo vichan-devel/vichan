@@ -10,7 +10,7 @@ class Image {
 	public $src, $format, $image, $size;
 	public function __construct($src, $format = false, $size = false) {
 		global $config;
-		
+
 		$this->src = $src;
 		$this->format = $format;
 
@@ -24,21 +24,21 @@ class Image {
 				error(_('Unsupported file format: ') . $this->format);
 			}
 		}
-		
+
 		$this->image = new $classname($this, $size);
 
 		if (!$this->image->valid()) {
 			$this->delete();
 			error($config['error']['invalidimg']);
 		}
-		
+
 		$this->size = (object)array('width' => $this->image->_width(), 'height' => $this->image->_height());
 		if ($this->size->width < 1 || $this->size->height < 1) {
 			$this->delete();
 			error($config['error']['invalidimg']);
 		}
 	}
-	
+
 	public function resize($extension, $max_width, $max_height) {
 		global $config;
 
@@ -62,16 +62,16 @@ class Image {
 				error(_('Unsupported file format: ') . $extension);
 			}
 		}
-		
+
 		$thumb = new $classname(false);
 		$thumb->src = $this->src;
 		$thumb->format = $this->format;
 		$thumb->original_width = $this->size->width;
 		$thumb->original_height = $this->size->height;
-		
+
 		$x_ratio = $max_width / $this->size->width;
 		$y_ratio = $max_height / $this->size->height;
-		
+
 		if (($this->size->width <= $max_width) && ($this->size->height <= $max_height)) {
 			$width = $this->size->width;
 			$height = $this->size->height;
@@ -82,16 +82,16 @@ class Image {
 			$width = ceil($y_ratio * $this->size->width);
 			$height = $max_height;
 		}
-		
+
 		$thumb->_resize($this->image->image, $width, $height);
-				
+
 		return $thumb;
 	}
-	
+
 	public function to($dst) {
 		$this->image->to($dst);
 	}
-	
+
 	public function delete() {
 		file_unlink($this->src);
 	}
@@ -114,26 +114,26 @@ class ImageGD {
 }
 
 class ImageBase extends ImageGD {
-	public $image, $src, $original, $original_width, $original_height, $width, $height;		
+	public $image, $src, $original, $original_width, $original_height, $width, $height;
 	public function valid() {
 		return (bool)$this->image;
 	}
-	
+
 	public function __construct($img, $size = false) {
 		if (method_exists($this, 'init'))
 			$this->init();
-		
+
 		if ($size && $size[0] > 0 && $size[1] > 0) {
 			$this->width = $size[0];
 			$this->height = $size[1];
 		}
-		
+
 		if ($img !== false) {
 			$this->src = $img->src;
 			$this->from();
 		}
 	}
-	
+
 	public function _width() {
 		if (method_exists($this, 'width'))
 			return $this->width();
@@ -156,7 +156,7 @@ class ImageBase extends ImageGD {
 		$this->original = &$original;
 		$this->width = $width;
 		$this->height = $height;
-		
+
 		if (method_exists($this, 'resize'))
 			$this->resize();
 		else
@@ -199,31 +199,31 @@ class ImageImagick extends ImageBase {
 	}
 	public function resize() {
 		global $config;
-		
+
 		if ($this->format == 'gif' && ($config['thumb_ext'] == 'gif' || $config['thumb_ext'] == '')) {
 			$this->image = new Imagick();
 			$this->image->setFormat('gif');
-			
+
 			$keep_frames = array();
 			for ($i = 0; $i < $this->original->getNumberImages(); $i += floor($this->original->getNumberImages() / $config['thumb_keep_animation_frames']))
 				$keep_frames[] = $i;
-			
+
 			$i = 0;
 			$delay = 0;
 			foreach ($this->original as $frame) {
 				$delay += $frame->getImageDelay();
-				
+
 				if (in_array($i, $keep_frames)) {
 					// $frame->scaleImage($this->width, $this->height, false);
 					$frame->sampleImage($this->width, $this->height);
 					$frame->setImagePage($this->width, $this->height, 0, 0);
 					$frame->setImageDelay($delay);
 					$delay = 0;
-					
+
 					$this->image->addImage($frame->getImage());
 				}
 				$i++;
-			}		
+			}
 		} else {
 			$this->image = clone $this->original;
 			$this->image->scaleImage($this->width, $this->height, false);
@@ -234,15 +234,15 @@ class ImageImagick extends ImageBase {
 
 class ImageConvert extends ImageBase {
 	public $width, $height, $temp, $gm = false, $gifsicle = false;
-	
+
 	public function init() {
 		global $config;
-		
+
 		if ($config['thumb_method'] == 'gm' || $config['thumb_method'] == 'gm+gifsicle')
 			$this->gm = true;
 		if ($config['thumb_method'] == 'convert+gifsicle' || $config['thumb_method'] == 'gm+gifsicle')
 			$this->gifsicle = true;
-		
+
 		$this->temp = false;
 	}
 	public function get_size($src, $try_gd_first = true) {
@@ -264,7 +264,7 @@ class ImageConvert extends ImageBase {
 		if ($size) {
 			$this->width = $size[0];
 			$this->height = $size[1];
-			
+
 			$this->image = true;
 		} else {
 			// mark as invalid
@@ -273,7 +273,7 @@ class ImageConvert extends ImageBase {
 	}
 	public function to($src) {
 		global $config;
-		
+
 		if (!$this->temp) {
 			if ($config['strip_exif']) {
 				if($error = shell_exec_error(($this->gm ? 'gm ' : '') . 'convert ' .
@@ -305,16 +305,16 @@ class ImageConvert extends ImageBase {
 	}
 	public function resize() {
 		global $config;
-		
+
 		if ($this->temp) {
 			// remove old
 			$this->destroy();
 		}
-		
+
 		$this->temp = tempnam($config['tmp'], 'convert') . ($config['thumb_ext'] == '' ? '' : '.' . $config['thumb_ext']);
-		
+
 		$config['thumb_keep_animation_frames'] = (int)$config['thumb_keep_animation_frames'];
-		
+
 		if ($this->format == 'gif' && ($config['thumb_ext'] == 'gif' || $config['thumb_ext'] == '') && $config['thumb_keep_animation_frames'] > 1) {
 			if ($this->gifsicle) {
 				if (($error = shell_exec("gifsicle -w --unoptimize -O2 --resize {$this->width}x{$this->height} < " .
@@ -380,7 +380,7 @@ class ImageConvert extends ImageBase {
 			}
 		}
 	}
-	
+
 	// For when -auto-orient doesn't exist (older versions)
 	static public function jpeg_exif_orientation($src, $exif = false) {
 		if (!$exif) {
@@ -398,16 +398,16 @@ class ImageConvert extends ImageBase {
 				//   8888
 				//     88
 				//     88
-			
+
 				return '-flop';
 			case 3:
-			
+
 				//     88
 				//     88
 				//   8888
 				//     88
 				// 888888
-			
+
 				return '-flip -flop';
 			case 4:
 				// 88
@@ -415,31 +415,31 @@ class ImageConvert extends ImageBase {
 				// 8888
 				// 88
 				// 888888
-			
+
 				return '-flip';
 			case 5:
 				// 8888888888
 				// 88  88
 				// 88
-			
+
 				return '-rotate 90 -flop';
 			case 6:
 				// 88
 				// 88  88
 				// 8888888888
-			
+
 				return '-rotate 90';
 			case 7:
 				//         88
 				//     88  88
 				// 8888888888
-			
+
 				return '-rotate "-90" -flop';
 			case 8:
 				// 8888888888
 				//     88  88
 				//         88
-			
+
 				return '-rotate "-90"';
 		}
 	}
@@ -495,9 +495,4 @@ class ImageBMP extends ImageBase {
 	public function to($src) {
 		imagebmp($this->image, $src);
 	}
-}
-
-
-if (PHP_MAJOR_VERSION <= 7 && PHP_MINOR_VERSION < 2) {
-	include 'inc/image/bmp.php';
 }
