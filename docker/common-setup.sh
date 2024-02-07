@@ -1,10 +1,5 @@
 #!/bin/sh
 
-# not exactly elegant, but one container is Debian, the other is Alpine
-useradd -MU leftypol
-addgroup leftypol
-adduser -DHG leftypol leftypol
-
 set -eu
 
 install -m 775 -o leftypol -g leftypol -d /var/www-leftypol

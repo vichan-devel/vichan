@@ -1,7 +1,10 @@
 FROM nginx:1.25.3-alpine
 
 COPY . /code
-RUN /code/docker/common-setup.sh
+RUN addgroup --system leftypol \
+   && adduser --system leftypol \
+   && adduser leftypol leftypol \
+   && /code/docker/common-setup.sh
 
 
 CMD ["nginx", "-g", "daemon off;"]

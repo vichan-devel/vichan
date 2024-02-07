@@ -35,7 +35,11 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     && pecl install imagick \
     && pecl install -o -f igbinary \
     && docker-php-ext-install gd zip opcache intl pdo pdo_mysql mysqli bcmath gettext iconv mbstring curl \
-    && docker-php-ext-enable igbinary redis imagick
+    && docker-php-ext-enable igbinary redis imagick \
+    && useradd -MU leftypol \
+    && /code/docker/common-setup.sh \
+    && ln -s /code/composer.json /code/composer.lock /var/www-leftypol/ \
+    && cd /var/www-leftypol && composer install
 
 
 RUN /code/docker/common-setup.sh
