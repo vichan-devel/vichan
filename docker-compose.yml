@@ -24,7 +24,6 @@ services:
         dockerfile: ./docker/php/Dockerfile
       volumes:
           - ./:/code
-          - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
           - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
       networks:
         leftchan_net:
