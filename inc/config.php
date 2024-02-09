@@ -1179,7 +1179,7 @@
 		array(
 			'/^https?:\/\/(\w+\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9\-_]{10,11})?$/i',
 			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" id="ytplayer" src="https://www.youtube.com/embed/$3"></iframe>'
-		),		
+		),
 		array(
 			'/^https?:\/\/(\w+\.)?vimeo\.com\/(\d{2,10})(\?.+)?$/i',
 			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" src="https://player.vimeo.com/video/$2"></iframe>'
@@ -1219,7 +1219,7 @@
 			'/^https?:\/\/(\w+\.)?(vocaroo\.com\/|voca\.ro\/)([a-zA-Z0-9]{2,12})$/i',
 			'<iframe style="float: left; margin: 10px 20px;" width="300" height="60" frameborder="0" src="https://vocaroo.com/embed/$3"></iframe>'
 		),
-				
+
 	);
 
 	// Embedding width and height.
@@ -1938,51 +1938,13 @@
 	// $config['api']['extra_fields'] = array('body_nomarkup' => 'com_nomarkup');
 
 /*
- * ==================
- *  NNTPChan settings
- * ==================
- */
-
-/*
- * Please keep in mind that NNTPChan support in vichan isn't finished yet / is in an experimental
- * state. Please join #nntpchan on Rizon in order to peer with someone.
- */
-
-	$config['nntpchan'] = [
-		// Enable NNTPChan integration
-		'enabled'=> false,
-		// NNTP server
-		'server' => "localhost:1119",
-		/*
-		 * Global dispatch array. Add your boards to it to enable them. Please make
-		 * sure that this setting is set in a global context.
-		 */
-		'dispatch' => [
-			// 'overchan.test' => 'test'
-		],
-		/*
-		 * Trusted peer - an IP address of your NNTPChan instance. This peer will have increased capabilities, eg.: will
-		 * evade spamfilter.
-		 */
-		'trusted_peer' => '127.0.0.1',
-		// Salt for message ID generation. Keep it long and secure.
-		'salt' => 'change_me+please',
-		// A local message ID domain. Make sure to change it.
-		'domain' => 'example.vichan.net',
-		/*
-		 * An NNTPChan group name.
-		 * Please set this setting in your board/config.php, not globally.
-		 */
-		'group' => false, // eg. 'overchan.test'
-	];
-
-
-
-/*
  * ====================
  *  Other/uncategorized
  * ====================
  */
+
+	// Keep the array initialization around to prevent errors in the user configuration.
+	$config['nntpchan'] = [];
 
 	// Meta keywords. It's probably best to include these in per-board configurations.
 	// $config['meta_keywords'] = 'chan,anonymous discussion,imageboard,vichan';
