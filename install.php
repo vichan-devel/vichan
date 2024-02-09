@@ -614,19 +614,6 @@ if (file_exists($config['has_installed'])) {
                         foreach ($boards as &$board) {
                                 query(sprintf("ALTER TABLE ``posts_%s`` ADD `cycle` int(1) NOT NULL AFTER `locked`", $board['uri'])) or error(db_error());
                         }
-		case '5.1.2':
-			query('CREATE TABLE IF NOT EXISTS ``nntp_references`` (
-				  `board` varchar(60) NOT NULL,
-				  `id` int(11) unsigned NOT NULL,
-				  `message_id` varchar(255) CHARACTER SET ascii NOT NULL,
-				  `message_id_digest` varchar(40) CHARACTER SET ascii NOT NULL,
-				  `own` tinyint(1) NOT NULL,
-				  `headers` text,
-				  PRIMARY KEY (`message_id_digest`),
-				  UNIQUE KEY `message_id` (`message_id`),
-				  UNIQUE KEY `u_board_id` (`board`, `id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-			') or error(db_error());
 		case '5.1.3':
 			query('CREATE TABLE IF NOT EXISTS ``captchas`` (
 			  	`cookie` varchar(50),

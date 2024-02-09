@@ -1835,45 +1835,6 @@
 	// $config['api']['extra_fields'] = array('body_nomarkup' => 'com_nomarkup');
 
 /*
- * ==================
- *  NNTPChan settings
- * ==================
- */
-
-/*
- * Please keep in mind that NNTPChan support in vichan isn't finished yet / is in an experimental
- * state. Please join #nntpchan on Rizon in order to peer with someone.
- */
-
-	$config['nntpchan'] = array();
-
-	// Enable NNTPChan integration
-	$config['nntpchan']['enabled'] = false;
-
-	// NNTP server
-	$config['nntpchan']['server'] = "localhost:1119";
-
-	// Global dispatch array. Add your boards to it to enable them. Please make
-	// sure that this setting is set in a global context.
-	$config['nntpchan']['dispatch'] = array(); // 'overchan.test' => 'test'
-
-	// Trusted peer - an IP address of your NNTPChan instance. This peer will have
-	// increased capabilities, eg.: will evade spamfilter.
-	$config['nntpchan']['trusted_peer'] = '127.0.0.1';
-
-	// Salt for message ID generation. Keep it long and secure.
-	$config['nntpchan']['salt'] = 'change_me+please';
-
-	// A local message ID domain. Make sure to change it.
-	$config['nntpchan']['domain'] = 'example.vichan.net';
-
-	// An NNTPChan group name.
-	// Please set this setting in your board/config.php, not globally.
-	$config['nntpchan']['group'] = false; // eg. 'overchan.test'
-
-
-
-/*
  * ====================
  *  Other/uncategorized
  * ====================
