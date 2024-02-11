@@ -2,8 +2,6 @@
 
 FROM composer AS composer
 FROM php:8.1-fpm-bullseye
-COPY --from=composer /usr/bin/composer /usr/bin/composer
-COPY . /code
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
       zlib1g-dev libicu-dev g++ \
@@ -36,8 +34,12 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     && pecl install -o -f igbinary \
     && docker-php-ext-install gd zip opcache intl pdo pdo_mysql mysqli bcmath gettext iconv mbstring curl \
     && docker-php-ext-enable igbinary redis imagick \
-    && useradd -MU leftypol \
-    && /code/docker/common-setup.sh \
+    && useradd -MU leftypol
+
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY . /code
+
+RUN /code/docker/common-setup.sh \
     && ln -s /code/composer.json /code/composer.lock /var/www-leftypol/ \
     && cd /var/www-leftypol && composer install
 
