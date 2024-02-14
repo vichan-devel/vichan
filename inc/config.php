@@ -1840,6 +1840,9 @@
  * ====================
  */
 
+	// Keep the array initialization around to prevent errors in the user configuration.
+	$config['nntpchan'] = array();
+
 	// Meta keywords. It's probably best to include these in per-board configurations.
 	// $config['meta_keywords'] = 'chan,anonymous discussion,imageboard,vichan';
 
