@@ -496,3 +496,12 @@ class ImageBMP extends ImageBase {
 		imagebmp($this->image, $src);
 	}
 }
+
+class ImageWEBP extends ImageBase {
+	public function from() {
+		$this->image = @imagecreatefromwebp($this->src);
+	}
+	public function to($src) {
+		imagewebp($this->image, $src);
+	}
+}
