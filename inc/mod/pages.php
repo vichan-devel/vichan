@@ -972,9 +972,7 @@ function mod_ban() {
 		mod_page(_('New ban'), $config['file_mod_ban_form'], array('token' => make_secure_link_token('ban')));
 		return;
 	}
-	
-	require_once 'inc/mod/ban.php';
-	
+
 	Bans::new_ban($_POST['ip'], $_POST['reason'], $_POST['length'], $_POST['board'] == '*' ? false : $_POST['board']);
 
 	if (isset($_POST['redirect']))
@@ -1544,8 +1542,6 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 	$ip = $_post['ip'];
 
 	if (isset($_POST['new_ban'], $_POST['reason'], $_POST['length'], $_POST['board'])) {
-		require_once 'inc/mod/ban.php';
-		
 		if (isset($_POST['ip']))
 			$ip = $_POST['ip'];
 		
