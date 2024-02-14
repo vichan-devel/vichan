@@ -31,7 +31,6 @@
             "inc/mod/auth.php",
             "inc/lock.php",
             "inc/queue.php",
-            "inc/polyfill.php",
             "inc/functions.php"
         ]
     },
