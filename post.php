@@ -999,27 +999,9 @@ if (isset($_POST['delete'])) {
 						$exif = @exif_read_data($file['tmp_name']);
 						$gm = in_array($config['thumb_method'], array('gm', 'gm+gifsicle'));
 						if (isset($exif['Orientation']) && $exif['Orientation'] != 1) {
-							if ($config['convert_manual_orient']) {
-								$error = shell_exec_error(($gm ? 'gm ' : '') . 'convert ' .
-									escapeshellarg($file['tmp_name']) . ' ' .
-									ImageConvert::jpeg_exif_orientation(false, $exif) . ' ' .
-									($config['strip_exif'] ? '+profile "*"' :
-										($config['use_exiftool'] ? '' : '+profile "*"')
-									) . ' ' .
-									escapeshellarg($file['tmp_name']));
-								if ($config['use_exiftool'] && !$config['strip_exif']) {
-									if ($exiftool_error = shell_exec_error(
-										'exiftool -overwrite_original -q -q -orientation=1 -n ' .
-											escapeshellarg($file['tmp_name'])))
-										error(_('exiftool failed!'), null, $exiftool_error);
-								} else {
-									// TODO: Find another way to remove the Orientation tag from the EXIF profile
-									// without needing `exiftool`.
-								}
-							} else {
-								$error = shell_exec_error(($gm ? 'gm ' : '') . 'convert ' .
-										escapeshellarg($file['tmp_name']) . ' -auto-orient ' . escapeshellarg($upload));
-							}
+							$error = shell_exec_error(($gm ? 'gm ' : '') . 'convert ' .
+									escapeshellarg($file['tmp_name']) . ' -auto-orient ' . escapeshellarg($upload));
+
 							if ($error)
 								error(_('Could not auto-orient image!'), null, $error);
 							$size = @getimagesize($file['tmp_name']);

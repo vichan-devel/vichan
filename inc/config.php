@@ -788,8 +788,7 @@
 	// Strip EXIF metadata from JPEG files.
 	$config['strip_exif'] = false;
 	// Use the command-line `exiftool` tool to strip EXIF metadata without decompressing/recompressing JPEGs.
-	// Ignored when $config['redraw_image'] is true. This is also used to adjust the Orientation tag when
-	//  $config['strip_exif'] is false and $config['convert_manual_orient'] is true.
+	// Ignored when $config['redraw_image'] is true.
 	$config['use_exiftool'] = false;
 	
 	// Redraw the image to strip any excess data (commonly ZIP archives) WARNING: This might strip the
@@ -802,11 +801,6 @@
 	// this basically does the same thing as $config['redraw_image']. (If $config['redraw_image'] is enabled,
 	// this value doesn't matter as $config['redraw_image'] attempts to correct orientation too.)
 	$config['convert_auto_orient'] = false;
-	
-	// Is your version of ImageMagick or GraphicsMagick old? Older versions may not include the -auto-orient
-	// switch. This is a manual replacement for that switch. This is independent from the above switch;
-	// -auto-orrient is applied when thumbnailing too.
-	$config['convert_manual_orient'] = false;
 
 	// Regular expression to check for an XSS exploit with IE 6 and 7. To disable, set to false.
 	// Details: https://github.com/savetheinternet/Tinyboard/issues/20

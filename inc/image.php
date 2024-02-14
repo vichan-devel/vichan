@@ -324,12 +324,7 @@ class ImageConvert extends ImageBase {
 					error(_('Failed to resize image!'), null, $error);
 				}
 			} else {
-				if ($config['convert_manual_orient'] && ($this->format == 'jpg' || $this->format == 'jpeg'))
-					$convert_args = str_replace('-auto-orient', ImageConvert::jpeg_exif_orientation($this->src), $config['convert_args']);
-				elseif ($config['convert_manual_orient'])
-					$convert_args = str_replace('-auto-orient', '', $config['convert_args']);
-				else
-					$convert_args = &$config['convert_args'];
+				$convert_args = &$config['convert_args'];
 
 				if (($error = shell_exec_error(($this->gm ? 'gm ' : '') . 'convert ' .
 					sprintf($convert_args,
@@ -348,12 +343,8 @@ class ImageConvert extends ImageBase {
 				}
 			}
 		} else {
-			if ($config['convert_manual_orient'] && ($this->format == 'jpg' || $this->format == 'jpeg'))
-				$convert_args = str_replace('-auto-orient', ImageConvert::jpeg_exif_orientation($this->src), $config['convert_args']);
-			elseif ($config['convert_manual_orient'])
-				$convert_args = str_replace('-auto-orient', '', $config['convert_args']);
-			else
-				$convert_args = &$config['convert_args'];
+			$convert_args = &$config['convert_args'];
+
 			if (($error = shell_exec_error(($this->gm ? 'gm ' : '') . 'convert ' .
 				sprintf($convert_args,
 					$this->width,
@@ -378,69 +369,6 @@ class ImageConvert extends ImageBase {
 				$this->width = $size[0];
 				$this->height = $size[1];
 			}
-		}
-	}
-
-	// For when -auto-orient doesn't exist (older versions)
-	static public function jpeg_exif_orientation($src, $exif = false) {
-		if (!$exif) {
-			$exif = @exif_read_data($src);
-			if (!isset($exif['Orientation']))
-				return false;
-		}
-		switch($exif['Orientation']) {
-			case 1:
-				// Normal
-				return false;
-			case 2:
-				// 888888
-				//     88
-				//   8888
-				//     88
-				//     88
-
-				return '-flop';
-			case 3:
-
-				//     88
-				//     88
-				//   8888
-				//     88
-				// 888888
-
-				return '-flip -flop';
-			case 4:
-				// 88
-				// 88
-				// 8888
-				// 88
-				// 888888
-
-				return '-flip';
-			case 5:
-				// 8888888888
-				// 88  88
-				// 88
-
-				return '-rotate 90 -flop';
-			case 6:
-				// 88
-				// 88  88
-				// 8888888888
-
-				return '-rotate 90';
-			case 7:
-				//         88
-				//     88  88
-				// 8888888888
-
-				return '-rotate "-90" -flop';
-			case 8:
-				// 8888888888
-				//     88  88
-				//         88
-
-				return '-rotate "-90"';
 		}
 	}
 }
