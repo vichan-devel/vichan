@@ -818,6 +818,7 @@
 	$config['allowed_ext'][] = 'bmp';
 	$config['allowed_ext'][] = 'gif';
 	$config['allowed_ext'][] = 'png';
+	$config['allowed_ext'][] = 'webp';
 	// $config['allowed_ext'][] = 'svg';
 
 	// Allowed extensions for OP. Inherits from the above setting if set to false. Otherwise, it overrides both allowed_ext and
