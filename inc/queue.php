@@ -3,7 +3,7 @@
 class Queue {
   function __construct($key) { global $config;
     if ($config['queue']['enabled'] == 'fs') {
-      $this->lock = new Lock($key);
+      $this->lock = Locks::get_lock($config, $key);
       $key = str_replace('/', '::', $key);
       $key = str_replace("\0", '', $key);
       $this->key = "tmp/queue/$key/";
