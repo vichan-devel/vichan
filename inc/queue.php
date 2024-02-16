@@ -22,11 +22,11 @@ class Queues {
 				$this->key = $key;
 			}
 
-			public function push(string $str): Queue {
+			public function push(string $str): bool {
 				$this->lock->get_ex();
-				file_put_contents($this->key . microtime(true), $str);
+				$ret = file_put_contents($this->key . microtime(true), $str);
 				$this->lock->free();
-				return $this;
+				return $ret !== false;
 			}
 
 			public function pop(int $n = 1): array {
@@ -63,8 +63,8 @@ class Queues {
 	 */
 	public static function none(): Queue {
 		return new class() implements Queue {
-			public function push(string $str): Queue {
-				return $this;
+			public function push(string $str): bool {
+				return true;
 			}
 
 			public function pop(int $n = 1): array {
@@ -91,7 +91,7 @@ class Queues {
 
 interface Queue {
 	// Push a string in the queue.
-	public function push(string $str): Queue;
+	public function push(string $str): bool;
 
 	// Get a string from the queue.
 	public function pop(int $n = 1): array;

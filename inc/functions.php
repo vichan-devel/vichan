@@ -2924,10 +2924,15 @@ function generation_strategy($fun, $array=array()) { global $config;
 					_syslog(LOG_ERR, "Could not initialize generate queue, falling back to immediate rebuild strategy");
 				}
 				return 'rebuild';
-			} else {
-				$queue->push(serialize(array('build', $fun, $array, $action)));
-				return 'ignore';
 			}
+			$ret = $queue->push(serialize(array('build', $fun, $array, $action)));
+			if ($ret === false) {
+				if ($config['syslog']) {
+					_syslog(LOG_ERR, "Could not push item in the queue, falling back to immediate rebuild strategy");
+				}
+				return 'rebuild';
+			}
+			return 'ignore';
 		case 'build_on_load':
 			return 'delete';
 	}
