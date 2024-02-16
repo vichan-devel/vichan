@@ -2918,8 +2918,16 @@ function generation_strategy($fun, $array=array()) { global $config;
 			return 'rebuild';
 		case 'defer':
 			// Ok, it gets interesting here :)
-			get_queue('generate')->push(serialize(array('build', $fun, $array, $action)));
-			return 'ignore';
+			$queue = Queues::get_queue($config, 'generate');
+			if ($queue === false) {
+				if ($config['syslog']) {
+					_syslog(LOG_ERR, "Could not initialize generate queue, falling back to immediate rebuild strategy");
+				}
+				return 'rebuild';
+			} else {
+				$queue->push(serialize(array('build', $fun, $array, $action)));
+				return 'ignore';
+			}
 		case 'build_on_load':
 			return 'delete';
 	}
