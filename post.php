@@ -5,6 +5,9 @@
 
 require_once 'inc/bootstrap.php';
 
+use Vichan\AppContext;
+use Vichan\Driver\HttpDriver;
+
 /**
  * Utility functions
  */
@@ -62,53 +65,26 @@ function strip_symbols($input) {
 }
 
 /**
- * Download the url's target with curl.
- *
- * @param string $url Url to the file to download.
- * @param int $timeout Request timeout in seconds.
- * @param File $fd File descriptor to save the content to.
- * @return null|string Returns a string on error.
- */
-function download_file_into($url, $timeout, $fd) {
-	$err = null;
-	$curl = curl_init();
-	curl_setopt($curl, CURLOPT_URL, $url);
-	curl_setopt($curl, CURLOPT_FAILONERROR, true);
-	curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
-	curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
-	curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
-	curl_setopt($curl, CURLOPT_USERAGENT, 'Tinyboard');
-	curl_setopt($curl, CURLOPT_FILE, $fd);
-	curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
-	curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-
-	if (curl_exec($curl) === false) {
-		$err = curl_error($curl);
-	}
-
-	curl_close($curl);
-	return $err;
-}
-
-/**
  * Download a remote file from the given url.
  * The file is deleted at shutdown.
  *
+ * @param HttpDriver $http The http client.
  * @param string $file_url The url to download the file from.
  * @param int $request_timeout Timeout to retrieve the file.
  * @param array $extra_extensions Allowed file extensions.
  * @param string $tmp_dir Temporary directory to save the file into.
  * @param array $error_array An array with error codes, used to create exceptions on failure.
- * @return array Returns an array describing the file on success.
- * @throws Exception on error.
+ * @return array|false Returns an array describing the file on success, or false if the file was too large
+ * @throws InvalidArgumentException|RuntimeException Throws on invalid arguments and IO errors.
  */
-function download_file_from_url($file_url, $request_timeout, $allowed_extensions, $tmp_dir, &$error_array) {
+function download_file_from_url(HttpDriver $http, $file_url, $request_timeout, $allowed_extensions, $tmp_dir, &$error_array) {
 	if (!preg_match('@^https?://@', $file_url)) {
 		throw new InvalidArgumentException($error_array['invalidimg']);
 	}
 
-	if (mb_strpos($file_url, '?') !== false) {
-		$url_without_params = mb_substr($file_url, 0, mb_strpos($file_url, '?'));
+	$param_idx = mb_strpos($file_url, '?');
+	if ($param_idx !== false) {
+		$url_without_params = mb_substr($file_url, 0, $param_idx);
 	} else {
 		$url_without_params = $file_url;
 	}
@@ -128,10 +104,13 @@ function download_file_from_url($file_url, $request_timeout, $allowed_extensions
 
 	$fd = fopen($tmp_file, 'w');
 
-	$dl_err = download_file_into($fd, $request_timeout, $fd);
-	fclose($fd);
-	if ($dl_err !== null) {
-		throw new Exception($error_array['nomove'] . '<br/>Curl says: ' . $dl_err);
+	try {
+		$success = $http->requestGetInto($url_without_params, null, $fd, $request_timeout);
+		if (!$success) {
+			return false;
+		}
+	} finally {
+		fclose($fd);
 	}
 
 	return array(
@@ -170,6 +149,7 @@ function ocr_image(array $config, string $img_path): string {
  */
 
 $dropped_post = false;
+$context = new AppContext($config);
 
 // Is it a post coming from NNTP? Let's extract it and pretend it's a normal post.
 if (isset($_GET['Newsgroups']) && $config['nntpchan']['enabled']) {
@@ -731,7 +711,21 @@ if (isset($_POST['delete'])) {
 		}
 
 		try {
-			$_FILES['file'] = download_file_from_url($_POST['file_url'], $config['upload_by_url_timeout'], $allowed_extensions, $config['tmp'], $config['error']);
+			$ret = download_file_from_url(
+				$context->getHttpDriver(),
+				$_POST['file_url'],
+				$config['upload_by_url_timeout'],
+				$allowed_extensions,
+				$config['tmp'],
+				$config['error']
+			);
+			if ($ret === false) {
+				error(sprintf3($config['error']['filesize'], array(
+					'filesz' => 'more than that',
+					'maxsz' => number_format($config['max_filesize'])
+				)));
+			}
+			$_FILES['file'] = $ret;
 		} catch (Exception $e) {
 			error($e->getMessage());
 		}
