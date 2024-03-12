@@ -1,4 +1,7 @@
 <?php // Honestly this is just a wrapper for cURL. Still useful to mock it and have an OOP API on PHP 7.
+namespace Vichan\Driver;
+
+use RuntimeException;
 
 defined('TINYBOARD') or exit;
 
@@ -7,7 +10,7 @@ class HttpDrivers {
 	private const DEFAULT_USER_AGENT = 'Tinyboard';
 
 
-	public static function get_http_driver(int $timeout, int $max_file_size) {
+	public static function getHttpDriver(int $timeout, int $max_file_size): HttpDriver {
 		return new HttpDriver($timeout, self::DEFAULT_USER_AGENT, $max_file_size);
 	}
 }
@@ -19,7 +22,7 @@ class HttpDriver {
 	private int $max_file_size;
 
 
-	private function set(string $url): void {
+	private function resetTowards(string $url, int $timeout): void {
 		curl_reset($this->inner);
 		curl_setopt_array($this->inner, array(
 			CURLOPT_URL => $url,
@@ -29,7 +32,7 @@ class HttpDriver {
 		));
 	}
 
-	private function set_size_limit(): void {
+	private function setSizeLimit(): void {
 		// Adapted from: https://stackoverflow.com/a/17642638
 		curl_setopt($this->inner, CURLOPT_NOPROGRESS, false);
 
@@ -60,20 +63,24 @@ class HttpDriver {
 	 *
 	 * @param string $endpoint Uri endpoint.
 	 * @param ?array $data Optional GET parameters.
+	 * @param int $timeout Optional request timeout in seconds. Use the default timeout if 0.
 	 * @return string Returns the body of the response.
-	 * @throws Exception Throws on error.
+	 * @throws RuntimeException Throws on IO error.
 	 */
-	public function send_get(string $endpoint, ?array $data): string {
-		if (is_array($data) && !empty($data)) {
+	public function requestGet(string $endpoint, ?array $data, int $timeout = 0): string {
+		if (!empty($data)) {
 			$endpoint .= '?' . http_build_query($data);
 		}
+		if ($timeout == 0) {
+			$timeout = $this->timeout;
+		}
 
-		$this->set($endpoint);
+		$this->resetTowards($endpoint, $timeout);
 		curl_setopt($this->inner, CURLOPT_RETURNTRANSFER, true);
 		$ret = curl_exec($this->inner);
 
 		if ($ret === false) {
-			throw new Exception(curl_error($this->inner));
+			throw new \RuntimeException(curl_error($this->inner));
 		}
 		return $ret;
 	}
@@ -83,20 +90,25 @@ class HttpDriver {
 	 *
 	 * @param string $endpoint Uri endpoint.
 	 * @param ?array $data Optional POST parameters.
+	 * @param int $timeout Optional request timeout in seconds. Use the default timeout if 0.
 	 * @return string Returns the body of the response.
-	 * @throws Exception Throws on error.
+	 * @throws RuntimeException Throws on IO error.
 	 */
-	public function send_post(string $endpoint, ?array $data): string {
-		$this->set($endpoint);
+	public function requestPost(string $endpoint, ?array $data, int $timeout = 0): string {
+		if ($timeout == 0) {
+			$timeout = $this->timeout;
+		}
+
+		$this->resetTowards($endpoint, $timeout);
 		curl_setopt($this->inner, CURLOPT_POST, true);
-		if (is_array($data) && !empty($data)) {
+		if (!empty($data)) {
 			curl_setopt($this->inner, CURLOPT_POSTFIELDS, http_build_query($data));
 		}
 		curl_setopt($this->inner, CURLOPT_RETURNTRANSFER, true);
 		$ret = curl_exec($this->inner);
 
 		if ($ret === false) {
-			throw new Exception(curl_error($this->inner));
+			throw new \RuntimeException(curl_error($this->inner));
 		}
 		return $ret;
 	}
@@ -105,30 +117,34 @@ class HttpDriver {
 	 * Download the url's target with curl.
 	 *
 	 * @param string $url Url to the file to download.
+	 * @param ?array $data Optional GET parameters.
 	 * @param resource $fd File descriptor to save the content to.
 	 * @param int $timeout Optional request timeout in seconds. Use the default timeout if 0.
 	 * @return bool Returns true on success, false if the file was too large.
-	 * @throws Exception Throws on error.
+	 * @throws RuntimeException Throws on IO error.
 	 */
-	public function send_get_into(string $endpoint, mixed $fd, int $timeout = 0): bool {
+	public function requestGetInto(string $endpoint, ?array $data, mixed $fd, int $timeout = 0): bool {
+		if (!empty($data)) {
+			$endpoint .= '?' . http_build_query($data);
+		}
 		if ($timeout == 0) {
 			$timeout = $this->timeout;
 		}
 
-		$this->set($endpoint);
+		$this->resetTowards($endpoint, $timeout);
 		curl_setopt($this->inner, CURLOPT_FAILONERROR, true);
 		curl_setopt($this->inner, CURLOPT_FOLLOWLOCATION, false);
 		curl_setopt($this->inner, CURLOPT_FILE, $fd);
 		curl_setopt($this->inner, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-		$this->set_size_limit();
+		$this->setSizeLimit();
 		$ret = curl_exec($this->inner);
 
 		if ($ret === false) {
 			if (curl_errno($this->inner) === CURLE_ABORTED_BY_CALLBACK) {
 				return false;
 			}
-			
-			throw new Exception(curl_error($this->inner));
+
+			throw new \RuntimeException(curl_error($this->inner));
 		}
 		return true;
 	}
