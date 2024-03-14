@@ -31,7 +31,8 @@
             "inc/mod/auth.php",
             "inc/lock.php",
             "inc/queue.php",
-            "inc/functions.php"
+            "inc/functions.php",
+            "inc/driver/http-driver.php"
         ]
     },
     "license": "Tinyboard + vichan",
