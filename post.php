@@ -166,6 +166,26 @@ function ocr_image(array $config, string $img_path): string {
 }
 
 /**
+ * Trim an image's EXIF metadata
+ *
+ * @param string $img_path The file path to the image.
+ * @return int The size of the stripped file.
+ * @throws RuntimeException Throws on IO errors.
+ */
+function strip_image_metadata(string $img_path): int {
+	$err = shell_exec_error('exiftool -overwrite_original -ignoreMinorErrors -q -q -all= ' . escapeshellarg($img_path));
+	if ($err === false) {
+		throw new RuntimeException('Could not strip EXIF metadata!');
+	}
+	clearstatcache(true, $img_path);
+	$ret = filesize($img_path);
+	if ($ret === false) {
+		throw new RuntimeException('Could not calculate file size!');
+	}
+	return $ret;
+}
+
+/**
  * Method handling functions
  */
 
@@ -1089,16 +1109,14 @@ if (isset($_POST['delete'])) {
 
 			if ($config['redraw_image'] || (!@$file['exif_stripped'] && $config['strip_exif'] && ($file['extension'] == 'jpg' || $file['extension'] == 'jpeg'))) {
 				if (!$config['redraw_image'] && $config['use_exiftool']) {
-					if ($error = shell_exec_error('exiftool -overwrite_original -ignoreMinorErrors -q -q -all= ' .
-						escapeshellarg($file['tmp_name']))) {
-						error(_('Could not strip EXIF metadata!'), null, $error);
-					} else {
-						clearstatcache(true, $file['tmp_name']);
-						$ret = filesize($file['tmp_name']);
-						if ($ret === false) {
-							error(_('Could not calculate file size!'), null, $error);
+					try {
+						$file['size'] = strip_image_metadata($file['tmp_name']);
+					} catch (RuntimeException $e) {
+						if ($config['syslog']) {
+							_syslog(LOG_ERR, "Could not strip image metadata: {$e->getMessage()}");
+							// Since EXIF metadata can countain sensible info, fail the request.
+							error(_('Could not strip EXIF metadata!'), null, $error);
 						}
-						$file['size'] = $ret;
 					}
 				} else {
 					$image->to($file['file']);
