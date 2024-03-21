@@ -1209,8 +1209,6 @@ if (isset($_POST['delete'])) {
 	}
 	$post = (array)$post;
 
-	if ($post['files'])
-		$post['files'] = $post['files'];
 	$post['num_files'] = sizeof($post['files']);
 
 	$post['id'] = $id = post($post);
