@@ -3,6 +3,31 @@
 use Lifo\IP\CIDR;
 
 class Bans {
+	static private function deleteBans(array $ban_ids) {
+		$len = count($ban_ids);
+		if ($len === 1) {
+			$query = prepare('DELETE FROM ``bans`` WHERE `id` = :id');
+			$query->bindValue(':id', $ban_ids[0], PDO::PARAM_INT);
+			$query->execute() or error(db_error());
+		} elseif ($len >= 1) {
+			// Build the query.
+			$query = 'DELETE FROM ``bans`` WHERE `id` IN (';
+			for ($i = 0; $i < $len; $i++) {
+				$query .= ":id{$i},";
+			}
+			// Substitute the last comma with a parenthesis.
+			substr_replace($query, ')', strlen($query) - 1);
+
+			// Bind the params
+			$query = prepare($query);
+			for ($i = 0; $i < $len; $i++) {
+				$query->bindValue(":id{$i}", (int)$ban_ids[$i], PDO::PARAM_INT);
+			}
+
+			$query->execute() or error(db_error());
+		}
+	}
+
 	static public function range_to_string($mask) {
 		list($ipstart, $ipend) = $mask;
 
@@ -113,6 +138,45 @@ class Bans {
 		return array($ipstart, $ipend);
 	}
 
+	static public function findSingle(string $ip, int $ban_id, bool $require_ban_view): array|null {
+		/**
+		 * Use OR in the query to also garbage collect bans. Ideally we should move the whole GC procedure to a separate
+		 * script, but it will require a more important restructuring.
+		 */
+		$query = prepare(
+			'SELECT ``bans``.* FROM ``bans``
+			 WHERE ((`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)) OR (``bans``.id = :id))
+			 ORDER BY `expires` IS NULL, `expires` DESC'
+		);
+
+		$query->bindValue(':id', $ban_id);
+		$query->bindValue(':ip', inet_pton($ip));
+
+		$query->execute() or error(db_error($query));
+
+		$found_ban = null;
+		$to_delete_list = [];
+
+		while ($ban = $query->fetch(PDO::FETCH_ASSOC)) {
+			if ($ban['expires'] && ($ban['seen'] || !$require_ban_view) && $ban['expires'] < time()) {
+				$to_delete_list[] = $ban['id'];
+			} elseif ($ban['id'] === $ban_id) {
+				if ($ban['post']) {
+					$ban['post'] = json_decode($ban['post'], true);
+				}
+				$ban['mask'] = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
+				$ban['cmask'] = cloak_mask($ban['mask']);
+				$found_ban = $ban;
+			}
+		}
+
+		self::deleteBans($to_delete_list);
+
+		rebuildThemes('bans');
+
+		return $found_ban;
+	}
+
 	static public function find($ip, $board = false, $get_mod_info = false, $banid = null) {
 		global $config;
 
@@ -132,10 +196,11 @@ class Bans {
 		$query->execute() or error(db_error($query));
 
 		$ban_list = array();
+		$to_delete_list = [];
 
 		while ($ban = $query->fetch(PDO::FETCH_ASSOC)) {
 			if ($ban['expires'] && ($ban['seen'] || !$config['require_ban_view']) && $ban['expires'] < time()) {
-				self::delete($ban['id']);
+				$to_delete_list[] = $ban['id'];
 			} else {
 				if ($ban['post'])
 					$ban['post'] = json_decode($ban['post'], true);
@@ -144,6 +209,8 @@ class Bans {
 				$ban_list[] = $ban;
 			}
 		}
+
+		self::deleteBans($to_delete_list);
 
 		return $ban_list;
 	}
