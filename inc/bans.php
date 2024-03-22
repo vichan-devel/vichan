@@ -9,6 +9,8 @@ class Bans {
 			$query = prepare('DELETE FROM ``bans`` WHERE `id` = :id');
 			$query->bindValue(':id', $ban_ids[0], PDO::PARAM_INT);
 			$query->execute() or error(db_error());
+
+			rebuildThemes('bans');
 		} elseif ($len >= 1) {
 			// Build the query.
 			$query = 'DELETE FROM ``bans`` WHERE `id` IN (';
@@ -25,6 +27,8 @@ class Bans {
 			}
 
 			$query->execute() or error(db_error());
+
+			rebuildThemes('bans');
 		}
 	}
 
@@ -171,8 +175,6 @@ class Bans {
 		}
 
 		self::deleteBans($to_delete_list);
-
-		rebuildThemes('bans');
 
 		return $found_ban;
 	}
