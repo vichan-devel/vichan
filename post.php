@@ -590,7 +590,7 @@ if (isset($_POST['delete'])) {
 						error($config['error']['bot']);
 					}
 					$response = $_POST['g-recaptcha-response'];
-					$query = RemoteCaptchaQuery::with_recaptcha($context->getHttpDriver(), $config['recaptcha_private']);
+					$query = RemoteCaptchaQuery::withRecaptcha($context->getHttpDriver(), $config['recaptcha_private']);
 				}
 				// hCaptcha
 				elseif ($config['hcaptcha']) {
@@ -598,7 +598,7 @@ if (isset($_POST['delete'])) {
 						error($config['error']['bot']);
 					}
 					$response = $_POST['g-recaptcha-response'];
-					$query = RemoteCaptchaQuery::with_hcaptcha($context->getHttpDriver(), $config['hcaptcha_private']);
+					$query = RemoteCaptchaQuery::withHCaptcha($context->getHttpDriver(), $config['hcaptcha_private']);
 				}
 
 				$success = $query->verify($response, $_SERVER['REMOTE_ADDR']);

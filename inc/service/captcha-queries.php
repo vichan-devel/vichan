@@ -19,7 +19,7 @@ class RemoteCaptchaQuery {
 	 * @param string $secret Server side secret.
 	 * @return CaptchaRemoteQueries A new captcha query instance.
 	 */
-	public static function with_recaptcha(HttpDriver $http, string $secret): RemoteCaptchaQuery {
+	public static function withRecaptcha(HttpDriver $http, string $secret): RemoteCaptchaQuery {
 		return new self($http, $secret, 'https://www.google.com/recaptcha/api/siteverify');
 	}
 
@@ -30,7 +30,7 @@ class RemoteCaptchaQuery {
 	 * @param string $secret Server side secret.
 	 * @return CaptchaRemoteQueries A new captcha query instance.
 	 */
-	public static function with_hcaptcha(HttpDriver $http, string $secret): RemoteCaptchaQuery {
+	public static function withHCaptcha(HttpDriver $http, string $secret): RemoteCaptchaQuery {
 		return new self($http, $secret, 'https://hcaptcha.com/siteverify');
 	}
 
