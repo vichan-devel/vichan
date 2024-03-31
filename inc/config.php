@@ -1231,6 +1231,8 @@
 	$config['error']['captcha']		= _('You seem to have mistyped the verification.');
 	$config['error']['flag_undefined']	= _('The flag %s is undefined, your PHP version is too old!');
 	$config['error']['flag_wrongtype']	= _('defined_flags_accumulate(): The flag %s is of the wrong type!');
+	$config['error']['remote_io_error']	= _('IO error while interacting with a remote service.');
+	$config['error']['local_io_error']	= _('IO error while interacting with a local resource or service.');
 
 
 	// Moderator errors
