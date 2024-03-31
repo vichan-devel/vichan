@@ -33,8 +33,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     && pecl install imagick \
     && pecl install -o -f igbinary \
     && docker-php-ext-install gd zip opcache intl pdo pdo_mysql mysqli bcmath gettext iconv mbstring curl \
-    && docker-php-ext-enable igbinary redis imagick \
-    && useradd -MU leftypol
+    && docker-php-ext-enable igbinary redis imagick
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY . /code
@@ -43,7 +42,6 @@ RUN /code/docker/common-setup.sh \
     && ln -s /code/composer.json /code/composer.lock /var/www/ \
     && cd /var/www && composer install
 
-# RUN /code/docker/common-setup.sh php
 WORKDIR "/var/www"
-CMD ["php-fpm"]
+CMD [ "php-fpm" ]
 EXPOSE 9000
