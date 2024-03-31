@@ -47,6 +47,17 @@ class PreparedQueryDebug {
 	}
 }
 
+// 5.6.10 becomes 50610
+function mysql_version() {
+	global $pdo;
+	
+	$version = $pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
+	$v = explode('.', $version);
+	if (count($v) != 3)
+		return false;
+	return (int) sprintf("%02d%02d%02d", $v[0], $v[1], is_int($v[2]) ? (int)$v[2] : 0);
+}
+
 function sql_open() {
 	global $pdo, $config, $debug;
 	if ($pdo)
@@ -93,17 +104,6 @@ function sql_open() {
 		// Print error
 		error(_('Database error: ') . $message);
 	}
-}
-
-// 5.6.10 becomes 50610
-function mysql_version() {
-	global $pdo;
-	
-	$version = $pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
-	$v = explode('.', $version);
-	if (count($v) != 3)
-		return false;
-	return (int) sprintf("%02d%02d%02d", $v[0], $v[1], is_int($v[2]) ? (int)$v[2] : 0);
 }
 
 function prepare($query) {
