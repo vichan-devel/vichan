@@ -5,10 +5,6 @@
 
 require_once 'inc/bootstrap.php';
 
-use Vichan\AppContext;
-use Vichan\Driver\HttpDriver;
-use Vichan\Service\{RemoteCaptchaQuery, NativeCaptchaQuery};
-
 /**
  * Utility functions
  */
@@ -66,26 +62,53 @@ function strip_symbols($input) {
 }
 
 /**
+ * Download the url's target with curl.
+ *
+ * @param string $url Url to the file to download.
+ * @param int $timeout Request timeout in seconds.
+ * @param File $fd File descriptor to save the content to.
+ * @return null|string Returns a string on error.
+ */
+function download_file_into($url, $timeout, $fd) {
+	$err = null;
+	$curl = curl_init();
+	curl_setopt($curl, CURLOPT_URL, $url);
+	curl_setopt($curl, CURLOPT_FAILONERROR, true);
+	curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
+	curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
+	curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
+	curl_setopt($curl, CURLOPT_USERAGENT, 'Tinyboard');
+	curl_setopt($curl, CURLOPT_FILE, $fd);
+	curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+	curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+
+	if (curl_exec($curl) === false) {
+		$err = curl_error($curl);
+	}
+
+	curl_close($curl);
+	return $err;
+}
+
+/**
  * Download a remote file from the given url.
  * The file is deleted at shutdown.
  *
- * @param HttpDriver $http The http client.
  * @param string $file_url The url to download the file from.
  * @param int $request_timeout Timeout to retrieve the file.
  * @param array $extra_extensions Allowed file extensions.
  * @param string $tmp_dir Temporary directory to save the file into.
  * @param array $error_array An array with error codes, used to create exceptions on failure.
- * @return array|false Returns an array describing the file on success, or false if the file was too large
- * @throws InvalidArgumentException|RuntimeException Throws on invalid arguments and IO errors.
+ * @return array Returns an array describing the file on success.
+ * @throws Exception on error.
  */
-function download_file_from_url(HttpDriver $http, $file_url, $request_timeout, $allowed_extensions, $tmp_dir, &$error_array) {
+function download_file_from_url($file_url, $request_timeout, $allowed_extensions, $tmp_dir, &$error_array) {
 	if (!preg_match('@^https?://@', $file_url)) {
 		throw new InvalidArgumentException($error_array['invalidimg']);
 	}
 
-	$param_idx = mb_strpos($file_url, '?');
-	if ($param_idx !== false) {
-		$url_without_params = mb_substr($file_url, 0, $param_idx);
+	if (mb_strpos($file_url, '?') !== false) {
+		$url_without_params = mb_substr($file_url, 0, mb_strpos($file_url, '?'));
 	} else {
 		$url_without_params = $file_url;
 	}
@@ -105,13 +128,10 @@ function download_file_from_url(HttpDriver $http, $file_url, $request_timeout, $
 
 	$fd = fopen($tmp_file, 'w');
 
-	try {
-		$success = $http->requestGetInto($url_without_params, null, $fd, $request_timeout);
-		if (!$success) {
-			return false;
-		}
-	} finally {
-		fclose($fd);
+	$dl_err = download_file_into($fd, $request_timeout, $fd);
+	fclose($fd);
+	if ($dl_err !== null) {
+		throw new Exception($error_array['nomove'] . '<br/>Curl says: ' . $dl_err);
 	}
 
 	return array(
@@ -145,7 +165,6 @@ function ocr_image(array $config, string $img_path): string {
 	return trim($ret);
 }
 
-
 /**
  * Trim an image's EXIF metadata
  *
@@ -171,7 +190,6 @@ function strip_image_metadata(string $img_path): int {
  */
 
 $dropped_post = false;
-$context = new AppContext($config);
 
 // Is it a post coming from NNTP? Let's extract it and pretend it's a normal post.
 if (isset($_GET['Newsgroups']) && $config['nntpchan']['enabled']) {
@@ -469,32 +487,22 @@ if (isset($_POST['delete'])) {
 	if (count($report) > $config['report_limit'])
 		error($config['error']['toomanyreports']);
 
+	if ($config['report_captcha'] && !isset($_POST['captcha_text'], $_POST['captcha_cookie'])) {
+		error($config['error']['bot']);
+	}
 
 	if ($config['report_captcha']) {
-		if (!isset($_POST['captcha_text'], $_POST['captcha_cookie'])) {
-			error($config['error']['bot']);
-		}
+		$ch = curl_init($config['domain'].'/'.$config['captcha']['provider_check'] . "?" . http_build_query([
+			'mode' => 'check',
+			'text' => $_POST['captcha_text'],
+			'extra' => $config['captcha']['extra'],
+			'cookie' => $_POST['captcha_cookie']
+		]));
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		$resp = curl_exec($ch);
 
-		try {
-			$query = new NativeCaptchaQuery(
-				$context->getHttpDriver(),
-				$config['domain'],
-				$config['captcha']['provider_check']
-			);
-			$success = $query->verify(
-				$config['captcha']['extra'],
-				$_POST['captcha_text'],
-				$_POST['captcha_cookie']
-			);
-
-			if (!$success) {
-				error($config['error']['captcha']);
-			}
-		} catch (RuntimeException $e) {
-			if ($config['syslog']) {
-				_syslog(LOG_ERR, "Native captcha IO exception: {$e->getMessage()}");
-			}
-			error($config['error']['local_io_error']);
+		if ($resp !== '1') {
+			error($config['error']['captcha']);
 		}
 	}
 
@@ -584,60 +592,62 @@ if (isset($_POST['delete'])) {
 		// Check if banned
 		checkBan($board['uri']);
 
-		// Check for CAPTCHA right after opening the board so the "return" link is in there.
-		try {
-			// With our custom captcha provider
-			if ($config['captcha']['enabled'] || ($post['op'] && $config['new_thread_capt'])) {
-				$query = new NativeCaptchaQuery($context->getHttpDriver(), $config['domain'], $config['captcha']['provider_check']);
-				$success = $query->verify($config['captcha']['extra'], $_POST['captcha_text'], $_POST['captcha_cookie']);
+		// Check for CAPTCHA right after opening the board so the "return" link is in there
+		if ($config['recaptcha']) {
+			if (!isset($_POST['g-recaptcha-response']))
+				error($config['error']['bot']);
 
-				if (!$success) {
-					error(
-						$config['error']['captcha']
-						. '<script>if (actually_load_captcha !== undefined) actually_load_captcha("'
-						. $config['captcha']['provider_get']
-						.'", "'
-						. $config['captcha']['extra']
-						. '");</script>'
-					);
-				}
-			}
-			// Remote 3rd party captchas.
-			else {
-				// recaptcha
-				if ($config['recaptcha']) {
-					if (!isset($_POST['g-recaptcha-response'])) {
-						error($config['error']['bot']);
-					}
-					$response = $_POST['g-recaptcha-response'];
-					$query = RemoteCaptchaQuery::withRecaptcha($context->getHttpDriver(), $config['recaptcha_private']);
-				}
-				// hCaptcha
-				elseif ($config['hcaptcha']) {
-					if (!isset($_POST['h-captcha-response'])) {
-						error($config['error']['bot']);
-					}
-					$response = $_POST['g-recaptcha-response'];
-					$query = RemoteCaptchaQuery::withHCaptcha($context->getHttpDriver(), $config['hcaptcha_private']);
-				}
+			// Check what reCAPTCHA has to say...
+			$resp = json_decode(file_get_contents(sprintf('https://www.recaptcha.net/recaptcha/api/siteverify?secret=%s&response=%s&remoteip=%s',
+				$config['recaptcha_private'],
+				urlencode($_POST['g-recaptcha-response']),
+				$_SERVER['REMOTE_ADDR'])), true);
 
-				$success = $query->verify($response, $_SERVER['REMOTE_ADDR']);
-				if (!$success) {
-					error($config['error']['captcha']);
-				}
+			if (!$resp['success']) {
+				error($config['error']['captcha']);
 			}
-		} catch (RuntimeException $e) {
-			if ($config['syslog']) {
-				_syslog(LOG_ERR, "Captcha IO exception: {$e->getMessage()}");
-			}
-			error($config['error']['remote_io_error']);
-		} catch (JsonException $e) {
-			if ($config['syslog']) {
-				_syslog(LOG_ERR, "Bad JSON reply to captcha: {$e->getMessage()}");
-			}
-			error($config['error']['remote_io_error']);
 		}
+		// hCaptcha
+		if ($config['hcaptcha']) {
+			if (!isset($_POST['h-captcha-response'])) {
+				error($config['error']['bot']);
+			}
 
+			$data = array(
+				'secret' => $config['hcaptcha_private'],
+				'response' => $_POST['h-captcha-response'],
+				'remoteip' => $_SERVER['REMOTE_ADDR']
+			);
+
+			$hcaptchaverify = curl_init();
+			curl_setopt($hcaptchaverify, CURLOPT_URL, "https://hcaptcha.com/siteverify");
+			curl_setopt($hcaptchaverify, CURLOPT_POST, true);
+			curl_setopt($hcaptchaverify, CURLOPT_POSTFIELDS, http_build_query($data));
+			curl_setopt($hcaptchaverify, CURLOPT_RETURNTRANSFER, true);
+			$hcaptcharesponse = curl_exec($hcaptchaverify);
+
+			$resp = json_decode($hcaptcharesponse, true); // Decoding $hcaptcharesponse instead of $response
+
+			if (!$resp['success']) {
+				error($config['error']['captcha']);
+			}
+		}
+		// Same, but now with our custom captcha provider
+ 		if (($config['captcha']['enabled']) || (($post['op']) && ($config['new_thread_capt'])) ) {
+		$ch = curl_init($config['domain'].'/'.$config['captcha']['provider_check'] . "?" . http_build_query([
+			'mode' => 'check',
+			'text' => $_POST['captcha_text'],
+			'extra' => $config['captcha']['extra'],
+			'cookie' => $_POST['captcha_cookie']
+		]));
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		$resp = curl_exec($ch);
+
+		if ($resp !== '1') {
+			error($config['error']['captcha'] .
+				'<script>if (actually_load_captcha !== undefined) actually_load_captcha("'.$config['captcha']['provider_get'].'", "'.$config['captcha']['extra'].'");</script>');
+		}
+	}
 
 		if (!(($post['op'] && $_POST['post'] == $config['button_newtopic']) ||
 			(!$post['op'] && $_POST['post'] == $config['button_reply'])))
@@ -741,21 +751,7 @@ if (isset($_POST['delete'])) {
 		}
 
 		try {
-			$ret = download_file_from_url(
-				$context->getHttpDriver(),
-				$_POST['file_url'],
-				$config['upload_by_url_timeout'],
-				$allowed_extensions,
-				$config['tmp'],
-				$config['error']
-			);
-			if ($ret === false) {
-				error(sprintf3($config['error']['filesize'], array(
-					'filesz' => 'more than that',
-					'maxsz' => number_format($config['max_filesize'])
-				)));
-			}
-			$_FILES['file'] = $ret;
+			$_FILES['file'] = download_file_from_url($_POST['file_url'], $config['upload_by_url_timeout'], $allowed_extensions, $config['tmp'], $config['error']);
 		} catch (Exception $e) {
 			error($e->getMessage());
 		}
