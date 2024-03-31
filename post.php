@@ -1363,15 +1363,9 @@ if (isset($_POST['delete'])) {
 
 	$ban_id = (int)$_POST['ban_id'];
 
-	$bans = Bans::find($_SERVER['REMOTE_ADDR']);
-	foreach ($bans as $_ban) {
-		if ($_ban['id'] == $ban_id) {
-			$ban = $_ban;
-			break;
-		}
-	}
+	$ban = Bans::findSingle($_SERVER['REMOTE_ADDR'], $ban_id, $config['require_ban_view']);
 
-	if (!isset($ban)) {
+	if (empty($ban)) {
 		error($config['error']['noban']);
 	}
 
