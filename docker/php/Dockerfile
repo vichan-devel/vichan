@@ -33,15 +33,29 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     && pecl install imagick \
     && pecl install -o -f igbinary \
     && docker-php-ext-install gd zip opcache intl pdo pdo_mysql mysqli bcmath gettext iconv mbstring curl \
-    && docker-php-ext-enable igbinary redis imagick
+    && docker-php-ext-enable igbinary redis imagick \
+    && rm -rf /var/cache/* \
+    && rmdir /var/www/html \
+    && install -d -m 744 -o www-data -g www-data /var/www \
+    && install -d -m 700 -o www-data -g www-data /var/tmp/leftypol \
+    && install -d -m 700 -o www-data -g www-data /var/cache/gen-cache \
+    && install -d -m 700 -o www-data -g www-data /var/cache/template-cache
 
-COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY --from=composer /usr/bin/composer /usr/local/bin/composer
+
+# Copy the bootstrap script.
+COPY ./docker/php/bootstrap.sh /usr/local/bin/bootstrap.sh
+
+# Copy the actual project (use .dockerignore to exclude stuff).
 COPY . /code
 
-RUN /code/docker/common-setup.sh \
-    && ln -s /code/composer.json /code/composer.lock /var/www/ \
-    && cd /var/www && composer install
+# Make the instance configuration owned by www-data.
+# Make it writable by php.
+# Install the compose depedencies.
+RUN chown www-data /code/inc/instance-config.php && chgrp www-data /code/inc/instance-config.php \
+    && chmod 660 /code/inc/instance-config.php \
+    && cd /code && composer install
 
 WORKDIR "/var/www"
-CMD [ "php-fpm" ]
+CMD [ "bootstrap.sh" ]
 EXPOSE 9000
