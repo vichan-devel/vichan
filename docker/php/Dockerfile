@@ -40,11 +40,10 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY . /code
 
 RUN /code/docker/common-setup.sh \
-    && ln -s /code/composer.json /code/composer.lock /var/www-leftypol/ \
-    && cd /var/www-leftypol && composer install
+    && ln -s /code/composer.json /code/composer.lock /var/www/ \
+    && cd /var/www && composer install
 
-
-RUN /code/docker/common-setup.sh
-WORKDIR "/var/www-leftypol"
+# RUN /code/docker/common-setup.sh php
+WORKDIR "/var/www"
 CMD ["php-fpm"]
 EXPOSE 9000

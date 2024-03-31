@@ -2,7 +2,7 @@
 
 set -eu
 
-install -m 775 -o leftypol -g leftypol -d /var/www-leftypol
+install -m 775 -o leftypol -g leftypol -d /var/www
 ln -s \
    /code/banners/ \
    /code/static/ \
@@ -14,18 +14,18 @@ ln -s \
    /code/LICENSE.* \
    /code/robots.txt \
    /code/install.sql \
-   /var/www-leftypol/
+   /var/www/
 
 install -m 775 -o leftypol -g leftypol -d /var/tmp/leftypol
 install -m 775 -o leftypol -g leftypol -d /var/tmp/leftypol/cache
-ln -s /var/tmp/leftypol /var/www-leftypol/tmp
+ln -s /var/tmp/leftypol /var/www/tmp
 
-install -m 775 -o leftypol -g leftypol -d /var/www-leftypol/js
-ln -s /code/js/* /var/www-leftypol/js/
+install -m 775 -o leftypol -g leftypol -d /var/www/js
+ln -s /code/js/* /var/www/js/
 
-install -m 775 -o leftypol -g leftypol -d /var/www-leftypol/templates
-install -m 775 -o leftypol -g leftypol -d /var/www-leftypol/templates/cache
-ln -s /code/templates/* /var/www-leftypol/templates/
+install -m 775 -o leftypol -g leftypol -d /var/www/templates
+install -m 775 -o leftypol -g leftypol -d /var/www/templates/cache
+ln -s /code/templates/* /var/www/templates/
 
-install -m 775 -o leftypol -g leftypol -d /var/www-leftypol/inc
-ln -s /code/inc/* /var/www-leftypol/inc/
+install -m 775 -o leftypol -g leftypol -d /var/www/inc
+ln -s /code/inc/* /var/www/inc/
