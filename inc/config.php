@@ -688,6 +688,27 @@
 	// a link to an email address or IRC chat room to appeal the ban.
 	$config['ban_page_extra'] = '';
 
+	// Pre-configured ban reasons that pre-fill the ban form when clicked.
+	// $config['premade_ban_reasons'] = array(
+	// 	array(
+	// 		'reason' => 'Low-quality posting',
+	// 		'length' =>  '1d'
+	// 	),
+	// 	array(
+	// 		'reason' => 'Off-topic',
+	// 		'length' => '1d'
+	// 	),
+	// 	array(
+	// 		'reason' => 'Ban evasion',
+	// 		'length' => '30d'
+	// 	),
+	// 	array(
+	// 		'reason' => 'Illegal content',
+	// 		'length' => ''
+	// 	)
+	//);
+	$config['premade_ban_reasons'] = false;
+
 	// Allow users to appeal bans through vichan.
 	$config['ban_appeals'] = false;
 

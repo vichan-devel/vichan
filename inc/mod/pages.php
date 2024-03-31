@@ -1586,6 +1586,7 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 		'board' => $board,
 		'delete' => (bool)$delete,
 		'boards' => listBoards(),
+		'reasons' => $config['premade_ban_reasons'],
 		'token' => $security_token
 	);
 

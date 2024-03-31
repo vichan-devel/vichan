@@ -16,6 +16,9 @@
                         {% if not config.additional_javascript_compile %}
                         {% for javascript in config.additional_javascript %}<script type="text/javascript" src="{{ config.additional_javascript_url }}{{ javascript }}"></script>{% endfor %}
                         {% endif %}
+                        {% if mod %}
+                        <script type="text/javascript" src="/js/mod/mod_snippets.js"></script>
+                        {% endif %}
                 {% endif %}
                 {% if config.recaptcha %}<script src="//www.recaptcha.net/recaptcha/api.js"></script>
                 <style type="text/css">{% verbatim %}
