@@ -856,14 +856,14 @@ if ($step == 0) {
 		array(
 			'category' => 'File permissions',
 			'name' => getcwd() . '/templates/cache',
-			'result' => is_writable('templates') || (is_dir('templates/cache') && is_writable('templates/cache')),
+			'result' => is_dir('templates/cache/') && is_writable('templates/cache/'),
 			'required' => true,
 			'message' => 'You must give vichan permission to create (and write to) the <code>templates/cache</code> directory or performance will be drastically reduced.'
 		),
 		array(
 			'category' => 'File permissions',
 			'name' => getcwd() . '/tmp/cache',
-			'result' => is_dir('tmp/cache') && is_writable('tmp/cache'),
+			'result' => is_dir('tmp/cache/') && is_writable('tmp/cache/'),
 			'required' => true,
 			'message' => 'You must give vichan permission to write to the <code>tmp/cache</code> directory.'
 		),
@@ -1032,4 +1032,3 @@ if ($step == 0) {
 
 	echo Element('page.html', $page);
 }
-

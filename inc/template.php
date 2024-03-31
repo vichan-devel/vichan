@@ -11,12 +11,14 @@ $twig = false;
 function load_twig() {
 	global $twig, $config;
 
+	$cache_dir = "{$config['dir']['template']}/cache/";
+
 	$loader = new Twig\Loader\FilesystemLoader($config['dir']['template']);
 	$loader->setPaths($config['dir']['template']);
 	$twig = new Twig\Environment($loader, array(
 		'autoescape' => false,
-		'cache' => is_writable('templates') || (is_dir('templates/cache') && is_writable('templates/cache')) ?
-			new Twig_Cache_TinyboardFilesystem("{$config['dir']['template']}/cache") : false,
+		'cache' => is_writable('templates/') || (is_dir($cache_dir) && is_writable($cache_dir)) ?
+			new Twig_Cache_TinyboardFilesystem($cache_dir) : false,
 		'debug' => $config['debug'],
 		'auto_reload' => $config['twig_auto_reload']
 	));
