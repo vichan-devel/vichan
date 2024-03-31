@@ -32,7 +32,9 @@
             "inc/mod/auth.php",
             "inc/lock.php",
             "inc/queue.php",
-            "inc/functions.php"
+            "inc/functions.php",
+            "inc/driver/http-driver.php",
+            "inc/service/captcha-queries.php"
         ]
     },
     "license": "Tinyboard + vichan",
