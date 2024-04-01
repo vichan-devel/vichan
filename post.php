@@ -599,12 +599,14 @@ if (isset($_POST['delete'])) {
 
 				if (!$success) {
 					error(
-						$config['error']['captcha']
-						. '<script>if (actually_load_captcha !== undefined) actually_load_captcha("'
-						. $config['captcha']['provider_get']
-						.'", "'
-						. $config['captcha']['extra']
-						. '");</script>'
+						"{$config['error']['captcha']}
+						<script>
+							if (actually_load_captcha !== undefined)
+								actually_load_captcha(
+									\"{$config['captcha']['provider_get']}\",
+									\"{$config['captcha']['extra']}\"
+								);
+						</script>"
 					);
 				}
 			}
