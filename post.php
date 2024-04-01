@@ -519,6 +519,12 @@ if (isset($_POST['delete'])) {
 		$query->execute() or error(db_error($query));
 
 		$post = $query->fetch(PDO::FETCH_ASSOC);
+		if ($post === false) {
+			if ($config['syslog']) {
+				_syslog(LOG_INFO, "Failed to report non-existing post #{$id} in {$board['dir']}");
+			}
+			error($config['error']['nopost']);
+		}
 
 		$error = event('report', array('ip' => $_SERVER['REMOTE_ADDR'], 'board' => $board['uri'], 'post' => $post, 'reason' => $reason, 'link' => link_for($post)));
 		if ($error) {
