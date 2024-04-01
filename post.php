@@ -627,9 +627,11 @@ if (isset($_POST['delete'])) {
 					$query = RemoteCaptchaQuery::withHCaptcha($context->getHttpDriver(), $config['hcaptcha_private']);
 				}
 
-				$success = $query->verify($response, $_SERVER['REMOTE_ADDR']);
-				if (!$success) {
-					error($config['error']['captcha']);
+				if (isset($query, $response)) {
+					$success = $query->verify($response, $_SERVER['REMOTE_ADDR']);
+					if (!$success) {
+						error($config['error']['captcha']);
+					}
 				}
 			}
 		} catch (RuntimeException $e) {
