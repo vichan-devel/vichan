@@ -36,11 +36,6 @@
 	// $config['global_message'] = 'This is an important announcement!';
 	$config['blotter'] = &$config['global_message'];
 
-	// Automatically check if a newer version of vichan is available when an administrator logs in.
-	$config['check_updates'] = false;
-	// How often to check for updates
-	$config['check_updates_time'] = 43200; // 12 hours
-
 	// Shows some extra information at the bottom of pages. Good for development/debugging.
 	$config['debug'] = false;
 	// For development purposes. Displays (and "dies" on) all errors and warnings. Turn on with the above.

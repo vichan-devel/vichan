@@ -107,60 +107,6 @@ function mod_dashboard() {
 	$query = query('SELECT COUNT(*) FROM ``ban_appeals``') or error(db_error($query));
 	$args['appeals'] = $query->fetchColumn();
 
-	if ($mod['type'] >= ADMIN && $config['check_updates']) {
-		if (!$config['version'])
-			error(_('Could not find current version! (Check .installed)'));
-
-		if (isset($_COOKIE['update'])) {
-			$latest = unserialize($_COOKIE['update']);
-		} else {
-			$ctx = stream_context_create(array('http' => array('timeout' => 5)));
-			if ($code = @file_get_contents('http://engine.vichan.info/version.txt', 0, $ctx)) {
-				$ver = strtok($code, "\n");
-
-				if (preg_match('@^// v(\d+)\.(\d+)\.(\d+)\s*?$@', $ver, $matches)) {
-					$latest = array(
-						'massive' => $matches[1],
-						'major' => $matches[2],
-						'minor' => $matches[3]
-					);
-					if (preg_match('/(\d+)\.(\d)\.(\d+)(-dev.+)?$/', $config['version'], $matches)) {
-						$current = array(
-							'massive' => (int) $matches[1],
-							'major' => (int) $matches[2],
-							'minor' => (int) $matches[3]
-						);
-						if (isset($m[4])) {
-							// Development versions are always ahead in the versioning numbers
-							$current['minor'] --;
-						}
-						// Check if it's newer
-						if (!(	$latest['massive'] > $current['massive'] ||
-							$latest['major'] > $current['major'] ||
-								($latest['massive'] == $current['massive'] &&
-									$latest['major'] == $current['major'] &&
-									$latest['minor'] > $current['minor']
-								)))
-							$latest = false;
-					} else {
-						$latest = false;
-					}
-				} else {
-					// Couldn't get latest version
-					$latest = false;
-				}
-			} else {
-				// Couldn't get latest version
-				$latest = false;
-			}
-
-			setcookie('update', serialize($latest), time() + $config['check_updates_time'], $config['cookies']['jail'] ? $config['cookies']['path'] : '/', null, !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off', true);
-		}
-
-		if ($latest)
-			$args['newer_release'] = $latest;
-	}
-
 	$args['logout_token'] = make_secure_link_token('logout');
 
 	mod_page(_('Dashboard'), $config['file_mod_dashboard'], $args);
