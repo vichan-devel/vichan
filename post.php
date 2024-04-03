@@ -1113,7 +1113,8 @@ if (isset($_POST['delete'])) {
 
 			$dont_copy_file = false;
 
-			if ($config['redraw_image'] || (!@$file['exif_stripped'] && $config['strip_exif'] && ($file['extension'] == 'jpg' || $file['extension'] == 'jpeg'))) {
+			$strippable_image_ext = $file['extension'] === 'jpg' || $file['extension'] === 'jpeg' || $file['extension'] === 'webp' || $file['extension'] == 'png';
+			if ($config['redraw_image'] || (!@$file['exif_stripped'] && $config['strip_exif'] && $strippable_image_ext)) {
 				if (!$config['redraw_image'] && $config['use_exiftool']) {
 					try {
 						$file['size'] = strip_image_metadata($file['tmp_name']);
