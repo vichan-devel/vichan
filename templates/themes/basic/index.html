@@ -17,7 +17,7 @@
 		<h1>{{ settings.title }}</h1>
 		<div class="subtitle">{{ settings.subtitle }}</div>
 	</header>
-	
+
 	<div class="ban">
 		{% if news|length == 0 %}
 			<p style="text-align:center" class="unimportant">(No news to show.)</p>
@@ -35,7 +35,7 @@
 			{% endfor %}
 		{% endif %}
 	</div>
-	
+
 	<hr/>
 		{% include 'footer.html' %}
 </body>
