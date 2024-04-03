@@ -7,6 +7,7 @@ require_once 'inc/bootstrap.php';
 
 use Vichan\AppContext;
 use Vichan\Driver\HttpDriver;
+use Vichan\Driver\Log;
 use Vichan\Service\{RemoteCaptchaQuery, NativeCaptchaQuery};
 
 /**
@@ -250,7 +251,7 @@ if (isset($_GET['Newsgroups']) && $config['nntpchan']['enabled']) {
 		$content = file_get_contents("php://input");
 	}
 	elseif ($ct == 'multipart/mixed' || $ct == 'multipart/form-data') {
-		_syslog(LOG_INFO, "MM: Files: ".print_r($GLOBALS, true)); // Debug
+		$context->getLog()->log(Log::DEBUG, 'MM: Files: ' . print_r($GLOBALS, true));
 
 		$content = '';
 
@@ -415,8 +416,9 @@ if (isset($_POST['delete'])) {
 				modLog("User at $ip deleted their own post #$id");
 			}
 
-			_syslog(LOG_INFO, 'Deleted post: ' .
-				'/' . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '')
+			$context->getLog()->log(
+				Log::INFO,
+				'Deleted post: /' . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '')
 			);
 		}
 	}
@@ -491,9 +493,7 @@ if (isset($_POST['delete'])) {
 				error($config['error']['captcha']);
 			}
 		} catch (RuntimeException $e) {
-			if ($config['syslog']) {
-				_syslog(LOG_ERR, "Native captcha IO exception: {$e->getMessage()}");
-			}
+			$context->getLog()->log(Log::ERROR, "Native captcha IO exception: {$e->getMessage()}");
 			error($config['error']['local_io_error']);
 		}
 	}
@@ -512,9 +512,7 @@ if (isset($_POST['delete'])) {
 
 		$post = $query->fetch(PDO::FETCH_ASSOC);
 		if ($post === false) {
-			if ($config['syslog']) {
-				_syslog(LOG_INFO, "Failed to report non-existing post #{$id} in {$board['dir']}");
-			}
+			$context->getLog()->log(Log::INFO, "Failed to report non-existing post #{$id} in {$board['dir']}");
 			error($config['error']['nopost']);
 		}
 
@@ -523,11 +521,12 @@ if (isset($_POST['delete'])) {
 			error($error);
 		}
 
-		if ($config['syslog'])
-			_syslog(LOG_INFO, 'Reported post: ' .
-				'/' . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '') .
-				' for "' . $reason . '"'
-			);
+		$context->getLog()->log(
+			Log::INFO,
+			'Reported post: /'
+				 . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '')
+				 . " for \"$reason\""
+		);
 		$query = prepare("INSERT INTO ``reports`` VALUES (NULL, :time, :ip, :board, :post, :reason)");
 		$query->bindValue(':time', time(), PDO::PARAM_INT);
 		$query->bindValue(':ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
@@ -637,14 +636,10 @@ if (isset($_POST['delete'])) {
 				}
 			}
 		} catch (RuntimeException $e) {
-			if ($config['syslog']) {
-				_syslog(LOG_ERR, "Captcha IO exception: {$e->getMessage()}");
-			}
+			$context->getLog()->log(Log::ERROR, "Captcha IO exception: {$e->getMessage()}");
 			error($config['error']['remote_io_error']);
 		} catch (JsonException $e) {
-			if ($config['syslog']) {
-				_syslog(LOG_ERR, "Bad JSON reply to captcha: {$e->getMessage()}");
-			}
+			$context->getLog()->log(Log::ERROR, "Bad JSON reply to captcha: {$e->getMessage()}");
 			error($config['error']['remote_io_error']);
 		}
 
@@ -1128,11 +1123,9 @@ if (isset($_POST['delete'])) {
 					try {
 						$file['size'] = strip_image_metadata($file['tmp_name']);
 					} catch (RuntimeException $e) {
-						if ($config['syslog']) {
-							_syslog(LOG_ERR, "Could not strip image metadata: {$e->getMessage()}");
-							// Since EXIF metadata can countain sensible info, fail the request.
-							error(_('Could not strip EXIF metadata!'), null, $error);
-						}
+						$context->getLog()->log(Log::ERROR, "Could not strip image metadata: {$e->getMessage()}");
+						// Since EXIF metadata can countain sensible info, fail the request.
+						error(_('Could not strip EXIF metadata!'), null, $error);
 					}
 				} else {
 					$image->to($file['file']);
@@ -1168,9 +1161,7 @@ if (isset($_POST['delete'])) {
 						$post['body_nomarkup'] .= "<tinyboard ocr image $key>" . htmlspecialchars($value) . "</tinyboard>";
 					}
 				} catch (RuntimeException $e) {
-					if ($config['syslog']) {
-						_syslog(LOG_ERR, "Could not OCR image: {$e->getMessage()}");
-					}
+					$context->getLog()->log(Log::ERROR, "Could not OCR image: {$e->getMessage()}");
 				}
 			}
 		}
@@ -1360,9 +1351,10 @@ if (isset($_POST['delete'])) {
 
 	buildThread($post['op'] ? $id : $post['thread']);
 
-	if ($config['syslog'])
-		_syslog(LOG_INFO, 'New post: /' . $board['dir'] . $config['dir']['res'] .
-			link_for($post) . (!$post['op'] ? '#' . $id : ''));
+	$context->getLog()->log(
+		Log::INFO,
+		'New post: /' . $board['dir'] . $config['dir']['res'] . link_for($post) . (!$post['op'] ? '#' . $id : '')
+	);
 
 	if (!$post['mod']) header('X-Associated-Content: "' . $redirect . '"');
 
