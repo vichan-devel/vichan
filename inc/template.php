@@ -113,7 +113,6 @@ class Tinyboard extends Twig\Extension\AbstractExtension
 		return array(
 			new Twig\TwigFunction('time', 'time'),
 			new Twig\TwigFunction('floor', 'floor'),
-			new Twig\TwigFunction('timezone', 'twig_timezone_function'),
 			new Twig\TwigFunction('hiddenInputs', 'hiddenInputs'),
 			new Twig\TwigFunction('hiddenInputsHash', 'hiddenInputsHash'),
 			new Twig\TwigFunction('ratio', 'twig_ratio_function'),
@@ -134,17 +133,14 @@ class Tinyboard extends Twig\Extension\AbstractExtension
 	}
 }
 
-function twig_timezone_function() {
-	return 'Z';
-}
-
 function twig_push_filter($array, $value) {
 	array_push($array, $value);
 	return $array;
 }
 
 function twig_date_filter($date, $format) {
-	return gmstrftime($format, $date);
+	$date = new DateTime($date, new DateTimeZone('UTC'));
+	return $date->format($format);
 }
 
 function twig_hasPermission_filter($mod, $permission, $board = null) {
