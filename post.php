@@ -154,7 +154,7 @@ function ocr_image(array $config, string $img_path): string {
  * @throws RuntimeException Throws on IO errors.
  */
 function strip_image_metadata(string $img_path): int {
-	$err = shell_exec_error('exiftool -overwrite_original -ignoreMinorErrors -q -q -all= ' . escapeshellarg($img_path));
+	$err = shell_exec_error('exiftool -overwrite_original -ignoreMinorErrors -q -q -all= -Orientation ' . escapeshellarg($img_path));
 	if ($err === false) {
 		throw new RuntimeException('Could not strip EXIF metadata!');
 	}
@@ -1055,12 +1055,14 @@ if (isset($_POST['delete'])) {
 			if ($size[0] > $config['max_width'] || $size[1] > $config['max_height']) {
 				error($config['error']['maxsize']);
 			}
+			// If, on the basis of the file extension, the image file has metadata we can operate on.
+			$file_image_has_operable_metadata = $file['extension'] === 'jpg' || $file['extension'] === 'jpeg' || $file['extension'] === 'webp' || $file['extension'] == 'png';
 
 
-			if ($config['convert_auto_orient'] && ($file['extension'] == 'jpg' || $file['extension'] == 'jpeg')) {
+			if ($file_image_has_operable_metadata && $config['convert_auto_orient']) {
 				// The following code corrects the image orientation.
 				// Currently only works with the 'convert' option selected but it could easily be expanded to work with the rest if you can be bothered.
-				if (!($config['redraw_image'] || (($config['strip_exif'] && !$config['use_exiftool']) && ($file['extension'] == 'jpg' || $file['extension'] == 'jpeg')))) {
+				if (!($config['redraw_image'] || (($config['strip_exif'] && !$config['use_exiftool'])))) {
 					if (in_array($config['thumb_method'], array('convert', 'convert+gifsicle', 'gm', 'gm+gifsicle'))) {
 						$exif = @exif_read_data($file['tmp_name']);
 						$gm = in_array($config['thumb_method'], array('gm', 'gm+gifsicle'));
@@ -1121,7 +1123,7 @@ if (isset($_POST['delete'])) {
 
 			$dont_copy_file = false;
 
-			if ($config['redraw_image'] || (!@$file['exif_stripped'] && $config['strip_exif'] && ($file['extension'] == 'jpg' || $file['extension'] == 'jpeg'))) {
+			if ($config['redraw_image'] || ($file_image_has_operable_metadata && !@$file['exif_stripped'] && $config['strip_exif'])) {
 				if (!$config['redraw_image'] && $config['use_exiftool']) {
 					try {
 						$file['size'] = strip_image_metadata($file['tmp_name']);
