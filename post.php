@@ -173,7 +173,7 @@ function ocr_image(array $config, string $img_path): string {
  * @throws RuntimeException Throws on IO errors.
  */
 function strip_image_metadata(string $img_path): int {
-	$err = shell_exec_error('exiftool -overwrite_original -ignoreMinorErrors -q -q -all= ' . escapeshellarg($img_path));
+	$err = shell_exec_error('exiftool -overwrite_original -ignoreMinorErrors -q -q -all= -Orientation ' . escapeshellarg($img_path));
 	if ($err === false) {
 		throw new RuntimeException('Could not strip EXIF metadata!');
 	}
