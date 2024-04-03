@@ -428,10 +428,10 @@ function rebuildThemes($action, $boardname = false) {
 		$board = $_board;
 
 		// Reload the locale
-	        if ($config['locale'] != $current_locale) {
-	                $current_locale = $config['locale'];
-	                init_locale($config['locale']);
-	        }
+		if ($config['locale'] != $current_locale) {
+			$current_locale = $config['locale'];
+			init_locale($config['locale']);
+		}
 
 		if (PHP_SAPI === 'cli') {
 			echo "Rebuilding theme ".$theme['theme']."... ";
@@ -450,8 +450,8 @@ function rebuildThemes($action, $boardname = false) {
 
 	// Reload the locale
 	if ($config['locale'] != $current_locale) {
-	        $current_locale = $config['locale'];
-	        init_locale($config['locale']);
+		$current_locale = $config['locale'];
+		init_locale($config['locale']);
 	}
 }
 
@@ -2918,7 +2918,20 @@ function generation_strategy($fun, $array=array()) { global $config;
 			return 'rebuild';
 		case 'defer':
 			// Ok, it gets interesting here :)
-			get_queue('generate')->push(serialize(array('build', $fun, $array, $action)));
+			$queue = Queues::get_queue($config, 'generate');
+			if ($queue === false) {
+				if ($config['syslog']) {
+					_syslog(LOG_ERR, "Could not initialize generate queue, falling back to immediate rebuild strategy");
+				}
+				return 'rebuild';
+			}
+			$ret = $queue->push(serialize(array('build', $fun, $array, $action)));
+			if ($ret === false) {
+				if ($config['syslog']) {
+					_syslog(LOG_ERR, "Could not push item in the queue, falling back to immediate rebuild strategy");
+				}
+				return 'rebuild';
+			}
 			return 'ignore';
 		case 'build_on_load':
 			return 'delete';
