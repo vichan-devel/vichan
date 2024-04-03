@@ -976,7 +976,7 @@
 
 	// Timezone to use for displaying dates/times.
 	$config['timezone'] = 'America/Los_Angeles';
-	// The format string passed to date_format() for displaying dates. ISO 8601-like by default.
+	// The format string passed to DateTime::format() for displaying dates. ISO 8601-like by default.
 	// https://www.php.net/manual/en/datetime.format.php
 	$config['post_date'] = 'd-m-Y (D) H:i:s';
 	// Same as above, but used for "you are banned' pages.
