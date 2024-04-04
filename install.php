@@ -5,8 +5,8 @@ define('VERSION', '5.1.4');
 require 'inc/bootstrap.php';
 loadConfig();
 
-if (!is_writable('inc/secrets.php')) {
-	echo 'install.php does not have permission to write to /inc/secrets.php, without permission the installer cannot continue';
+if (!is_writable('inc/secrets.php') || !is_writable('inc/')) {
+	echo 'install.php does not have permission to write to /inc/secrets.php and/or /inc/, without permission the installer cannot continue';
 	exit();
 }
 

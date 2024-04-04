@@ -30,6 +30,11 @@ chgrp www-data /var/www
 # Initialize an empty robots.txt with the default if it doesn't exist.
 touch /var/www/robots.txt
 
+# Initialize an empty writable secrests.php with the default if it doesn't exist.
+touch /var/www/inc/secrets.php
+chown www-data /var/www/inc/secrets.php
+chgrp www-data /var/www/inc/secrets.php
+
 # Link the cache and tmp files directory.
 ln -nfs /var/tmp/leftypol /var/www/tmp
 
