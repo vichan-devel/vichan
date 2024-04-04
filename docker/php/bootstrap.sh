@@ -27,8 +27,8 @@ ln -nfs \
 chown www-data /var/www
 chgrp www-data /var/www
 
-# Initialize robots.txt with the default if it doesn't exist.
-cp -n /code/robots.txt /var/www
+# Initialize an empty robots.txt with the default if it doesn't exist.
+touch /var/www/robots.txt
 
 # Link the cache and tmp files directory.
 ln -nfs /var/tmp/leftypol /var/www/tmp
