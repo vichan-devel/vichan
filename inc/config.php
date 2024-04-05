@@ -65,8 +65,21 @@
 	// been generated. This keeps the script from querying the database and causing strain when not needed.
 	$config['has_installed'] = '.installed';
 
-	// Use syslog() for logging all error messages and unauthorized login attempts.
-	$config['syslog'] = false;
+	// Deprecated, use 'log_system'.
+	// $config['syslog'] = false;
+
+	$config['log_system'] = [];
+	// Log all error messages and unauthorized login attempts.
+	// Can be "syslog", "error_log" (default), "file", "stderr" or "none".
+	$config['log_system']['type'] = 'error_log';
+	// The application name used by the logging system. Defaults to "tinyboard" for backwards compatibility.
+	$config['log_system']['name'] = 'tinyboard';
+	// Only relevant if 'log_system' is set to "syslog". If true, double print the logs also in stderr.
+	// Defaults to false.
+	$config['log_system']['syslog_stderr'] = false;
+	// Only relevant if "log_system" is set to `file`. Sets the file that vichan will log to.
+	// Defaults to '/var/log/vichan.log'.
+	$config['log_system']['file_path'] = '/var/log/vichan.log';
 
 	// Use `host` via shell_exec() to lookup hostnames, avoiding query timeouts. May not work on your system.
 	// Requires safe_mode to be disabled.
