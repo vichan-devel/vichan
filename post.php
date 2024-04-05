@@ -317,7 +317,7 @@ if (isset($_GET['Newsgroups']) && $config['nntpchan']['enabled']) {
 					$ret[] = ">>".$v['id'];
 				}
 			}
-			return implode($ret, ", ");
+			return implode(", ", $ret);
 		}
 	}, $content);
 
@@ -1036,7 +1036,7 @@ if (isset($_POST['delete'])) {
 		if ($file['is_an_image']) {
 			if ($config['ie_mime_type_detection'] !== false) {
 				// Check IE MIME type detection XSS exploit
-				$buffer = file_get_contents($upload, null, null, null, 255);
+				$buffer = file_get_contents($upload, false, null, 0, 255);
 				if (preg_match($config['ie_mime_type_detection'], $buffer)) {
 					undoImage($post);
 					error($config['error']['mime_exploit']);
