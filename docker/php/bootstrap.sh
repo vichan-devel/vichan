@@ -2,6 +2,19 @@
 
 set -eu
 
+function set_cfg() {
+    if [ -L "/var/www/inc/$1" ]; then
+        echo "INFO: Resetting $1"
+        rm "/var/www/inc/$1"
+        cp "/code/inc/$1" "/var/www/inc/$1"
+        chown www-data "/var/www/inc/$1"
+        chgrp www-data "/var/www/inc/$1"
+        chmod 600 "/var/www/inc/$1"
+    else
+        echo "INFO: Using existing $1"
+    fi
+}
+
 if ! mountpoint -q /var/www; then
     echo "WARNING: '/var/www' is not a mountpoint. All the data will remain inside the container!"
 fi
@@ -14,8 +27,6 @@ fi
 # Link the entrypoints from the exposed directory.
 ln -nfs \
     /code/banners/ \
-    /code/static/ \
-    /code/stylesheets/ \
     /code/tools/ \
     /code/walls/ \
     /code/*.php \
@@ -23,6 +34,10 @@ ln -nfs \
     /code/404.html \
     /code/install.sql \
     /var/www/
+# Static files accessible from the webserver must be copied.
+cp -ur /code/static /var/www/
+cp -ur /code/stylesheets /var/www/
+
 # Ensure correct permissions are set, since this might be bind mount.
 chown www-data /var/www
 chgrp www-data /var/www
@@ -30,13 +45,8 @@ chgrp www-data /var/www
 # Initialize an empty robots.txt with the default if it doesn't exist.
 touch /var/www/robots.txt
 
-# Initialize an empty writable secrests.php with the default if it doesn't exist.
-touch /var/www/inc/secrets.php
-chown www-data /var/www/inc/secrets.php
-chgrp www-data /var/www/inc/secrets.php
-
 # Link the cache and tmp files directory.
-ln -nfs /var/tmp/leftypol /var/www/tmp
+ln -nfs /var/tmp/vichan /var/www/tmp
 
 # Link the javascript directory.
 ln -nfs /code/js /var/www/
@@ -60,17 +70,10 @@ for file in /code/inc/*; do
         ln -s /code/inc/$file /var/www/inc/
     fi
 done
+
 # Copy an empty instance configuration if the file is a link (it was linked because it did not exist before).
-if [ -L '/var/www/inc/instance-config.php' ]; then
-    echo 'INFO: Resetting instance configuration'
-    rm /var/www/inc/instance-config.php
-    cp /code/inc/instance-config.php /var/www/inc/instance-config.php
-    chown www-data /var/www/inc/instance-config.php
-    chgrp www-data /var/www/inc/instance-config.php
-    chmod 600 /var/www/inc/instance-config.php
-else
-    echo 'INFO: Using existing instance configuration'
-fi
+set_cfg 'instance-config.php'
+set_cfg 'secrets.php'
 
 # Link the composer dependencies.
 ln -nfs /code/vendor /var/www/
