@@ -83,6 +83,10 @@ function build_context(array $config): Context {
 				$config['captcha']['native']['provider_check'],
 				$config['captcha']['native']['extra']
 			);
+		},
+		CacheDriver::class => function($c) {
+			// Use the global for backwards compatibility.
+			return \cache::getCache();
 		}
 	]);
 }
