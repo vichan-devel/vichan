@@ -988,12 +988,16 @@ if ($step == 0) {
 	$queries[] = Element('posts.sql', array('board' => 'b'));
 
 	$sql_errors = '';
+	$sql_err_count = 0;
 	foreach ($queries as $query) {
 		if ($mysql_version < 50503)
 			$query = preg_replace('/(CHARSET=|CHARACTER SET )utf8mb4/', '$1utf8', $query);
 		$query = preg_replace('/^([\w\s]*)`([0-9a-zA-Z$_\x{0080}-\x{FFFF}]+)`/u', '$1``$2``', $query);
-		if (!query($query))
-			$sql_errors .= '<li>' . db_error() . '</li>';
+		if (!query($query)) {
+			$sql_err_count++;
+			$error = db_error();
+			$sql_errors .= "<li>$sql_err_count<ul><li>$query</li><li>$error</li></ul></li>";
+		}
 	}
 
 	$page['title'] = 'Installation complete';
