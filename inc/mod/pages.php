@@ -4,8 +4,8 @@
  */
 use Vichan\Context;
 use Vichan\Functions\Format;
-
 use Vichan\Functions\Net;
+use Vichan\Data\Driver\CacheDriver;
 
 defined('TINYBOARD') or exit;
 
@@ -112,25 +112,23 @@ function mod_dashboard(Context $ctx) {
 	$args['boards'] = listBoards();
 
 	if (hasPermission($config['mod']['noticeboard'])) {
-		if (!$config['cache']['enabled'] || !$args['noticeboard'] = cache::get('noticeboard_preview')) {
+		if (!$args['noticeboard'] = $ctx->get(CacheDriver::class)->get('noticeboard_preview')) {
 			$query = prepare("SELECT ``noticeboard``.*, `username` FROM ``noticeboard`` LEFT JOIN ``mods`` ON ``mods``.`id` = `mod` ORDER BY `id` DESC LIMIT :limit");
 			$query->bindValue(':limit', $config['mod']['noticeboard_dashboard'], PDO::PARAM_INT);
 			$query->execute() or error(db_error($query));
 			$args['noticeboard'] = $query->fetchAll(PDO::FETCH_ASSOC);
 
-			if ($config['cache']['enabled'])
-				cache::set('noticeboard_preview', $args['noticeboard']);
+			$ctx->get(CacheDriver::class)->set('noticeboard_preview', $args['noticeboard']);
 		}
 	}
 
-	if (!$config['cache']['enabled'] || ($args['unread_pms'] = cache::get('pm_unreadcount_' . $mod['id'])) === false) {
+	if ($args['unread_pms'] = $ctx->get(CacheDriver::class)->get('pm_unreadcount_' . $mod['id']) === false) {
 		$query = prepare('SELECT COUNT(*) FROM ``pms`` WHERE `to` = :id AND `unread` = 1');
 		$query->bindValue(':id', $mod['id']);
 		$query->execute() or error(db_error($query));
 		$args['unread_pms'] = $query->fetchColumn();
 
-		if ($config['cache']['enabled'])
-			cache::set('pm_unreadcount_' . $mod['id'], $args['unread_pms']);
+		$ctx->get(CacheDriver::class)->set('pm_unreadcount_' . $mod['id'], $args['unread_pms']);
 	}
 
 	$query = query('SELECT COUNT(*) FROM ``reports``') or error(db_error($query));
@@ -384,6 +382,8 @@ function mod_search(Context $ctx, $type, $search_query_escaped, $page_no = 1) {
 function mod_edit_board(Context $ctx, $boardName) {
 	global $board, $config, $mod;
 
+	$cache = $ctx->get(CacheDriver::class);
+
 	if (!openBoard($boardName))
 		error($config['error']['noboard']);
 
@@ -399,10 +399,8 @@ function mod_edit_board(Context $ctx, $boardName) {
 			$query->bindValue(':uri', $board['uri']);
 			$query->execute() or error(db_error($query));
 
-			if ($config['cache']['enabled']) {
-				cache::delete('board_' . $board['uri']);
-				cache::delete('all_boards');
-			}
+			$cache->delete('board_' . $board['uri']);
+			$cache->delete('all_boards');
 
 			modLog('Deleted board: ' . sprintf($config['board_abbreviation'], $board['uri']), false);
 
@@ -467,10 +465,9 @@ function mod_edit_board(Context $ctx, $boardName) {
 			modLog('Edited board information for ' . sprintf($config['board_abbreviation'], $board['uri']), false);
 		}
 
-		if ($config['cache']['enabled']) {
-			cache::delete('board_' . $board['uri']);
-			cache::delete('all_boards');
-		}
+		$cache->delete('board_' . $board['uri']);
+		$cache->delete('all_boards');
+
 
 		Vichan\Functions\Theme\rebuild_themes('boards');
 
@@ -504,6 +501,8 @@ function mod_new_board(Context $ctx) {
 
 		if (!preg_match('/^' . $config['board_regex'] . '$/u', $_POST['uri']))
 			error(sprintf($config['error']['invalidfield'], 'URI'));
+
+		$cache = $ctx->get(CacheDriver::class);
 
 		$bytes = 0;
 		$chars = preg_split('//u', $_POST['uri'], -1, PREG_SPLIT_NO_EMPTY);
@@ -544,8 +543,8 @@ function mod_new_board(Context $ctx) {
 
 		query($query) or error(db_error());
 
-		if ($config['cache']['enabled'])
-			cache::delete('all_boards');
+		$cache = $ctx->get(CacheDriver::class);
+		$cache->delete('all_boards');
 
 		// Build the board
 		buildIndex();
@@ -590,8 +589,8 @@ function mod_noticeboard(Context $ctx, $page_no = 1) {
 		$query->bindValue(':body', $_POST['body']);
 		$query->execute() or error(db_error($query));
 
-		if ($config['cache']['enabled'])
-			cache::delete('noticeboard_preview');
+		$cache = $ctx->get(CacheDriver::class);
+		$cache->delete('noticeboard_preview');
 
 		modLog('Posted a noticeboard entry');
 
@@ -631,7 +630,7 @@ function mod_noticeboard_delete(Context $ctx, $id) {
 	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['noticeboard_delete']))
-			error($config['error']['noaccess']);
+		error($config['error']['noaccess']);
 
 	$query = prepare('DELETE FROM ``noticeboard`` WHERE `id` = :id');
 	$query->bindValue(':id', $id);
@@ -639,8 +638,8 @@ function mod_noticeboard_delete(Context $ctx, $id) {
 
 	modLog('Deleted a noticeboard entry');
 
-	if ($config['cache']['enabled'])
-		cache::delete('noticeboard_preview');
+	$cache = $ctx->get(CacheDriver::class);
+	$cache->delete('noticeboard_preview');
 
 	header('Location: ?/noticeboard', true, $config['redirect_http']);
 }
@@ -706,7 +705,7 @@ function mod_news_delete(Context $ctx, $id) {
 	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['news_delete']))
-			error($config['error']['noaccess']);
+		error($config['error']['noaccess']);
 
 	$query = prepare('DELETE FROM ``news`` WHERE `id` = :id');
 	$query->bindValue(':id', $id);
@@ -843,7 +842,7 @@ function mod_view_board(Context $ctx, $boardName, $page_no = 1) {
 	}
 
 	$page['pages'] = getPages(true);
-	$page['pages'][$page_no-1]['selected'] = true;
+	$page['pages'][$page_no - 1]['selected'] = true;
 	$page['btn'] = getPageButtons($page['pages'], true);
 	$page['mod'] = true;
 	$page['config'] = $config;
@@ -1042,7 +1041,6 @@ function mod_edit_ban(Context $ctx, $ban_id) {
 		Bans::delete($ban_id);
 
 		header('Location: ?/', true, $config['redirect_http']);
-
 	}
 
 	$args['token'] = make_secure_link_token('edit_ban/' . $ban_id);
@@ -2235,10 +2233,9 @@ function mod_pm(Context $ctx, $id, $reply = false) {
 		$query->bindValue(':id', $id);
 		$query->execute() or error(db_error($query));
 
-		if ($config['cache']['enabled']) {
-			cache::delete('pm_unread_' . $mod['id']);
-			cache::delete('pm_unreadcount_' . $mod['id']);
-		}
+		$cache = $ctx->get(CacheDriver::class);
+		$cache->delete('pm_unread_' . $mod['id']);
+		$cache->delete('pm_unreadcount_' . $mod['id']);
 
 		header('Location: ?/', true, $config['redirect_http']);
 		return;
@@ -2249,10 +2246,9 @@ function mod_pm(Context $ctx, $id, $reply = false) {
 		$query->bindValue(':id', $id);
 		$query->execute() or error(db_error($query));
 
-		if ($config['cache']['enabled']) {
-			cache::delete('pm_unread_' . $mod['id']);
-			cache::delete('pm_unreadcount_' . $mod['id']);
-		}
+		$cache = $ctx->get(CacheDriver::class);
+		$cache->delete('pm_unread_' . $mod['id']);
+		$cache->delete('pm_unreadcount_' . $mod['id']);
 
 		modLog('Read a PM');
 	}
@@ -2339,10 +2335,10 @@ function mod_new_pm(Context $ctx, $username) {
 		$query->bindValue(':time', time());
 		$query->execute() or error(db_error($query));
 
-		if ($config['cache']['enabled']) {
-			cache::delete('pm_unread_' . $id);
-			cache::delete('pm_unreadcount_' . $id);
-		}
+		$cache = $ctx->get(CacheDriver::class);
+
+		$cache->delete('pm_unread_' . $id);
+		$cache->delete('pm_unreadcount_' . $id);
 
 		modLog('Sent a PM to ' . utf8tohtml($username));
 
@@ -2368,6 +2364,8 @@ function mod_rebuild(Context $ctx) {
 	if (!hasPermission($config['mod']['rebuild']))
 		error($config['error']['noaccess']);
 
+	$cache = $ctx->get(CacheDriver::class);
+
 	if (isset($_POST['rebuild'])) {
 		@set_time_limit($config['mod']['rebuild_timelimit']);
 
@@ -2378,7 +2376,7 @@ function mod_rebuild(Context $ctx) {
 		if (isset($_POST['rebuild_cache'])) {
 			if ($config['cache']['enabled']) {
 				$log[] = 'Flushing cache';
-				Cache::flush();
+				$cache->flush();
 			}
 
 			$log[] = 'Clearing template cache';
@@ -2840,6 +2838,8 @@ function mod_theme_configure(Context $ctx, $theme_name) {
 		error($config['error']['invalidtheme']);
 	}
 
+	$cache = $ctx->get(CacheDriver::class);
+
 	if (isset($_POST['install'])) {
 		// Check if everything is submitted
 		foreach ($theme['config'] as &$conf) {
@@ -2868,8 +2868,8 @@ function mod_theme_configure(Context $ctx, $theme_name) {
 		$query->execute() or error(db_error($query));
 
 		// Clean cache
-		Cache::delete("themes");
-		Cache::delete("theme_settings_".$theme_name);
+		$cache->delete("themes");
+		$cache->delete("theme_settings_$theme_name");
 
 		$result = true;
 		$message = false;
@@ -2928,13 +2928,15 @@ function mod_theme_uninstall(Context $ctx, $theme_name) {
 	if (!hasPermission($config['mod']['themes']))
 		error($config['error']['noaccess']);
 
+	$cache = $ctx->get(CacheDriver::class);
+
 	$query = prepare("DELETE FROM ``theme_settings`` WHERE `theme` = :theme");
 	$query->bindValue(':theme', $theme_name);
 	$query->execute() or error(db_error($query));
 
 	// Clean cache
-	Cache::delete("themes");
-	Cache::delete("theme_settings_".$theme_name);
+	$cache->delete("themes");
+	$cache->delete("theme_settings_$theme_name");
 
 	header('Location: ?/themes', true, $config['redirect_http']);
 }
@@ -2959,7 +2961,7 @@ function mod_theme_rebuild(Context $ctx, $theme_name) {
 }
 
 // This needs to be done for `secure` CSRF prevention compatibility, otherwise the $board will be read in as the token if editing global pages.
-function delete_page_base($page = '', $board = false) {
+function delete_page_base(Context $ctx, $page = '', $board = false) {
 	global $config, $mod;
 
 	if (empty($board))
