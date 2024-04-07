@@ -26,12 +26,9 @@ fi
 
 # Link the entrypoints from the exposed directory.
 ln -nfs \
-    /code/banners/ \
     /code/tools/ \
-    /code/walls/ \
     /code/*.php \
     /code/LICENSE.* \
-    /code/404.html \
     /code/install.sql \
     /var/www/
 # Static files accessible from the webserver must be copied.
