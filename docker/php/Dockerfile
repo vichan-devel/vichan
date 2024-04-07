@@ -1,43 +1,73 @@
 # Based on https://github.com/dead-guru/devichan/blob/master/php-fpm/Dockerfile
 
 FROM composer AS composer
-FROM php:8.1-fpm-bullseye
+FROM php:8.1-fpm-alpine
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y \
-      zlib1g-dev libicu-dev g++ \
-      libjpeg62-turbo-dev \
-      libzip-dev \
-      libpng-dev \
-      libwebp-dev \
-      libfreetype6-dev \
-      libxml2-dev \
-      git \
-      zip \
-      ffmpeg \
-      libonig-dev \
-      unzip \
-      libcurl4-openssl-dev \
-      libmagickwand-dev \
-      gifsicle \
-      graphicsmagick \
-      gettext \
-      imagemagick \
-      locales locales-all \
-      libmagickwand-dev \
-      libmcrypt-dev \
+RUN apk add --no-cache \
+    zlib \
+    zlib-dev \
+    libpng \
+    libpng-dev \
+    libjpeg-turbo \
+    libjpeg-turbo-dev \
+    libwebp \
+    libwebp-dev \
+    libcurl \
+    curl-dev \
+    imagemagick \
+    graphicsmagick \
+    gifsicle \
+    ffmpeg \
+    bind-tools \
+    gettext \
+    gettext-dev \
+    icu-dev \
+    oniguruma \
+    oniguruma-dev \
+    libmcrypt \
+    libmcrypt-dev \
+    lz4-libs \
+    lz4-dev \
+    imagemagick-dev \
+    pcre-dev \
+    $PHPIZE_DEPS \
     && docker-php-ext-configure gd \
         --with-webp=/usr/include/webp \
         --with-jpeg=/usr/include \
-        --with-freetype=/usr/include/freetype2/ \
+    && docker-php-ext-install -j$(nproc) \
+        gd \
+        curl \
+        bcmath \
+        opcache \
+        pdo_mysql \
+        gettext \
+        intl \
+        mbstring \
+    && pecl update-channels \
+    && pecl install -o -f igbinary \
     && pecl install redis \
     && pecl install imagick \
-    && pecl install -o -f igbinary \
-    && docker-php-ext-install gd zip opcache intl pdo pdo_mysql mysqli bcmath gettext iconv mbstring curl \
-    && docker-php-ext-enable igbinary redis imagick \
-    && rm -rf /var/cache/* \
-    && rmdir /var/www/html \
+    $$ docker-php-ext-enable \
+        igbinary \
+        redis \
+        imagick \
+    && apk del \
+        zlib-dev \
+        libpng-dev \
+        libjpeg-turbo-dev \
+        libwebp-dev \
+        curl-dev \
+        gettext-dev \
+        oniguruma-dev \
+        libmcrypt-dev \
+        lz4-dev \
+        imagemagick-dev \
+        pcre-dev \
+        $PHPIZE_DEPS \
+    && rm -rf /var/cache/*
+RUN rmdir /var/www/html \
     && install -d -m 744 -o www-data -g www-data /var/www \
-    && install -d -m 700 -o www-data -g www-data /var/tmp/leftypol \
+    && install -d -m 700 -o www-data -g www-data /var/tmp/vichan \
     && install -d -m 700 -o www-data -g www-data /var/cache/gen-cache \
     && install -d -m 700 -o www-data -g www-data /var/cache/template-cache
 
