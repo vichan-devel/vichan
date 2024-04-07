@@ -28,17 +28,17 @@ function load_twig() {
 
 function Element($templateFile, array $options) {
 	global $config, $debug, $twig, $build_pages;
-	
+
 	if (!$twig)
 		load_twig();
-	
+
 	if (function_exists('create_pm_header') && ((isset($options['mod']) && $options['mod']) || isset($options['__mod'])) && !preg_match('!^mod/!', $templateFile)) {
 		$options['pm'] = create_pm_header();
 	}
-	
+
 	if (isset($options['body']) && $config['debug']) {
 		$_debug = $debug;
-		
+
 		if (isset($debug['start'])) {
 			$_debug['time']['total'] = '~' . round((microtime(true) - $_debug['start']) * 1000, 2) . 'ms';
 			$_debug['time']['init'] = '~' . round(($_debug['start_debug'] - $_debug['start']) * 1000, 2) . 'ms';
@@ -56,15 +56,15 @@ function Element($templateFile, array $options) {
 				str_replace("\n", '<br/>', utf8tohtml(print_r($_debug, true))) .
 			'</pre>';
 	}
-	
+
 	// Read the template file
 	if (@file_get_contents("{$config['dir']['template']}/${templateFile}")) {
 		$body = $twig->render($templateFile, $options);
-		
+
 		if ($config['minify_html'] && preg_match('/\.html$/', $templateFile)) {
 			$body = trim(preg_replace("/[\t\r\n]/", '', $body));
 		}
-		
+
 		return $body;
 	} else {
 		throw new Exception("Template file '${templateFile}' does not exist or is empty in '{$config['dir']['template']}'!");
@@ -102,7 +102,7 @@ class Tinyboard extends Twig\Extension\AbstractExtension
 			new Twig\TwigFilter('cloak_mask', 'cloak_mask'),
 		);
 	}
-	
+
 	/**
 	* Returns a list of functions to add to the existing list.
 	*
@@ -122,7 +122,7 @@ class Tinyboard extends Twig\Extension\AbstractExtension
 			new Twig\TwigFunction('link_for', 'link_for')
 		);
 	}
-	
+
 	/**
 	* Returns the name of the extension.
 	*
@@ -154,7 +154,7 @@ function twig_hasPermission_filter($mod, $permission, $board = null) {
 function twig_extension_filter($value, $case_insensitive = true) {
 	$ext = mb_substr($value, mb_strrpos($value, '.') + 1);
 	if($case_insensitive)
-		$ext = mb_strtolower($ext);		
+		$ext = mb_strtolower($ext);
 	return $ext;
 }
 
@@ -179,7 +179,7 @@ function twig_filename_truncate_filter($value, $length = 30, $separator = '…')
 		$value = strrev($value);
 		$array = array_reverse(explode(".", $value, 2));
 		$array = array_map("strrev", $array);
-		
+
 		$filename = &$array[0];
 		$extension = isset($array[1]) ? $array[1] : false;
 
