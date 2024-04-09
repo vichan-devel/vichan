@@ -6,18 +6,20 @@ use Vichan\Driver\{HttpDriver, HttpDrivers, Log, LogDrivers};
 defined('TINYBOARD') or exit;
 
 
-interface Context {
-	public function getLog(): Log;
-	public function getHttpDriver(): HttpDriver;
+interface DependencyFactory {
+	public function buildLogDriver(): Log;
+	public function buildHttpDriver(): HttpDriver;
 }
 
-class AppContext implements Context {
+class WebDependencyFactory implements DependencyFactory {
 	private array $config;
-	private ?Log $log;
-	private ?HttpDriver $http;
 
 
-	private function initLogDriver(): Log {
+	public function __construct(array $config) {
+		$this->config = $config;
+	}
+
+	public function buildLogDriver(): Log {
 		$name = $this->config['log_system']['name'];
 		$level = $this->config['debug'] ? Log::DEBUG : Log::NOTICE;
 		$backend = $this->config['log_system']['type'];
@@ -36,21 +38,34 @@ class AppContext implements Context {
 		}
 	}
 
+	public function buildHttpDriver(): HttpDriver {
+		return HttpDrivers::getHttpDriver(
+			$this->config['upload_by_url_timeout'],
+			$this->config['max_filesize']
+		);
+	}
+}
 
-	public function __construct(array $config) {
-		$this->config = $config;
+class Context {
+	private DependencyFactory $factory;
+	private ?Log $log;
+	private ?HttpDriver $http;
+
+
+	public function __construct(DependencyFactory $factory) {
+		$this->factory = $factory;
 	}
 
 	public function getLog(): Log {
 		if (is_null($this->log)) {
-			$this->log = $this->initLogDriver();
+			$this->log = $this->factory->buildLogDriver();
 		}
 		return $this->log;
 	}
 
 	public function getHttpDriver(): HttpDriver {
 		if (is_null($this->http)) {
-			$this->http = HttpDrivers::getHttpDriver($this->config['upload_by_url_timeout'], $this->config['max_filesize']);
+			$this->http = $this->factory->buildHttpDriver();
 		}
 		return $this->http;
 	}
