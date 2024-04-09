@@ -5,9 +5,8 @@
 
 require_once 'inc/bootstrap.php';
 
-use Vichan\AppContext;
-use Vichan\Driver\HttpDriver;
-use Vichan\Driver\Log;
+use Vichan\{Context, WebDependencyFactory};
+use Vichan\Driver\{HttpDriver, Log};
 use Vichan\Service\{RemoteCaptchaQuery, NativeCaptchaQuery};
 
 /**
@@ -172,7 +171,7 @@ function strip_image_metadata(string $img_path): int {
  */
 
 $dropped_post = false;
-$context = new AppContext($config);
+$context = new Context(new WebDependencyFactory($config));
 
 // Is it a post coming from NNTP? Let's extract it and pretend it's a normal post.
 if (isset($_GET['Newsgroups']) && $config['nntpchan']['enabled']) {
