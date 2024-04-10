@@ -39,7 +39,7 @@ services:
       - "3306:3306"
     environment:
       MYSQL_DATABASE: vichan
-      MYSQL_ROOT_PASSWORD: test-database
+      MYSQL_ROOT_PASSWORD: password
     networks:
         vichan_net:
             ipv4_address: 172.20.0.2
