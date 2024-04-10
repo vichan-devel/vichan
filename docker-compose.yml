@@ -25,6 +25,7 @@ services:
       volumes:
           - ./local-www:/var/www
           - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
+          - ./docker/php/jit.ini:/usr/local/etc/php/conf.d/jit.ini
       networks:
         vichan_net:
           ipv4_address: 172.20.0.4
