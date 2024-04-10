@@ -14,7 +14,7 @@ services:
           - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
           - ./docker/nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf
       networks:
-        leftchan_net:
+        vichan_net:
           ipv4_address: 172.20.0.3
       links:
           - php
@@ -26,7 +26,7 @@ services:
           - ./local-www:/var/www
           - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
       networks:
-        leftchan_net:
+        vichan_net:
           ipv4_address: 172.20.0.4
   #MySQL Service
   db:
@@ -40,12 +40,12 @@ services:
       MYSQL_DATABASE: vichan
       MYSQL_ROOT_PASSWORD: test-database
     networks:
-        leftchan_net:
+        vichan_net:
             ipv4_address: 172.20.0.2
 
 #Docker Networks
 networks:
-    leftchan_net:
+    vichan_net:
         ipam:
             driver: default
             config:
