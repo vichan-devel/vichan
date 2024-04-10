@@ -52,22 +52,15 @@ class Context {
 	private ?HttpDriver $http;
 
 
-	private function lazyGet(mixed &$field_ref, string $dependency_name): mixed {
-		if (is_null($field_ref)) {
-			$field_ref = [$this->factory, "build{$dependency_name}"]();
-		}
-		return $field_ref;
-	}
-
 	public function __construct(DependencyFactory $factory) {
 		$this->factory = $factory;
 	}
 
 	public function getLog(): Log {
-		return $this->lazyGet($this->log, 'logDriver');
+		return $this->log ??= $this->factory->buildLogDriver();
 	}
 
 	public function getHttpDriver(): HttpDriver {
-		return $this->lazyGet($this->http, 'httpDriver');
+		return $this->http ??= $this->factory->buildHttpDriver();
 	}
 }
