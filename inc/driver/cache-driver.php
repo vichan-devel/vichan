@@ -122,7 +122,7 @@ class CacheDrivers {
 		};
 	}
 
-	public static function filesystem(string $prefix, string $base_path) {
+	public static function filesystem(string $prefix, string $base_path, string $lock_file) {
 		if ($base_path[strlen($base_path) - 1] !== '/') {
 			$base_path = "$base_path/";
 		}
@@ -135,9 +135,17 @@ class CacheDrivers {
 			throw new RuntimeException("$base_path is not writable!");
 		}
 
-		return new class($prefix, $base_path) implements CacheDriver {
+		$lock_file = $base_path . $lock_file;
+
+		$lock_fd = fopen($lock_file, 'w');
+		if ($lock_fd === false) {
+			throw new RuntimeException('Unable to open the lock file!');
+		}
+
+		$ret = new class($prefix, $base_path, $lock_file) implements CacheDriver {
 			private string $prefix;
 			private string $base_path;
+			private mixed $lock_fd;
 
 
 			private function prepareKey(string $key): string {
@@ -146,21 +154,38 @@ class CacheDrivers {
 				return $this->prefix . $key;
 			}
 
-			public function __construct(string $prefix, string $base_path) {
+			private function sharedLockCache(): void {
+				flock($this->lock_fd, LOCK_SH);
+			}
+
+			private function exclusiveLockCache(): void {
+				flock($this->lock_fd, LOCK_EX);
+			}
+
+			private function unlockCache(): void {
+				flock($this->lock_fd, LOCK_UN);
+			}
+
+			public function __construct(string $prefix, string $base_path, mixed $lock_fd) {
 				$this->prefix = $prefix;
 				$this->base_path = $base_path;
+				$this->lock_fd = $lock_fd;
 			}
 
 			public function get(string $key): mixed {
 				$key = $this->prepareKey($key);
 
-				$fd = fopen("$this->base_path/$key", 'r');
+				$this->sharedLockCache();
+
+				$fd = fopen($this->base_path . $key, 'r');
 				if ($fd === false) {
+					$this->unlockCache();
 					return null;
 				}
 
-				$data = stream_get_contents("$this->base_path/$key");
+				$data = stream_get_contents($fd);
 				fclose($fd);
+				$this->unlockCache();
 				return json_decode($data, true);
 			}
 
@@ -168,22 +193,36 @@ class CacheDrivers {
 				$key = $this->prepareKey($key);
 
 				$data = json_encode($value);
-				file_put_contents("$this->base_path/$key", $data);
+				$this->exclusiveLockCache();
+				file_put_contents($this->base_path . $key, $data);
+				$this->unlockCache();
 			}
 
 			public function delete(string $key): void {
 				$key = $this->prepareKey($key);
 
-				@unlink("$this->base_path/$key");
+				$this->exclusiveLockCache();
+				@unlink($this->base_path . $key);
+				$this->unlockCache();
 			}
 
 			public function flush(): void {
-				$files = glob("$this->base_path/$this->prefix*");
+				$this->exclusiveLockCache();
+				$files = glob($this->base_path . $this->prefix . '*', GLOB_NOSORT);
 				foreach ($files as $file) {
 					@unlink($file);
 				}
+				$this->unlockCache();
+			}
+
+			public function close() {
+				fclose($this->lock_fd);
 			}
 		};
+
+		register_shutdown_function([$ret, 'close']);
+
+		return $ret;
 	}
 
 	public static function phpArray() {
