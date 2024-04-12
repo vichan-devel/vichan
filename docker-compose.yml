@@ -21,11 +21,12 @@ services:
   php:
       build:
         context: .
-        dockerfile: ./docker/php/Dockerfile
+        dockerfile: ./docker/php/Dockerfile.profile
       volumes:
           - ./local-www:/var/www
           - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
           - ./docker/php/jit.ini:/usr/local/etc/php/conf.d/jit.ini
+          - ./docker/php/xdebug-prof.ini:/usr/local/etc/php/conf.d/xdebug-prof.ini
       networks:
         vichan_net:
           ipv4_address: 172.20.0.4

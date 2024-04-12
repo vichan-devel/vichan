@@ -24,6 +24,14 @@ if [ ! -w /var/www ] ; then
     exit 1
 fi
 
+if [ -z "$XDEBUG_OUT_DIR" ] ; then
+    echo "INFO: Initializing xdebug out directory at $XDEBUG_OUT_DIR"
+    mkdir -p "$XDEBUG_OUT_DIR"
+    chown www-data "$XDEBUG_OUT_DIR"
+    chgrp www-data "$XDEBUG_OUT_DIR"
+    chmod 755 "$XDEBUG_OUT_DIR"
+fi
+
 # Link the entrypoints from the exposed directory.
 ln -nfs \
     /code/tools/ \
