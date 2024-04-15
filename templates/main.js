@@ -45,7 +45,7 @@ function ago($timestamp) {
         switch(true){
         case ($difference < 60) :
                 return "" + $difference + ' ' + _('second(s)');
-        case ($difference < 3600): //60*60 = 3600 
+        case ($difference < 3600): //60*60 = 3600
                 return "" + ($num = Math.round($difference/(60))) + ' ' + _('minute(s)');
         case ($difference <  86400): //60*60*24 = 86400
                 return "" + ($num = Math.round($difference/(3600))) + ' ' + _('hour(s)');
@@ -131,7 +131,7 @@ function changeStyle(styleName, link) {
 		localStorage.stylesheet = styleName;
 	{% endif %}
 	{% verbatim %}
-	
+
 	if (!document.getElementById('stylesheet')) {
 		var s = document.createElement('link');
 		s.rel = 'stylesheet';
@@ -140,21 +140,21 @@ function changeStyle(styleName, link) {
 		var x = document.getElementsByTagName('head')[0];
 		x.appendChild(s);
 	}
-	
+
 	document.getElementById('stylesheet').href = styles[styleName];
 	selectedstyle = styleName;
-	
+
 	if (document.getElementsByClassName('styles').length != 0) {
 		var styleLinks = document.getElementsByClassName('styles')[0].childNodes;
 		for (var i = 0; i < styleLinks.length; i++) {
 			styleLinks[i].className = '';
 		}
 	}
-	
+
 	if (link) {
 		link.className = 'selected';
 	}
-	
+
 	if (typeof $ != 'undefined')
 		$(window).trigger('stylesheet', styleName);
 }
@@ -163,11 +163,11 @@ function changeStyle(styleName, link) {
 {% endverbatim %}
 {% if config.stylesheets_board %}
 	{% verbatim %}
-	
+
 	if (!localStorage.board_stylesheets) {
 		localStorage.board_stylesheets = '{}';
 	}
-	
+
 	var stylesheet_choices = JSON.parse(localStorage.board_stylesheets);
 	if (board_name && stylesheet_choices[board_name]) {
 		for (var styleName in styles) {
@@ -195,7 +195,7 @@ function changeStyle(styleName, link) {
 function init_stylechooser() {
 	var newElement = document.createElement('div');
 	newElement.className = 'styles';
-	
+
 	for (styleName in styles) {
 		var style = document.createElement('a');
 		style.innerHTML = '[' + styleName + ']';
@@ -207,8 +207,8 @@ function init_stylechooser() {
 		}
 		style.href = 'javascript:void(0);';
 		newElement.appendChild(style);
-	}	
-	
+	}
+
 	document.getElementsByTagName('body')[0].insertBefore(newElement, document.getElementsByTagName('body')[0].lastChild.nextSibling);
 }
 
@@ -225,7 +225,7 @@ function highlightReply(id) {
 		// don't highlight on middle click
 		return true;
 	}
-	
+
 	var divs = document.getElementsByTagName('div');
 	for (var i = 0; i < divs.length; i++)
 	{
@@ -261,10 +261,10 @@ function dopost(form) {
 	if (form.elements['email'] && form.elements['email'].value != 'sage') {
 		localStorage.email = form.elements['email'].value;
 	}
-	
+
 	saved[document.location] = form.elements['body'].value;
 	sessionStorage.body = JSON.stringify(saved);
-	
+
 	return form.elements['body'].value != "" || (form.elements['file'] && form.elements['file'].value != "") || (form.elements.file_url && form.elements['file_url'].value != "");
 }
 
@@ -272,7 +272,7 @@ function citeReply(id, with_link) {
 	var textarea = document.getElementById('body');
 
 	if (!textarea) return false;
-	
+
 	if (document.selection) {
 		// IE
 		textarea.focus();
@@ -282,7 +282,7 @@ function citeReply(id, with_link) {
 		var start = textarea.selectionStart;
 		var end = textarea.selectionEnd;
 		textarea.value = textarea.value.substring(0, start) + '>>' + id + '\n' + textarea.value.substring(end, textarea.value.length);
-		
+
 		textarea.selectionStart += ('>>' + id).length + 1;
 		textarea.selectionEnd = textarea.selectionStart;
 	} else {
@@ -312,15 +312,15 @@ function rememberStuff() {
 				localStorage.password = generatePassword();
 			document.forms.post.password.value = localStorage.password;
 		}
-		
+
 		if (localStorage.name && document.forms.post.elements['name'])
 			document.forms.post.elements['name'].value = localStorage.name;
 		if (localStorage.email && document.forms.post.elements['email'])
 			document.forms.post.elements['email'].value = localStorage.email;
-		
+
 		if (window.location.hash.indexOf('q') == 1)
 			citeReply(window.location.hash.substring(2), true);
-		
+
 		if (sessionStorage.body) {
 			var saved = JSON.parse(sessionStorage.body);
 			if (get_cookie('{% endverbatim %}{{ config.cookies.js }}{% verbatim %}')) {
@@ -330,14 +330,14 @@ function rememberStuff() {
 					saved[url] = null;
 				}
 				sessionStorage.body = JSON.stringify(saved);
-				
+
 				document.cookie = '{% endverbatim %}{{ config.cookies.js }}{% verbatim %}={};expires=0;path=/;';
 			}
 			if (saved[document.location]) {
 				document.forms.post.body.value = saved[document.location];
 			}
 		}
-		
+
 		if (localStorage.body) {
 			document.forms.post.body.value = localStorage.body;
 			localStorage.body = '';
@@ -359,14 +359,14 @@ var script_settings = function(script_name) {
 function init() {
 	init_stylechooser();
 
-	{% endverbatim %}	
+	{% endverbatim %}
 	{% if config.allow_delete %}
 	if (document.forms.postcontrols) {
 		document.forms.postcontrols.password.value = localStorage.password;
 	}
 	{% endif %}
 	{% verbatim %}
-	
+
 	if (window.location.hash.indexOf('q') != 1 && window.location.hash.substring(1))
 		highlightReply(window.location.hash.substring(1));
 }
@@ -404,4 +404,3 @@ sc.innerHTML = 'var sc_project={{ config.statcounter_project }};var sc_invisible
 var s = document.getElementsByTagName('script')[0];
 s.parentNode.insertBefore(sc, s);
 {% endif %}
-
