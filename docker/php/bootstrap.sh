@@ -24,7 +24,7 @@ if [ ! -w /var/www ] ; then
     exit 1
 fi
 
-if [ -z "$XDEBUG_OUT_DIR" ] ; then
+if [ -z  "${XDEBUG_OUT_DIR:-''}" ] ; then
     echo "INFO: Initializing xdebug out directory at $XDEBUG_OUT_DIR"
     mkdir -p "$XDEBUG_OUT_DIR"
     chown www-data "$XDEBUG_OUT_DIR"
