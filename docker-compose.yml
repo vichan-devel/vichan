@@ -19,12 +19,11 @@ services:
   php:
     build:
       context: .
-      dockerfile: ./docker/php/Dockerfile.profile
+      dockerfile: ./docker/php/Dockerfile
     volumes:
       - ./local-www:/var/www
       - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
       - ./docker/php/jit.ini:/usr/local/etc/php/conf.d/jit.ini
-      - ./docker/php/xdebug-prof.ini:/usr/local/etc/php/conf.d/xdebug-prof.ini
 
   #MySQL Service
   db:
