@@ -44,6 +44,6 @@ Thumbs.db
 #vichan custom
 favicon.ico
 /static/spoiler.png
-local-www
+/local-instances
 
 /vendor/
