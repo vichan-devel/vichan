@@ -71,20 +71,16 @@ RUN rmdir /var/www/html \
     && install -d -m 700 -o www-data -g www-data /var/cache/gen-cache \
     && install -d -m 700 -o www-data -g www-data /var/cache/template-cache
 
-COPY --from=composer /usr/bin/composer /usr/local/bin/composer
-
 # Copy the bootstrap script.
 COPY ./docker/php/bootstrap.sh /usr/local/bin/bootstrap.sh
+
+COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 
 # Copy the actual project (use .dockerignore to exclude stuff).
 COPY . /code
 
-# Make the instance configuration owned by www-data.
-# Make it writable by php.
 # Install the compose depedencies.
-RUN chown www-data /code/inc/instance-config.php && chgrp www-data /code/inc/instance-config.php \
-    && chmod 660 /code/inc/instance-config.php \
-    && cd /code && composer install
+RUN cd /code && composer install
 
 WORKDIR "/var/www"
 CMD [ "bootstrap.sh" ]
