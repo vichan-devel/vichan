@@ -623,7 +623,7 @@ if (isset($_POST['delete'])) {
 					if (!isset($_POST['h-captcha-response'])) {
 						error($config['error']['bot']);
 					}
-					$response = $_POST['g-recaptcha-response'];
+					$response = $_POST['h-captcha-response'];
 					$query = RemoteCaptchaQuery::withHCaptcha($context->getHttpDriver(), $config['hcaptcha_private']);
 				}
 
