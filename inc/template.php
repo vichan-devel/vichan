@@ -18,7 +18,7 @@ function load_twig() {
 	$twig = new Twig\Environment($loader, array(
 		'autoescape' => false,
 		'cache' => is_writable('templates/') || (is_dir($cache_dir) && is_writable($cache_dir)) ?
-			new Twig_Cache_TinyboardFilesystem($cache_dir) : false,
+			new TinyboardTwigCache($cache_dir) : false,
 		'debug' => $config['debug'],
 		'auto_reload' => $config['twig_auto_reload']
 	));
@@ -70,6 +70,32 @@ function Element($templateFile, array $options) {
 		return $body;
 	} else {
 		throw new Exception("Template file '${templateFile}' does not exist or is empty in '{$config['dir']['template']}'!");
+	}
+}
+
+class TinyboardTwigCache extends Twig\Cache\FilesystemCache {
+	private string $directory;
+
+	public function __construct(string $directory) {
+		parent::__construct($directory);
+		$this->directory = $directory;
+	}
+
+	/**
+	 * This function was removed in Twig 2.x due to developer views on the Twig library.
+	 * Who says we can't keep it for ourselves though?
+	 */
+	public function clear() {
+		$iter = new RecursiveIteratorIterator(
+			new RecursiveDirectoryIterator($this->directory),
+			RecursiveIteratorIterator::LEAVES_ONLY
+		);
+
+		foreach ($iter as $file) {
+			if ($file->isFile()) {
+				@unlink($file->getPathname());
+			}
+		}
 	}
 }
 
