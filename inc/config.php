@@ -186,7 +186,7 @@
 
 	// How long should the cookies last (in seconds). Defines how long should moderators should remain logged
 	// in (0 = browser session).
-	$config['cookies']['expire'] = 60 * 60 * 24 * 30 * 6; // ~6 months
+	$config['cookies']['expire'] = 60 * 60 * 24 * 7; // 1 week.
 
 	// Make this something long and random for security.
 	$config['cookies']['salt'] = 'abcdefghijklmnopqrstuvwxyz09123456789!@#$%^&*()';
