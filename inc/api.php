@@ -16,42 +16,39 @@ class Api {
 		 */
 		$this->config = $config;
 
-		        $this->postFields = array(
-		            'id' => 'no',
-		            'thread' => 'resto',
-		            'subject' => 'sub',
-		            'body' => 'com',
-		            'body_nomarkup' => '___body_nomarkup',
-		            'email' => 'email',
-		            'name' => 'name',
-		            'trip' => 'trip',
-		            'capcode' => 'capcode',
-		            'time' => 'time',
-		            'omitted' => 'omitted_posts',
-		            'omitted_images' => 'omitted_images',
-		            'replies' => 'replies',
-		            'images' => 'images',
-		            'sticky' => 'sticky',
-		            'locked' => 'locked',
-		            'cycle' => 'cyclical',
-		            'bump' => 'last_modified',
-		            'embed' => 'embed',
-		        );
-		
-		        $this->threadsPageFields = array(
-		            'id' => 'no',
-		            'bump' => 'last_modified'
-		        );
-		
-		        $this->fileFields = array(
-		            'thumbheight' => 'tn_h',
-		            'thumbwidth' => 'tn_w',
-		            'height' => 'h',
-		            'width' => 'w',
-		            'size' => 'fsize',
-		            'thumb' => 'thumb',
-		            'filename' => 'filename',
-		        );
+		$this->postFields = array(
+			'id' => 'no',
+			'thread' => 'resto',
+			'subject' => 'sub',
+			'body' => 'com',
+			'email' => 'email',
+			'name' => 'name',
+			'trip' => 'trip',
+			'capcode' => 'capcode',
+			'time' => 'time',
+			'omitted' => 'omitted_posts',
+			'omitted_images' => 'omitted_images',
+			'replies' => 'replies',
+			'images' => 'images',
+			'sticky' => 'sticky',
+			'locked' => 'locked',
+			'cycle' => 'cyclical',
+			'bump' => 'last_modified',
+			'embed' => 'embed',
+		);
+
+		$this->threadsPageFields = array(
+			'id' => 'no',
+			'bump' => 'last_modified'
+		);
+
+		$this->fileFields = array(
+			'thumbheight' => 'tn_h',
+			'thumbwidth' => 'tn_w',
+			'height' => 'h',
+			'width' => 'w',
+			'size' => 'fsize',
+		);
 
 		if (isset($config['api']['extra_fields']) && gettype($config['api']['extra_fields']) == 'array'){
 			$this->postFields = array_merge($this->postFields, $config['api']['extra_fields']);
