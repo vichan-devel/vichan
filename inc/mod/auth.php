@@ -66,6 +66,18 @@ function generate_salt() {
 	return strtr(base64_encode(random_bytes(16)), '+', '.');
 }
 
+function calc_cookie_name($is_https, $is_path_jailed, $base_name) {
+	if ($is_https) {
+		if ($is_path_jailed) {
+			return "__Host-$base_name";
+		} else {
+			return "__Secure-$base_name";
+		}
+	} else {
+		return $base_name;
+	}
+}
+
 function login($username, $password) {
 	global $mod, $config;
 
@@ -102,22 +114,62 @@ function login($username, $password) {
 
 function setCookies() {
 	global $mod, $config;
-	if (!$mod)
+	if (!$mod) {
 		error('setCookies() was called for a non-moderator!');
+	}
 
-	setcookie($config['cookies']['mod'],
-			$mod['username'] . // username
-			':' .
-			$mod['hash'][0] . // password
-			':' .
-			$mod['hash'][1], // salt
-		time() + $config['cookies']['expire'], $config['cookies']['jail'] ? $config['cookies']['path'] : '/', null, !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off', $config['cookies']['httponly']);
+	$is_https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off';
+	$is_path_jailed = $config['cookies']['jail'];
+	$name = calc_cookie_name($is_https, $is_path_jailed, $config['cookies']['mod']);
+
+	// <username>:<password>:<salt>
+	$value = "{$mod['username']}:{$mod['hash'][0]}:{$mod['hash'][1]}";
+
+	$options = [
+		'expires' => time() + $config['cookies']['expire'],
+		'path' => $is_path_jailed ? $config['cookies']['path'] : '/',
+		'secure' => $is_https,
+		'httponly' => $config['cookies']['httponly'],
+		'samesite' => 'Strict'
+	];
+
+	setcookie($name, $value, $options);
 }
 
 function destroyCookies() {
 	global $config;
-	// Delete the cookies
-	setcookie($config['cookies']['mod'], 'deleted', time() - $config['cookies']['expire'], $config['cookies']['jail']?$config['cookies']['path'] : '/', null, !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off', true);
+	$base_name = $config['cookies']['mod'];
+	$del_time = time() - 60 * 60 * 24 * 365; // 1 year.
+	$jailed_path = $config['cookies']['jail'] ? $config['cookies']['path'] : '/';
+	$http_only = $config['cookies']['httponly'];
+
+	$options_multi = [
+		$base_name => [
+			'expires' => $del_time,
+			'path' => $jailed_path ,
+			'secure' => false,
+			'httponly' => $http_only,
+			'samesite' => 'Strict'
+		],
+		"__Host-$base_name" => [
+			'expires' => $del_time,
+			'path' => $jailed_path,
+			'secure' => true,
+			'httponly' => $http_only,
+			'samesite' => 'Strict'
+		],
+		"__Secure-$base_name" => [
+			'expires' => $del_time,
+			'path' => '/',
+			'secure' => true,
+			'httponly' => $http_only,
+			'samesite' => 'Strict'
+		]
+	];
+
+	foreach ($options_multi as $name => $options) {
+		setcookie($name, 'deleted', $options);
+	}
 }
 
 function modLog($action, $_board=null) {
@@ -174,10 +226,14 @@ function make_secure_link_token($uri) {
 
 function check_login($prompt = false) {
 	global $config, $mod;
+	$is_https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off';
+	$is_path_jailed = $config['cookies']['jail'];
+	$expected_cookie_name = calc_cookie_name($is_https, $is_path_jailed, $config['cookies']['mod']);
+
 	// Validate session
-	if (isset($_COOKIE[$config['cookies']['mod']])) {
+	if (isset($expected_cookie_name)) {
 		// Should be username:hash:salt
-		$cookie = explode(':', $_COOKIE[$config['cookies']['mod']]);
+		$cookie = explode(':', $_COOKIE[$expected_cookie_name]);
 		if (count($cookie) != 3) {
 			// Malformed cookies
 			destroyCookies();
