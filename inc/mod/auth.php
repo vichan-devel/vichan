@@ -9,14 +9,14 @@ defined('TINYBOARD') or exit;
 // create a hash/salt pair for validate logins
 function mkhash($username, $password, $salt = false) {
 	global $config;
-	
+
 	if (!$salt) {
 		// create some sort of salt for the hash
 		$salt = substr(base64_encode(sha1(rand() . time(), true) . $config['cookies']['salt']), 0, 15);
-		
+
 		$generated_salt = true;
 	}
-	
+
 	// generate hash (method is not important as long as it's strong)
 	$hash = substr(
 		base64_encode(
@@ -30,7 +30,7 @@ function mkhash($username, $password, $salt = false) {
 			)
 		), 0, 20
 	);
-	
+
 	if (isset($generated_salt))
 		return array($hash, $salt);
 	else
@@ -81,11 +81,11 @@ function generate_salt() {
 
 function login($username, $password) {
 	global $mod, $config;
-	
+
 	$query = prepare("SELECT `id`, `type`, `boards`, `password`, `version` FROM ``mods`` WHERE BINARY `username` = :username");
 	$query->bindValue(':username', $username);
 	$query->execute() or error(db_error($query));
-	
+
 	if ($user = $query->fetch(PDO::FETCH_ASSOC)) {
 		list($version, $ok) = test_password($user['password'], $user['version'], $password);
 
@@ -109,7 +109,7 @@ function login($username, $password) {
 			);
 		}
 	}
-	
+
 	return false;
 }
 
@@ -117,10 +117,10 @@ function setCookies() {
 	global $mod, $config;
 	if (!$mod)
 		error('setCookies() was called for a non-moderator!');
-	
+
 	setcookie($config['cookies']['mod'],
 			$mod['username'] . // username
-			':' . 
+			':' .
 			$mod['hash'][0] . // password
 			':' .
 			$mod['hash'][1], // salt
@@ -147,36 +147,36 @@ function modLog($action, $_board=null) {
 	else
 		$query->bindValue(':board', null, PDO::PARAM_NULL);
 	$query->execute() or error(db_error($query));
-	
+
 	if ($config['syslog'])
 		_syslog(LOG_INFO, '[mod/' . $mod['username'] . ']: ' . $action);
 }
 
 function create_pm_header() {
 	global $mod, $config;
-	
+
 	if ($config['cache']['enabled'] && ($header = cache::get('pm_unread_' . $mod['id'])) != false) {
 		if ($header === true)
 			return false;
-	
+
 		return $header;
 	}
-	
+
 	$query = prepare("SELECT `id` FROM ``pms`` WHERE `to` = :id AND `unread` = 1");
 	$query->bindValue(':id', $mod['id'], PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
-	
+
 	if ($pm = $query->fetch(PDO::FETCH_ASSOC))
 		$header = array('id' => $pm['id'], 'waiting' => $query->rowCount() - 1);
 	else
 		$header = true;
-	
+
 	if ($config['cache']['enabled'])
 		cache::set('pm_unread_' . $mod['id'], $header);
-	
+
 	if ($header === true)
 		return false;
-	
+
 	return $header;
 }
 
@@ -197,12 +197,12 @@ function check_login($prompt = false) {
 			if ($prompt) mod_login();
 			exit;
 		}
-		
+
 		$query = prepare("SELECT `id`, `type`, `boards`, `password` FROM ``mods`` WHERE `username` = :username");
 		$query->bindValue(':username', $cookie[0]);
 		$query->execute() or error(db_error($query));
 		$user = $query->fetch(PDO::FETCH_ASSOC);
-		
+
 		// validate password hash
 		if ($cookie[1] !== mkhash($cookie[0], $user['password'], $cookie[2])) {
 			// Malformed cookies
@@ -210,7 +210,7 @@ function check_login($prompt = false) {
 			if ($prompt) mod_login();
 			exit;
 		}
-		
+
 		$mod = array(
 			'id' => (int)$user['id'],
 			'type' => (int)$user['type'],
