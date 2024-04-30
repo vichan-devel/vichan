@@ -9,7 +9,7 @@ use Vichan\Functions\Net;
 defined('TINYBOARD') or exit;
 
 // create a hash/salt pair for validate logins
-function mkhash($username, $password, $salt = false) {
+function mkhash(string $username, string $password, bool $salt = false): array|string {
 	global $config;
 
 	if (!$salt) {
@@ -33,42 +33,40 @@ function mkhash($username, $password, $salt = false) {
 		), 0, 20
 	);
 
-	if (isset($generated_salt))
-		return array($hash, $salt);
-	else
+	if (isset($generated_salt)) {
+		return [ $hash, $salt ];
+	} else {
 		return $hash;
+	}
 }
 
-function crypt_password($password) {
+function crypt_password(string $password): array {
 	global $config;
 	// `salt` database field is reused as a version value. We don't want it to be 0.
 	$version = $config['password_crypt_version'] ? $config['password_crypt_version'] : 1;
 	$new_salt = generate_salt();
 	$password = crypt($password, $config['password_crypt'] . $new_salt . "$");
-	return array($version, $password);
+	return [ $version, $password ];
 }
 
-function test_password($password, $salt, $test) {
-	global $config;
-
+function test_password(string $password, string $salt, string $test): array {
 	// Version = 0 denotes an old password hashing schema. In the same column, the
 	// password hash was kept previously
-	$version = (strlen($salt) <= 8) ? (int) $salt : 0;
+	$version = strlen($salt) <= 8 ? (int)$salt : 0;
 
 	if ($version == 0) {
 		$comp = hash('sha256', $salt . sha1($test));
-	}
-	else {
+	} else {
 		$comp = crypt($test, $password);
 	}
-	return array($version, hash_equals($password, $comp));
+	return [ $version, hash_equals($password, $comp) ];
 }
 
-function generate_salt() {
+function generate_salt(): string {
 	return strtr(base64_encode(random_bytes(16)), '+', '.');
 }
 
-function calc_cookie_name($is_https, $is_path_jailed, $base_name) {
+function calc_cookie_name(bool $is_https, bool $is_path_jailed, string $base_name): string {
 	if ($is_https) {
 		if ($is_path_jailed) {
 			return "__Host-$base_name";
@@ -80,7 +78,7 @@ function calc_cookie_name($is_https, $is_path_jailed, $base_name) {
 	}
 }
 
-function login($username, $password) {
+function login(string $username, string $password): array|false {
 	global $mod, $config;
 
 	$query = prepare("SELECT `id`, `type`, `boards`, `password`, `version` FROM ``mods`` WHERE BINARY `username` = :username");
@@ -101,20 +99,20 @@ function login($username, $password) {
 				$query->execute() or error(db_error($query));
 			}
 
-			return $mod = array(
+			return $mod = [
 				'id' => $user['id'],
 				'type' => $user['type'],
 				'username' => $username,
 				'hash' => mkhash($username, $user['password']),
 				'boards' => explode(',', $user['boards'])
-			);
+			];
 		}
 	}
 
 	return false;
 }
 
-function setCookies() {
+function setCookies(): void {
 	global $mod, $config;
 	if (!$mod) {
 		error('setCookies() was called for a non-moderator!');
@@ -138,7 +136,7 @@ function setCookies() {
 	setcookie($name, $value, $options);
 }
 
-function destroyCookies() {
+function destroyCookies(): void {
 	global $config;
 	$base_name = $config['cookies']['mod'];
 	$del_time = time() - 60 * 60 * 24 * 365; // 1 year.
@@ -177,7 +175,7 @@ function destroyCookies() {
 	}
 }
 
-function modLog($action, $_board=null) {
+function modLog(string $action, ?string $_board = null): void {
 	global $mod, $board, $config;
 	$query = prepare("INSERT INTO ``modlogs`` VALUES (:id, :ip, :board, :time, :text)");
 	$query->bindValue(':id', (isset($mod['id']) ? $mod['id'] : -1), PDO::PARAM_INT);
@@ -192,16 +190,18 @@ function modLog($action, $_board=null) {
 		$query->bindValue(':board', null, PDO::PARAM_NULL);
 	$query->execute() or error(db_error($query));
 
-	if ($config['syslog'])
+	if ($config['syslog']) {
 		_syslog(LOG_INFO, '[mod/' . $mod['username'] . ']: ' . $action);
+	}
 }
 
-function create_pm_header() {
+function create_pm_header(): mixed {
 	global $mod, $config;
 
 	if ($config['cache']['enabled'] && ($header = cache::get('pm_unread_' . $mod['id'])) != false) {
-		if ($header === true)
+		if ($header === true) {
 			return false;
+		}
 
 		return $header;
 	}
@@ -210,26 +210,29 @@ function create_pm_header() {
 	$query->bindValue(':id', $mod['id'], PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
 
-	if ($pm = $query->fetch(PDO::FETCH_ASSOC))
-		$header = array('id' => $pm['id'], 'waiting' => $query->rowCount() - 1);
-	else
+	if ($pm = $query->fetch(PDO::FETCH_ASSOC)) {
+		$header = [ 'id' => $pm['id'], 'waiting' => $query->rowCount() - 1 ];
+	} else {
 		$header = true;
+	}
 
-	if ($config['cache']['enabled'])
+	if ($config['cache']['enabled']) {
 		cache::set('pm_unread_' . $mod['id'], $header);
+	}
 
-	if ($header === true)
+	if ($header === true) {
 		return false;
+	}
 
 	return $header;
 }
 
-function make_secure_link_token($uri) {
+function make_secure_link_token(string $uri): string {
 	global $mod, $config;
 	return substr(sha1($config['cookies']['salt'] . '-' . $uri . '-' . $mod['id']), 0, 8);
 }
 
-function check_login($prompt = false) {
+function check_login(bool $prompt = false): void {
 	global $config, $mod;
 
 	$is_https = Net\is_connection_secure();
