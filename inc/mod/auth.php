@@ -168,7 +168,10 @@ function destroyCookies() {
 	];
 
 	foreach ($options_multi as $name => $options) {
-		setcookie($name, 'deleted', $options);
+		if (isset($_COOKIE[$name])) {
+			setcookie($name, 'deleted', $options);
+			unset($_COOKIE[$name]);
+		}
 	}
 }
 
