@@ -4,7 +4,10 @@
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  */
 
+use Vichan\Functions\Net;
+
 defined('TINYBOARD') or exit;
+
 
 function mod_page($title, $template, $args, $subtitle = false) {
 	global $config, $mod;
@@ -29,9 +32,11 @@ function mod_page($title, $template, $args, $subtitle = false) {
 function mod_login($redirect = false) {
 	global $config;
 
-	$args = array();
+	$args = [];
 
-	if (isset($_POST['login'])) {
+	if ($config['cookies']['secure_login_only'] && !Net\is_connection_secure()) {
+		$args['error'] = $config['error']['insecure'];
+	} elseif (isset($_POST['login'])) {
 		// Check if inputs are set and not empty
 		if (!isset($_POST['username'], $_POST['password']) || $_POST['username'] == '' || $_POST['password'] == '') {
 			$args['error'] = $config['error']['invalid'];

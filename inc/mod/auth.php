@@ -4,6 +4,8 @@
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  */
 
+use Vichan\Functions\Net;
+
 defined('TINYBOARD') or exit;
 
 // create a hash/salt pair for validate logins
@@ -118,7 +120,7 @@ function setCookies() {
 		error('setCookies() was called for a non-moderator!');
 	}
 
-	$is_https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off';
+	$is_https = Net\is_connection_secure();
 	$is_path_jailed = $config['cookies']['jail'];
 	$name = calc_cookie_name($is_https, $is_path_jailed, $config['cookies']['mod']);
 
@@ -229,7 +231,8 @@ function make_secure_link_token($uri) {
 
 function check_login($prompt = false) {
 	global $config, $mod;
-	$is_https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off';
+
+	$is_https = Net\is_connection_secure();
 	$is_path_jailed = $config['cookies']['jail'];
 	$expected_cookie_name = calc_cookie_name($is_https, $is_path_jailed, $config['cookies']['mod']);
 
