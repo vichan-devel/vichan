@@ -37,12 +37,6 @@ function mkhash($username, $password, $salt = false) {
 		return $hash;
 }
 
-function crypt_password_old($password) {
-	$salt = generate_salt();
-	$password = hash('sha256', $salt . sha1($password));
-	return array($salt, $password);
-}
-
 function crypt_password($password) {
 	global $config;
 	// `salt` database field is reused as a version value. We don't want it to be 0.
@@ -69,13 +63,6 @@ function test_password($password, $salt, $test) {
 }
 
 function generate_salt() {
-	// mcrypt_create_iv() was deprecated in PHP 7.1.0, only use it if we're below that version number.
-	if (PHP_VERSION_ID < 70100) {
-		// 128 bits of entropy
-		return strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_URANDOM)), '+', '.');
-	}
-
-	// Otherwise, use random_bytes()
 	return strtr(base64_encode(random_bytes(16)), '+', '.');
 }
 
