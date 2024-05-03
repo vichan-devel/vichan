@@ -186,13 +186,17 @@
 
 	// How long should the cookies last (in seconds). Defines how long should moderators should remain logged
 	// in (0 = browser session).
-	$config['cookies']['expire'] = 60 * 60 * 24 * 30 * 6; // ~6 months
+	$config['cookies']['expire'] = 60 * 60 * 24 * 7; // 1 week.
 
 	// Make this something long and random for security.
 	$config['cookies']['salt'] = 'abcdefghijklmnopqrstuvwxyz09123456789!@#$%^&*()';
 
 	// Whether or not you can access the mod cookie in JavaScript. Most users should not need to change this.
 	$config['cookies']['httponly'] = true;
+
+	// Do not allow logins via unencrypted HTTP. Should only be changed in testing environments or if you connect to a
+	// load-balancer without encryption.
+	$config['cookies']['secure_login_only'] = true;
 
 	// Used to salt secure tripcodes ("##trip") and poster IDs (if enabled).
 	$config['secure_trip_salt'] = ')(*&^%$#@!98765432190zyxwvutsrqponmlkjihgfedcba';
@@ -1252,6 +1256,7 @@
 	// Moderator errors
 	$config['error']['toomanyunban']	= _('You are only allowed to unban %s users at a time. You tried to unban %u users.');
 	$config['error']['invalid']		= _('Invalid username and/or password.');
+	$config['error']['insecure']		= _('Login on insecure connections is disabled.');
 	$config['error']['notamod']		= _('You are not a mod…');
 	$config['error']['invalidafter']	= _('Invalid username and/or password. Your user may have been deleted or changed.');
 	$config['error']['malformed']		= _('Invalid/malformed cookies.');

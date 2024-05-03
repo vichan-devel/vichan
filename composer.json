@@ -33,6 +33,7 @@
             "inc/lock.php",
             "inc/queue.php",
             "inc/functions.php",
+            "inc/functions/net.php",
             "inc/functions/num.php",
             "inc/functions/format.php",
             "inc/driver/http-driver.php",
