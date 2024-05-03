@@ -3,8 +3,10 @@
 /*
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  */
+use Vichan\Functions\Format;
 
 defined('TINYBOARD') or exit;
+
 
 function mod_page($title, $template, $args, $subtitle = false) {
 	global $config, $mod;
@@ -1553,7 +1555,7 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 
 		if (isset($_POST['public_message'], $_POST['message'])) {
 			// public ban message
-			$length_english = Bans::parse_time($_POST['length']) ? 'for ' . until(Bans::parse_time($_POST['length'])) : 'permanently';
+			$length_english = Bans::parse_time($_POST['length']) ? 'for ' . Format\until(Bans::parse_time($_POST['length'])) : 'permanently';
 			$_POST['message'] = preg_replace('/[\r\n]/', '', $_POST['message']);
 			$_POST['message'] = str_replace('%length%', $length_english, $_POST['message']);
 			$_POST['message'] = str_replace('%LENGTH%', strtoupper($length_english), $_POST['message']);
