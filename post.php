@@ -8,6 +8,7 @@ require_once 'inc/bootstrap.php';
 use Vichan\{Context, WebDependencyFactory};
 use Vichan\Driver\{HttpDriver, Log};
 use Vichan\Service\{RemoteCaptchaQuery, NativeCaptchaQuery};
+use Vichan\Functions\Format;
 
 /**
  * Utility functions
@@ -394,14 +395,14 @@ if (isset($_POST['delete'])) {
 			}
 
 			if ($post['time'] < time() - $config['max_delete_time'] && $config['max_delete_time'] != false) {
-				error(sprintf($config['error']['delete_too_late'], until($post['time'] + $config['max_delete_time'])));
+				error(sprintf($config['error']['delete_too_late'], Format\until($post['time'] + $config['max_delete_time'])));
 			}
 
 			if ($password != '' && $post['password'] != $password && (!$thread || $thread['password'] != $password))
 				error($config['error']['invalidpassword']);
 
 			if ($post['time'] > time() - $config['delete_time'] && (!$thread || $thread['password'] != $password)) {
-				error(sprintf($config['error']['delete_too_soon'], until($post['time'] + $config['delete_time'])));
+				error(sprintf($config['error']['delete_too_soon'], Format\until($post['time'] + $config['delete_time'])));
 			}
 
 			$ip = $_SERVER['REMOTE_ADDR'];

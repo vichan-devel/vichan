@@ -1,5 +1,6 @@
 <?php
 
+use Vichan\Functions\Format;
 use Lifo\IP\CIDR;
 
 class Bans {
@@ -371,7 +372,7 @@ class Bans {
 		$query->execute() or error(db_error($query));
 		if (isset($mod['id']) && $mod['id'] == $mod_id) {
 			modLog('Created a new ' .
-				($length > 0 ? preg_replace('/^(\d+) (\w+?)s?$/', '$1-$2', until($length)) : 'permanent') .
+				($length > 0 ? preg_replace('/^(\d+) (\w+?)s?$/', '$1-$2', Format\until($length)) : 'permanent') .
 				' ban on ' .
 				($ban_board ? '/' . $ban_board . '/' : 'all boards') .
 				' for ' .
