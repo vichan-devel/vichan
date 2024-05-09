@@ -850,7 +850,12 @@ if (isset($_POST['delete'])) {
 
 	$trip = generate_tripcode($post['name']);
 	$post['name'] = $trip[0];
-	$post['trip'] = isset($trip[1]) ? $trip[1] : ''; // XX: Dropped posts and tripcodes
+	if ($config['disable_tripcodes'] = true && !$mod) {
+		$post['trip'] = '';
+	}
+	else {
+		$post['trip'] = isset($trip[1]) ? $trip[1] : ''; // XX: Dropped posts and tripcodes
+	}
 
 	$noko = false;
 	if (strtolower($post['email']) == 'noko') {

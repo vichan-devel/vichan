@@ -628,6 +628,9 @@
 	// Example: Custom secure tripcode.
 	// $config['custom_tripcode']['##securetrip'] = '!!somethingelse';
 
+	//Disable tripcodes. This will make it so all new posts will act as if no tripcode exists.
+	$config['disable_tripcodes'] = false;
+
 	// Allow users to mark their image as a "spoiler" when posting. The thumbnail will be replaced with a
 	// static spoiler image instead (see $config['spoiler_image']).
 	$config['spoiler_images'] = false;
