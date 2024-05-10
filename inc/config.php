@@ -66,7 +66,7 @@
 	$config['has_installed'] = '.installed';
 
 	// Deprecated, use 'log_system'.
-	// $config['syslog'] = false;
+	$config['syslog'] = false;
 
 	$config['log_system'] = [];
 	// Log all error messages and unauthorized login attempts.
