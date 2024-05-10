@@ -1,7 +1,7 @@
 <?php
 
 // Installation/upgrade file
-define('VERSION', '5.1.4');
+define('VERSION', '5.2.0');
 require 'inc/bootstrap.php';
 loadConfig();
 
@@ -738,13 +738,6 @@ if ($step == 0) {
 			'result' => PHP_VERSION_ID >= 50400,
 			'required' => true,
 			'message' => 'vichan requires PHP 7.4 or better.',
-		),
-		array(
-			'category' => 'PHP',
-			'name' => 'PHP &ge; 5.6',
-			'result' => PHP_VERSION_ID >= 50600,
-			'required' => false,
-			'message' => 'vichan works best on PHP 5.6 or better.',
 		),
 		array(
 			'category' => 'PHP',
