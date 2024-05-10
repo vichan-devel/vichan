@@ -1854,6 +1854,9 @@
 	// Boards for searching
 	//$config['search']['boards'] = array('a', 'b', 'c', 'd', 'e');
 
+	// Blacklist boards for searching, basically the opposite of the one above
+	//$config['search']['disallowed_boards'] = array('j', 'z');
+
 	// Enable public logs? 0: NO, 1: YES, 2: YES, but drop names
 	$config['public_logs'] = 0;
 
