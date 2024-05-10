@@ -9,26 +9,21 @@
 	$queries_per_minutes_all = $config['search']['queries_per_minutes_all'];
 	$search_limit = $config['search']['search_limit'];
 	
+	//Is there a whitelist? Let's list those boards and if not, let's list everything.
 	if (isset($config['search']['boards'])) {
 		$boards = $config['search']['boards'];
 	} else {
 		$boards = listBoards(TRUE);
 	}
+
+	//Let's remove any disallowed boards from the above list (the blacklist)
+	if (isset($config['search']['disallowed_boards'])) {
+		$boards = array_values(array_diff($boards, $config['search']['disallowed_boards']));
+	}
 	
 	$body = Element('search_form.html', Array('boards' => $boards, 'board' => isset($_GET['board']) ? $_GET['board'] : false, 'search' => isset($_GET['search']) ? str_replace('"', '&quot;', utf8tohtml($_GET['search'])) : false));
 	
-	if(isset($_GET['search']) && !empty($_GET['search']) && isset($_GET['board']) && in_array($_GET['board'], $boards)) {	
-
-		//Before we do any of that, is this a disallowed board? If so, don't allow people to peer into it.
-                if (in_array($_GET['board'], $config['search']['disallowed_boards'])) {
-			$body .= '<hr/><p class="unimportant" style="text-align:center">('._('Disallowed board.').')</p>';
-			echo Element($config['file_page_template'], Array(
-				'config'=>$config,
-				'title'=>'Search',
-				'body'=>$body,
-			));
-			exit;
-		}
+	if(isset($_GET['search']) && !empty($_GET['search']) && isset($_GET['board']) && in_array($_GET['board'], $boards)) {		
 		
 		$phrase = $_GET['search'];
 		$_body = '';
