@@ -240,7 +240,7 @@ function check_login(bool $prompt = false): void {
 	$expected_cookie_name = calc_cookie_name($is_https, $is_path_jailed, $config['cookies']['mod']);
 
 	// Validate session
-	if (isset($expected_cookie_name)) {
+	if (isset($_COOKIE[$expected_cookie_name])) {
 		// Should be username:hash:salt
 		$cookie = explode(':', $_COOKIE[$expected_cookie_name]);
 		if (count($cookie) != 3) {
