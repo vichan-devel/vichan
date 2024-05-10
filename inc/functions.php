@@ -2276,7 +2276,7 @@ function defined_flags_accumulate($desired_flags) {
 
 function utf8tohtml($utf8) {
 	$flags = defined_flags_accumulate(['ENT_NOQUOTES', 'ENT_SUBSTITUTE', 'ENT_DISALLOWED']);
-	return htmlspecialchars($utf8, $flags, 'UTF-8');
+	return $utf8 ? htmlspecialchars($utf8, $flags, 'UTF-8') : '';
 }
 
 function ordutf8($string, &$offset) {
