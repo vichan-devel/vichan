@@ -9,7 +9,7 @@ use Vichan\Functions\Net;
 defined('TINYBOARD') or exit;
 
 // create a hash/salt pair for validate logins
-function mkhash(string $username, string $password, bool $salt = false): array|string {
+function mkhash(string $username, string $password, mixed $salt = false): array|string {
 	global $config;
 
 	if (!$salt) {
