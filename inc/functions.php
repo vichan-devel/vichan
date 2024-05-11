@@ -1990,7 +1990,7 @@ function extract_modifiers($body) {
 }
 
 function remove_modifiers($body) {
-	return preg_replace('@<tinyboard ([\w\s]+)>(.+?)</tinyboard>@usm', '', $body);
+	return $body ? preg_replace('@<tinyboard ([\w\s]+)>(.+?)</tinyboard>@usm', '', $body) : null;
 }
 
 function markup(&$body, $track_cites = false, $op = false) {
