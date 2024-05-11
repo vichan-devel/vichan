@@ -715,12 +715,18 @@ function file_unlink($path) {
 		$debug['unlink'][] = $path;
 	}
 
-	$ret = @unlink($path);
+	if (file_exists($path)) {
+		$ret = @unlink($path);
+	} else {
+		$ret = true;
+	}
 
-		if ($config['gzip_static']) {
-				$gzpath = "$path.gz";
+	if ($config['gzip_static']) {
+		$gzpath = "$path.gz";
 
-		@unlink($gzpath);
+		if (file_exists($gzpath)) {
+			@unlink($gzpath);
+		}
 	}
 
 	if (isset($config['purge']) && $path[0] != '/' && isset($_SERVER['HTTP_HOST'])) {
