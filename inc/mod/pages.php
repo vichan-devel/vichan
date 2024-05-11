@@ -35,7 +35,8 @@ function mod_login($redirect = false) {
 
 	$args = [];
 
-	if ($config['cookies']['secure_login_only'] && !Net\is_connection_secure()) {
+	$secure_login_mode = $config['cookies']['secure_login_only'];
+	if ($secure_login_mode !== 0 && !Net\is_connection_secure($secure_login_mode === 1)) {
 		$args['error'] = $config['error']['insecure'];
 	} elseif (isset($_POST['login'])) {
 		// Check if inputs are set and not empty

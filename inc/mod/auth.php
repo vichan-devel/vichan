@@ -118,7 +118,7 @@ function setCookies(): void {
 		error('setCookies() was called for a non-moderator!');
 	}
 
-	$is_https = Net\is_connection_secure();
+	$is_https = Net\is_connection_secure($config['cookies']['secure_login_only'] === 1);
 	$is_path_jailed = $config['cookies']['jail'];
 	$name = calc_cookie_name($is_https, $is_path_jailed, $config['cookies']['mod']);
 
@@ -235,7 +235,7 @@ function make_secure_link_token(string $uri): string {
 function check_login(bool $prompt = false): void {
 	global $config, $mod;
 
-	$is_https = Net\is_connection_secure();
+	$is_https = Net\is_connection_secure($config['cookies']['secure_login_only'] === 1);
 	$is_path_jailed = $config['cookies']['jail'];
 	$expected_cookie_name = calc_cookie_name($is_https, $is_path_jailed, $config['cookies']['mod']);
 
