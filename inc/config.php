@@ -997,9 +997,9 @@
 	$config['timezone'] = 'America/Los_Angeles';
 	// The format string passed to DateTime::format() for displaying dates. ISO 8601-like by default.
 	// https://www.php.net/manual/en/datetime.format.php
-	$config['post_date'] = '%m/%d/%y (%a) %H:%M:%S';
+	$config['post_date'] = 'm/d/y (D) H:i:s';
 	// Same as above, but used for "you are banned' pages.
-	$config['ban_date'] = '%A %e %B, %Y';
+	$config['ban_date'] = 'l j F, Y';
 
 	// The names on the post buttons. (On most imageboards, these are both just "Post").
 	$config['button_newtopic'] = _('New Topic');
