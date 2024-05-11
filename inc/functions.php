@@ -1990,7 +1990,7 @@ function extract_modifiers($body) {
 }
 
 function remove_modifiers($body) {
-	return preg_replace('@<tinyboard ([\w\s]+)>(.+?)</tinyboard>@usm', '', $body);
+	return $body ? preg_replace('@<tinyboard ([\w\s]+)>(.+?)</tinyboard>@usm', '', $body) : null;
 }
 
 function markup(&$body, $track_cites = false, $op = false) {
@@ -2259,6 +2259,7 @@ function escape_markup_modifiers($string) {
 }
 
 function defined_flags_accumulate($desired_flags) {
+	global $config;
 	$output_flags = 0x0;
 	foreach ($desired_flags as $flagname) {
 		if (defined($flagname)) {
@@ -2276,7 +2277,7 @@ function defined_flags_accumulate($desired_flags) {
 
 function utf8tohtml($utf8) {
 	$flags = defined_flags_accumulate(['ENT_NOQUOTES', 'ENT_SUBSTITUTE', 'ENT_DISALLOWED']);
-	return htmlspecialchars($utf8, $flags, 'UTF-8');
+	return $utf8 ? htmlspecialchars($utf8, $flags, 'UTF-8') : '';
 }
 
 function ordutf8($string, &$offset) {

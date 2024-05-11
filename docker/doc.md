@@ -14,3 +14,7 @@ The folder structure expected by compose is as follows
         └── www
 ```
 The vichan container is by itself much less rigid.
+
+
+Use `docker compose up --build` to start the docker compose.
+Use `docker compose up --build -d php` to rebuild just the vichan container while the compose is running. Useful for development.

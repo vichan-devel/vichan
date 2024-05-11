@@ -1055,9 +1055,11 @@ if (isset($_POST['delete'])) {
 			if ($size[0] > $config['max_width'] || $size[1] > $config['max_height']) {
 				error($config['error']['maxsize']);
 			}
+
 			// If, on the basis of the file extension, the image file has metadata we can operate on.
 			$file_image_has_operable_metadata = $file['extension'] === 'jpg' || $file['extension'] === 'jpeg' || $file['extension'] === 'webp' || $file['extension'] == 'png';
 
+			$file['exif_stripped'] = false;
 
 			if ($file_image_has_operable_metadata && $config['convert_auto_orient']) {
 				// The following code corrects the image orientation.
@@ -1123,7 +1125,7 @@ if (isset($_POST['delete'])) {
 
 			$dont_copy_file = false;
 
-			if ($config['redraw_image'] || ($file_image_has_operable_metadata && !@$file['exif_stripped'] && $config['strip_exif'])) {
+			if ($config['redraw_image'] || ($file_image_has_operable_metadata && !$file['exif_stripped'] && $config['strip_exif'])) {
 				if (!$config['redraw_image'] && $config['use_exiftool']) {
 					try {
 						$file['size'] = strip_image_metadata($file['tmp_name']);
@@ -1319,14 +1321,22 @@ if (isset($_POST['delete'])) {
 
 	if (isset($_SERVER['HTTP_REFERER'])) {
 		// Tell Javascript that we posted successfully
-		if (isset($_COOKIE[$config['cookies']['js']]))
+		if (isset($_COOKIE[$config['cookies']['js']])) {
 			$js = json_decode($_COOKIE[$config['cookies']['js']]);
-		else
-			$js = (object) array();
+		} else {
+			$js = (object)array();
+		}
 		// Tell it to delete the cached post for referer
 		$js->{$_SERVER['HTTP_REFERER']} = true;
-		// Encode and set cookie
-		setcookie($config['cookies']['js'], json_encode($js), 0, $config['cookies']['jail'] ? $config['cookies']['path'] : '/', null, false, false);
+
+		// Encode and set cookie.
+		$options = [
+			'expires' => 0,
+			'path' => $config['cookies']['jail'] ? $config['cookies']['path'] : '/',
+			'httponly' => false,
+			'samesite' => 'Strict'
+		];
+		setcookie($config['cookies']['js'], json_encode($js), $options);
 	}
 
 	$root = $post['mod'] ? $config['root'] . $config['file_mod'] . '?/' : $config['root'];
