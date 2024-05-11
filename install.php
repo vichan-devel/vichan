@@ -5,11 +5,6 @@ define('VERSION', '5.2.0');
 require 'inc/bootstrap.php';
 loadConfig();
 
-if (!is_writable('inc/secrets.php') || !is_writable('inc/')) {
-	echo 'install.php does not have permission to write to /inc/secrets.php and/or /inc/, without permission the installer cannot continue';
-	exit();
-}
-
 // Salt generators
 class SaltGen {
 	public $salt_length = 128;

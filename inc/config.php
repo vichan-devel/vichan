@@ -194,9 +194,8 @@
 	// Whether or not you can access the mod cookie in JavaScript. Most users should not need to change this.
 	$config['cookies']['httponly'] = true;
 
-	// Do not allow logins via unencrypted HTTP. Should only be changed in testing environments or if you connect to a
-	// load-balancer without encryption.
-	$config['cookies']['secure_login_only'] = true;
+	// Do not allow logins via unencrypted HTTP. If your website uses HTTPS, turn this on.
+	$config['cookies']['secure_login_only'] = false;
 
 	// Used to salt secure tripcodes ("##trip") and poster IDs (if enabled).
 	$config['secure_trip_salt'] = ')(*&^%$#@!98765432190zyxwvutsrqponmlkjihgfedcba';
