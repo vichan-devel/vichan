@@ -194,8 +194,13 @@
 	// Whether or not you can access the mod cookie in JavaScript. Most users should not need to change this.
 	$config['cookies']['httponly'] = true;
 
-	// Do not allow logins via unencrypted HTTP. If your website uses HTTPS, turn this on.
-	$config['cookies']['secure_login_only'] = false;
+	// Do not allow logins via unsecure connections.
+	// 0 = off. Allow logins on unencrypted HTTP connections. Should only be used in testing environments.
+	// 1 = on, trust HTTP headers. Allow logins on (at least reportedly partial) HTTPS connections. Use this only if you
+	// use a proxy, CDN or load balancer via an unencrypted connection. Be sure to filter 'HTTP_X_FORWARDED_PROTO' in
+	// the remote server, since an attacker could inject the header from the client.
+	// 2 = on, do not trust HTTP headers. Secure default, allow logins only on HTTPS connections.
+	$config['cookies']['secure_login_only'] = 2;
 
 	// Used to salt secure tripcodes ("##trip") and poster IDs (if enabled).
 	$config['secure_trip_salt'] = ')(*&^%$#@!98765432190zyxwvutsrqponmlkjihgfedcba';
