@@ -869,6 +869,13 @@ if ($step == 0) {
 		),
 		array(
 			'category' => 'Misc',
+			'name' => 'HTTPS not being used',
+			'result' => $_SERVER['HTTPS'] == 'off',
+			'required' => false,
+			'message' => 'You are not currently using https for vichan, or at least for your backend server. If this intentional, add "$config[\'cookies\'][\'secure_login_only\'] = 0;" (or 1 if using a proxy) on a new line under "Additional configuration" on the next page.'
+		),
+		array(
+			'category' => 'Misc',
 			'name' => 'Caching available (APCu, Memcached or Redis)',
 			'result' => extension_loaded('apcu') || extension_loaded('memcached') || extension_loaded('redis'),
 			'required' => false,
