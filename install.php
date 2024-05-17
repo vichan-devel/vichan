@@ -635,6 +635,19 @@ if (file_exists($config['has_installed'])) {
 			  	`created_at` int(11),
 			  	PRIMARY KEY (`cookie`,`extra`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;') or error(db_error());
+		case '5.1.4':
+			//This was done in earlier versions, but certain failed checks caused many to still use utf8mb3 and MyISAM.
+                        foreach ($boards as &$board) {
+                                query(sprintf("ALTER TABLE ``posts_%s`` ENGINE=InnoDB, CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci", $board['uri'])) or error(db_error());
+	                        }
+			$tables = [
+			        'antispam', 'bans', 'ban_appeals', 'boards', 'captchas', 'flood', 'ip_notes', 'modlogs', 'mods', 'mutes', 'news', 'nntp_references', 'noticeboard', 'pages', 'pms', 'reports', 'search_queries', 'theme_settings'
+			    ];
+		
+		    foreach ($tables as $table) {
+		        query(sprintf("ALTER TABLE ``%s`` ENGINE=InnoDB, CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci", $table)) or error(db_error());
+		    }
+		//Let's not drop the telegrams table in case board admins still need them for something.
 		case false:
 			// TODO: enhance Tinyboard -> vichan upgrade path.
 			query("CREATE TABLE IF NOT EXISTS ``search_queries`` (  `ip` varchar(39) NOT NULL,  `time` int(11) NOT NULL,  `query` text NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;") or error(db_error());
