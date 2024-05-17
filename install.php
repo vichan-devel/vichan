@@ -689,6 +689,10 @@ if ($step == 0) {
 
 	echo Element('page.html', $page);
 } elseif ($step == 1) {
+	//The HTTPS check doesn't work properly when in those arrays, so let's run it here and pass along the result during the actual check.
+	if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        $httpsvalue = true;
+    }
 	$page['title'] = 'Pre-installation test';
 
 	$can_exec = true;
@@ -870,7 +874,7 @@ if ($step == 0) {
 		array(
 			'category' => 'Misc',
 			'name' => 'HTTPS not being used',
-			'result' => $_SERVER['HTTPS'] == 'off',
+			'result' => $httpsvalue = true,
 			'required' => false,
 			'message' => 'You are not currently using https for vichan, or at least for your backend server. If this intentional, add "$config[\'cookies\'][\'secure_login_only\'] = 0;" (or 1 if using a proxy) on a new line under "Additional configuration" on the next page.'
 		),
