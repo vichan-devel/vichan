@@ -167,8 +167,12 @@ function twig_push_filter($array, $value) {
 }
 
 function twig_date_filter($date, $format) {
-	$date = new DateTime($date, new DateTimeZone('UTC'));
-	return $date->format($format);
+    if (is_numeric($date)) {
+        $date = new DateTime("@$date", new DateTimeZone('UTC'));
+    } else {
+        $date = new DateTime($date, new DateTimeZone('UTC'));
+    }
+    return $date->format($format);
 }
 
 function twig_hasPermission_filter($mod, $permission, $board = null) {
