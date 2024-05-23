@@ -1342,8 +1342,8 @@ function mod_move($originBoard, $postID) {
 		if ($targetBoard === $originBoard)
 			error(_('Target and source board are the same.'));
 
-		// copy() if leaving a shadow thread behind; else, rename().
-		$clone = $shadow ? 'copy' : 'rename';
+		// link() if leaving a shadow thread behind; else, rename().
+		$clone = $shadow ? 'link' : 'rename';
 
 		// indicate that the post is a thread
 		$post['op'] = true;
