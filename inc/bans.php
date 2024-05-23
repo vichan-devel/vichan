@@ -370,16 +370,14 @@ class Bans {
 			$query->bindValue(':post', null, PDO::PARAM_NULL);
 
 		$query->execute() or error(db_error($query));
-		if (isset($mod['id']) && $mod['id'] == $mod_id) {
-			modLog('Created a new ' .
-				($length > 0 ? preg_replace('/^(\d+) (\w+?)s?$/', '$1-$2', Format\until($length)) : 'permanent') .
-				' ban on ' .
-				($ban_board ? '/' . $ban_board . '/' : 'all boards') .
-				' for ' .
-				(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$cloaked_mask\">$cloaked_mask</a>" : $cloaked_mask) .
-				' (<small>#' . $pdo->lastInsertId() . '</small>)' .
-				' with ' . ($reason ? 'reason: ' . utf8tohtml($reason) . '' : 'no reason'));
-		}
+
+		$ban_len = $length > 0 ? preg_replace('/^(\d+) (\w+?)s?$/', '$1-$2', Format\until($length)) : 'permanent';
+		$ban_board = $ban_board ? "/$ban_board/" : 'all boards';
+		$ban_ip = filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$cloaked_mask\">$cloaked_mask</a>" : $cloaked_mask;
+		$ban_id = $pdo->lastInsertId();
+		$ban_reason = $reason ? 'reason: ' . utf8tohtml($reason) : 'no reason';
+
+		modLog("Created a new $ban_len ban on $ban_board for $ban_ip (<small># $ban_id </small>) with $ban_reason");
 
 		rebuildThemes('bans');
 
