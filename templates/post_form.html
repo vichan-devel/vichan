@@ -73,7 +73,11 @@
 			</td>
 		</tr>
 		{% if config.recaptcha %}
+		{% if config.dynamic_captcha %}
+		<tr id="captcha" style="display: none;">
+		{% else %}
 		<tr>
+		{% endif %}
 			<th>
 				{% trans %}Verification{% endtrans %}
 				{{ antibot.html() }}

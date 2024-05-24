@@ -648,7 +648,7 @@ if (isset($_POST['delete'])) {
 				}
 			}
 			// Remote 3rd party captchas.
-			else {
+			else if (!$config['dynamic_captcha'] || $config['dynamic_captcha'] === $_SERVER['REMOTE_ADDR']) {
 				// recaptcha
 				if ($config['recaptcha']) {
 					if (!isset($_POST['g-recaptcha-response'])) {

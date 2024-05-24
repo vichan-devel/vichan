@@ -351,6 +351,15 @@
 	//);
 	$config['simple_spam'] = false;
 
+	/*
+	 * If not flase, the captcha is dynamically injected on the client if the web server set the `captcha-required`
+	 * cookie to 1. The configuration value should be set the IP for which the captcha should be verified.
+	 *
+	 * Example:
+	 * $config['dynamic_captcha'] = '127.0.0.1'; // Verify the captcha for users sending posts from the loopback address.
+	 */
+	$config['dynamic_captcha'] = false;
+
 	// Enable reCaptcha to make spam even harder. Rarely necessary.
 	$config['recaptcha'] = false;
 
