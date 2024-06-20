@@ -21,9 +21,7 @@ loadConfig();
 
 function init_locale($locale, $error='error') {
 	if (extension_loaded('gettext')) {
-		if (setlocale(LC_ALL, $locale) === false) {
-			//$error('The specified locale (' . $locale . ') does not exist on your platform!');
-		}
+		setlocale(LC_ALL, $locale);
 		bindtextdomain('tinyboard', './inc/locale');
 		bind_textdomain_codeset('tinyboard', 'UTF-8');
 		textdomain('tinyboard');
@@ -55,8 +53,9 @@ function loadConfig() {
 
 
 	if (isset($config['cache_config']) &&
-	    $config['cache_config'] &&
-            $config = Cache::get('config_' . $boardsuffix ) ) {
+		$config['cache_config'] &&
+		$config = Cache::get('config_' . $boardsuffix))
+	{
 		$events = Cache::get('events_' . $boardsuffix );
 
 		define_groups();
@@ -66,11 +65,10 @@ function loadConfig() {
 		}
 
 		if ($config['locale'] != $current_locale) {
-                	$current_locale = $config['locale'];
-                	init_locale($config['locale'], $error);
-        	}
-	}
-	else {
+					$current_locale = $config['locale'];
+					init_locale($config['locale'], $error);
+			}
+	} else {
 		$config = array();
 
 		reset_events();
@@ -180,8 +178,8 @@ function loadConfig() {
 							'(' .
 								str_replace('%d', '\d+', preg_quote($config['file_page'], '/')) . '|' .
 								str_replace('%d', '\d+', preg_quote($config['file_page50'], '/')) . '|' .
-	                                                        str_replace(array('%d', '%s'), array('\d+', '[a-z0-9-]+'), preg_quote($config['file_page_slug'], '/')) . '|' .
-	                                                        str_replace(array('%d', '%s'), array('\d+', '[a-z0-9-]+'), preg_quote($config['file_page50_slug'], '/')) .
+								str_replace(array('%d', '%s'), array('\d+', '[a-z0-9-]+'), preg_quote($config['file_page_slug'], '/')) . '|' .
+								str_replace(array('%d', '%s'), array('\d+', '[a-z0-9-]+'), preg_quote($config['file_page50_slug'], '/')) .
 							')' .
 						'|' .
 							preg_quote($config['file_mod'], '/') . '\?\/.+' .
@@ -242,12 +240,13 @@ function loadConfig() {
 			$__version = file_exists('.installed') ? trim(file_get_contents('.installed')) : false;
 		$config['version'] = $__version;
 
-		if ($config['allow_roll'])
+		if ($config['allow_roll']) {
 			event_handler('post', 'diceRoller');
+		}
 
-		if (in_array('webm', $config['allowed_ext_files']) ||
-        	    in_array('mp4',  $config['allowed_ext_files']))
+		if (in_array('webm', $config['allowed_ext_files']) || in_array('mp4',  $config['allowed_ext_files'])) {
 			event_handler('post', 'postHandler');
+		}
 	}
 	// Effectful config processing below:
 
@@ -280,8 +279,7 @@ function loadConfig() {
 	if ($config['cache']['enabled'])
 		require_once 'inc/cache.php';
 
-	if (in_array('webm', $config['allowed_ext_files']) ||
-            in_array('mp4',  $config['allowed_ext_files']))
+	if (in_array('webm', $config['allowed_ext_files']) || in_array('mp4',  $config['allowed_ext_files']))
 		require_once 'inc/lib/webm/posthandler.php';
 
 	event('load-config');
@@ -428,10 +426,10 @@ function rebuildThemes($action, $boardname = false) {
 		$board = $_board;
 
 		// Reload the locale
-	        if ($config['locale'] != $current_locale) {
-	                $current_locale = $config['locale'];
-	                init_locale($config['locale']);
-	        }
+		if ($config['locale'] != $current_locale) {
+			$current_locale = $config['locale'];
+			init_locale($config['locale']);
+		}
 
 		if (PHP_SAPI === 'cli') {
 			echo "Rebuilding theme ".$theme['theme']."... ";
@@ -450,8 +448,8 @@ function rebuildThemes($action, $boardname = false) {
 
 	// Reload the locale
 	if ($config['locale'] != $current_locale) {
-	        $current_locale = $config['locale'];
-	        init_locale($config['locale']);
+		$current_locale = $config['locale'];
+		init_locale($config['locale']);
 	}
 }
 
@@ -517,12 +515,11 @@ function mb_substr_replace($string, $replacement, $start, $length) {
 function setupBoard($array) {
 	global $board, $config;
 
-	$board = array(
+	$board = [
 		'uri' => $array['uri'],
 		'title' => $array['title'],
 		'subtitle' => $array['subtitle'],
-		#'indexed' => $array['indexed'],
-	);
+	];
 
 	// older versions
 	$board['name'] = &$board['title'];
@@ -718,12 +715,18 @@ function file_unlink($path) {
 		$debug['unlink'][] = $path;
 	}
 
-	$ret = @unlink($path);
+	if (file_exists($path)) {
+		$ret = @unlink($path);
+	} else {
+		$ret = true;
+	}
 
-        if ($config['gzip_static']) {
-                $gzpath = "$path.gz";
+	if ($config['gzip_static']) {
+		$gzpath = "$path.gz";
 
-		@unlink($gzpath);
+		if (file_exists($gzpath)) {
+			@unlink($gzpath);
+		}
 	}
 
 	if (isset($config['purge']) && $path[0] != '/' && isset($_SERVER['HTTP_HOST'])) {
@@ -795,42 +798,6 @@ function listBoards($just_uri = false) {
 		cache::set($cache_name, $boards);
 
 	return $boards;
-}
-
-function until($timestamp) {
-	$difference = $timestamp - time();
-	switch(TRUE){
-	case ($difference < 60):
-		return $difference . ' ' . ngettext('second', 'seconds', $difference);
-	case ($difference < 3600): //60*60 = 3600
-		return ($num = round($difference/(60))) . ' ' . ngettext('minute', 'minutes', $num);
-	case ($difference < 86400): //60*60*24 = 86400
-		return ($num = round($difference/(3600))) . ' ' . ngettext('hour', 'hours', $num);
-	case ($difference < 604800): //60*60*24*7 = 604800
-		return ($num = round($difference/(86400))) . ' ' . ngettext('day', 'days', $num);
-	case ($difference < 31536000): //60*60*24*365 = 31536000
-		return ($num = round($difference/(604800))) . ' ' . ngettext('week', 'weeks', $num);
-	default:
-		return ($num = round($difference/(31536000))) . ' ' . ngettext('year', 'years', $num);
-	}
-}
-
-function ago($timestamp) {
-	$difference = time() - $timestamp;
-	switch(TRUE){
-	case ($difference < 60) :
-		return $difference . ' ' . ngettext('second', 'seconds', $difference);
-	case ($difference < 3600): //60*60 = 3600
-		return ($num = round($difference/(60))) . ' ' . ngettext('minute', 'minutes', $num);
-	case ($difference <  86400): //60*60*24 = 86400
-		return ($num = round($difference/(3600))) . ' ' . ngettext('hour', 'hours', $num);
-	case ($difference < 604800): //60*60*24*7 = 604800
-		return ($num = round($difference/(86400))) . ' ' . ngettext('day', 'days', $num);
-	case ($difference < 31536000): //60*60*24*365 = 31536000
-		return ($num = round($difference/(604800))) . ' ' . ngettext('week', 'weeks', $num);
-	default:
-		return ($num = round($difference/(31536000))) . ' ' . ngettext('year', 'years', $num);
-	}
 }
 
 function displayBan($ban) {
@@ -1267,25 +1234,25 @@ function deletePost($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
 	$query->bindValue(':board', $board['uri']);
 	$query->execute() or error(db_error($query));
 
-        // No need to run on OPs
-        if ($config['anti_bump_flood'] && isset($thread_id)) {
-                $query = prepare(sprintf("SELECT `sage` FROM ``posts_%s`` WHERE `id` = :thread", $board['uri']));
-                $query->bindValue(':thread', $thread_id);
-                $query->execute() or error(db_error($query));
-                $bumplocked = (bool)$query->fetchColumn();
+	// No need to run on OPs
+	if ($config['anti_bump_flood'] && isset($thread_id)) {
+		$query = prepare(sprintf("SELECT `sage` FROM ``posts_%s`` WHERE `id` = :thread", $board['uri']));
+		$query->bindValue(':thread', $thread_id);
+		$query->execute() or error(db_error($query));
+		$bumplocked = (bool)$query->fetchColumn();
 
-                if (!$bumplocked) {
-                        $query = prepare(sprintf("SELECT `time` FROM ``posts_%s`` WHERE (`thread` = :thread AND NOT email <=> 'sage') OR `id` = :thread ORDER BY `time` DESC LIMIT 1", $board['uri']));
-                        $query->bindValue(':thread', $thread_id);
-                        $query->execute() or error(db_error($query));
-                        $bump = $query->fetchColumn();
+		if (!$bumplocked) {
+			$query = prepare(sprintf("SELECT `time` FROM ``posts_%s`` WHERE (`thread` = :thread AND NOT email <=> 'sage') OR `id` = :thread ORDER BY `time` DESC LIMIT 1", $board['uri']));
+			$query->bindValue(':thread', $thread_id);
+			$query->execute() or error(db_error($query));
+			$bump = $query->fetchColumn();
 
-                        $query = prepare(sprintf("UPDATE ``posts_%s`` SET `bump` = :bump WHERE `id` = :thread", $board['uri']));
-                        $query->bindValue(':bump', $bump);
-                        $query->bindValue(':thread', $thread_id);
-                        $query->execute() or error(db_error($query));
-                }
-        }
+			$query = prepare(sprintf("UPDATE ``posts_%s`` SET `bump` = :bump WHERE `id` = :thread", $board['uri']));
+			$query->bindValue(':bump', $bump);
+			$query->bindValue(':thread', $thread_id);
+			$query->execute() or error(db_error($query));
+		}
+	}
 
 	if (isset($rebuild) && $rebuild_after) {
 		buildThread($rebuild);
@@ -2029,7 +1996,7 @@ function extract_modifiers($body) {
 }
 
 function remove_modifiers($body) {
-	return preg_replace('@<tinyboard ([\w\s]+)>(.+?)</tinyboard>@usm', '', $body);
+	return $body ? preg_replace('@<tinyboard ([\w\s]+)>(.+?)</tinyboard>@usm', '', $body) : null;
 }
 
 function markup(&$body, $track_cites = false, $op = false) {
@@ -2298,6 +2265,7 @@ function escape_markup_modifiers($string) {
 }
 
 function defined_flags_accumulate($desired_flags) {
+	global $config;
 	$output_flags = 0x0;
 	foreach ($desired_flags as $flagname) {
 		if (defined($flagname)) {
@@ -2315,7 +2283,7 @@ function defined_flags_accumulate($desired_flags) {
 
 function utf8tohtml($utf8) {
 	$flags = defined_flags_accumulate(['ENT_NOQUOTES', 'ENT_SUBSTITUTE', 'ENT_DISALLOWED']);
-	return htmlspecialchars($utf8, $flags, 'UTF-8');
+	return $utf8 ? htmlspecialchars($utf8, $flags, 'UTF-8') : '';
 }
 
 function ordutf8($string, &$offset) {
@@ -2572,35 +2540,6 @@ function generate_tripcode($name) {
 	return array($name, $trip);
 }
 
-// Highest common factor
-function hcf($a, $b){
-	$gcd = 1;
-	if ($a>$b) {
-		$a = $a+$b;
-		$b = $a-$b;
-		$a = $a-$b;
-	}
-	if ($b==(round($b/$a))*$a)
-		$gcd=$a;
-	else {
-		for ($i=round($a/2);$i;$i--) {
-			if ($a == round($a/$i)*$i && $b == round($b/$i)*$i) {
-				$gcd = $i;
-				$i = false;
-			}
-		}
-	}
-	return $gcd;
-}
-
-function fraction($numerator, $denominator, $sep) {
-	$gcf = hcf($numerator, $denominator);
-	$numerator = $numerator / $gcf;
-	$denominator = $denominator / $gcf;
-
-	return "{$numerator}{$sep}{$denominator}";
-}
-
 function getPostByHash($hash) {
 	global $board;
 	$query = prepare(sprintf("SELECT `id`,`thread` FROM ``posts_%s`` WHERE `filehash` = :hash", $board['uri']));
@@ -2835,10 +2774,10 @@ function link_for($post, $page50 = false, $foreignlink = false, $thread = false)
 
 			if ($slug === false) {
 				$query = prepare(sprintf("SELECT `slug` FROM ``posts_%s`` WHERE `id` = :id", $b['uri']));
-		                $query->bindValue(':id', $id, PDO::PARAM_INT);
-        		        $query->execute() or error(db_error($query));
+				$query->bindValue(':id', $id, PDO::PARAM_INT);
+				$query->execute() or error(db_error($query));
 
-		                $thread = $query->fetch(PDO::FETCH_ASSOC);
+				$thread = $query->fetch(PDO::FETCH_ASSOC);
 
 				$slug = $thread['slug'];
 
@@ -2854,7 +2793,7 @@ function link_for($post, $page50 = false, $foreignlink = false, $thread = false)
 	}
 
 
-	     if ( $page50 &&  $slug)  $tpl = $config['file_page50_slug'];
+		 if ( $page50 &&  $slug)  $tpl = $config['file_page50_slug'];
 	else if (!$page50 &&  $slug)  $tpl = $config['file_page_slug'];
 	else if ( $page50 && !$slug)  $tpl = $config['file_page50'];
 	else if (!$page50 && !$slug)  $tpl = $config['file_page'];
@@ -2865,24 +2804,6 @@ function link_for($post, $page50 = false, $foreignlink = false, $thread = false)
 function prettify_textarea($s){
 	return str_replace("\t", '&#09;', str_replace("\n", '&#13;&#10;', htmlentities($s)));
 }
-
-/*class HTMLPurifier_URIFilter_NoExternalImages extends HTMLPurifier_URIFilter {
-	public $name = 'NoExternalImages';
-	public function filter(&$uri, $c, $context) {
-		global $config;
-		$ct = $context->get('CurrentToken');
-
-		if (!$ct || $ct->name !== 'img') return true;
-
-		if (!isset($uri->host) && !isset($uri->scheme)) return true;
-
-		if (!in_array($uri->scheme . '://' . $uri->host . '/', $config['allowed_offsite_urls'])) {
-			error('No off-site links in board announcement images.');
-		}
-
-		return true;
-	}
-}*/
 
 function purify_html($s) {
 	global $config;
@@ -2899,7 +2820,6 @@ function purify_html($s) {
 function markdown($s) {
 	$pd = new Parsedown();
 	$pd->setMarkupEscaped(true);
-	$pd->setimagesEnabled(false);
 
 	return $pd->text($s);
 }
@@ -2918,7 +2838,20 @@ function generation_strategy($fun, $array=array()) { global $config;
 			return 'rebuild';
 		case 'defer':
 			// Ok, it gets interesting here :)
-			get_queue('generate')->push(serialize(array('build', $fun, $array, $action)));
+			$queue = Queues::get_queue($config, 'generate');
+			if ($queue === false) {
+				if ($config['syslog']) {
+					_syslog(LOG_ERR, "Could not initialize generate queue, falling back to immediate rebuild strategy");
+				}
+				return 'rebuild';
+			}
+			$ret = $queue->push(serialize(array('build', $fun, $array, $action)));
+			if ($ret === false) {
+				if ($config['syslog']) {
+					_syslog(LOG_ERR, "Could not push item in the queue, falling back to immediate rebuild strategy");
+				}
+				return 'rebuild';
+			}
 			return 'ignore';
 		case 'build_on_load':
 			return 'delete';

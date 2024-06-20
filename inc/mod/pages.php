@@ -3,8 +3,12 @@
 /*
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  */
+use Vichan\Functions\Format;
+
+use Vichan\Functions\Net;
 
 defined('TINYBOARD') or exit;
+
 
 function mod_page($title, $template, $args, $subtitle = false) {
 	global $config, $mod;
@@ -29,9 +33,12 @@ function mod_page($title, $template, $args, $subtitle = false) {
 function mod_login($redirect = false) {
 	global $config;
 
-	$args = array();
+	$args = [];
 
-	if (isset($_POST['login'])) {
+	$secure_login_mode = $config['cookies']['secure_login_only'];
+	if ($secure_login_mode !== 0 && !Net\is_connection_secure($secure_login_mode === 1)) {
+		$args['error'] = $config['error']['insecure'];
+	} elseif (isset($_POST['login'])) {
 		// Check if inputs are set and not empty
 		if (!isset($_POST['username'], $_POST['password']) || $_POST['username'] == '' || $_POST['password'] == '') {
 			$args['error'] = $config['error']['invalid'];
@@ -1335,8 +1342,8 @@ function mod_move($originBoard, $postID) {
 		if ($targetBoard === $originBoard)
 			error(_('Target and source board are the same.'));
 
-		// copy() if leaving a shadow thread behind; else, rename().
-		$clone = $shadow ? 'copy' : 'rename';
+		// link() if leaving a shadow thread behind; else, rename().
+		$clone = $shadow ? 'link' : 'rename';
 
 		// indicate that the post is a thread
 		$post['op'] = true;
@@ -1553,7 +1560,7 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 
 		if (isset($_POST['public_message'], $_POST['message'])) {
 			// public ban message
-			$length_english = Bans::parse_time($_POST['length']) ? 'for ' . until(Bans::parse_time($_POST['length'])) : 'permanently';
+			$length_english = Bans::parse_time($_POST['length']) ? 'for ' . Format\until(Bans::parse_time($_POST['length'])) : 'permanently';
 			$_POST['message'] = preg_replace('/[\r\n]/', '', $_POST['message']);
 			$_POST['message'] = str_replace('%length%', $length_english, $_POST['message']);
 			$_POST['message'] = str_replace('%LENGTH%', strtoupper($length_english), $_POST['message']);

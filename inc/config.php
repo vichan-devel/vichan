@@ -65,8 +65,21 @@
 	// been generated. This keeps the script from querying the database and causing strain when not needed.
 	$config['has_installed'] = '.installed';
 
-	// Use syslog() for logging all error messages and unauthorized login attempts.
+	// Deprecated, use 'log_system'.
 	$config['syslog'] = false;
+
+	$config['log_system'] = [];
+	// Log all error messages and unauthorized login attempts.
+	// Can be "syslog", "error_log" (default), "file", "stderr" or "none".
+	$config['log_system']['type'] = 'error_log';
+	// The application name used by the logging system. Defaults to "tinyboard" for backwards compatibility.
+	$config['log_system']['name'] = 'tinyboard';
+	// Only relevant if 'log_system' is set to "syslog". If true, double print the logs also in stderr.
+	// Defaults to false.
+	$config['log_system']['syslog_stderr'] = false;
+	// Only relevant if "log_system" is set to `file`. Sets the file that vichan will log to.
+	// Defaults to '/var/log/vichan.log'.
+	$config['log_system']['file_path'] = '/var/log/vichan.log';
 
 	// Use `host` via shell_exec() to lookup hostnames, avoiding query timeouts. May not work on your system.
 	// Requires safe_mode to be disabled.
@@ -173,13 +186,21 @@
 
 	// How long should the cookies last (in seconds). Defines how long should moderators should remain logged
 	// in (0 = browser session).
-	$config['cookies']['expire'] = 60 * 60 * 24 * 30 * 6; // ~6 months
+	$config['cookies']['expire'] = 60 * 60 * 24 * 7; // 1 week.
 
 	// Make this something long and random for security.
 	$config['cookies']['salt'] = 'abcdefghijklmnopqrstuvwxyz09123456789!@#$%^&*()';
 
 	// Whether or not you can access the mod cookie in JavaScript. Most users should not need to change this.
 	$config['cookies']['httponly'] = true;
+
+	// Do not allow logins via unsecure connections.
+	// 0 = off. Allow logins on unencrypted HTTP connections. Should only be used in testing environments.
+	// 1 = on, trust HTTP headers. Allow logins on (at least reportedly partial) HTTPS connections. Use this only if you
+	// use a proxy, CDN or load balancer via an unencrypted connection. Be sure to filter 'HTTP_X_FORWARDED_PROTO' in
+	// the remote server, since an attacker could inject the header from the client.
+	// 2 = on, do not trust HTTP headers. Secure default, allow logins only on HTTPS connections.
+	$config['cookies']['secure_login_only'] = 2;
 
 	// Used to salt secure tripcodes ("##trip") and poster IDs (if enabled).
 	$config['secure_trip_salt'] = ')(*&^%$#@!98765432190zyxwvutsrqponmlkjihgfedcba';
@@ -614,6 +635,9 @@
 	// Example: Custom secure tripcode.
 	// $config['custom_tripcode']['##securetrip'] = '!!somethingelse';
 
+	//Disable tripcodes. This will make it so all new posts will act as if no tripcode exists.
+	$config['disable_tripcodes'] = false;
+
 	// Allow users to mark their image as a "spoiler" when posting. The thumbnail will be replaced with a
 	// static spoiler image instead (see $config['spoiler_image']).
 	$config['spoiler_images'] = false;
@@ -979,11 +1003,11 @@
 
 	// Timezone to use for displaying dates/times.
 	$config['timezone'] = 'America/Los_Angeles';
-	// The format string passed to strftime() for displaying dates.
-	// http://www.php.net/manual/en/function.strftime.php
-	$config['post_date'] = '%m/%d/%y (%a) %H:%M:%S';
+	// The format string passed to DateTime::format() for displaying dates. ISO 8601-like by default.
+	// https://www.php.net/manual/en/datetime.format.php
+	$config['post_date'] = 'm/d/y (D) H:i:s';
 	// Same as above, but used for "you are banned' pages.
-	$config['ban_date'] = '%A %e %B, %Y';
+	$config['ban_date'] = 'l j F, Y';
 
 	// The names on the post buttons. (On most imageboards, these are both just "Post").
 	$config['button_newtopic'] = _('New Topic');
@@ -1235,11 +1259,14 @@
 	$config['error']['captcha']		= _('You seem to have mistyped the verification.');
 	$config['error']['flag_undefined']	= _('The flag %s is undefined, your PHP version is too old!');
 	$config['error']['flag_wrongtype']	= _('defined_flags_accumulate(): The flag %s is of the wrong type!');
+	$config['error']['remote_io_error']	= _('IO error while interacting with a remote service.');
+	$config['error']['local_io_error']	= _('IO error while interacting with a local resource or service.');
 
 
 	// Moderator errors
 	$config['error']['toomanyunban']	= _('You are only allowed to unban %s users at a time. You tried to unban %u users.');
 	$config['error']['invalid']		= _('Invalid username and/or password.');
+	$config['error']['insecure']		= _('Login on insecure connections is disabled.');
 	$config['error']['notamod']		= _('You are not a mod…');
 	$config['error']['invalidafter']	= _('Invalid username and/or password. Your user may have been deleted or changed.');
 	$config['error']['malformed']		= _('Invalid/malformed cookies.');
@@ -1833,6 +1860,9 @@
 
 	// Boards for searching
 	//$config['search']['boards'] = array('a', 'b', 'c', 'd', 'e');
+
+	// Blacklist boards for searching, basically the opposite of the one above
+	//$config['search']['disallowed_boards'] = array('j', 'z');
 
 	// Enable public logs? 0: NO, 1: YES, 2: YES, but drop names
 	$config['public_logs'] = 0;
