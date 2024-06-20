@@ -347,10 +347,11 @@ if (isset($_POST['delete'])) {
 	if (!isset($_POST['board'], $_POST['password']))
 		error($config['error']['bot']);
 
-	$password = &$_POST['password'];
-
-	if ($password == '')
+	if (empty($_POST['password'])){
 		error($config['error']['invalidpassword']);
+	}
+
+	$password = hashPassword($_POST['password']);
 
 	$delete = array();
 	foreach ($_POST as $post => $value) {
@@ -398,10 +399,12 @@ if (isset($_POST['delete'])) {
 				error(sprintf($config['error']['delete_too_late'], Format\until($post['time'] + $config['max_delete_time'])));
 			}
 
-			if ($password != '' && $post['password'] != $password && (!$thread || $thread['password'] != $password))
+			if (!hash_equals($post['password'], $password) && (!$thread || !hash_equals($thread['password'], $password))) {
 				error($config['error']['invalidpassword']);
+			}
 
-			if ($post['time'] > time() - $config['delete_time'] && (!$thread || $thread['password'] != $password)) {
+
+			if ($post['time'] > time() - $config['delete_time'] && (!$thread || !hash_equals($thread['password'], $password))) {
 				error(sprintf($config['error']['delete_too_soon'], Format\until($post['time'] + $config['delete_time'])));
 			}
 
@@ -770,7 +773,7 @@ if (isset($_POST['delete'])) {
 	$post['subject'] = $_POST['subject'];
 	$post['email'] = str_replace(' ', '%20', htmlspecialchars($_POST['email']));
 	$post['body'] = $_POST['body'];
-	$post['password'] = $_POST['password'];
+	$post['password'] = hashPassword($_POST['password']);
 	$post['has_file'] = (!isset($post['embed']) && (($post['op'] && !isset($post['no_longer_require_an_image_for_op']) && $config['force_image_op']) || count($_FILES) > 0));
 
 	if (!$dropped_post) {
@@ -928,8 +931,6 @@ if (isset($_POST['delete'])) {
 			error($config['error']['toolong_body']);
 		if (!$mod && substr_count($post['body'], "\n") >= $config['maximum_lines'])
 			error($config['error']['toomanylines']);
-		if (mb_strlen($post['password']) > 20)
-			error(sprintf($config['error']['toolong'], 'password'));
 	}
 	wordfilters($post['body']);
 
@@ -1055,9 +1056,6 @@ if (isset($_POST['delete'])) {
 			if ($size[0] > $config['max_width'] || $size[1] > $config['max_height']) {
 				error($config['error']['maxsize']);
 			}
-
-			// If, on the basis of the file extension, the image file has metadata we can operate on.
-			$file_image_has_operable_metadata = $file['extension'] === 'jpg' || $file['extension'] === 'jpeg' || $file['extension'] === 'webp' || $file['extension'] == 'png';
 
 			$file['exif_stripped'] = false;
 

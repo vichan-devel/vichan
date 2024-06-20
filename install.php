@@ -921,6 +921,7 @@ if ($step == 0) {
 	$sg = new SaltGen();
 	$config['cookies']['salt'] = $sg->generate();
 	$config['secure_trip_salt'] = $sg->generate();
+	$config['secure_password_salt'] = $sg->generate();
 
 	echo Element('page.html', array(
 		'body' => Element('installer/config.html', array(
