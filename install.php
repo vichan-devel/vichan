@@ -690,7 +690,7 @@ if ($step == 0) {
 	echo Element('page.html', $page);
 } elseif ($step == 1) {
 	// The HTTPS check doesn't work properly when in those arrays, so let's run it here and pass along the result during the actual check.
-	$httpsvalue = !empty($_SERVER['HTTPS'] && $_SERVER['HTTPS'] !== 'off');
+	$httpsvalue = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 	$page['title'] = 'Pre-installation test';
 
 	$can_exec = true;
