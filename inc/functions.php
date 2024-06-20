@@ -3089,3 +3089,9 @@ function check_thread_limit($post) {
 		return $r['count'] >= $config['max_threads_per_hour'];
 	}
 }
+
+function hashPassword($password) {
+	global $config;
+
+	return hash('sha3-256', $password . $config['secure_password_salt']);
+}

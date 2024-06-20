@@ -184,6 +184,9 @@
 	// Used to salt secure tripcodes ("##trip") and poster IDs (if enabled).
 	$config['secure_trip_salt'] = ')(*&^%$#@!98765432190zyxwvutsrqponmlkjihgfedcba';
 
+	// Used to salt poster passwords.
+	$config['secure_password_salt'] = 'wKJSb7M5SyzMcFWD2gPO3j2RYUSO9B789!@#$%^&*()';
+
 /*
  * ====================
  *  Flood/spam settings
