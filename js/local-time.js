@@ -21,15 +21,20 @@ $(document).ready(function(){
 		if (parts.length === 2) {
 			var timeParts = parts[1].split(':');
 			if (timeParts.length === 3) {
-				var secondsParts = timeParts[2].split('.');
-				if (secondsParts[0] > 59) {
-					secondsParts[0] = '59';
+				var seconds = timeParts[2];
+				if (seconds.length > 2) {
+					seconds = seconds.substr(0, 2) + '.' + seconds.substr(2);
 				}
-				timeParts[2] = secondsParts.join('.');
+				// Ensure seconds part is valid
+				if (parseFloat(seconds) > 59) {
+					seconds = '59';
+				}
+				timeParts[2] = seconds;
 			}
 			parts[1] = timeParts.join(':');
 		}
 		s = parts.join('T');
+
 		if (!s.endsWith('Z')) {
 			s += 'Z';
 		}
@@ -123,3 +128,4 @@ $(document).ready(function(){
 
 	do_localtime(document);
 });
+
