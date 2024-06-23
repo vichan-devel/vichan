@@ -64,7 +64,8 @@ RUN apk add --no-cache \
         imagemagick-dev \
         pcre-dev \
         $PHPIZE_DEPS \
-    && rm -rf /var/cache/*
+    && rm -rf /var/cache/* \
+    && rm -rf /tmp/pear
 RUN rmdir /var/www/html \
     && install -d -m 744 -o www-data -g www-data /var/www \
     && install -d -m 700 -o www-data -g www-data /var/tmp/vichan \
