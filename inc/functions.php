@@ -907,7 +907,7 @@ function checkBan($board = false) {
 			return;
 	}
 
-	Bans::purge();
+	Bans::purge($config['require_ban_view']);
 
 	if ($config['cache']['enabled'])
 		cache::set('purged_bans_last', time());

@@ -342,9 +342,20 @@ class Bans {
                 rebuildThemes('bans');
 	}
 
-	static public function purge() {
-		$query = query("DELETE FROM ``bans`` WHERE `expires` IS NOT NULL AND `expires` < " . time() . " AND `seen` = 1") or error(db_error());
-		rebuildThemes('bans');
+	static public function purge($require_seen) {
+		if ($require_seen) {
+			$query = prepare("DELETE FROM ``bans`` WHERE `expires` IS NOT NULL AND `expires` < :curr_time AND `seen` = 1");
+		} else {
+			$query = prepare("DELETE FROM ``bans`` WHERE `expires` IS NOT NULL AND `expires` < :curr_time");
+		}
+		$query->bindValue(':curr_time', time());
+		$query->execute() or error(db_error($query));
+
+		$affected = $query->rowCount();
+		if ($affected > 0) {
+			rebuildThemes('bans');
+		}
+		return $affected;
 	}
 
 	static public function delete($ban_id, $modlog = false, $boards = false, $dont_rebuild = false) {
