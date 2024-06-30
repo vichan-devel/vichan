@@ -33,6 +33,59 @@ class Bans {
 		}
 	}
 
+	static private function findSingleAutoGc(string $ip, int $ban_id, bool $require_ban_view): array|null {
+		// Use OR in the query to also garbage collect bans.
+		$query = prepare(
+			'SELECT ``bans``.* FROM ``bans``
+			 WHERE ((`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)) OR (``bans``.id = :id))
+			 ORDER BY `expires` IS NULL, `expires` DESC'
+		);
+
+		$query->bindValue(':id', $ban_id);
+		$query->bindValue(':ip', inet_pton($ip));
+
+		$query->execute() or error(db_error($query));
+
+		$found_ban = null;
+		$to_delete_list = [];
+
+		while ($ban = $query->fetch(PDO::FETCH_ASSOC)) {
+			if ($ban['expires'] && ($ban['seen'] || !$require_ban_view) && $ban['expires'] < time()) {
+				$to_delete_list[] = $ban['id'];
+			} elseif ($ban['id'] === $ban_id) {
+				if ($ban['post']) {
+					$ban['post'] = json_decode($ban['post'], true);
+				}
+				$ban['mask'] = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
+				$found_ban = $ban;
+			}
+		}
+
+		self::deleteBans($to_delete_list);
+
+		return $found_ban;
+	}
+
+	static private function findSingleNoGc(int $ban_id): array|null {
+		$query = prepare(
+			'SELECT ``bans``.* FROM ``bans``
+			 WHERE ``bans``.id = :id
+			 ORDER BY `expires` IS NULL, `expires` DESC
+			 LIMIT 1'
+		);
+
+		$query->bindValue(':id', $ban_id);
+
+		$query->execute() or error(db_error($query));
+		$ret = $query->fetch(PDO::FETCH_ASSOC);
+		if ($query->rowCount() == 0) {
+			return null;
+		} else {
+			$ret['post'] = json_decode($ret['post'], true);
+			return $ret;
+		}
+	}
+
 	static public function range_to_string($mask) {
 		list($ipstart, $ipend) = $mask;
 
@@ -143,41 +196,12 @@ class Bans {
 		return array($ipstart, $ipend);
 	}
 
-	static public function findSingle(string $ip, int $ban_id, bool $require_ban_view): array|null {
-		/**
-		 * Use OR in the query to also garbage collect bans. Ideally we should move the whole GC procedure to a separate
-		 * script, but it will require a more important restructuring.
-		 */
-		$query = prepare(
-			'SELECT ``bans``.* FROM ``bans``
-			 WHERE ((`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)) OR (``bans``.id = :id))
-			 ORDER BY `expires` IS NULL, `expires` DESC'
-		);
-
-		$query->bindValue(':id', $ban_id);
-		$query->bindValue(':ip', inet_pton($ip));
-
-		$query->execute() or error(db_error($query));
-
-		$found_ban = null;
-		$to_delete_list = [];
-
-		while ($ban = $query->fetch(PDO::FETCH_ASSOC)) {
-			if ($ban['expires'] && ($ban['seen'] || !$require_ban_view) && $ban['expires'] < time()) {
-				$to_delete_list[] = $ban['id'];
-			} elseif ($ban['id'] === $ban_id) {
-				if ($ban['post']) {
-					$ban['post'] = json_decode($ban['post'], true);
-				}
-				$ban['mask'] = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
-				$ban['cmask'] = cloak_mask($ban['mask']);
-				$found_ban = $ban;
-			}
+	static public function findSingle(string $ip, int $ban_id, bool $require_ban_view, bool $auto_gc): array|null {
+		if ($auto_gc) {
+			return self::findSingleAutoGc($ip, $ban_id, $require_ban_view);
+		} else {
+			return self::findSingleNoGc($ban_id);
 		}
-
-		self::deleteBans($to_delete_list);
-
-		return $found_ban;
 	}
 
 	static public function find($ip, $board = false, $get_mod_info = false, $banid = null) {
