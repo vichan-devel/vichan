@@ -876,7 +876,7 @@ function checkBan($board = false) {
 	}
 
 	foreach ($ips as $ip) {
-		$bans = Bans::find($ip, $board, $config['show_modname']);
+		$bans = Bans::find($ip, $board, $config['show_modname'], null, true);
 
 		foreach ($bans as &$ban) {
 			if ($ban['expires'] && $ban['expires'] < time()) {
