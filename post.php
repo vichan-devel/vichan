@@ -1439,7 +1439,7 @@ if (isset($_POST['delete'])) {
 
 	$ban_id = (int)$_POST['ban_id'];
 
-	$ban = Bans::findSingle($_SERVER['REMOTE_ADDR'], $ban_id, $config['require_ban_view'], true);
+	$ban = Bans::findSingle($_SERVER['REMOTE_ADDR'], $ban_id, $config['require_ban_view'], $config['auto_maintenance']);
 
 	if (empty($ban)) {
 		error($config['error']['noban']);

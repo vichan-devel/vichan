@@ -92,6 +92,11 @@
 	// to the environment path (seperated by :).
 	$config['shell_path'] = '/usr/local/bin';
 
+	// Automatically execute some maintenance tasks when some pages are opened, which may result in higher
+	// latencies.
+	// If set to false, ensure to periodically invoke the tools/maintenance.php script.
+	$config['auto_maintenance'] = true;
+
 /*
  * ====================
  *  Database settings

@@ -897,7 +897,7 @@ function mod_page_ip($cip) {
 	$args['token'] = make_secure_link_token('ban');
 
 	if (hasPermission($config['mod']['view_ban'])) {
-		$args['bans'] = Bans::find($ip, false, true, null, true);
+		$args['bans'] = Bans::find($ip, false, true, null, $config['auto_maintenance']);
 	}
 
 	if (hasPermission($config['mod']['view_notes'])) {
@@ -927,7 +927,7 @@ function mod_edit_ban($ban_id) {
 	if (!hasPermission($config['mod']['edit_ban']))
 		error($config['error']['noaccess']);
 
-	$args['bans'] = Bans::find(null, false, true, $ban_id, true);
+	$args['bans'] = Bans::find(null, false, true, $ban_id, $config['auto_maintenance']);
 	$args['ban_id'] = $ban_id;
 	$args['boards'] = listBoards();
 	$args['current_board'] = isset($args['bans'][0]['board']) ? $args['bans'][0]['board'] : false;
