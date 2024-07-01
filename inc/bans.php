@@ -60,7 +60,7 @@ class Bans {
 				if ($ban['post']) {
 					$ban['post'] = json_decode($ban['post'], true);
 				}
-				$ban['mask'] = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
+				$ban['mask'] = self::range_to_string([$ban['ipstart'], $ban['ipend']]);
 				$found_ban = $ban;
 			}
 		}
@@ -116,7 +116,7 @@ class Bans {
 				if ($ban['post']) {
 					$ban['post'] = json_decode($ban['post'], true);
 				}
-				$ban['mask'] = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
+				$ban['mask'] = self::range_to_string([$ban['ipstart'], $ban['ipend']]);
 				$ban_list[] = $ban;
 			}
 		}
@@ -176,7 +176,7 @@ class Bans {
 		$cidr = new CIDR($mask);
 		$range = $cidr->getRange();
 
-		return array(inet_pton($range[0]), inet_pton($range[1]));
+		return [ inet_pton($range[0]), inet_pton($range[1]) ];
 	}
 
 	public static function parse_time($str) {
@@ -260,7 +260,7 @@ class Bans {
 				return false;
 		}
 
-		return array($ipstart, $ipend);
+		return [$ipstart, $ipend];
 	}
 
 	static public function findSingle(string $ip, int $ban_id, bool $require_ban_view, bool $auto_gc): array|null {
@@ -294,8 +294,7 @@ class Bans {
 		$end = end($bans);
 
 		foreach ($bans as &$ban) {
-			$uncloaked_mask = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
-			$ban['mask'] = cloak_mask($uncloaked_mask);
+			$ban['mask'] = self::range_to_string([$ban['ipstart'], $ban['ipend']]);
 
 			if ($ban['post']) {
 				$post = json_decode($ban['post']);
@@ -373,8 +372,7 @@ class Bans {
 			if ($boards !== false && !in_array($ban['board'], $boards))
 		                error($config['error']['noaccess']);
 
-			$mask = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
-			$cloaked_mask = cloak_mask($mask);
+			$mask = self::range_to_string([$ban['ipstart'], $ban['ipend']]);
 
 			modLog("Removed ban #{$ban_id} for " .
 				(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$cloaked_mask\">$cloaked_mask</a>" : $cloaked_mask));
