@@ -4,6 +4,10 @@ use Vichan\Functions\Format;
 use Lifo\IP\CIDR;
 
 class Bans {
+	static private function shouldDelete(array $ban, bool $require_ban_view) {
+		return $ban['expires'] && ($ban['seen'] || !$require_ban_view) && $ban['expires'] < time();
+	}
+
 	static private function deleteBans(array $ban_ids) {
 		$len = count($ban_ids);
 		if ($len === 1) {
@@ -50,7 +54,7 @@ class Bans {
 		$to_delete_list = [];
 
 		while ($ban = $query->fetch(PDO::FETCH_ASSOC)) {
-			if ($ban['expires'] && ($ban['seen'] || !$require_ban_view) && $ban['expires'] < time()) {
+			if (self::shouldDelete($ban, $require_ban_view)) {
 				$to_delete_list[] = $ban['id'];
 			} elseif ($ban['id'] === $ban_id) {
 				if ($ban['post']) {
@@ -106,7 +110,7 @@ class Bans {
 		$to_delete_list = [];
 
 		while ($ban = $query->fetch(PDO::FETCH_ASSOC)) {
-			if ($ban['expires'] && ($ban['seen'] || !$require_ban_view) && $ban['expires'] < time()) {
+			if (self::shouldDelete($ban, $require_ban_view)) {
 				$to_delete_list[] = $ban['id'];
 			} else {
 				if ($ban['post']) {
