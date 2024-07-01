@@ -140,16 +140,12 @@ class Bans {
 		$query->bindValue(':curr_time', time());
 		$query->execute() or error(db_error($query));
 
-		$ban_list = [];
-
-		while ($ban = $query->fetch(PDO::FETCH_ASSOC)) {
+		$ban_list = $query->fetchAll(PDO::FETCH_ASSOC);
+		array_walk($ban_list, function (&$ban, $_index) {
 			if ($ban['post']) {
 				$ban['post'] = json_decode($ban['post'], true);
 			}
-			$ban['mask'] = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
-			$ban_list[] = $ban;
-		}
-
+		});
 		return $ban_list;
 	}
 
