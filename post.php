@@ -853,7 +853,7 @@ if (isset($_POST['delete'])) {
 
 	$trip = generate_tripcode($post['name']);
 	$post['name'] = $trip[0];
-	if ($config['disable_tripcodes'] = true && !$mod) {
+	if ($config['disable_tripcodes'] && !$mod) {
 		$post['trip'] = '';
 	}
 	else {
