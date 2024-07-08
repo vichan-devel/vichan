@@ -1612,13 +1612,19 @@ function checkMute() {
 	}
 }
 
+function purge_old_antispam() {
+	$query = prepare('DELETE FROM ``antispam`` WHERE `expires` < UNIX_TIMESTAMP()');
+	$query->execute() or error(db_error());
+	return $query->rowCount();
+}
+
 function _create_antibot($board, $thread) {
 	global $config, $purged_old_antispam;
 
 	$antibot = new AntiBot([$board, $thread]);
 
 	// Delete old expired antispam, skipping those with NULL expiration timestamps (infinite lifetime).
-	if (!isset($purged_old_antispam)) {
+	if (!isset($purged_old_antispam) && $config['auto_maintenance']) {
 		$purged_old_antispam = true;
 		query('DELETE FROM ``antispam`` WHERE `expires` < UNIX_TIMESTAMP()') or error(db_error());
 	}
