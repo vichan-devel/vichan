@@ -10,4 +10,11 @@ $start = microtime(true);
 $deleted_count = Bans::purge($config['require_ban_view']);
 $delta = microtime(true) - $start;
 echo "Deleted $deleted_count expired bans in $delta seconds!";
-modLog('Deleted expired bans using tools/maintenance.php');
+modLog("Deleted expired bans in {$delta}s with tools/maintenance.php");
+
+echo "Clearing old antispam...";
+$start = microtime(true);
+$deleted_count = purge_old_antispam();
+$delta = microtime(true) - $start;
+echo "Deleted $deleted_count expired antispam in $delta seconds!";
+modLog("Deleted expired antispam in {$delta}s with tools/maintenance.php");
