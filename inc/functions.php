@@ -880,7 +880,9 @@ function checkBan($board = false) {
 
 		foreach ($bans as &$ban) {
 			if ($ban['expires'] && $ban['expires'] < time()) {
-				Bans::delete($ban['id']);
+				if ($config['auto_maintenance']) {
+					Bans::delete($ban['id']);
+				}
 				if ($config['require_ban_view'] && !$ban['seen']) {
 					if (!isset($_POST['json_response'])) {
 						displayBan($ban);
@@ -900,17 +902,20 @@ function checkBan($board = false) {
 		}
 	}
 
-	// I'm not sure where else to put this. It doesn't really matter where; it just needs to be called every
-	// now and then to keep the ban list tidy.
-	if ($config['cache']['enabled'] && $last_time_purged = cache::get('purged_bans_last')) {
-		if (time() - $last_time_purged < $config['purge_bans'] )
-			return;
+	if ($config['auto_maintenance']) {
+		// I'm not sure where else to put this. It doesn't really matter where; it just needs to be called every
+		// now and then to keep the ban list tidy.
+		if ($config['cache']['enabled']) {
+			$last_time_purged = cache::get('purged_bans_last');
+			if ($last_time_purged !== false && time() - $last_time_purged > $config['purge_bans']) {
+				Bans::purge($config['require_ban_view']);
+				cache::set('purged_bans_last', time());
+			}
+		} else {
+			// Purge every time.
+			Bans::purge($config['require_ban_view']);
+		}
 	}
-
-	Bans::purge($config['require_ban_view']);
-
-	if ($config['cache']['enabled'])
-		cache::set('purged_bans_last', time());
 }
 
 function threadLocked($id) {
