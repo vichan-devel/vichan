@@ -341,12 +341,13 @@ class Bans {
                 rebuildThemes('bans');
 	}
 
-	static public function purge($require_seen) {
+	static public function purge($require_seen, $moratorium) {
 		if ($require_seen) {
-			$query = prepare("DELETE FROM ``bans`` WHERE `expires` IS NOT NULL AND `expires` < :curr_time AND `seen` = 1");
+			$query = prepare("DELETE FROM ``bans`` WHERE `expires` IS NOT NULL AND `expires` + :moratorium < :curr_time AND `seen` = 1");
 		} else {
-			$query = prepare("DELETE FROM ``bans`` WHERE `expires` IS NOT NULL AND `expires` < :curr_time");
+			$query = prepare("DELETE FROM ``bans`` WHERE `expires` IS NOT NULL AND `expires` + :moratorium < :curr_time");
 		}
+		$query->bindValue(':moratorium', $moratorium);
 		$query->bindValue(':curr_time', time());
 		$query->execute() or error(db_error($query));
 

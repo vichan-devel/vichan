@@ -908,12 +908,12 @@ function checkBan($board = false) {
 		if ($config['cache']['enabled']) {
 			$last_time_purged = cache::get('purged_bans_last');
 			if ($last_time_purged !== false && time() - $last_time_purged > $config['purge_bans']) {
-				Bans::purge($config['require_ban_view']);
+				Bans::purge($config['require_ban_view'], $config['purge_bans']);
 				cache::set('purged_bans_last', time());
 			}
 		} else {
 			// Purge every time.
-			Bans::purge($config['require_ban_view']);
+			Bans::purge($config['require_ban_view'], $config['purge_bans']);
 		}
 	}
 }

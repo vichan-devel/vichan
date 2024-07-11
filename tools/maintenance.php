@@ -7,7 +7,7 @@ require dirname(__FILE__) . '/inc/cli.php';
 
 echo "Clearing expired bans...";
 $start = microtime(true);
-$deleted_count = Bans::purge($config['require_ban_view']);
+$deleted_count = Bans::purge($config['require_ban_view'], $config['purge_bans']);
 $delta = microtime(true) - $start;
 echo "Deleted $deleted_count expired bans in $delta seconds!";
 modLog("Deleted expired bans in {$delta}s with tools/maintenance.php");
