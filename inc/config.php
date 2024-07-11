@@ -752,6 +752,9 @@
 	//);
 	$config['premade_ban_reasons'] = false;
 
+	// How often (minimum) to purge the ban list of expired bans (which have been seen).
+	$config['purge_bans'] = 60 * 60 * 12; // 12 hours
+
 	// Allow users to appeal bans through vichan.
 	$config['ban_appeals'] = false;
 
@@ -1568,9 +1571,6 @@
 
 	// Enable the moving of single replies
 	$config['move_replies'] = false;
-
-	// How often (minimum) to purge the ban list of expired bans (which have been seen).
-	$config['purge_bans'] = 60 * 60 * 12; // 12 hours
 
 	// Do DNS lookups on IP addresses to get their hostname for the moderator IP pages (?/IP/x.x.x.x).
 	$config['mod']['dns_lookup'] = true;
