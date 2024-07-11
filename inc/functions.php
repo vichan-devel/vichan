@@ -1617,11 +1617,15 @@ function _create_antibot($board, $thread) {
 
 	$antibot = new AntiBot([$board, $thread]);
 
+	// Delete old expired antispam, skipping those with NULL expiration timestamps (infinite lifetime).
 	if (!isset($purged_old_antispam)) {
 		$purged_old_antispam = true;
 		query('DELETE FROM ``antispam`` WHERE `expires` < UNIX_TIMESTAMP()') or error(db_error());
 	}
 
+	// Keep the now invalid timestamps around for a bit to enable users to post if they're still on an old version of
+	// the HTML page.
+	// By virtue of existing, we know that we're making a new version of the page, and the user from now on may just reload.
 	if ($thread) {
 		$query = prepare('UPDATE ``antispam`` SET `expires` = UNIX_TIMESTAMP() + :expires WHERE `board` = :board AND `thread` = :thread AND `expires` IS NULL');
 	} else {
@@ -1635,6 +1639,7 @@ function _create_antibot($board, $thread) {
 	$query->bindValue(':expires', $config['spam']['hidden_inputs_expire']);
 	$query->execute() or error(db_error($query));
 
+	// Insert an antispam with infinite life as the HTML page of a thread might last well beyond the expiry date.
 	$query = prepare('INSERT INTO ``antispam`` VALUES (:board, :thread, :hash, UNIX_TIMESTAMP(), NULL, 0)');
 	$query->bindValue(':board', $board);
 	$query->bindValue(':thread', $thread);
