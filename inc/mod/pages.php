@@ -1044,10 +1044,6 @@ function mod_ban_appeals() {
 	if (!hasPermission($config['mod']['view_ban_appeals']))
 		error($config['error']['noaccess']);
 
-	// Remove stale ban appeals
-	query("DELETE FROM ``ban_appeals`` WHERE NOT EXISTS (SELECT 1 FROM ``bans`` WHERE `ban_id` = ``bans``.`id`)")
-		or error(db_error());
-
 	if (isset($_POST['appeal_id']) && (isset($_POST['unban']) || isset($_POST['deny']))) {
 		if (!hasPermission($config['mod']['ban_appeals']))
 			error($config['error']['noaccess']);
