@@ -1,6 +1,15 @@
 <?php
 	require 'info.php';
 
+	function get_all_boards() {
+		$boards = [];
+		$query = query("SELECT uri FROM ``boards``") or error(db_error());
+		while ($board = $query->fetch(PDO::FETCH_ASSOC)) {
+			$boards[] = $board['uri'];
+		}
+		return $boards;
+	}
+
 	function catalog_build($action, $settings, $board) {
 		global $config;
 
@@ -12,6 +21,11 @@
 		//	- post-thread (a thread has been made)
 
 		$boards = explode(' ', $settings['boards']);
+
+		if (in_array('*', $boards)) {
+			$boards = get_all_boards();
+		}
+
 
 		if ($action == 'all') {
 			foreach ($boards as $board) {
