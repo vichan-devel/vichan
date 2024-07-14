@@ -85,7 +85,9 @@ class Bans {
 		if ($query->rowCount() == 0) {
 			return null;
 		} else {
-			$ret['post'] = json_decode($ret['post'], true);
+			if ($ret['post']) {
+				$ret['post'] = json_decode($ret['post'], true);
+			}
 			return $ret;
 		}
 	}
