@@ -88,6 +88,8 @@ class Bans {
 			if ($ret['post']) {
 				$ret['post'] = json_decode($ret['post'], true);
 			}
+			$ret['mask'] = self::range_to_string([$ret['ipstart'], $ret['ipend']]);
+
 			return $ret;
 		}
 	}
@@ -151,6 +153,7 @@ class Bans {
 			if ($ban['post']) {
 				$ban['post'] = json_decode($ban['post'], true);
 			}
+			$ban['mask'] = self::range_to_string([$ban['ipstart'], $ban['ipend']]);
 		});
 		return $ban_list;
 	}
