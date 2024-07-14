@@ -134,7 +134,7 @@ class Bans {
 		WHERE
 			(' . ($board !== false ? '(`board` IS NULL OR `board` = :board) AND' : '') . '
 			(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)) OR (``bans``.id = :id))
-			AND `expires` IS NULL OR `expires` >= :curr_time
+			AND (`expires` IS NULL OR `expires` >= :curr_time)
 		ORDER BY `expires` IS NULL, `expires` DESC');
 
 		if ($board !== false) {
