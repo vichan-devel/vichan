@@ -22,7 +22,7 @@
 		'name' => 'boards',
 		'type' => 'text',
 		'comment' => '(space seperated)',
-		'default' => implode('*')
+		'default' => '*'
 	);
 	
 	$theme['config'][] = Array(
