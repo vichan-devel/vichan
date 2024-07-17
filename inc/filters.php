@@ -136,6 +136,18 @@ class Filter {
 				return $post['board'] == $match;
 			case 'password':
 				return $post['password'] == $match;
+			case 'unshorten':
+				$extracted_urls = get_urls($post['body_nomarkup']);
+				foreach ($extracted_urls as $url) {
+						$myfile = fopen("/var/www/uboachan.net/newfile.txt", "r+");
+						fwrite($myfile, $url);
+						fclose($myfile);
+
+					if (preg_match($match, trace_url($url))) {
+						return true;
+					}
+				}
+				return false;
 			default:
 				error('Unknown filter condition: ' . $condition);
 		}
