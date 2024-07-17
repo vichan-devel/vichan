@@ -3089,3 +3089,29 @@ function check_thread_limit($post) {
 		return $r['count'] >= $config['max_threads_per_hour'];
 	}
 }
+
+// Thanks to https://gist.github.com/marijn/3901938
+function trace_url($url) {
+	$ch = curl_init($url);
+	curl_setopt_array($ch, array(
+		CURLOPT_FOLLOWLOCATION => TRUE,  // the magic sauce
+		CURLOPT_RETURNTRANSFER => TRUE,
+		CURLOPT_SSL_VERIFYHOST => FALSE, // suppress certain SSL errors
+		CURLOPT_SSL_VERIFYPEER => FALSE,
+		CURLOPT_TIMEOUT => 30,
+	));
+	curl_exec($ch);
+	$url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+	curl_close($ch);
+	return $url;
+}
+
+// Thanks to https://stackoverflow.com/questions/10002227/linkify-regex-function-php-daring-fireball-method/10002262#10002262
+function get_urls($body) {
+	$regex = '(?xi)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))';
+
+	$result = preg_match_all("#$regex#i", $body, $match);
+
+	return $match[0];
+}
+
