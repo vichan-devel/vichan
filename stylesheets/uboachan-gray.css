@@ -1,0 +1,121 @@
+body {
+	background: #1C1C1C;
+	color: #AAA;
+}
+a:link, a:visited, p.intro a.email span.name {
+	color: #8080E0;
+}
+a:hover, a:link:hover, a:visited:hover {
+	color: #f33;
+}
+a.post_no {
+	color: 999;
+}
+div.post.reply {
+	background: #383838;
+	border: 1px solid #000000;
+	transition: 0.3s;
+}
+div.post.reply.highlighted {
+	/*background: #202020;*/
+	border: 1px solid #000000;
+	border-left: 1px solid #D03030;
+	background: #282828;
+	/*border: none;*/
+	transition: 0.3s;
+}
+/*Changed this*/
+div.post.reply div.body a {
+	color: #8080E0;
+}
+p.intro span.subject {
+	color: #8080E0;
+}
+p.intro span.capcode, p.intro a.capcode, p.intro a.nametag {
+        color: #F33;
+        margin-left: 0;
+}
+form table tr th {
+	background: #383838;
+	color: #CCC;
+}
+div.ban h2 {
+	background: #504040;
+	color: inherit;
+}
+div.ban {
+	border-color: #cccccc;
+	background: #404040;
+}
+div.ban p {
+	color: black;
+}
+div.pages {
+	background: #404040;
+	border-color: #000000;
+}
+div.pages a.selected {
+	color: #101010;
+}
+hr {
+	border-color: gray;
+}
+div.boardlist {
+	color: #a0a0a0;
+}
+div.boardlist a {
+	color: #a9a9a9;
+}
+div.report {
+	color: gray;
+}
+table.modlog tr th {
+	background: #555;
+}
+input, input[type="text"], input[type="password"], textarea {
+	color: #AAA;
+	background: #111;
+	border: 1px solid #000;
+}
+div.banner {
+	background-color: #833;
+}
+div.banner, div.banner a {
+	color: #000000;
+}
+div.title, h1 {
+	color: #B03030;
+}
+h2 {
+	color: #B03030;
+}
+div.blotter {
+	color: #D33;
+}
+.category {
+	background: #603030;
+	color: #141414;
+	border-color: #a9a9a9;
+}
+#maintable {
+	background: #404040;
+}
+#announcement {
+	background: #404040;
+	color: #D04040;
+}
+.post_wrap {
+	background: #404040;
+}
+.post_body {
+	background: #303030;
+}
+header div.subtitle {
+	color: #B03030;
+}
+span.heading {
+	color: #D03030;
+}
+#options_div {
+    background-color: #404040;
+}
