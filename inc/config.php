@@ -511,6 +511,17 @@
 	// 	'action' => 'reject'
 	// );
 
+	// Example: Expand shortened links in a post, looking for and blocking URLs that lead to an unwanted
+        // endpoint. Many botspam posts include a variety of shortened URLs which all point to the same few
+        // webhosts. You can use this filter to block the endpoint webhost instead of just the apparent URL.
+	// $config['filters'][] = array(
+	// 	'condition' => array(
+	// 		'unshorten' => '/endpoint.net/i',
+	// 	),
+	// 	'action' => 'reject',
+	// 	'message' => 'None of that, please.'
+	// );
+
 	// Filter flood prevention conditions ("flood-match") depend on a table which contains a cache of recent
 	// posts across all boards. This table is automatically purged of older posts, determining the maximum
 	// "age" by looking at each filter. However, when determining the maximum age, vichan does not look
