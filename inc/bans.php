@@ -365,6 +365,14 @@ class Bans {
 				openBoard($post['board']);
 
 			$post['board'] = $board['uri'];
+			/*
+			 * The body can be so long to make the json longer than 64KBs, causing the query to fail.
+			 * Truncate it to a safe length (32KBs). It could probably be longer, but if the deleted body is THAT big
+			 * already, the likelihood of it being just assorted spam/garbage is about 101%.
+			 */
+			// We're on UTF-8 only, right...?
+			$post['body'] = mb_strcut($post['body'], 0, 32768);
+
 			$query->bindValue(':post', json_encode($post));
 		} else
 			$query->bindValue(':post', null, PDO::PARAM_NULL);
