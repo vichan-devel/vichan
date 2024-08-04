@@ -212,12 +212,13 @@ function init_stylechooser() {
 	document.getElementsByTagName('body')[0].insertBefore(newElement, document.getElementsByTagName('body')[0].lastChild.nextSibling);
 }
 
-function get_cookie(cookie_name) {
-	var results = document.cookie.match ( '(^|;) ?' + cookie_name + '=([^;]*)(;|$)');
-	if (results)
-		return (unescape(results[2]));
-	else
+function getCookie(cookie_name) {
+	let results = document.cookie.match('(^|;) ?' + cookie_name + '=([^;]*)(;|$)');
+	if (results) {
+		return unescape(results[2]);
+	} else {
 		return null;
+	}
 }
 
 function highlightReply(id) {
@@ -323,9 +324,9 @@ function rememberStuff() {
 
 		if (sessionStorage.body) {
 			var saved = JSON.parse(sessionStorage.body);
-			if (get_cookie('{% endverbatim %}{{ config.cookies.js }}{% verbatim %}')) {
+			if (getCookie('{% endverbatim %}{{ config.cookies.js }}{% verbatim %}')) {
 				// Remove successful posts
-				var successful = JSON.parse(get_cookie('{% endverbatim %}{{ config.cookies.js }}{% verbatim %}'));
+				var successful = JSON.parse(getCookie('{% endverbatim %}{{ config.cookies.js }}{% verbatim %}'));
 				for (var url in successful) {
 					saved[url] = null;
 				}
