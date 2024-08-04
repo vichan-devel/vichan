@@ -193,7 +193,7 @@ function changeStyle(styleName, link) {
 {% endif %}
 {% verbatim %}
 
-function init_stylechooser() {
+function initStyleChooser() {
 	var newElement = document.createElement('div');
 	newElement.className = 'styles';
 
@@ -367,7 +367,7 @@ var script_settings = function(script_name) {
 };
 
 function init() {
-	init_stylechooser();
+	initStyleChooser();
 
 	{% endverbatim %}
 	{% if config.allow_delete %}
