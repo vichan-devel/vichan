@@ -1,4 +1,4 @@
-<form name="post" onsubmit="return dopost(this);" enctype="multipart/form-data" action="{{ config.post_url }}" method="post">
+<form name="post" onsubmit="return doPost(this);" enctype="multipart/form-data" action="{{ config.post_url }}" method="post">
 {{ antibot.html() }}
 {% if id %}<input type="hidden" name="thread" value="{{ id }}">{% endif %}
 {{ antibot.html() }}
@@ -112,7 +112,7 @@
 			</td>
 		</tr>
 			{% elseif config.new_thread_capt %}
- 			{% if not id %} 
+			{% if not id %}
  			<tr class='captcha'>
                         <th>
                                 {% trans %}Verification{% endtrans %}
@@ -165,7 +165,7 @@
 
 				{% if config.allow_upload_by_url %}
 					<div style="float:none;text-align:left" id="upload_url">
-						<label for="file_url">{% trans %}Or URL{% endtrans %}</label>: 
+						<label for="file_url">{% trans %}Or URL{% endtrans %}</label>:
 						<input style="display:inline" type="text" id="file_url" name="file_url" size="35">
 					</div>
 				{% endif %}
@@ -210,7 +210,7 @@
 				{{ antibot.html() }}
 			</th>
 			<td>
-				<input type="text" name="password" value="" size="12" maxlength="18" autocomplete="off"> 
+				<input type="text" name="password" value="" size="12" maxlength="18" autocomplete="off">
 				<span class="unimportant">{% trans %}(For file deletion.){% endtrans %}</span>
 				{{ antibot.html() }}
 			</td>
@@ -221,7 +221,7 @@
 				{{ antibot.html() }}
 			</th>
 			<td>
-				<input type="text" name="simple_spam" value="" size="12" maxlength="18" autocomplete="off"> 
+				<input type="text" name="simple_spam" value="" size="12" maxlength="18" autocomplete="off">
 				{{ antibot.html() }}
 			</td>
 		</tr>{% endif %}

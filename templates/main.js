@@ -252,7 +252,7 @@ function generatePassword() {
 	return pass;
 }
 
-function dopost(form) {
+function doPost(form) {
 	if (form.elements['name']) {
 		localStorage.name = form.elements['name'].value.replace(/( |^)## .+$/, '');
 	}
