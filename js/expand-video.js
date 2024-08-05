@@ -236,7 +236,7 @@ function setupVideosIn(element) {
 	}
 }
 
-onready(function(){
+onReady(function(){
 	// Insert menu from settings.js
 	if (typeof settingsMenu != "undefined" && typeof Options == "undefined") {
 		document.body.insertBefore(settingsMenu, document.getElementsByTagName("hr")[0]);
