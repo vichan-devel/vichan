@@ -22,7 +22,7 @@
 *
 */
 
-onready(function() {
+onReady(function() {
 	let do_embed_yt = function(tag) {
 		$('div.video-container a', tag).click(function() {
 			let videoID = $(this.parentNode).data('video');
