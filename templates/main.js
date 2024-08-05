@@ -386,7 +386,7 @@ var RecaptchaOptions = {
 };
 
 onready_callbacks = [];
-function onready(fnc) {
+function onReady(fnc) {
 	onready_callbacks.push(fnc);
 }
 
@@ -401,7 +401,7 @@ function ready() {
 var post_date = "{{ config.post_date }}";
 var max_images = {{ config.max_images }};
 
-onready(init);
+onReady(init);
 
 {% if config.google_analytics %}{% verbatim %}
 
