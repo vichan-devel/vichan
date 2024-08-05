@@ -12,7 +12,7 @@
  *
  */
 
-onready(function() {
+onReady(function() {
 	if (device_type == 'mobile') {
 		let fix_spoilers = function(where) {
 			let spoilers = where.getElementsByClassName('spoiler');
