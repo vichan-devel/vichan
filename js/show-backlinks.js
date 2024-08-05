@@ -13,7 +13,7 @@
  *
  */
 
-onready(function() {
+onReady(function() {
 	let showBackLinks = function() {
 		let reply_id = $(this).attr('id').replace(/(^reply_)|(^op_)/, '');
 
