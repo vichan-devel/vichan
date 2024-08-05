@@ -13,7 +13,7 @@
  *
  */
 
-onready(function() {
+onReady(function() {
 	let dontFetchAgain = [];
 	initHover = function() {
 		let link = $(this);
