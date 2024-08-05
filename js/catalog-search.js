@@ -8,7 +8,7 @@
  *   $config['additional_javascript'][] = 'js/comment-toolbar.js';
  */
 if (active_page == 'catalog') {
-	onready(function() {
+	onReady(function() {
 		'use strict';
 
 		// 'true' = enable shortcuts
