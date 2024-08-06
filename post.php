@@ -186,6 +186,41 @@ function strip_image_metadata(string $img_path): int {
 }
 
 /**
+ * Delete posts in a cyclical thread.
+ *
+ * @param string $boardUri The URI of the board.
+ * @param int $threadId The ID of the thread.
+ * @param int $cycleLimit The number of most recent posts to retain.
+ */
+function delete_cyclical_posts(string $boardUri, int $threadId, int $cycleLimit): void
+{
+    $query = prepare(sprintf('
+        SELECT p.`id`
+        FROM ``posts_%s`` p
+        LEFT JOIN (
+            SELECT `id`
+            FROM ``posts_%s``
+            WHERE `thread` = :thread
+            ORDER BY `id` DESC
+            LIMIT :limit
+        ) recent_posts ON p.id = recent_posts.id
+        WHERE p.thread = :thread
+        AND recent_posts.id IS NULL',
+        $boardUri, $boardUri
+    ));
+
+    $query->bindValue(':thread', $threadId, PDO::PARAM_INT);
+    $query->bindValue(':limit', $cycleLimit, PDO::PARAM_INT);
+
+    $query->execute() or error(db_error($query));
+    $ids = $query->fetchAll(PDO::FETCH_COLUMN);
+
+    foreach ($ids as $id) {
+        deletePost($id, false);
+    }
+}
+
+/**
  * Method handling functions
  */
 
@@ -1282,11 +1317,7 @@ if (isset($_POST['delete'])) {
 
 	// Handle cyclical threads
 	if (!$post['op'] && isset($thread['cycle']) && $thread['cycle']) {
-		// Query is a bit weird due to "This version of MariaDB doesn't yet support 'LIMIT & IN/ALL/ANY/SOME subquery'" (MariaDB Ver 15.1 Distrib 10.0.17-MariaDB, for Linux (x86_64))
-		$query = prepare(sprintf('DELETE FROM ``posts_%s`` WHERE `thread` = :thread AND `id` NOT IN (SELECT `id` FROM (SELECT `id` FROM ``posts_%s`` WHERE `thread` = :thread ORDER BY `id` DESC LIMIT :limit) i)', $board['uri'], $board['uri']));
-		$query->bindValue(':thread', $post['thread']);
-		$query->bindValue(':limit', $config['cycle_limit'], PDO::PARAM_INT);
-		$query->execute() or error(db_error($query));
+		delete_cyclical_posts($board['uri'], $post['thread'], $config['cycle_limit']);
 	}
 
 	if (isset($post['antispam_hash'])) {
