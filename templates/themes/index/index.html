@@ -23,7 +23,7 @@
 	<div class="box-wrap">
 	    <fieldset>
 		<legend>Boards</legend>
-		<ul style="columns: 2;">
+		<ul>
 			{% for board in boards %}
 				<li class="boardlinksurl">
 					<a href="{{ config.board_path|sprintf(board.uri) }}">
