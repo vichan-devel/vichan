@@ -80,7 +80,7 @@
 			{% endverbatim %}
 			{% for name, uri in config.stylesheets %}{% verbatim %}'{% endverbatim %}{{ name|addslashes }}{% verbatim %}' : '{% endverbatim %}/stylesheets/{{ uri|addslashes }}{% verbatim %}',
 			{% endverbatim %}{% endfor %}{% verbatim %}
-		}; onready(init);
+		}; onReady(init);
 	{% endverbatim %}</script>
 
 	<script type="text/javascript">{% verbatim %}
