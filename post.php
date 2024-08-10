@@ -207,7 +207,7 @@ function delete_cyclical_posts(string $boardUri, int $threadId, int $cycleLimit)
  */
 
 $dropped_post = false;
-$context = new Context(new WebDependencyFactory($config));
+$context = Vichan\build_context($config);
 
 // Is it a post coming from NNTP? Let's extract it and pretend it's a normal post.
 if (isset($_GET['Newsgroups']) && $config['nntpchan']['enabled']) {
@@ -286,7 +286,7 @@ if (isset($_GET['Newsgroups']) && $config['nntpchan']['enabled']) {
 		$content = file_get_contents("php://input");
 	}
 	elseif ($ct == 'multipart/mixed' || $ct == 'multipart/form-data') {
-		$context->getLog()->log(Log::DEBUG, 'MM: Files: ' . print_r($GLOBALS, true));
+		$context->get(Log::class)->log(Log::DEBUG, 'MM: Files: ' . print_r($GLOBALS, true));
 
 		$content = '';
 
@@ -454,7 +454,7 @@ if (isset($_POST['delete'])) {
 				modLog("User at $ip deleted their own post #$id");
 			}
 
-			$context->getLog()->log(
+			$context->get(Log::class)->log(
 				Log::INFO,
 				'Deleted post: /' . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '')
 			);
@@ -517,7 +517,7 @@ if (isset($_POST['delete'])) {
 
 		try {
 			$query = new NativeCaptchaQuery(
-				$context->getHttpDriver(),
+				$context->get(HttpDriver::class),
 				$config['domain'],
 				$config['captcha']['provider_check']
 			);
@@ -531,7 +531,7 @@ if (isset($_POST['delete'])) {
 				error($config['error']['captcha']);
 			}
 		} catch (RuntimeException $e) {
-			$context->getLog()->log(Log::ERROR, "Native captcha IO exception: {$e->getMessage()}");
+			$context->get(Log::class)->log(Log::ERROR, "Native captcha IO exception: {$e->getMessage()}");
 			error($config['error']['local_io_error']);
 		}
 	}
@@ -550,7 +550,7 @@ if (isset($_POST['delete'])) {
 
 		$post = $query->fetch(PDO::FETCH_ASSOC);
 		if ($post === false) {
-			$context->getLog()->log(Log::INFO, "Failed to report non-existing post #{$id} in {$board['dir']}");
+			$context->get(Log::class)->log(Log::INFO, "Failed to report non-existing post #{$id} in {$board['dir']}");
 			error($config['error']['nopost']);
 		}
 
@@ -559,7 +559,7 @@ if (isset($_POST['delete'])) {
 			error($error);
 		}
 
-		$context->getLog()->log(
+		$context->get(Log::class)->log(
 			Log::INFO,
 			'Reported post: /'
 				 . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '')
@@ -631,7 +631,7 @@ if (isset($_POST['delete'])) {
 		try {
 			// With our custom captcha provider
 			if ($config['captcha']['enabled'] || ($post['op'] && $config['new_thread_capt'])) {
-				$query = new NativeCaptchaQuery($context->getHttpDriver(), $config['domain'], $config['captcha']['provider_check']);
+				$query = new NativeCaptchaQuery($context->get(HttpDriver::class), $config['domain'], $config['captcha']['provider_check']);
 				$success = $query->verify($config['captcha']['extra'], $_POST['captcha_text'], $_POST['captcha_cookie']);
 
 				if (!$success) {
@@ -655,7 +655,7 @@ if (isset($_POST['delete'])) {
 						error($config['error']['bot']);
 					}
 					$response = $_POST['g-recaptcha-response'];
-					$query = RemoteCaptchaQuery::withRecaptcha($context->getHttpDriver(), $config['recaptcha_private']);
+					$query = RemoteCaptchaQuery::withRecaptcha($context->get(HttpDriver::class), $config['recaptcha_private']);
 				}
 				// hCaptcha
 				elseif ($config['hcaptcha']) {
@@ -663,7 +663,7 @@ if (isset($_POST['delete'])) {
 						error($config['error']['bot']);
 					}
 					$response = $_POST['h-captcha-response'];
-					$query = RemoteCaptchaQuery::withHCaptcha($context->getHttpDriver(), $config['hcaptcha_private']);
+					$query = RemoteCaptchaQuery::withHCaptcha($context->get(HttpDriver::class), $config['hcaptcha_private']);
 				}
 
 				if (isset($query, $response)) {
@@ -785,7 +785,7 @@ if (isset($_POST['delete'])) {
 
 		try {
 			$ret = download_file_from_url(
-				$context->getHttpDriver(),
+				$context->get(HttpDriver::class),
 				$_POST['file_url'],
 				$config['upload_by_url_timeout'],
 				$allowed_extensions,
@@ -1163,7 +1163,7 @@ if (isset($_POST['delete'])) {
 					try {
 						$file['size'] = strip_image_metadata($file['tmp_name']);
 					} catch (RuntimeException $e) {
-						$context->getLog()->log(Log::ERROR, "Could not strip image metadata: {$e->getMessage()}");
+						$context->get(Log::class)->log(Log::ERROR, "Could not strip image metadata: {$e->getMessage()}");
 						// Since EXIF metadata can countain sensible info, fail the request.
 						error(_('Could not strip EXIF metadata!'), null, $error);
 					}
@@ -1201,7 +1201,7 @@ if (isset($_POST['delete'])) {
 						$post['body_nomarkup'] .= "<tinyboard ocr image $key>" . htmlspecialchars($value) . "</tinyboard>";
 					}
 				} catch (RuntimeException $e) {
-					$context->getLog()->log(Log::ERROR, "Could not OCR image: {$e->getMessage()}");
+					$context->get(Log::class)->log(Log::ERROR, "Could not OCR image: {$e->getMessage()}");
 				}
 			}
 		}
@@ -1395,7 +1395,7 @@ if (isset($_POST['delete'])) {
 
 	buildThread($post['op'] ? $id : $post['thread']);
 
-	$context->getLog()->log(
+	$context->get(Log::class)->log(
 		Log::INFO,
 		'New post: /' . $board['dir'] . $config['dir']['res'] . link_for($post) . (!$post['op'] ? '#' . $id : '')
 	);
