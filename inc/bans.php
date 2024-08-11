@@ -4,6 +4,10 @@ use Vichan\Functions\Format;
 use Lifo\IP\CIDR;
 
 class Bans {
+	static private function shouldDelete(array $ban, bool $require_ban_view) {
+		return $ban['expires'] && ($ban['seen'] || !$require_ban_view) && $ban['expires'] < time();
+	}
+
 	static private function deleteBans(array $ban_ids) {
 		$len = count($ban_ids);
 		if ($len === 1) {
@@ -33,6 +37,127 @@ class Bans {
 		}
 	}
 
+	static private function findSingleAutoGc(string $ip, int $ban_id, bool $require_ban_view): array|null {
+		// Use OR in the query to also garbage collect bans.
+		$query = prepare(
+			'SELECT ``bans``.* FROM ``bans``
+			 WHERE ((`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)) OR (``bans``.id = :id))
+			 ORDER BY `expires` IS NULL, `expires` DESC'
+		);
+
+		$query->bindValue(':id', $ban_id);
+		$query->bindValue(':ip', inet_pton($ip));
+
+		$query->execute() or error(db_error($query));
+
+		$found_ban = null;
+		$to_delete_list = [];
+
+		while ($ban = $query->fetch(PDO::FETCH_ASSOC)) {
+			if (self::shouldDelete($ban, $require_ban_view)) {
+				$to_delete_list[] = $ban['id'];
+			} elseif ($ban['id'] === $ban_id) {
+				if ($ban['post']) {
+					$ban['post'] = json_decode($ban['post'], true);
+				}
+				$ban['mask'] = self::range_to_string([$ban['ipstart'], $ban['ipend']]);
+				$found_ban = $ban;
+			}
+		}
+
+		self::deleteBans($to_delete_list);
+
+		return $found_ban;
+	}
+
+	static private function findSingleNoGc(int $ban_id): array|null {
+		$query = prepare(
+			'SELECT ``bans``.* FROM ``bans``
+			 WHERE ``bans``.id = :id
+			 ORDER BY `expires` IS NULL, `expires` DESC
+			 LIMIT 1'
+		);
+
+		$query->bindValue(':id', $ban_id);
+
+		$query->execute() or error(db_error($query));
+		$ret = $query->fetch(PDO::FETCH_ASSOC);
+		if ($query->rowCount() == 0) {
+			return null;
+		} else {
+			if ($ret['post']) {
+				$ret['post'] = json_decode($ret['post'], true);
+			}
+			$ret['mask'] = self::range_to_string([$ret['ipstart'], $ret['ipend']]);
+
+			return $ret;
+		}
+	}
+
+	static private function findAutoGc(?string $ip, string|false $board, bool $get_mod_info, bool $require_ban_view, ?int $ban_id): array {
+		$query = prepare('SELECT ``bans``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``bans``
+		' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
+		WHERE
+			(' . ($board !== false ? '(`board` IS NULL OR `board` = :board) AND' : '') . '
+			(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)) OR (``bans``.id = :id))
+		ORDER BY `expires` IS NULL, `expires` DESC');
+
+		if ($board !== false) {
+			$query->bindValue(':board', $board, PDO::PARAM_STR);
+		}
+
+		$query->bindValue(':id', $ban_id);
+		$query->bindValue(':ip', inet_pton($ip));
+		$query->execute() or error(db_error($query));
+
+		$ban_list = [];
+		$to_delete_list = [];
+
+		while ($ban = $query->fetch(PDO::FETCH_ASSOC)) {
+			if (self::shouldDelete($ban, $require_ban_view)) {
+				$to_delete_list[] = $ban['id'];
+			} else {
+				if ($ban['post']) {
+					$ban['post'] = json_decode($ban['post'], true);
+				}
+				$ban['mask'] = self::range_to_string([$ban['ipstart'], $ban['ipend']]);
+				$ban_list[] = $ban;
+			}
+		}
+
+		self::deleteBans($to_delete_list);
+
+		return $ban_list;
+	}
+
+	static private function findNoGc(?string $ip, string|false $board, bool $get_mod_info, ?int $ban_id): array {
+		$query = prepare('SELECT ``bans``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``bans``
+		' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
+		WHERE
+			(' . ($board !== false ? '(`board` IS NULL OR `board` = :board) AND' : '') . '
+			(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)) OR (``bans``.id = :id))
+			AND (`expires` IS NULL OR `expires` >= :curr_time)
+		ORDER BY `expires` IS NULL, `expires` DESC');
+
+		if ($board !== false) {
+			$query->bindValue(':board', $board, PDO::PARAM_STR);
+		}
+
+		$query->bindValue(':id', $ban_id);
+		$query->bindValue(':ip', inet_pton($ip));
+		$query->bindValue(':curr_time', time());
+		$query->execute() or error(db_error($query));
+
+		$ban_list = $query->fetchAll(PDO::FETCH_ASSOC);
+		array_walk($ban_list, function (&$ban, $_index) {
+			if ($ban['post']) {
+				$ban['post'] = json_decode($ban['post'], true);
+			}
+			$ban['mask'] = self::range_to_string([$ban['ipstart'], $ban['ipend']]);
+		});
+		return $ban_list;
+	}
+
 	static public function range_to_string($mask) {
 		list($ipstart, $ipend) = $mask;
 
@@ -56,7 +181,7 @@ class Bans {
 		$cidr = new CIDR($mask);
 		$range = $cidr->getRange();
 
-		return array(inet_pton($range[0]), inet_pton($range[1]));
+		return [ inet_pton($range[0]), inet_pton($range[1]) ];
 	}
 
 	public static function parse_time($str) {
@@ -140,82 +265,25 @@ class Bans {
 				return false;
 		}
 
-		return array($ipstart, $ipend);
+		return [$ipstart, $ipend];
 	}
 
-	static public function findSingle(string $ip, int $ban_id, bool $require_ban_view): array|null {
-		/**
-		 * Use OR in the query to also garbage collect bans. Ideally we should move the whole GC procedure to a separate
-		 * script, but it will require a more important restructuring.
-		 */
-		$query = prepare(
-			'SELECT ``bans``.* FROM ``bans``
-			 WHERE ((`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)) OR (``bans``.id = :id))
-			 ORDER BY `expires` IS NULL, `expires` DESC'
-		);
-
-		$query->bindValue(':id', $ban_id);
-		$query->bindValue(':ip', inet_pton($ip));
-
-		$query->execute() or error(db_error($query));
-
-		$found_ban = null;
-		$to_delete_list = [];
-
-		while ($ban = $query->fetch(PDO::FETCH_ASSOC)) {
-			if ($ban['expires'] && ($ban['seen'] || !$require_ban_view) && $ban['expires'] < time()) {
-				$to_delete_list[] = $ban['id'];
-			} elseif ($ban['id'] === $ban_id) {
-				if ($ban['post']) {
-					$ban['post'] = json_decode($ban['post'], true);
-				}
-				$ban['mask'] = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
-				$ban['cmask'] = cloak_mask($ban['mask']);
-				$found_ban = $ban;
-			}
+	static public function findSingle(string $ip, int $ban_id, bool $require_ban_view, bool $auto_gc): array|null {
+		if ($auto_gc) {
+			return self::findSingleAutoGc($ip, $ban_id, $require_ban_view);
+		} else {
+			return self::findSingleNoGc($ban_id);
 		}
-
-		self::deleteBans($to_delete_list);
-
-		return $found_ban;
 	}
 
-	static public function find($ip, $board = false, $get_mod_info = false, $banid = null) {
+	static public function find(?string $ip, string|false $board = false, bool $get_mod_info = false, ?int $ban_id = null, bool $auto_gc = true) {
 		global $config;
 
-		$query = prepare('SELECT ``bans``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``bans``
-		' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
-		WHERE
-			(' . ($board !== false ? '(`board` IS NULL OR `board` = :board) AND' : '') . '
-		(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)) OR (``bans``.id = :id))
-		ORDER BY `expires` IS NULL, `expires` DESC');
-
-		if ($board !== false)
-			$query->bindValue(':board', $board, PDO::PARAM_STR);
-
-		$query->bindValue(':id', $banid);
-		$query->bindValue(':ip', inet_pton($ip));
-
-		$query->execute() or error(db_error($query));
-
-		$ban_list = array();
-		$to_delete_list = [];
-
-		while ($ban = $query->fetch(PDO::FETCH_ASSOC)) {
-			if ($ban['expires'] && ($ban['seen'] || !$config['require_ban_view']) && $ban['expires'] < time()) {
-				$to_delete_list[] = $ban['id'];
-			} else {
-				if ($ban['post'])
-					$ban['post'] = json_decode($ban['post'], true);
-				$ban['mask'] = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
-				$ban['cmask'] = cloak_mask($ban['mask']);
-				$ban_list[] = $ban;
-			}
+		if ($auto_gc) {
+			return self::findAutoGc($ip, $board, $get_mod_info, $config['require_ban_view'], $ban_id);
+		} else {
+			return self::findNoGc($ip, $board, $get_mod_info, $ban_id);
 		}
-
-		self::deleteBans($to_delete_list);
-
-		return $ban_list;
 	}
 
 	static public function stream_json($out = false, $filter_ips = false, $filter_staff = false, $board_access = false) {
@@ -231,8 +299,7 @@ class Bans {
 		$end = end($bans);
 
 		foreach ($bans as &$ban) {
-			$uncloaked_mask = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
-			$ban['mask'] = cloak_mask($uncloaked_mask);
+			$ban['mask'] = self::range_to_string([$ban['ipstart'], $ban['ipend']]);
 
 			if ($ban['post']) {
 				$post = json_decode($ban['post']);
@@ -279,9 +346,21 @@ class Bans {
                 rebuildThemes('bans');
 	}
 
-	static public function purge() {
-		$query = query("DELETE FROM ``bans`` WHERE `expires` IS NOT NULL AND `expires` < " . time() . " AND `seen` = 1") or error(db_error());
-		rebuildThemes('bans');
+	static public function purge($require_seen, $moratorium) {
+		if ($require_seen) {
+			$query = prepare("DELETE FROM ``bans`` WHERE `expires` IS NOT NULL AND `expires` + :moratorium < :curr_time AND `seen` = 1");
+		} else {
+			$query = prepare("DELETE FROM ``bans`` WHERE `expires` IS NOT NULL AND `expires` + :moratorium < :curr_time");
+		}
+		$query->bindValue(':moratorium', $moratorium);
+		$query->bindValue(':curr_time', time());
+		$query->execute() or error(db_error($query));
+
+		$affected = $query->rowCount();
+		if ($affected > 0) {
+			rebuildThemes('bans');
+		}
+		return $affected;
 	}
 
 	static public function delete($ban_id, $modlog = false, $boards = false, $dont_rebuild = false) {
@@ -299,8 +378,7 @@ class Bans {
 			if ($boards !== false && !in_array($ban['board'], $boards))
 		                error($config['error']['noaccess']);
 
-			$mask = self::range_to_string(array($ban['ipstart'], $ban['ipend']));
-			$cloaked_mask = cloak_mask($mask);
+			$mask = self::range_to_string([$ban['ipstart'], $ban['ipend']]);
 
 			modLog("Removed ban #{$ban_id} for " .
 				(filter_var($mask, FILTER_VALIDATE_IP) !== false ? "<a href=\"?/IP/$cloaked_mask\">$cloaked_mask</a>" : $cloaked_mask));

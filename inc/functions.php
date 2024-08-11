@@ -876,11 +876,13 @@ function checkBan($board = false) {
 	}
 
 	foreach ($ips as $ip) {
-		$bans = Bans::find($ip, $board, $config['show_modname']);
+		$bans = Bans::find($ip, $board, $config['show_modname'], null, $config['auto_maintenance']);
 
 		foreach ($bans as &$ban) {
 			if ($ban['expires'] && $ban['expires'] < time()) {
-				Bans::delete($ban['id']);
+				if ($config['auto_maintenance']) {
+					Bans::delete($ban['id']);
+				}
 				if ($config['require_ban_view'] && !$ban['seen']) {
 					if (!isset($_POST['json_response'])) {
 						displayBan($ban);
@@ -900,17 +902,20 @@ function checkBan($board = false) {
 		}
 	}
 
-	// I'm not sure where else to put this. It doesn't really matter where; it just needs to be called every
-	// now and then to keep the ban list tidy.
-	if ($config['cache']['enabled'] && $last_time_purged = cache::get('purged_bans_last')) {
-		if (time() - $last_time_purged < $config['purge_bans'] )
-			return;
+	if ($config['auto_maintenance']) {
+		// I'm not sure where else to put this. It doesn't really matter where; it just needs to be called every
+		// now and then to keep the ban list tidy.
+		if ($config['cache']['enabled']) {
+			$last_time_purged = cache::get('purged_bans_last');
+			if ($last_time_purged !== false && time() - $last_time_purged > $config['purge_bans']) {
+				Bans::purge($config['require_ban_view'], $config['purge_bans']);
+				cache::set('purged_bans_last', time());
+			}
+		} else {
+			// Purge every time.
+			Bans::purge($config['require_ban_view'], $config['purge_bans']);
+		}
 	}
-
-	Bans::purge();
-
-	if ($config['cache']['enabled'])
-		cache::set('purged_bans_last', time());
 }
 
 function threadLocked($id) {
@@ -1612,27 +1617,40 @@ function checkMute() {
 	}
 }
 
+function purge_old_antispam() {
+	$query = prepare('DELETE FROM ``antispam`` WHERE `expires` < UNIX_TIMESTAMP()');
+	$query->execute() or error(db_error());
+	return $query->rowCount();
+}
+
 function _create_antibot($board, $thread) {
 	global $config, $purged_old_antispam;
 
-	$antibot = new AntiBot(array($board, $thread));
+	$antibot = new AntiBot([$board, $thread]);
 
-	if (!isset($purged_old_antispam)) {
+	// Delete old expired antispam, skipping those with NULL expiration timestamps (infinite lifetime).
+	if (!isset($purged_old_antispam) && $config['auto_maintenance']) {
 		$purged_old_antispam = true;
 		query('DELETE FROM ``antispam`` WHERE `expires` < UNIX_TIMESTAMP()') or error(db_error());
 	}
 
-	if ($thread)
+	// Keep the now invalid timestamps around for a bit to enable users to post if they're still on an old version of
+	// the HTML page.
+	// By virtue of existing, we know that we're making a new version of the page, and the user from now on may just reload.
+	if ($thread) {
 		$query = prepare('UPDATE ``antispam`` SET `expires` = UNIX_TIMESTAMP() + :expires WHERE `board` = :board AND `thread` = :thread AND `expires` IS NULL');
-	else
+	} else {
 		$query = prepare('UPDATE ``antispam`` SET `expires` = UNIX_TIMESTAMP() + :expires WHERE `board` = :board AND `thread` IS NULL AND `expires` IS NULL');
+	}
 
 	$query->bindValue(':board', $board);
-	if ($thread)
+	if ($thread) {
 		$query->bindValue(':thread', $thread);
+	}
 	$query->bindValue(':expires', $config['spam']['hidden_inputs_expire']);
 	$query->execute() or error(db_error($query));
 
+	// Insert an antispam with infinite life as the HTML page of a thread might last well beyond the expiry date.
 	$query = prepare('INSERT INTO ``antispam`` VALUES (:board, :thread, :hash, UNIX_TIMESTAMP(), NULL, 0)');
 	$query->bindValue(':board', $board);
 	$query->bindValue(':thread', $thread);

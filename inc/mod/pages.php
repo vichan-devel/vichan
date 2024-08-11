@@ -897,7 +897,7 @@ function mod_page_ip($cip) {
 	$args['token'] = make_secure_link_token('ban');
 
 	if (hasPermission($config['mod']['view_ban'])) {
-		$args['bans'] = Bans::find($ip, false, true);
+		$args['bans'] = Bans::find($ip, false, true, null, $config['auto_maintenance']);
 	}
 
 	if (hasPermission($config['mod']['view_notes'])) {
@@ -927,7 +927,7 @@ function mod_edit_ban($ban_id) {
 	if (!hasPermission($config['mod']['edit_ban']))
 		error($config['error']['noaccess']);
 
-	$args['bans'] = Bans::find(null, false, true, $ban_id);
+	$args['bans'] = Bans::find(null, false, true, $ban_id, $config['auto_maintenance']);
 	$args['ban_id'] = $ban_id;
 	$args['boards'] = listBoards();
 	$args['current_board'] = isset($args['bans'][0]['board']) ? $args['bans'][0]['board'] : false;
@@ -1043,10 +1043,6 @@ function mod_ban_appeals() {
 
 	if (!hasPermission($config['mod']['view_ban_appeals']))
 		error($config['error']['noaccess']);
-
-	// Remove stale ban appeals
-	query("DELETE FROM ``ban_appeals`` WHERE NOT EXISTS (SELECT 1 FROM ``bans`` WHERE `ban_id` = ``bans``.`id`)")
-		or error(db_error());
 
 	if (isset($_POST['appeal_id']) && (isset($_POST['unban']) || isset($_POST['deny']))) {
 		if (!hasPermission($config['mod']['ban_appeals']))
