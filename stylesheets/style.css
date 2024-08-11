@@ -253,10 +253,6 @@ input.delete {
   margin-left: 0;
 }
 
-.intro a {
-  margin-left: 8px;
-}
-
 div.delete {
   float: right;
 }
@@ -952,7 +948,7 @@ span.pln {
   color: grey;
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 48em) {
   .intro {
     clear: none;
   }
@@ -1070,6 +1066,111 @@ div.boardlist a {
 
 #youtube-size input {
   width: 50px;
+}
+
+div.video-container {
+  display: block;
+  min-width: unset !important;
+  align-items: center;
+  max-width: 15%;
+}
+
+@media only screen and (max-width: 48em) {
+  /* wired-7 style_m.css plus edit by perdedora */
+  hr {
+    margin: 1em 0;
+  }
+  div.post.reply {
+    width: 100%;
+    padding: 0.5em 0px 0.5em 0.5em;
+    margin: 0;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    margin: 0px;
+  }
+  div.post.reply div.body {
+    margin-inline-start: 10px;
+    margin-inline-end: 0px;
+    margin-left: initial !important;
+  }
+  .post-btn {
+    margin: 0 2px 0 2px;
+  }
+  .post-image{
+    max-width: 150px;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  div.post:not(.op) div.body{
+    clear:none;
+  }
+
+  div.post .files {
+    display: inline-flex !important;
+    float:left;
+    flex-flow: row wrap;
+    align-content: space-between;
+    margin-right: 10px;
+    margin-top: 2px;
+  }
+
+  div.thread.files {
+    display: flex;
+    flex-flow: row wrap;
+    float: left;
+  }
+  div.file.multifile {
+    min-width: unset !important;
+    width: unset !important;
+  }
+
+  div.post .file {
+    width: initial !important;
+    min-width: 100px;
+  }
+
+  .full-image {
+    max-width: 100%;
+  }
+  div.video-container {
+    max-width: unset !important;
+  }
+  .intro time,
+  .name,
+  .own_post,
+  .poster_id,
+  i fa,
+  .post_no,
+  .capcode {
+    font-size: 1em;
+  }
+  .intro a:not(#reply-button) {
+    margin-left: unset !important;
+  }
+  .post-btn,
+  .hide-thread-link {
+    margin-right: 2px !important;
+  }
+  .show-image-link,
+  .hide-image-link {
+    font-size: 16px;
+    margin: 0 4px !important;
+  }
+}
+
+p.fileinfo .unimportant {
+  @media (max-width: 48em) {
+    display: none;
+  }
+}
+
+p.fileinfo span + span {
+  margin-right: 0.3em;
+}
+
+.image_id a + a {
+  margin-left: 0.3em;
 }
 
 /* File selector */
