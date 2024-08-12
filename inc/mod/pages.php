@@ -818,7 +818,7 @@ function mod_ip_remove_note($cloaked_ip, $id) {
 
 
 
-function mod_page_ip($cip) {
+function mod_ip($cip) {
 	$ip = uncloak_ip($cip);
 	global $config, $mod;
 
