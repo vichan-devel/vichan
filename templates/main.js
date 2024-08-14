@@ -413,7 +413,7 @@ function addFormListener() {
     var form = document.getElementById('post-form');
 
     if (form) {
-        form.addEventListener('submit', function(event) {
+        form.addEventListener('submit', (event) => {
             if (!dopost(form)) {
                 event.preventDefault();
             }
