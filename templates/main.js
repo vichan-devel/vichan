@@ -357,7 +357,9 @@ var script_settings = function(script_name) {
 };
 
 function init() {
-	init_stylechooser();
+	if (active_page !== 'page') {
+		init_stylechooser();
+	}
 
 	{% endverbatim %}	
 	{% if config.allow_delete %}
@@ -413,6 +415,8 @@ function addFormListener() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+	ready();
+	rememberStuff();
 	addLinkListenersCite('.highlight-link', highlightReply);
 	addLinkListenersCite('.cite-link', citeReply);
 	addFormListener();
