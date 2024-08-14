@@ -375,7 +375,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 
 			var list = getList();
 			var postId = $post.find('.post_no').not('[id]').text();
-			var name, trip, uid, subject, comment;
+			var name, trip, uid, subject, comment, flag;
 			var i, length, array, rule, pattern;  // temp variables
 
 			var boardId	      = $post.data('board');
@@ -388,6 +388,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 
 			var hasTrip = ($post.find('.trip').length > 0);
 			var hasSub = ($post.find('.subject').length > 0);
+			var hasFlag = ($post.find('.flag').length > 0);
 
 			$post.data('hidden', false);
 			$post.data('hiddenByUid', false);
@@ -396,6 +397,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 			$post.data('hiddenByTrip', false);
 			$post.data('hiddenBySubject', false);
 			$post.data('hiddenByComment', false);
+			$post.data('hiddenByFlag', false);
 
 			// add post with matched UID to localList
 			if (hasUID &&
@@ -436,6 +438,8 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 			});
 			comment = array.join(' ');
 
+			if (hasFlag)
+				flag = $post.find('.flag').attr('title')
 
 			for (i = 0, length = list.generalFilter.length; i < length; i++) {
 				rule = list.generalFilter[i];
@@ -467,6 +471,12 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 								hide(post);
 							}
 							break;
+						case 'flag':
+							if (hasFlag && pattern.test(flag)) {
+								$post.data('hiddenByFlag', true);
+								hide(post);
+							}
+							break;
 					}
 				} else {
 					switch (rule.type) {
@@ -493,6 +503,13 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 							pattern = new RegExp('\\b'+ rule.value+ '\\b');
 							if (pattern.test(comment)) {
 								$post.data('hiddenByComment', true);
+								hide(post);
+							}
+							break;
+						case 'flag':
+							pattern = new RegExp('\\b'+ rule.value+ '\\b');
+							if (hasFlag && pattern.test(flag)) {
+								$post.data('hiddenByFlag', true);
 								hide(post);
 							}
 							break;
@@ -621,7 +638,8 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 				name: 'name',
 				trip: 'tripcode',
 				sub: 'subject',
-				com: 'comment'
+				com: 'comment',
+				flag: 'flag'
 			};
 
 			$ele.empty();
@@ -660,6 +678,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 							'<option value="trip">'+_('Tripcode')+'</option>' +
 							'<option value="sub">'+_('Subject')+'</option>' +
 							'<option value="com">'+_('Comment')+'</option>' +
+							'<option value="flag">'+_('Flag')+'</option>' +
 						'</select>' +
 						'<input type="text">' +
 						'<input type="checkbox">' +
