@@ -400,9 +400,22 @@ function addLinkListenersCite(selector, callback) {
     });
 }
 
+function addFormListener() {
+    var form = document.getElementById('post-form');
+
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            if (!dopost(form)) {
+                event.preventDefault();
+            }
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 	addLinkListenersCite('.highlight-link', highlightReply);
 	addLinkListenersCite('.cite-link', citeReply);
+	addFormListener();
 });
 
 {% endverbatim %}

@@ -1,4 +1,4 @@
-<form name="post" onsubmit="return dopost(this);" enctype="multipart/form-data" action="{{ config.post_url }}" method="post">
+<form name="post" id="post-form" enctype="multipart/form-data" action="{{ config.post_url }}" method="post">
 {{ antibot.html() }}
 {% if id %}<input type="hidden" name="thread" value="{{ id }}">{% endif %}
 {{ antibot.html() }}
