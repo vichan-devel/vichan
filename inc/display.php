@@ -307,10 +307,15 @@ function bidi_cleanup($data) {
 }
 
 function secure_link_confirm($text, $title, $confirm_message, $href) {
-	global $config;
+    $secure_url = htmlspecialchars('?/' . $href . '/' . make_secure_link_token($href), ENT_QUOTES, 'UTF-8');
 
-	return '<a onclick="if (event.which==2) return true;if (confirm(\'' . htmlentities(addslashes($confirm_message)) . '\')) document.location=\'?/' . htmlspecialchars(addslashes($href . '/' . make_secure_link_token($href))) . '\';return false;" title="' . htmlentities($title) . '" href="?/' . $href . '">' . $text . '</a>';
+	$title = htmlentities($title);
+
+	$confirm_message = htmlentities($confirm_message);
+
+	return "<a title='{$title}' data-href='{$secure_url}' href='?/{$href}' data-confirm='{$confirm_message}'>{$text}</a>";
 }
+
 function secure_link($href) {
 	return $href . '/' . make_secure_link_token($href);
 }

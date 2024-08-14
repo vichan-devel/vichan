@@ -11,6 +11,9 @@
                         var inMod = {% if mod %}true{% else %}false{% endif %};
                         var modRoot="{{ config.root }}"+(inMod ? "mod.php?/" : "");
                 </script>
+                {% if mod %}
+                        <script type="text/javascript" src="js/mod/mod-scripts.js"></script>
+                {% endif %}
                 {% if not nojavascript %}
                         <script type="text/javascript" src="{{ config.url_javascript }}"></script>
                         {% if not config.additional_javascript_compile %}
