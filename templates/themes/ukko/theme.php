@@ -98,7 +98,7 @@
 				$count += 1;
 			}
 
-			$body .= '<script> var overflow = ' . json_encode($overflow) . '</script>';
+			$body .= '<script id="overflow-data" type="application/json">' . json_encode($overflow) . '</script>';
 			$body .= '<script type="text/javascript" src="/'.$this->settings['uri'].'/ukko.js"></script>';
 
 			return Element('index.html', array(

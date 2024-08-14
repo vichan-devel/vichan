@@ -54,6 +54,7 @@ $(document).ready(function() {
 
 	$('.pages').hide();
 	var loadnext = function() {
+		let overflow = JSON.parse(document.getElementById('overflow-data').textContent || '[]');
 		if (overflow.length == 0) {
 			$('.pages').show().html(_("No more threads to display"));
 		}
