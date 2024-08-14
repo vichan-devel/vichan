@@ -5,7 +5,7 @@
 <tr id="filethread_{{ post.id }}" class="intro" data-board="{{ board.uri }}">
 
 <td><input type="checkbox" class="delete" name="delete_{{ post.id }}" id="delete_{{ post.id }}" />
-<td><a class="post_no" onclick="citeReply({{ post.id }})" href="{{ post.link('q') }}">{{ post.id }}</a>
+<td><a class="post_no" data-cite="{{ post.id }}" href="{{ post.link('q') }}">{{ post.id }}</a>
 <td>{% include 'post/name.html' %}
     {% include 'post/flag.html' %}
 <td>[<a href="{{ config.uri_img }}{{ post.files[0].file }}">{{ post.files[0].filename|e|bidi_cleanup }}</a>]

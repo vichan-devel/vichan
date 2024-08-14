@@ -268,26 +268,27 @@ function dopost(form) {
 }
 
 function citeReply(id, with_link) {
-	var textarea = document.getElementById('body');
+    var textarea = document.getElementById('body');
 
-	if (!textarea) return false;
-	
-	if (document.selection) {
-		// IE
-		textarea.focus();
-		var sel = document.selection.createRange();
-		sel.text = '>>' + id + '\n';
-	} else if (textarea.selectionStart || textarea.selectionStart == '0') {
-		var start = textarea.selectionStart;
-		var end = textarea.selectionEnd;
-		textarea.value = textarea.value.substring(0, start) + '>>' + id + '\n' + textarea.value.substring(end, textarea.value.length);
-		
-		textarea.selectionStart += ('>>' + id).length + 1;
-		textarea.selectionEnd = textarea.selectionStart;
-	} else {
-		// ???
-		textarea.value += '>>' + id + '\n';
-	}
+    if (!textarea) return false;
+
+    var insertionText = '>>' + id + '\n';
+
+    if (document.selection) {
+        // IE
+        textarea.focus();
+        var sel = document.selection.createRange();
+        sel.text = insertionText;
+    } else if (textarea.selectionStart !== undefined) {
+        var start = textarea.selectionStart;
+        var end = textarea.selectionEnd;
+        textarea.value = textarea.value.substring(0, start) + insertionText + textarea.value.substring(end);
+
+        textarea.selectionStart = textarea.selectionEnd = start + insertionText.length;
+    } else {
+        textarea.value += insertionText;
+    }
+
 	if (typeof $ != 'undefined') {
 		var select = document.getSelection().toString();
 		if (select) {
@@ -401,6 +402,7 @@ function addLinkListenersCite(selector, callback) {
 
 document.addEventListener('DOMContentLoaded', () => {
 	addLinkListenersCite('.highlight-link', highlightReply);
+	addLinkListenersCite('.cite-link', citeReply);
 });
 
 {% endverbatim %}
