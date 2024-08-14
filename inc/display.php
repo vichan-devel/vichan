@@ -376,14 +376,19 @@ class Post {
 			markup($this->body);
 		}
 		
-		if ($this->mod)
+		if ($this->mod) {
 			// Fix internal links
 			// Very complicated regex
-			$this->body = preg_replace(
-				'/<a((([a-zA-Z]+="[^"]+")|[a-zA-Z]+=[a-zA-Z]+|\s)*)href="' . preg_quote($config['root'], '/') . '(' . sprintf(preg_quote($config['board_path'], '/'), $config['board_regex']) . ')/u',
-				'<a $1href="?/$4',
-				$this->body
-			);
+	        $this->body = preg_replace(
+            	'/<a\s*((?:[a-zA-Z-]+="[^"]*"\s*)*)href="'
+            	. preg_quote($this->config['root'], '/')
+            	. '('
+            	. sprintf(preg_quote($this->config['board_path'], '/'), $this->config['board_regex'])
+            	. '([^"]+))"/u',
+            	'<a $1href="?$2"',
+            	$this->body
+        	);
+		}
 	}
 	public function link($pre = '', $page = false) {
 		global $config, $board;
@@ -431,14 +436,19 @@ class Thread {
 			markup($this->body);
 		}
 		
-		if ($this->mod)
+		if ($this->mod) {
 			// Fix internal links
 			// Very complicated regex
-			$this->body = preg_replace(
-				'/<a((([a-zA-Z]+="[^"]+")|[a-zA-Z]+=[a-zA-Z]+|\s)*)href="' . preg_quote($config['root'], '/') . '(' . sprintf(preg_quote($config['board_path'], '/'), $config['board_regex']) . ')/u',
-				'<a $1href="?/$4',
-				$this->body
-			);
+	        $this->body = preg_replace(
+            	'/<a\s*((?:[a-zA-Z-]+="[^"]*"\s*)*)href="'
+            	. preg_quote($this->config['root'], '/')
+            	. '('
+            	. sprintf(preg_quote($this->config['board_path'], '/'), $this->config['board_regex'])
+            	. '([^"]+))"/u',
+            	'<a $1href="?$2"',
+            	$this->body
+        	);
+		}
 	}
 	public function link($pre = '', $page = false) {
 		global $config, $board;

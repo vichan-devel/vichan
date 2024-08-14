@@ -2128,11 +2128,19 @@ function markup(&$body, $track_cites = false, $op = false) {
 			}
 
 			if (isset($cited_posts[$cite])) {
-				$replacement = '<a onclick="highlightReply(\''.$cite.'\', event);" href="' .
-					$config['root'] . $board['dir'] . $config['dir']['res'] .
-					link_for(array('id' => $cite, 'thread' => $cited_posts[$cite])) . '#' . $cite . '">' .
-					'&gt;&gt;' . $cite .
-					'</a>';
+				$classAttribute = 'class="highlight-link"';
+				$dataCiteAttribute = 'data-cite="' . htmlspecialchars($cite, ENT_QUOTES, 'UTF-8') . '"';
+				$hrefValue = $config['root'] . $board['dir'] . $config['dir']['res'] 
+    						. link_for(['id' => $cite, 'thread' => $cited_posts[$cite]])
+							. '#' . $cite;
+				$linkText = '&gt;&gt;' . htmlspecialchars($cite, ENT_QUOTES, 'UTF-8');
+
+				$replacement = $matches[1][0] . '<a '
+    							. $classAttribute . ' '
+    							. $dataCiteAttribute . ' '
+    							. 'href="' . htmlspecialchars($hrefValue, ENT_QUOTES, 'UTF-8') . '">'
+    							. $linkText
+    							. '</a>';
 
 				$body = mb_substr_replace($body, $matches[1][0] . $replacement . $matches[3][0], $matches[0][1] + $skip_chars, mb_strlen($matches[0][0]));
 				$skip_chars += mb_strlen($matches[1][0] . $replacement . $matches[3][0]) - mb_strlen($matches[0][0]);
@@ -2224,13 +2232,23 @@ function markup(&$body, $track_cites = false, $op = false) {
 			if ($cite) {
 				if (isset($cited_posts[$_board][$cite])) {
 					$link = $cited_posts[$_board][$cite];
+						$classAttribute = '';
+						if ($_board == $board['uri']) {
+    						$classAttribute = 'class="highlight-link" data-cite="' . htmlspecialchars($cite, ENT_QUOTES, 'UTF-8') . '"';
+						}
 
-					$replacement = '<a ' .
-						($_board == $board['uri'] ?
-							'onclick="highlightReply(\''.$cite.'\', event);" '
-						: '') . 'href="' . $link . '">' .
-						'&gt;&gt;&gt;/' . $_board . '/' . $cite .
-						'</a>';
+						$hrefValue = htmlspecialchars($link, ENT_QUOTES, 'UTF-8');
+
+						$linkText = '&gt;&gt;&gt;/'
+									. htmlspecialchars($_board, ENT_QUOTES, 'UTF-8')
+									. '/' . htmlspecialchars($cite, ENT_QUOTES, 'UTF-8');
+
+						$replacement = $matches[1][0] 
+    						. '<a '
+							. $classAttribute 
+							. ' href="' . $hrefValue . '">'
+							. $linkText 
+							. '</a>';
 
 					$body = mb_substr_replace($body, $matches[1][0] . $replacement . $matches[4][0], $matches[0][1] + $skip_chars, mb_strlen($matches[0][0]));
 					$skip_chars += mb_strlen($matches[1][0] . $replacement . $matches[4][0]) - mb_strlen($matches[0][0]);
