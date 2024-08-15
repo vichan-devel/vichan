@@ -83,7 +83,7 @@ function mod_dashboard(Context $ctx) {
 	global $mod;
 	$config = $ctx->get('config');
 
-	$args = array();
+	$args = [];
 
 	$args['boards'] = listBoards();
 
@@ -223,7 +223,7 @@ function mod_search(Context $ctx, $type, $search_query_escaped, $page_no = 1) {
 	$query = str_replace('`', '!`', $query);
 
 	// Array of phrases to match
-	$match = array();
+	$match = [];
 
 	// Exact phrases ("like this")
 	if (preg_match_all('/"(.+?)"/', $query, $exact_phrases)) {
@@ -752,7 +752,7 @@ function mod_board_log(Context $ctx, $board, $page_no = 1, $hide_names = false, 
 function mod_view_catalog(Context $ctx, $boardName) {
 	$config = $ctx->get('config');
 	require_once($config['dir']['themes'].'/catalog/theme.php');
-	$settings = array();
+	$settings = [];
 	$settings['boards'] = $boardName;
 	$settings['update_on_posts'] = true;
 	$settings['title'] = 'Catalog';
@@ -871,9 +871,9 @@ function mod_ip(Context $ctx, $cip) {
 	}
 
 
-	$args = array();
+	$args = [];
 	$args['ip'] = $ip;
-	$args['posts'] = array();
+	$args['posts'] = [];
 
 	if ($config['mod']['dns_lookup'] && empty($config['ipcrypt_key']))
 		$args['hostname'] = rDNS($ip);
@@ -896,7 +896,7 @@ function mod_ip(Context $ctx, $cip) {
 			}
 
 			if (!isset($args['posts'][$board['uri']]))
-				$args['posts'][$board['uri']] = array('board' => $board, 'posts' => array());
+				$args['posts'][$board['uri']] = array('board' => $board, 'posts' => []);
 			$args['posts'][$board['uri']]['posts'][] = $po->build(true);
 		}
 	}
@@ -921,7 +921,7 @@ function mod_ip(Context $ctx, $cip) {
 		$query->execute() or error(db_error($query));
 		$args['logs'] = $query->fetchAll(PDO::FETCH_ASSOC);
 	} else {
-		$args['logs'] = array();
+		$args['logs'] = [];
 	}
 
 	$args['security_token'] = make_secure_link_token('IP/' . $cip);
@@ -1009,7 +1009,7 @@ function mod_bans(Context $ctx) {
 		if (!hasPermission($config['mod']['unban']))
 			error($config['error']['noaccess']);
 
-		$unban = array();
+		$unban = [];
 		foreach ($_POST as $name => $unused) {
 			if (preg_match('/^ban_(\d+)$/', $name, $match))
 				$unban[] = $match[1];
@@ -1094,16 +1094,16 @@ function mod_ban_appeals(Context $ctx) {
 				$query = query(sprintf("SELECT `num_files`, `files` FROM ``posts_%s`` WHERE `id` = " .
 					(int)$ban['post']['id'], $board['uri']));
 				if ($_post = $query->fetch(PDO::FETCH_ASSOC)) {
-					$_post['files'] = $_post['files'] ? json_decode($_post['files']) : array();
+					$_post['files'] = $_post['files'] ? json_decode($_post['files']) : [];
 					$ban['post'] = array_merge($ban['post'], $_post);
 				} else {
-					$ban['post']['files'] = array(array());
+					$ban['post']['files'] = array([]);
 					$ban['post']['files'][0]['file'] = 'deleted';
 					$ban['post']['files'][0]['thumb'] = false;
 					$ban['post']['num_files'] = 1;
 				}
 			} else {
-				$ban['post']['files'] = array(array());
+				$ban['post']['files'] = array([]);
 				$ban['post']['files'][0]['file'] = 'deleted';
 				$ban['post']['files'][0]['thumb'] = false;
 				$ban['post']['num_files'] = 1;
@@ -1395,7 +1395,7 @@ function mod_move(Context $ctx, $originBoard, $postID) {
 		$query->bindValue(':id', $postID, PDO::PARAM_INT);
 		$query->execute() or error(db_error($query));
 
-		$replies = array();
+		$replies = [];
 
 		while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
 			$post['mod'] = true;
@@ -1459,7 +1459,7 @@ function mod_move(Context $ctx, $originBoard, $postID) {
 
 
 			if (!empty($post['tracked_cites'])) {
-				$insert_rows = array();
+				$insert_rows = [];
 				foreach ($post['tracked_cites'] as $cite) {
 					$insert_rows[] = '(' .
 						$pdo->quote($board['uri']) . ', ' . $newPostID . ', ' .
@@ -1810,8 +1810,8 @@ function mod_deletebyip(Context $ctx, $boardName, $post, $global = false) {
 
 	@set_time_limit($config['mod']['rebuild_timelimit']);
 
-	$threads_to_rebuild = array();
-	$threads_deleted = array();
+	$threads_to_rebuild = [];
+	$threads_deleted = [];
 	while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
 		openBoard($post['board']);
 
@@ -1870,7 +1870,7 @@ function mod_user(Context $ctx, $uid) {
 				$board = $board['uri'];
 			}
 
-			$boards = array();
+			$boards = [];
 			foreach ($_POST as $name => $value) {
 				if (preg_match('/^board_(' . $config['board_regex'] . ')$/u', $name, $matches) && in_array($matches[1], $_boards))
 					$boards[] = $matches[1];
@@ -1961,7 +1961,7 @@ function mod_user(Context $ctx, $uid) {
 		$query->execute() or error(db_error($query));
 		$log = $query->fetchAll(PDO::FETCH_ASSOC);
 	} else {
-		$log = array();
+		$log = [];
 	}
 
 	$user['boards'] = explode(',', $user['boards']);
@@ -1994,7 +1994,7 @@ function mod_user_new(Context $ctx) {
 				$board = $board['uri'];
 			}
 
-			$boards = array();
+			$boards = [];
 			foreach ($_POST as $name => $value) {
 				if (preg_match('/^board_(' . $config['board_regex'] . ')$/u', $name, $matches) && in_array($matches[1], $_boards))
 					$boards[] = $matches[1];
@@ -2230,9 +2230,9 @@ function mod_rebuild(Context $ctx) {
 	if (isset($_POST['rebuild'])) {
 		@set_time_limit($config['mod']['rebuild_timelimit']);
 
-		$log = array();
+		$log = [];
 		$boards = listBoards();
-		$rebuilt_scripts = array();
+		$rebuilt_scripts = [];
 
 		if (isset($_POST['rebuild_cache'])) {
 			if ($config['cache']['enabled']) {
@@ -2305,16 +2305,16 @@ function mod_reports(Context $ctx) {
 	$query->execute() or error(db_error($query));
 	$reports = $query->fetchAll(PDO::FETCH_ASSOC);
 
-	$report_queries = array();
+	$report_queries = [];
 	foreach ($reports as $report) {
 		if (!isset($report_queries[$report['board']]))
-			$report_queries[$report['board']] = array();
+			$report_queries[$report['board']] = [];
 		$report_queries[$report['board']][] = $report['post'];
 	}
 
-	$report_posts = array();
+	$report_posts = [];
 	foreach ($report_queries as $board => $posts) {
-		$report_posts[$board] = array();
+		$report_posts[$board] = [];
 
 		$query = query(sprintf('SELECT * FROM ``posts_%s`` WHERE `id` = ' . implode(' OR `id` = ', $posts), $board)) or error(db_error());
 		while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -2433,7 +2433,7 @@ function mod_recent_posts(Context $ctx, $lim) {
 	$limit = (is_numeric($lim))? $lim : 25;
 	$last_time = (isset($_GET['last']) && is_numeric($_GET['last'])) ? $_GET['last'] : 0;
 
-	$mod_boards = array();
+	$mod_boards = [];
 	$boards = listBoards();
 
 	//if not all boards
@@ -2593,7 +2593,7 @@ function mod_config(Context $ctx, $board_config = false) {
 
 				if ($config['minify_html'])
 					$config_append = str_replace("\n", '&#010;', $config_append);
-				$page = array();
+				$page = [];
 				$page['title'] = 'Cannot write to file!';
 				$page['config'] = $config;
 				$page['body'] = '
@@ -2636,7 +2636,7 @@ function mod_themes_list(Context $ctx) {
 	$themes_in_use = $query->fetchAll(PDO::FETCH_COLUMN);
 
 	// Scan directory for themes
-	$themes = array();
+	$themes = [];
 	while ($file = readdir($dir)) {
 		if ($file[0] != '.' && is_dir($config['dir']['themes'] . '/' . $file)) {
 			$themes[$file] = loadThemeConfig($file);
@@ -2933,7 +2933,7 @@ function mod_pages(Context $ctx, $board = false) {
 function mod_debug_antispam(Context $ctx) {
 	global $pdo, $config;
 
-	$args = array();
+	$args = [];
 
 	if (isset($_POST['board'], $_POST['thread'])) {
 		$where = '`board` = ' . $pdo->quote($_POST['board']);
