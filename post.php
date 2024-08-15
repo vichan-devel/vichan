@@ -661,8 +661,13 @@ if (isset($_POST['delete'])) {
 					error($config['error']['bot']);
 				}
 				$response = $_POST[$field];
+				/*
+				 * Do not query with the IP if the mode is dynamic. This config is meant for proxies and internal
+				 * loopback addresses.
+				 */
+				$ip = $dynamic ? null : $_SERVER['REMOTE_ADDR'];
 
-				$success = $query->verify($response, $_SERVER['REMOTE_ADDR']);
+				$success = $query->verify($response, $ip);
 				if (!$success) {
 					error($config['error']['captcha']);
 				}
