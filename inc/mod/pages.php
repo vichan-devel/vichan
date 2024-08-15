@@ -31,7 +31,7 @@ function mod_page($title, $template, $args, $subtitle = false) {
 }
 
 function mod_login(Context $ctx, $redirect = false) {
-	global $config;
+	$config = $ctx->get('config');
 
 	$args = [];
 
@@ -68,19 +68,20 @@ function mod_login(Context $ctx, $redirect = false) {
 }
 
 function mod_confirm(Context $ctx, $request) {
-	global $config;
+	$config = $ctx->get('config');
 	mod_page(_('Confirm action'), $config['file_mod_confim'], array('request' => $request, 'token' => make_secure_link_token($request)));
 }
 
 function mod_logout(Context $ctx) {
-	global $config;
+	$config = $ctx->get('config');
 	destroyCookies();
 
 	header('Location: ?/', true, $config['redirect_http']);
 }
 
 function mod_dashboard(Context $ctx) {
-	global $config, $mod;
+	global $mod;
+	$config = $ctx->get('config');
 
 	$args = array();
 
@@ -174,7 +175,7 @@ function mod_dashboard(Context $ctx) {
 }
 
 function mod_search_redirect(Context $ctx) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['search']))
 		error($config['error']['noaccess']);
@@ -454,7 +455,8 @@ function mod_edit_board(Context $ctx, $boardName) {
 }
 
 function mod_new_board(Context $ctx) {
-	global $config, $board;
+	global $board;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['newboard']))
 		error($config['error']['noaccess']);
@@ -523,7 +525,8 @@ function mod_new_board(Context $ctx) {
 }
 
 function mod_noticeboard(Context $ctx, $page_no = 1) {
-	global $config, $pdo, $mod;
+	global $pdo, $mod;
+	$config = $ctx->get('config');
 
 	if ($page_no < 1)
 		error($config['error']['404']);
@@ -578,7 +581,7 @@ function mod_noticeboard(Context $ctx, $page_no = 1) {
 }
 
 function mod_noticeboard_delete(Context $ctx, $id) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['noticeboard_delete']))
 			error($config['error']['noaccess']);
@@ -596,7 +599,8 @@ function mod_noticeboard_delete(Context $ctx, $id) {
 }
 
 function mod_news(Context $ctx, $page_no = 1) {
-	global $config, $pdo, $mod;
+	global $pdo, $mod;
+	$config = $ctx->get('config');
 
 	if ($page_no < 1)
 		error($config['error']['404']);
@@ -643,7 +647,7 @@ function mod_news(Context $ctx, $page_no = 1) {
 }
 
 function mod_news_delete(Context $ctx, $id) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['news_delete']))
 			error($config['error']['noaccess']);
@@ -658,7 +662,7 @@ function mod_news_delete(Context $ctx, $id) {
 }
 
 function mod_log(Context $ctx, $page_no = 1) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if ($page_no < 1)
 		error($config['error']['404']);
@@ -683,7 +687,7 @@ function mod_log(Context $ctx, $page_no = 1) {
 }
 
 function mod_user_log(Context $ctx, $username, $page_no = 1) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if ($page_no < 1)
 		error($config['error']['404']);
@@ -710,7 +714,7 @@ function mod_user_log(Context $ctx, $username, $page_no = 1) {
 }
 
 function mod_board_log(Context $ctx, $board, $page_no = 1, $hide_names = false, $public = false) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if ($page_no < 1)
 		error($config['error']['404']);
@@ -746,7 +750,7 @@ function mod_board_log(Context $ctx, $board, $page_no = 1, $hide_names = false, 
 }
 
 function mod_view_catalog(Context $ctx, $boardName) {
-	global $config;
+	$config = $ctx->get('config');
 	require_once($config['dir']['themes'].'/catalog/theme.php');
 	$settings = array();
 	$settings['boards'] = $boardName;
@@ -758,7 +762,8 @@ function mod_view_catalog(Context $ctx, $boardName) {
 }
 
 function mod_view_board(Context $ctx, $boardName, $page_no = 1) {
-	global $config, $mod;
+	global $mod;
+	$config = $ctx->get('config');
 
 	if (!openBoard($boardName))
 		error($config['error']['noboard']);
@@ -777,7 +782,8 @@ function mod_view_board(Context $ctx, $boardName, $page_no = 1) {
 }
 
 function mod_view_thread(Context $ctx, $boardName, $thread) {
-	global $config, $mod;
+	global $mod;
+	$config = $ctx->get('config');
 
 	if (!openBoard($boardName))
 		error($config['error']['noboard']);
@@ -787,7 +793,8 @@ function mod_view_thread(Context $ctx, $boardName, $thread) {
 }
 
 function mod_view_thread50(Context $ctx, $boardName, $thread) {
-	global $config, $mod;
+	global $mod;
+	$config = $ctx->get('config');
 
 	if (!openBoard($boardName))
 		error($config['error']['noboard']);
@@ -798,10 +805,10 @@ function mod_view_thread50(Context $ctx, $boardName, $thread) {
 
 function mod_ip_remove_note(Context $ctx, $cloaked_ip, $id) {
 	$ip = uncloak_ip($cloaked_ip);
-	global $config, $mod;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['remove_notes']))
-			error($config['error']['noaccess']);
+		error($config['error']['noaccess']);
 
 	if (filter_var($ip, FILTER_VALIDATE_IP) === false)
 		error("Invalid IP address.");
@@ -820,7 +827,8 @@ function mod_ip_remove_note(Context $ctx, $cloaked_ip, $id) {
 
 function mod_ip(Context $ctx, $cip) {
 	$ip = uncloak_ip($cip);
-	global $config, $mod;
+	global $mod;
+	$config = $ctx->get('config');
 
 	if (filter_var($ip, FILTER_VALIDATE_IP) === false)
 		error("Invalid IP address.");
@@ -922,7 +930,7 @@ function mod_ip(Context $ctx, $cip) {
 }
 
 function mod_edit_ban(Context $ctx, $ban_id) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['edit_ban']))
 		error($config['error']['noaccess']);
@@ -972,7 +980,7 @@ function mod_edit_ban(Context $ctx, $ban_id) {
 }
 
 function mod_ban(Context $ctx) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['ban']))
 		error($config['error']['noaccess']);
@@ -991,7 +999,8 @@ function mod_ban(Context $ctx) {
 }
 
 function mod_bans(Context $ctx) {
-	global $config, $mod;
+	global $mod;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['view_banlist']))
 		error($config['error']['noaccess']);
@@ -1025,7 +1034,8 @@ function mod_bans(Context $ctx) {
 }
 
 function mod_bans_json(Context $ctx) {
-	global $config, $mod;
+	global $mod;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['ban']))
 		error($config['error']['noaccess']);
@@ -1037,7 +1047,8 @@ function mod_bans_json(Context $ctx) {
 }
 
 function mod_ban_appeals(Context $ctx) {
-	global $config, $board;
+	global $board;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['view_ban_appeals']))
 		error($config['error']['noaccess']);
@@ -1113,7 +1124,7 @@ function mod_ban_appeals(Context $ctx) {
 }
 
 function mod_lock(Context $ctx, $board, $unlock, $post) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!openBoard($board))
 		error($config['error']['noboard']);
@@ -1147,7 +1158,7 @@ function mod_lock(Context $ctx, $board, $unlock, $post) {
 }
 
 function mod_sticky(Context $ctx, $board, $unsticky, $post) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!openBoard($board))
 		error($config['error']['noboard']);
@@ -1169,7 +1180,7 @@ function mod_sticky(Context $ctx, $board, $unsticky, $post) {
 }
 
 function mod_cycle(Context $ctx, $board, $uncycle, $post) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!openBoard($board))
 		error($config['error']['noboard']);
@@ -1191,7 +1202,7 @@ function mod_cycle(Context $ctx, $board, $uncycle, $post) {
 }
 
 function mod_bumplock(Context $ctx, $board, $unbumplock, $post) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!openBoard($board))
 		error($config['error']['noboard']);
@@ -1525,7 +1536,7 @@ function mod_move(Context $ctx, $originBoard, $postID) {
 }
 
 function mod_ban_post(Context $ctx, $board, $delete, $post, $token = false) {
-	global $config, $mod;
+	$config = $ctx->get('config');
 
 	if (!openBoard($board))
 		error($config['error']['noboard']);
@@ -1595,7 +1606,7 @@ function mod_ban_post(Context $ctx, $board, $delete, $post, $token = false) {
 }
 
 function mod_edit_post(Context $ctx, $board, $edit_raw_html, $postID) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!openBoard($board))
 		error($config['error']['noboard']);
@@ -1672,7 +1683,7 @@ function mod_edit_post(Context $ctx, $board, $edit_raw_html, $postID) {
 }
 
 function mod_delete(Context $ctx, $board, $post) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!openBoard($board))
 		error($config['error']['noboard']);
@@ -1693,7 +1704,7 @@ function mod_delete(Context $ctx, $board, $post) {
 }
 
 function mod_deletefile(Context $ctx, $board, $post, $file) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!openBoard($board))
 		error($config['error']['noboard']);
@@ -1716,7 +1727,7 @@ function mod_deletefile(Context $ctx, $board, $post, $file) {
 }
 
 function mod_spoiler_image(Context $ctx, $board, $post, $file) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!openBoard($board))
 		error($config['error']['noboard']);
@@ -1761,7 +1772,8 @@ function mod_spoiler_image(Context $ctx, $board, $post, $file) {
 }
 
 function mod_deletebyip(Context $ctx, $boardName, $post, $global = false) {
-	global $config, $board;
+	global $board;
+	$config = $ctx->get('config');
 
 	$global = (bool)$global;
 
@@ -1837,7 +1849,8 @@ function mod_deletebyip(Context $ctx, $boardName, $post, $global = false) {
 }
 
 function mod_user(Context $ctx, $uid) {
-	global $config, $mod;
+	global $mod;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['editusers']) && !(hasPermission($config['mod']['change_password']) && $uid == $mod['id']))
 		error($config['error']['noaccess']);
@@ -2015,7 +2028,7 @@ function mod_user_new(Context $ctx) {
 
 
 function mod_users(Context $ctx) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['manageusers']))
 		error($config['error']['noaccess']);
@@ -2036,7 +2049,7 @@ function mod_users(Context $ctx) {
 }
 
 function mod_user_promote(Context $ctx, $uid, $action) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['promoteusers']))
 		error($config['error']['noaccess']);
@@ -2134,7 +2147,8 @@ function mod_pm(Context $ctx, $id, $reply = false) {
 }
 
 function mod_inbox(Context $ctx) {
-	global $config, $mod;
+	global $mod;
+	$config = $ctx->get('config');
 
 	$query = prepare('SELECT `unread`,``pms``.`id`, `time`, `sender`, `to`, `message`, `username` FROM ``pms`` LEFT JOIN ``mods`` ON ``mods``.`id` = `sender` WHERE `to` = :mod ORDER BY `unread` DESC, `time` DESC');
 	$query->bindValue(':mod', $mod['id']);
@@ -2158,7 +2172,8 @@ function mod_inbox(Context $ctx) {
 
 
 function mod_new_pm(Context $ctx, $username) {
-	global $config, $mod;
+	global $mod;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['create_pm']))
 		error($config['error']['noaccess']);
@@ -2206,7 +2221,8 @@ function mod_new_pm(Context $ctx, $username) {
 }
 
 function mod_rebuild(Context $ctx) {
-	global $config, $twig;
+	global $twig;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['rebuild']))
 		error($config['error']['noaccess']);
@@ -2278,7 +2294,8 @@ function mod_rebuild(Context $ctx) {
 }
 
 function mod_reports(Context $ctx) {
-	global $config, $mod;
+	global $mod;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['reports']))
 		error($config['error']['noaccess']);
@@ -2361,7 +2378,7 @@ function mod_reports(Context $ctx) {
 }
 
 function mod_report_dismiss(Context $ctx, $id, $action) {
-	global $config;
+	$config = $ctx->get('config');
 
 	$query = prepare("SELECT `post`, `board`, `ip` FROM ``reports`` WHERE `id` = :id");
 	$query->bindValue(':id', $id);
@@ -2407,7 +2424,8 @@ function mod_report_dismiss(Context $ctx, $id, $action) {
 }
 
 function mod_recent_posts(Context $ctx, $lim) {
-	global $config, $mod, $pdo;
+	global $mod, $pdo;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['recent']))
 		error($config['error']['noaccess']);
@@ -2463,7 +2481,8 @@ function mod_recent_posts(Context $ctx, $lim) {
 }
 
 function mod_config(Context $ctx, $board_config = false) {
-	global $config, $mod, $board;
+	global $mod, $board;
+	$config = $ctx->get('config');
 
 	if ($board_config && !openBoard($board_config))
 		error($config['error']['noboard']);
@@ -2603,7 +2622,7 @@ function mod_config(Context $ctx, $board_config = false) {
 }
 
 function mod_themes_list(Context $ctx) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['themes']))
 		error($config['error']['noaccess']);
@@ -2637,7 +2656,7 @@ function mod_themes_list(Context $ctx) {
 }
 
 function mod_theme_configure(Context $ctx, $theme_name) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['themes']))
 		error($config['error']['noaccess']);
@@ -2719,7 +2738,7 @@ function mod_theme_configure(Context $ctx, $theme_name) {
 }
 
 function mod_theme_uninstall(Context $ctx, $theme_name) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['themes']))
 		error($config['error']['noaccess']);
@@ -2736,7 +2755,7 @@ function mod_theme_uninstall(Context $ctx, $theme_name) {
 }
 
 function mod_theme_rebuild(Context $ctx, $theme_name) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['themes']))
 		error($config['error']['noaccess']);
@@ -2785,7 +2804,8 @@ function mod_delete_page_board(Context $ctx, $page = '', $board = false) {
 }
 
 function mod_edit_page(Context $ctx, $id) {
-	global $config, $mod, $board;
+	global $mod, $board;
+	$config = $ctx->get('config');
 
 	$query = prepare('SELECT * FROM ``pages`` WHERE `id` = :id');
 	$query->bindValue(':id', $id);
@@ -2856,7 +2876,8 @@ function mod_edit_page(Context $ctx, $id) {
 }
 
 function mod_pages(Context $ctx, $board = false) {
-	global $config, $mod, $pdo;
+	global $mod, $pdo;
+	$config = $ctx->get('config');
 
 	if (empty($board))
 		$board = false;
@@ -2981,7 +3002,7 @@ function mod_debug_recent_posts(Context $ctx) {
 }
 
 function mod_debug_sql(Context $ctx) {
-	global $config;
+	$config = $ctx->get('config');
 
 	if (!hasPermission($config['mod']['debug_sql']))
 		error($config['error']['noaccess']);
