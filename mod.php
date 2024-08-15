@@ -136,9 +136,11 @@ foreach ($pages as $key => $callback) {
 }
 $pages = $new_pages;
 
+$ctx = Vichan\build_context($config);
+
 foreach ($pages as $uri => $handler) {
 	if (preg_match($uri, $query, $matches)) {
-		$matches = array_slice($matches, 1);
+		$matches[0] = $ctx; // Replace the text captured by the full pattern with a reference to the context.
 
 		if (isset($matches['board'])) {
 			$board_match = $matches['board'];

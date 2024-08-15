@@ -1,8 +1,8 @@
 <?php
-
 /*
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  */
+use Vichan\Context;
 use Vichan\Functions\Format;
 
 use Vichan\Functions\Net;
@@ -30,7 +30,7 @@ function mod_page($title, $template, $args, $subtitle = false) {
 	);
 }
 
-function mod_login($redirect = false) {
+function mod_login(Context $ctx, $redirect = false) {
 	global $config;
 
 	$args = [];
@@ -67,19 +67,19 @@ function mod_login($redirect = false) {
 	mod_page(_('Login'), $config['file_mod_login'], $args);
 }
 
-function mod_confirm($request) {
+function mod_confirm(Context $ctx, $request) {
 	global $config;
 	mod_page(_('Confirm action'), $config['file_mod_confim'], array('request' => $request, 'token' => make_secure_link_token($request)));
 }
 
-function mod_logout() {
+function mod_logout(Context $ctx) {
 	global $config;
 	destroyCookies();
 
 	header('Location: ?/', true, $config['redirect_http']);
 }
 
-function mod_dashboard() {
+function mod_dashboard(Context $ctx) {
 	global $config, $mod;
 
 	$args = array();
@@ -173,7 +173,7 @@ function mod_dashboard() {
 	mod_page(_('Dashboard'), $config['file_mod_dashboard'], $args);
 }
 
-function mod_search_redirect() {
+function mod_search_redirect(Context $ctx) {
 	global $config;
 
 	if (!hasPermission($config['mod']['search']))
@@ -196,7 +196,7 @@ function mod_search_redirect() {
 	}
 }
 
-function mod_search($type, $search_query_escaped, $page_no = 1) {
+function mod_search(Context $ctx, $type, $search_query_escaped, $page_no = 1) {
 	global $pdo, $config;
 
 	if (!hasPermission($config['mod']['search']))
@@ -351,7 +351,7 @@ function mod_search($type, $search_query_escaped, $page_no = 1) {
 	));
 }
 
-function mod_edit_board($boardName) {
+function mod_edit_board(Context $ctx, $boardName) {
 	global $board, $config;
 
 	if (!openBoard($boardName))
@@ -453,7 +453,7 @@ function mod_edit_board($boardName) {
 	}
 }
 
-function mod_new_board() {
+function mod_new_board(Context $ctx) {
 	global $config, $board;
 
 	if (!hasPermission($config['mod']['newboard']))
@@ -522,7 +522,7 @@ function mod_new_board() {
 	mod_page(_('New board'), $config['file_mod_board'], array('new' => true, 'token' => make_secure_link_token('new-board')));
 }
 
-function mod_noticeboard($page_no = 1) {
+function mod_noticeboard(Context $ctx, $page_no = 1) {
 	global $config, $pdo, $mod;
 
 	if ($page_no < 1)
@@ -577,7 +577,7 @@ function mod_noticeboard($page_no = 1) {
 	));
 }
 
-function mod_noticeboard_delete($id) {
+function mod_noticeboard_delete(Context $ctx, $id) {
 	global $config;
 
 	if (!hasPermission($config['mod']['noticeboard_delete']))
@@ -595,7 +595,7 @@ function mod_noticeboard_delete($id) {
 	header('Location: ?/noticeboard', true, $config['redirect_http']);
 }
 
-function mod_news($page_no = 1) {
+function mod_news(Context $ctx, $page_no = 1) {
 	global $config, $pdo, $mod;
 
 	if ($page_no < 1)
@@ -642,7 +642,7 @@ function mod_news($page_no = 1) {
 	mod_page(_('News'), $config['file_mod_news'], array('news' => $news, 'count' => $count, 'token' => make_secure_link_token('edit_news')));
 }
 
-function mod_news_delete($id) {
+function mod_news_delete(Context $ctx, $id) {
 	global $config;
 
 	if (!hasPermission($config['mod']['news_delete']))
@@ -657,7 +657,7 @@ function mod_news_delete($id) {
 	header('Location: ?/edit_news', true, $config['redirect_http']);
 }
 
-function mod_log($page_no = 1) {
+function mod_log(Context $ctx, $page_no = 1) {
 	global $config;
 
 	if ($page_no < 1)
@@ -682,7 +682,7 @@ function mod_log($page_no = 1) {
 	mod_page(_('Moderation log'), $config['file_mod_log'], array('logs' => $logs, 'count' => $count));
 }
 
-function mod_user_log($username, $page_no = 1) {
+function mod_user_log(Context $ctx, $username, $page_no = 1) {
 	global $config;
 
 	if ($page_no < 1)
@@ -709,7 +709,7 @@ function mod_user_log($username, $page_no = 1) {
 	mod_page(_('Moderation log'), $config['file_mod_log'], array('logs' => $logs, 'count' => $count, 'username' => $username));
 }
 
-function mod_board_log($board, $page_no = 1, $hide_names = false, $public = false) {
+function mod_board_log(Context $ctx, $board, $page_no = 1, $hide_names = false, $public = false) {
 	global $config;
 
 	if ($page_no < 1)
@@ -745,8 +745,8 @@ function mod_board_log($board, $page_no = 1, $hide_names = false, $public = fals
 	mod_page(_('Board log'), $config['file_mod_log'], array('logs' => $logs, 'count' => $count, 'board' => $board, 'hide_names' => $hide_names, 'public' => $public));
 }
 
-function mod_view_catalog($boardName) {
-	global $config, $mod;
+function mod_view_catalog(Context $ctx, $boardName) {
+	global $config;
 	require_once($config['dir']['themes'].'/catalog/theme.php');
 	$settings = array();
 	$settings['boards'] = $boardName;
@@ -757,7 +757,7 @@ function mod_view_catalog($boardName) {
 	echo $catalog->build($settings, $boardName, true);
 }
 
-function mod_view_board($boardName, $page_no = 1) {
+function mod_view_board(Context $ctx, $boardName, $page_no = 1) {
 	global $config, $mod;
 
 	if (!openBoard($boardName))
@@ -776,7 +776,7 @@ function mod_view_board($boardName, $page_no = 1) {
 	echo Element($config['file_board_index'], $page);
 }
 
-function mod_view_thread($boardName, $thread) {
+function mod_view_thread(Context $ctx, $boardName, $thread) {
 	global $config, $mod;
 
 	if (!openBoard($boardName))
@@ -786,7 +786,7 @@ function mod_view_thread($boardName, $thread) {
 	echo $page;
 }
 
-function mod_view_thread50($boardName, $thread) {
+function mod_view_thread50(Context $ctx, $boardName, $thread) {
 	global $config, $mod;
 
 	if (!openBoard($boardName))
@@ -796,7 +796,7 @@ function mod_view_thread50($boardName, $thread) {
 	echo $page;
 }
 
-function mod_ip_remove_note($cloaked_ip, $id) {
+function mod_ip_remove_note(Context $ctx, $cloaked_ip, $id) {
 	$ip = uncloak_ip($cloaked_ip);
 	global $config, $mod;
 
@@ -818,7 +818,7 @@ function mod_ip_remove_note($cloaked_ip, $id) {
 
 
 
-function mod_ip($cip) {
+function mod_ip(Context $ctx, $cip) {
 	$ip = uncloak_ip($cip);
 	global $config, $mod;
 
@@ -921,8 +921,8 @@ function mod_ip($cip) {
 	mod_page(sprintf('%s: %s', _('IP'), htmlspecialchars($cip)), $config['file_mod_view_ip'], $args, $args['hostname']);
 }
 
-function mod_edit_ban($ban_id) {
-	global $mod, $config;
+function mod_edit_ban(Context $ctx, $ban_id) {
+	global $config;
 
 	if (!hasPermission($config['mod']['edit_ban']))
 		error($config['error']['noaccess']);
@@ -971,8 +971,7 @@ function mod_edit_ban($ban_id) {
 
 }
 
-
-function mod_ban() {
+function mod_ban(Context $ctx) {
 	global $config;
 
 	if (!hasPermission($config['mod']['ban']))
@@ -991,9 +990,8 @@ function mod_ban() {
 		header('Location: ?/', true, $config['redirect_http']);
 }
 
-function mod_bans() {
-	global $config;
-	global $mod;
+function mod_bans(Context $ctx) {
+	global $config, $mod;
 
 	if (!hasPermission($config['mod']['view_banlist']))
 		error($config['error']['noaccess']);
@@ -1026,11 +1024,11 @@ function mod_bans() {
 	));
 }
 
-function mod_bans_json() {
-        global $config, $mod;
+function mod_bans_json(Context $ctx) {
+	global $config, $mod;
 
-        if (!hasPermission($config['mod']['ban']))
-                error($config['error']['noaccess']);
+	if (!hasPermission($config['mod']['ban']))
+		error($config['error']['noaccess']);
 
 	// Compress the json for faster loads
 	if (substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) ob_start("ob_gzhandler");
@@ -1038,7 +1036,7 @@ function mod_bans_json() {
 	Bans::stream_json(false, false, !hasPermission($config['mod']['view_banstaff']), $mod['boards']);
 }
 
-function mod_ban_appeals() {
+function mod_ban_appeals(Context $ctx) {
 	global $config, $board;
 
 	if (!hasPermission($config['mod']['view_ban_appeals']))
@@ -1114,7 +1112,7 @@ function mod_ban_appeals() {
 	));
 }
 
-function mod_lock($board, $unlock, $post) {
+function mod_lock(Context $ctx, $board, $unlock, $post) {
 	global $config;
 
 	if (!openBoard($board))
@@ -1148,7 +1146,7 @@ function mod_lock($board, $unlock, $post) {
 		event('lock', $post);
 }
 
-function mod_sticky($board, $unsticky, $post) {
+function mod_sticky(Context $ctx, $board, $unsticky, $post) {
 	global $config;
 
 	if (!openBoard($board))
@@ -1170,7 +1168,7 @@ function mod_sticky($board, $unsticky, $post) {
 	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
 }
 
-function mod_cycle($board, $uncycle, $post) {
+function mod_cycle(Context $ctx, $board, $uncycle, $post) {
 	global $config;
 
 	if (!openBoard($board))
@@ -1192,7 +1190,7 @@ function mod_cycle($board, $uncycle, $post) {
 	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
 }
 
-function mod_bumplock($board, $unbumplock, $post) {
+function mod_bumplock(Context $ctx, $board, $unbumplock, $post) {
 	global $config;
 
 	if (!openBoard($board))
@@ -1214,8 +1212,8 @@ function mod_bumplock($board, $unbumplock, $post) {
 	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
 }
 
-function mod_move_reply($originBoard, $postID) {
-	global $board, $config, $mod;
+function mod_move_reply(Context $ctx, $originBoard, $postID) {
+	global $board, $config;
 
 	if (!openBoard($originBoard))
 		error($config['error']['noboard']);
@@ -1316,8 +1314,8 @@ function mod_move_reply($originBoard, $postID) {
 
 }
 
-function mod_move($originBoard, $postID) {
-	global $board, $config, $mod, $pdo;
+function mod_move(Context $ctx, $originBoard, $postID) {
+	global $board, $config, $pdo;
 
 	if (!openBoard($originBoard))
 		error($config['error']['noboard']);
@@ -1526,7 +1524,7 @@ function mod_move($originBoard, $postID) {
 	mod_page(_('Move thread'), $config['file_mod_move'], array('post' => $postID, 'board' => $originBoard, 'boards' => $boards, 'token' => $security_token));
 }
 
-function mod_ban_post($board, $delete, $post, $token = false) {
+function mod_ban_post(Context $ctx, $board, $delete, $post, $token = false) {
 	global $config, $mod;
 
 	if (!openBoard($board))
@@ -1596,8 +1594,8 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 	mod_page(_('New ban'), $config['file_mod_ban_form'], $args);
 }
 
-function mod_edit_post($board, $edit_raw_html, $postID) {
-	global $config, $mod;
+function mod_edit_post(Context $ctx, $board, $edit_raw_html, $postID) {
+	global $config;
 
 	if (!openBoard($board))
 		error($config['error']['noboard']);
@@ -1673,8 +1671,8 @@ function mod_edit_post($board, $edit_raw_html, $postID) {
 	}
 }
 
-function mod_delete($board, $post) {
-	global $config, $mod;
+function mod_delete(Context $ctx, $board, $post) {
+	global $config;
 
 	if (!openBoard($board))
 		error($config['error']['noboard']);
@@ -1694,8 +1692,8 @@ function mod_delete($board, $post) {
 	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
 }
 
-function mod_deletefile($board, $post, $file) {
-	global $config, $mod;
+function mod_deletefile(Context $ctx, $board, $post, $file) {
+	global $config;
 
 	if (!openBoard($board))
 		error($config['error']['noboard']);
@@ -1717,8 +1715,8 @@ function mod_deletefile($board, $post, $file) {
 	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
 }
 
-function mod_spoiler_image($board, $post, $file) {
-	global $config, $mod;
+function mod_spoiler_image(Context $ctx, $board, $post, $file) {
+	global $config;
 
 	if (!openBoard($board))
 		error($config['error']['noboard']);
@@ -1762,8 +1760,8 @@ function mod_spoiler_image($board, $post, $file) {
 	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
 }
 
-function mod_deletebyip($boardName, $post, $global = false) {
-	global $config, $mod, $board;
+function mod_deletebyip(Context $ctx, $boardName, $post, $global = false) {
+	global $config, $board;
 
 	$global = (bool)$global;
 
@@ -1838,7 +1836,7 @@ function mod_deletebyip($boardName, $post, $global = false) {
 	header('Location: ?/' . sprintf($config['board_path'], $boardName) . $config['file_index'], true, $config['redirect_http']);
 }
 
-function mod_user($uid) {
+function mod_user(Context $ctx, $uid) {
 	global $config, $mod;
 
 	if (!hasPermission($config['mod']['editusers']) && !(hasPermission($config['mod']['change_password']) && $uid == $mod['id']))
@@ -1963,7 +1961,7 @@ function mod_user($uid) {
 	));
 }
 
-function mod_user_new() {
+function mod_user_new(Context $ctx) {
 	global $pdo, $config;
 
 	if (!hasPermission($config['mod']['createusers']))
@@ -2016,7 +2014,7 @@ function mod_user_new() {
 }
 
 
-function mod_users() {
+function mod_users(Context $ctx) {
 	global $config;
 
 	if (!hasPermission($config['mod']['manageusers']))
@@ -2037,7 +2035,7 @@ function mod_users() {
 	mod_page(sprintf('%s (%d)', _('Manage users'), count($users)), $config['file_mod_users'], array('users' => $users));
 }
 
-function mod_user_promote($uid, $action) {
+function mod_user_promote(Context $ctx, $uid, $action) {
 	global $config;
 
 	if (!hasPermission($config['mod']['promoteusers']))
@@ -2080,7 +2078,7 @@ function mod_user_promote($uid, $action) {
 	header('Location: ?/users', true, $config['redirect_http']);
 }
 
-function mod_pm($id, $reply = false) {
+function mod_pm(Context $ctx, $id, $reply = false) {
 	global $mod, $config;
 
 	if ($reply && !hasPermission($config['mod']['create_pm']))
@@ -2135,7 +2133,7 @@ function mod_pm($id, $reply = false) {
 	}
 }
 
-function mod_inbox() {
+function mod_inbox(Context $ctx) {
 	global $config, $mod;
 
 	$query = prepare('SELECT `unread`,``pms``.`id`, `time`, `sender`, `to`, `message`, `username` FROM ``pms`` LEFT JOIN ``mods`` ON ``mods``.`id` = `sender` WHERE `to` = :mod ORDER BY `unread` DESC, `time` DESC');
@@ -2159,7 +2157,7 @@ function mod_inbox() {
 }
 
 
-function mod_new_pm($username) {
+function mod_new_pm(Context $ctx, $username) {
 	global $config, $mod;
 
 	if (!hasPermission($config['mod']['create_pm']))
@@ -2207,7 +2205,7 @@ function mod_new_pm($username) {
 	));
 }
 
-function mod_rebuild() {
+function mod_rebuild(Context $ctx) {
 	global $config, $twig;
 
 	if (!hasPermission($config['mod']['rebuild']))
@@ -2279,7 +2277,7 @@ function mod_rebuild() {
 	));
 }
 
-function mod_reports() {
+function mod_reports(Context $ctx) {
 	global $config, $mod;
 
 	if (!hasPermission($config['mod']['reports']))
@@ -2362,7 +2360,7 @@ function mod_reports() {
 	mod_page(sprintf('%s (%d)', _('Report queue'), $count), $config['file_mod_reports'], array('reports' => $body, 'count' => $count));
 }
 
-function mod_report_dismiss($id, $action) {
+function mod_report_dismiss(Context $ctx, $id, $action) {
 	global $config;
 
 	$query = prepare("SELECT `post`, `board`, `ip` FROM ``reports`` WHERE `id` = :id");
@@ -2408,7 +2406,7 @@ function mod_report_dismiss($id, $action) {
 	header('Location: ?/reports', true, $config['redirect_http']);
 }
 
-function mod_recent_posts($lim) {
+function mod_recent_posts(Context $ctx, $lim) {
 	global $config, $mod, $pdo;
 
 	if (!hasPermission($config['mod']['recent']))
@@ -2464,7 +2462,7 @@ function mod_recent_posts($lim) {
 
 }
 
-function mod_config($board_config = false) {
+function mod_config(Context $ctx, $board_config = false) {
 	global $config, $mod, $board;
 
 	if ($board_config && !openBoard($board_config))
@@ -2604,7 +2602,7 @@ function mod_config($board_config = false) {
 	));
 }
 
-function mod_themes_list() {
+function mod_themes_list(Context $ctx) {
 	global $config;
 
 	if (!hasPermission($config['mod']['themes']))
@@ -2638,7 +2636,7 @@ function mod_themes_list() {
 	));
 }
 
-function mod_theme_configure($theme_name) {
+function mod_theme_configure(Context $ctx, $theme_name) {
 	global $config;
 
 	if (!hasPermission($config['mod']['themes']))
@@ -2720,7 +2718,7 @@ function mod_theme_configure($theme_name) {
 	));
 }
 
-function mod_theme_uninstall($theme_name) {
+function mod_theme_uninstall(Context $ctx, $theme_name) {
 	global $config;
 
 	if (!hasPermission($config['mod']['themes']))
@@ -2737,7 +2735,7 @@ function mod_theme_uninstall($theme_name) {
 	header('Location: ?/themes', true, $config['redirect_http']);
 }
 
-function mod_theme_rebuild($theme_name) {
+function mod_theme_rebuild(Context $ctx, $theme_name) {
 	global $config;
 
 	if (!hasPermission($config['mod']['themes']))
@@ -2778,15 +2776,15 @@ function delete_page_base($page = '', $board = false) {
 	header('Location: ?/edit_pages' . ($board ? ('/' . $board) : ''), true, $config['redirect_http']);
 }
 
-function mod_delete_page($page = '') {
-	delete_page_base($page);
+function mod_delete_page(Context $ctx, $page = '') {
+	delete_page_base($ctx, $page);
 }
 
-function mod_delete_page_board($page = '', $board = false) {
-	delete_page_base($page, $board);
+function mod_delete_page_board(Context $ctx, $page = '', $board = false) {
+	delete_page_base($ctx, $page, $board);
 }
 
-function mod_edit_page($id) {
+function mod_edit_page(Context $ctx, $id) {
 	global $config, $mod, $board;
 
 	$query = prepare('SELECT * FROM ``pages`` WHERE `id` = :id');
@@ -2857,7 +2855,7 @@ function mod_edit_page($id) {
 	mod_page(sprintf(_('Editing static page: %s'), $page['name']), $config['file_mod_edit_page'], array('page' => $page, 'token' => make_secure_link_token("edit_page/$id"), 'content' => prettify_textarea($content), 'board' => $board));
 }
 
-function mod_pages($board = false) {
+function mod_pages(Context $ctx, $board = false) {
 	global $config, $mod, $pdo;
 
 	if (empty($board))
@@ -2911,7 +2909,7 @@ function mod_pages($board = false) {
 	mod_page(_('Pages'), $config['file_mod_pages'], array('pages' => $pages, 'token' => make_secure_link_token('edit_pages' . ($board ? ('/' . $board) : '')), 'board' => $board));
 }
 
-function mod_debug_antispam() {
+function mod_debug_antispam(Context $ctx) {
 	global $pdo, $config;
 
 	$args = array();
@@ -2948,7 +2946,7 @@ function mod_debug_antispam() {
 	mod_page(_('Debug: Anti-spam'), $config['file_mod_debug_antispam'], $args);
 }
 
-function mod_debug_recent_posts() {
+function mod_debug_recent_posts(Context $ctx) {
 	global $pdo, $config;
 
 	$limit = 500;
@@ -2982,7 +2980,7 @@ function mod_debug_recent_posts() {
 	mod_page(_('Debug: Recent posts'), $config['file_mod_debug_recent_posts'], array('posts' => $posts, 'flood_posts' => $flood_posts));
 }
 
-function mod_debug_sql() {
+function mod_debug_sql(Context $ctx) {
 	global $config;
 
 	if (!hasPermission($config['mod']['debug_sql']))
