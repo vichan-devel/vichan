@@ -630,12 +630,12 @@ if (isset($_POST['delete'])) {
 		// Check for CAPTCHA right after opening the board so the "return" link is in there.
 		try {
 			$provider = $config['captcha']['provider'];
-			$new_thread_capt = $config['captcha']['secureimage']['new_thread_capt'];
+			$new_thread_capt = $config['captcha']['native']['new_thread_capt'];
 			$dynamic = $config['captcha']['dynamic'];
 
 			// With our custom captcha provider
-			if (($provider === 'secureimage' && !$new_thread_capt)
-				|| ($provider === 'secureimage' && $new_thread_capt && $post['op'])) {
+			if (($provider === 'native' && !$new_thread_capt)
+				|| ($provider === 'native' && $new_thread_capt && $post['op'])) {
 				$query = $context->get(NativeCaptchaQuery::class);
 				$success = $query->verify($_POST['captcha_text'], $_POST['captcha_cookie']);
 

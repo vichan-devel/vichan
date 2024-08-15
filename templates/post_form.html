@@ -106,11 +106,11 @@
 				{% trans %}Verification{% endtrans %}
 			</th>
 			<td>
-				<script>load_captcha("{{ config.captcha.secureimage.provider_get }}", "{{ config.secureimage.captcha.extra }}");</script>
+				<script>load_captcha("{{ config.captcha.native.provider_get }}", "{{ config.native.captcha.extra }}");</script>
 				<noscript>
 					<input class='captcha_text' type='text' name='captcha_text' size='32' maxlength='6' autocomplete='off'>
 					<div class="captcha_html">
-						<img src="/{{ config.captcha.secureimage.provider_get }}?mode=get&raw=1">
+						<img src="/{{ config.captcha.native.provider_get }}?mode=get&raw=1">
 					</div>
 				</noscript>
 			</td>
@@ -122,11 +122,11 @@
                                 {% trans %}Verification{% endtrans %}
                         </th>
                         <td>
-                                <script>load_captcha("{{ config.captcha.secureimage.provider_get }}", "{{ config.captcha.secureimage.extra }}");</script>
+                                <script>load_captcha("{{ config.captcha.native.provider_get }}", "{{ config.captcha.native.extra }}");</script>
 				<noscript>
 					<input class='captcha_text' type='text' name='captcha_text' size='32' maxlength='6' autocomplete='off'>
 					<div class="captcha_html">
-						<img src="/{{ config.captcha.secureimage.provider_get }}?mode=get&raw=1">
+						<img src="/{{ config.captcha.native.provider_get }}?mode=get&raw=1">
 					</div>
 				</noscript>
                         </td>

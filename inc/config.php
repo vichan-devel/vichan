@@ -352,7 +352,7 @@
 	$config['simple_spam'] = false;
 
 	$config['captcha'] = [
-		// Can be false, 'recaptcha', 'hcaptcha' or 'secureimage'.
+		// Can be false, 'recaptcha', 'hcaptcha' or 'native'.
 		'provider' => false,
 		/*
 		 * If not false, the captcha is dynamically injected on the client if the web server set the `captcha-required`
@@ -372,8 +372,8 @@
 			'sitekey' => '10000000-ffff-ffff-ffff-000000000001',
 			'secret' => '0x0000000000000000000000000000000000000000',
 		],
-		// Enable the secureimage captcha you need to change a couple of settings. Read more at: /inc/captcha/readme.md
-		'secureimage' => [
+		// To enable the native captcha you need to change a couple of settings. Read more at: /inc/captcha/readme.md
+		'native' => [
 			// Custom captcha get provider path (if not working get the absolute path aka your url).
 			'provider_get' => '../inc/captcha/entrypoint.php',
 			// Custom captcha check provider path

@@ -76,14 +76,14 @@ function build_context(array $config): Context {
 		},
 		NativeCaptchaQuery::class => function($c) {
 			$config = $c->get('config');
-			if ($config['captcha']['provider'] !== 'secureimage') {
+			if ($config['captcha']['provider'] !== 'native') {
 				throw new RuntimeException('No native captcha service available');
 			}
 			return new NativeCaptchaQuery(
 				$c->get(HttpDriver::class),
 				$config['domain'],
-				$config['captcha']['secureimage']['provider_check'],
-				$config['captcha']['secureimage']['extra']
+				$config['captcha']['native']['provider_check'],
+				$config['captcha']['native']['extra']
 			);
 		}
 	]);
