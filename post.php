@@ -631,8 +631,8 @@ if (isset($_POST['delete'])) {
 		try {
 			// With our custom captcha provider
 			if ($config['captcha']['enabled'] || ($post['op'] && $config['new_thread_capt'])) {
-				$query = new NativeCaptchaQuery($context->get(HttpDriver::class), $config['domain'], $config['captcha']['provider_check']);
-				$success = $query->verify($config['captcha']['extra'], $_POST['captcha_text'], $_POST['captcha_cookie']);
+				$query = $context->get(NativeCaptchaQuery::class);
+				$success = $query->verify($_POST['captcha_text'], $_POST['captcha_cookie']);
 
 				if (!$success) {
 					error(

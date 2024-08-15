@@ -4,6 +4,7 @@ namespace Vichan;
 use RuntimeException;
 use Vichan\Driver\{HttpDriver, HttpDrivers, Log, LogDrivers};
 use Vichan\Service\HCaptchaQuery;
+use Vichan\Service\NativeCaptchaQuery;
 use Vichan\Service\ReCaptchaQuery;
 use Vichan\Service\RemoteCaptchaQuery;
 
@@ -67,6 +68,15 @@ function build_context(array $config): Context {
 			} else {
 				throw new RuntimeException('No remote captcha service available');
 			}
+		},
+		NativeCaptchaQuery::class => function($c) {
+			$http = $c->get(HttpDriver::class);
+			$config = $c->get('config');
+			return new NativeCaptchaQuery($http,
+				$config['domain'],
+				$config['captcha']['provider_check'],
+				$config['captcha']['extra']
+			);
 		}
 	]);
 }
