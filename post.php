@@ -648,29 +648,19 @@ if (isset($_POST['delete'])) {
 				}
 			}
 			// Remote 3rd party captchas.
-			else if (!$config['dynamic_captcha'] || $config['dynamic_captcha'] === $_SERVER['REMOTE_ADDR']) {
-				// recaptcha
-				if ($config['recaptcha']) {
-					if (!isset($_POST['g-recaptcha-response'])) {
-						error($config['error']['bot']);
-					}
-					$response = $_POST['g-recaptcha-response'];
-					$query = RemoteCaptchaQuery::withRecaptcha($context->get(HttpDriver::class), $config['recaptcha_private']);
-				}
-				// hCaptcha
-				elseif ($config['hcaptcha']) {
-					if (!isset($_POST['h-captcha-response'])) {
-						error($config['error']['bot']);
-					}
-					$response = $_POST['h-captcha-response'];
-					$query = RemoteCaptchaQuery::withHCaptcha($context->get(HttpDriver::class), $config['hcaptcha_private']);
-				}
+			elseif (($config['recaptcha'] || $config['hcaptcha'])
+				&& (!$config['dynamic_captcha'] || $config['dynamic_captcha'] === $_SERVER['REMOTE_ADDR'])) {
+				$query = $content->get(RemoteCaptchaQuery::class);
+				$field = $query->responseField();
 
-				if (isset($query, $response)) {
-					$success = $query->verify($response, $_SERVER['REMOTE_ADDR']);
-					if (!$success) {
-						error($config['error']['captcha']);
-					}
+				if (!isset($_POST[$field])) {
+					error($config['error']['bot']);
+				}
+				$response = $_POST[$field];
+
+				$success = $query->verify($response, $_SERVER['REMOTE_ADDR']);
+				if (!$success) {
+					error($config['error']['captcha']);
 				}
 			}
 		} catch (RuntimeException $e) {

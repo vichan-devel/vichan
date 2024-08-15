@@ -3,6 +3,9 @@ namespace Vichan;
 
 use RuntimeException;
 use Vichan\Driver\{HttpDriver, HttpDrivers, Log, LogDrivers};
+use Vichan\Service\HCaptchaQuery;
+use Vichan\Service\ReCaptchaQuery;
+use Vichan\Service\RemoteCaptchaQuery;
 
 defined('TINYBOARD') or exit;
 
@@ -53,6 +56,17 @@ function build_context(array $config): Context {
 		HttpDriver::class => function($c) {
 			$config = $c->get('config');
 			return HttpDrivers::getHttpDriver($config['upload_by_url_timeout'], $config['max_filesize']);
+		},
+		RemoteCaptchaQuery::class => function($c) {
+			$config = $c->get('config');
+			$http = $c->get(HttpDriver::class);
+			if ($config['recaptcha']) {
+				return new ReCaptchaQuery($http, $config['recaptcha_private']);
+			} elseif ($config['hcaptcha']) {
+				return new HCaptchaQuery($http, $config['hcaptcha_private'], $config['hcaptcha_public']);
+			} else {
+				throw new RuntimeException('No remote captcha service available');
+			}
 		}
 	]);
 }
