@@ -223,15 +223,15 @@ function getCookie(cookie_name) {
 }
 
 {% endraw %}
-{% if config.dynamic_captcha %}
+{% if config.captcha.dynamic %}
 function is_dynamic_captcha_enabled() {
 	let cookie = get_cookie('require-captcha');
 	return cookie === '1';
 }
 
 function get_captcha_pub_key() {
-{% if config.recaptcha %}
-	return "{{ config.recaptcha_public }}";
+{% if config.captcha.provider === 'recaptcha' %}
+	return "{{ config.captcha.recaptcha.sitekey }}";
 {% else %}
 	return null;
 {% endif %}

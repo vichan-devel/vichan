@@ -72,8 +72,8 @@
 				{% endif %}
 			</td>
 		</tr>
-		{% if config.recaptcha %}
-		{% if config.dynamic_captcha %}
+		{% if config.captcha.provider == 'recaptcha' %}
+		{% if config.captcha.dynamic %}
 		<tr id="captcha" style="display: none;">
 		{% else %}
 		<tr>
@@ -83,19 +83,19 @@
 				{{ antibot.html() }}
 			</th>
 			<td>
-				<div class="g-recaptcha" data-sitekey="{{ config.recaptcha_public }}"></div>
+				<div class="g-recaptcha" data-sitekey="{{ config.captcha.recaptcha.sitekey }}"></div>
 				{{ antibot.html() }}
 			</td>
 		</tr>
 		{% endif %}
-		{% if config.hcaptcha %}
+		{% if config.captcha.provider == 'hcaptcha' %}
 		<tr>
 			<th>
 				{% trans %}Verification{% endtrans %}
 				{{ antibot.html() }}
 			</th>
 			<td>
-				<div class="h-captcha" data-sitekey="{{ config.hcaptcha_public }}"></div>
+				<div class="h-captcha" data-sitekey="{{ config.captcha.hcaptcha.sitekey }}"></div>
 				{{ antibot.html() }}
 			</td>
 		</tr>
@@ -106,11 +106,11 @@
 				{% trans %}Verification{% endtrans %}
 			</th>
 			<td>
-				<script>load_captcha("{{ config.captcha.provider_get }}", "{{ config.captcha.extra }}");</script>
+				<script>load_captcha("{{ config.captcha.secureimage.provider_get }}", "{{ config.secureimage.captcha.extra }}");</script>
 				<noscript>
 					<input class='captcha_text' type='text' name='captcha_text' size='32' maxlength='6' autocomplete='off'>
 					<div class="captcha_html">
-						<img src="/{{ config.captcha.provider_get }}?mode=get&raw=1">
+						<img src="/{{ config.captcha.secureimage.provider_get }}?mode=get&raw=1">
 					</div>
 				</noscript>
 			</td>
@@ -122,11 +122,11 @@
                                 {% trans %}Verification{% endtrans %}
                         </th>
                         <td>
-                                <script>load_captcha("{{ config.captcha.provider_get }}", "{{ config.captcha.extra }}");</script>
+                                <script>load_captcha("{{ config.captcha.secureimage.provider_get }}", "{{ config.captcha.secureimage.extra }}");</script>
 				<noscript>
 					<input class='captcha_text' type='text' name='captcha_text' size='32' maxlength='6' autocomplete='off'>
 					<div class="captcha_html">
-						<img src="/{{ config.captcha.provider_get }}?mode=get&raw=1">
+						<img src="/{{ config.captcha.secureimage.provider_get }}?mode=get&raw=1">
 					</div>
 				</noscript>
                         </td>

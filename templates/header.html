@@ -20,7 +20,7 @@
                         <script type="text/javascript" src="/js/mod/mod_snippets.js"></script>
                         {% endif %}
                 {% endif %}
-                {% if config.recaptcha %}<script src="//www.recaptcha.net/recaptcha/api.js"></script>
+                {% if config.captcha.provider == 'recaptcha' %}<script src="//www.recaptcha.net/recaptcha/api.js"></script>
                 <style type="text/css">{% verbatim %}
                         #recaptcha_area {
                                 float: none !important;
@@ -50,6 +50,6 @@
                                 padding: 0 !important;
                         }
                 {% endverbatim %}</style>{% endif %}
-                {% if config.hcaptcha %}
+                {% if config.captcha.provider.hcaptcha %}
                 <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
                 {% endif %}

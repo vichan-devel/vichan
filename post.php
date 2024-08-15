@@ -629,8 +629,13 @@ if (isset($_POST['delete'])) {
 
 		// Check for CAPTCHA right after opening the board so the "return" link is in there.
 		try {
+			$provider = $config['captcha']['provider'];
+			$new_thread_capt = $config['captcha']['secureimage']['new_thread_capt'];
+			$dynamic = $config['captcha']['dynamic'];
+
 			// With our custom captcha provider
-			if ($config['captcha']['enabled'] || ($post['op'] && $config['new_thread_capt'])) {
+			if (($provider === 'secureimage' && !$new_thread_capt)
+				|| ($provider === 'secureimage' && $new_thread_capt && $post['op'])) {
 				$query = $context->get(NativeCaptchaQuery::class);
 				$success = $query->verify($_POST['captcha_text'], $_POST['captcha_cookie']);
 
@@ -648,8 +653,7 @@ if (isset($_POST['delete'])) {
 				}
 			}
 			// Remote 3rd party captchas.
-			elseif (($config['recaptcha'] || $config['hcaptcha'])
-				&& (!$config['dynamic_captcha'] || $config['dynamic_captcha'] === $_SERVER['REMOTE_ADDR'])) {
+			elseif ($provider && (!$dynamic || $dynamic === $_SERVER['REMOTE_ADDR'])) {
 				$query = $content->get(RemoteCaptchaQuery::class);
 				$field = $query->responseField();
 

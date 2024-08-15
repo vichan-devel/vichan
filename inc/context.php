@@ -61,21 +61,29 @@ function build_context(array $config): Context {
 		RemoteCaptchaQuery::class => function($c) {
 			$config = $c->get('config');
 			$http = $c->get(HttpDriver::class);
-			if ($config['recaptcha']) {
-				return new ReCaptchaQuery($http, $config['recaptcha_private']);
-			} elseif ($config['hcaptcha']) {
-				return new HCaptchaQuery($http, $config['hcaptcha_private'], $config['hcaptcha_public']);
-			} else {
-				throw new RuntimeException('No remote captcha service available');
+			switch ($config['captcha']['provider']) {
+				case 'recaptcha':
+					return new ReCaptchaQuery($http, $config['captcha']['recaptcha']['secret']);
+				case 'hcaptcha':
+					return new HCaptchaQuery(
+						$http,
+						$config['captcha']['hcaptcha']['secret'],
+						$config['captcha']['hcaptcha']['sitekey']
+					);
+				default:
+					throw new RuntimeException('No remote captcha service available');
 			}
 		},
 		NativeCaptchaQuery::class => function($c) {
-			$http = $c->get(HttpDriver::class);
 			$config = $c->get('config');
-			return new NativeCaptchaQuery($http,
+			if ($config['captcha']['provider'] !== 'secureimage') {
+				throw new RuntimeException('No native captcha service available');
+			}
+			return new NativeCaptchaQuery(
+				$c->get(HttpDriver::class),
 				$config['domain'],
-				$config['captcha']['provider_check'],
-				$config['captcha']['extra']
+				$config['captcha']['secureimage']['provider_check'],
+				$config['captcha']['secureimage']['extra']
 			);
 		}
 	]);

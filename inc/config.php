@@ -351,48 +351,39 @@
 	//);
 	$config['simple_spam'] = false;
 
-	/*
-	 * If not flase, the captcha is dynamically injected on the client if the web server set the `captcha-required`
-	 * cookie to 1. The configuration value should be set the IP for which the captcha should be verified.
-	 *
-	 * Example:
-	 * $config['dynamic_captcha'] = '127.0.0.1'; // Verify the captcha for users sending posts from the loopback address.
-	 */
-	$config['dynamic_captcha'] = false;
-
-	// Enable reCaptcha to make spam even harder. Rarely necessary.
-	$config['recaptcha'] = false;
-
-	// Public and private key pair from https://www.google.com/recaptcha/admin/create
-	$config['recaptcha_public'] = '6LcXTcUSAAAAAKBxyFWIt2SO8jwx4W7wcSMRoN3f';
-	$config['recaptcha_private'] = '6LcXTcUSAAAAAOGVbVdhmEM1_SyRF4xTKe8jbzf_';
-
-	// Enable hCaptcha as an alternative to reCAPTCHA.
-	$config['hcaptcha'] = false;
-
-	// Public and private key pair for using hCaptcha.
-	$config['hcaptcha_public'] = '7a4b21e0-dc53-46f2-a9f8-91d2e74b63a0';
-	$config['hcaptcha_private'] = '0x4e9A01bE637b51dC41a7Ea9865C3fDe4aB72Cf17';
-
-	// Enable Custom Captcha you need to change a couple of settings
-	//Read more at: /inc/captcha/readme.md
-	$config['captcha'] = array();
-
-	// Enable custom captcha provider
-	$config['captcha']['enabled'] = false;
-
-	//New thread captcha
- 	//Require solving a captcha to post a thread.
- 	//Default off.
- 	$config['new_thread_capt'] = false;
-
-	// Custom captcha get provider path (if not working get the absolute path aka your url.)
-	$config['captcha']['provider_get'] = '../inc/captcha/entrypoint.php';
-	// Custom captcha check provider path
-	$config['captcha']['provider_check'] = '../inc/captcha/entrypoint.php';
-
-	// Custom captcha extra field (eg. charset)
-	$config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
+	$config['captcha'] = [
+		// Can be false, 'recaptcha', 'hcaptcha' or 'secureimage'.
+		'provider' => false,
+		/*
+		 * If not false, the captcha is dynamically injected on the client if the web server set the `captcha-required`
+		 * cookie to 1. The configuration value should be set the IP for which the captcha should be verified.
+		 *
+		 * Example:
+		 *
+		 * // Verify the captcha for users sending posts from the loopback address.
+		 * $config['captcha']['dynamic'] = '127.0.0.1';
+		 */
+		'dynamic' => false,
+		'recaptcha' => [
+			'sitekey' => '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+			'secret' => '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe',
+		],
+		'hcaptcha' => [
+			'sitekey' => '10000000-ffff-ffff-ffff-000000000001',
+			'secret' => '0x0000000000000000000000000000000000000000',
+		],
+		// Enable the secureimage captcha you need to change a couple of settings. Read more at: /inc/captcha/readme.md
+		'secureimage' => [
+			// Custom captcha get provider path (if not working get the absolute path aka your url).
+			'provider_get' => '../inc/captcha/entrypoint.php',
+			// Custom captcha check provider path
+			'provider_check' => '../inc/captcha/entrypoint.php',
+			// Custom captcha extra field (eg. charset)
+			'extra' => 'abcdefghijklmnopqrstuvwxyz',
+			// New thread captcha. Require solving a captcha to post a thread.
+			'new_thread_capt' => false
+		]
+	];
 
 	// Ability to lock a board for normal users and still allow mods to post.  Could also be useful for making an archive board
 	$config['board_locked'] = false;
