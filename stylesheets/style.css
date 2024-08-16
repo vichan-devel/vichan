@@ -228,6 +228,8 @@ div.post.op hr {
 }
 
 .intro {
+  display: flex;
+  justify-content: space-between;
   margin: 0.5em 0;
   padding: 0;
   padding-bottom: 0.2em;
@@ -257,12 +259,19 @@ div.delete {
   float: right;
 }
 
-div.post.reply p {
-  margin: 0.3em 0 0 0;
+.required-star {
+  color: maroon;
 }
 
-div.post.reply div.body {
-  margin-left: 1.8em;
+div.post p {
+  margin: 0;
+
+  line-height: 1.16em;
+  font-size: 13px;
+  min-height: 1.16em;
+}
+
+div.post div.body {
   margin-top: 0.8em;
   padding-right: 3em;
   padding-bottom: 0.3em;
@@ -288,7 +297,7 @@ div.post div.body {
 div.post.reply {
   background: #D6DAF0;
   margin: 0.2em 4px;
-  padding: 0.2em 0.3em 0.5em 0.6em;
+  padding: 0.5em 0.3em;
   border-width: 1px;
   border-style: none solid solid none;
   border-color: #B7C5D9;

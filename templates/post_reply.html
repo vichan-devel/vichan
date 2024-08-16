@@ -11,9 +11,9 @@
 		{% include 'post/flag.html' %}
 	</label>
 	{% apply spaceless %}
-	{% include 'post/poster_id.html' %}&nbsp;
+	{% include 'post/poster_id.html' %}
 	{% include 'post/time.html' %}
-	<a class="post_no" id="post_no_{{ post.id }}" title="Link to this post"  onclick="highlightReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('', config.file_page50) }}{% else %}{{ post.link }}{% endif %}">No.</a>
+	<a class="post_no" id="post_no_{{ post.id }}" title="Link to this post" onclick="highlightReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('', config.file_page50) }}{% else %}{{ post.link }}{% endif %}">No.</a>
 	<a class="post_no" title="Reply to this post" onclick="citeReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('q', config.file_page50) }}{% else %}{{ post.link('q') }}{% endif %}">{{ post.id }}</a>
 	</p>
 	{% endapply %}
