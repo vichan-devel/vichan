@@ -218,11 +218,6 @@ div.post i.fa {
   font-size: 16px;
 }
 
-div.post.op {
-  margin-right: 20px;
-  margin-bottom: 5px;
-}
-
 div.post.op hr {
   border-color: #D9BFB7;
 }
@@ -263,6 +258,13 @@ div.delete {
   color: maroon;
 }
 
+div.post {
+  margin: 0.2em 4px;
+  padding: 0.5em 0.3em;
+  display: inline-block;
+  max-width: 94%!important;
+}
+
 div.post p {
   margin: 0;
 
@@ -294,15 +296,15 @@ div.post div.body {
   white-space: pre-wrap;
 }
 
+div.post.op {
+  padding-top: 0px;
+}
+
 div.post.reply {
   background: #D6DAF0;
-  margin: 0.2em 4px;
-  padding: 0.5em 0.3em;
   border-width: 1px;
   border-style: none solid solid none;
   border-color: #B7C5D9;
-  display: inline-block;
-  max-width: 94%!important;
 }
 
 span.trip {
