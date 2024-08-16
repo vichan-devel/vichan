@@ -442,7 +442,7 @@ function mod_edit_board($boardName) {
 			cache::delete('all_boards');
 		}
 
-		rebuildThemes('boards');
+		Vichan\Functions\Theme\rebuild_themes('boards');
 
 		header('Location: ?/', true, $config['redirect_http']);
 	} else {
@@ -514,7 +514,7 @@ function mod_new_board() {
 		// Build the board
 		buildIndex();
 
-		rebuildThemes('boards');
+		Vichan\Functions\Theme\rebuild_themes('boards');
 
 		header('Location: ?/' . $board['uri'] . '/' . $config['file_index'], true, $config['redirect_http']);
 	}
@@ -617,7 +617,7 @@ function mod_news($page_no = 1) {
 
 		modLog('Posted a news entry');
 
-		rebuildThemes('news');
+		Vichan\Functions\Theme\rebuild_themes('news');
 
 		header('Location: ?/edit_news#' . $pdo->lastInsertId(), true, $config['redirect_http']);
 	}
@@ -1013,7 +1013,7 @@ function mod_bans() {
 		foreach ($unban as $id) {
 			Bans::delete($id, true, $mod['boards'], true);
 		}
-                rebuildThemes('bans');
+                Vichan\Functions\Theme\rebuild_themes('bans');
 		header('Location: ?/bans', true, $config['redirect_http']);
 		return;
 	}
@@ -1281,7 +1281,7 @@ function mod_move_reply($originBoard, $postID) {
 		buildThread($newID);
 
 		// trigger themes
-		rebuildThemes('post', $targetBoard);
+		Vichan\Functions\Theme\rebuild_themes('post', $targetBoard);
 		// mod log
 		modLog("Moved post #{$postID} to " . sprintf($config['board_abbreviation'], $targetBoard) . " (#{$newID})", $originBoard);
 
@@ -1469,7 +1469,7 @@ function mod_move($originBoard, $postID) {
 		buildIndex();
 
 		// trigger themes
-		rebuildThemes('post', $targetBoard);
+		Vichan\Functions\Theme\rebuild_themes('post', $targetBoard);
 
 		$newboard = $board;
 
@@ -1576,7 +1576,7 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 			// Rebuild board
 			buildIndex();
 			// Rebuild themes
-			rebuildThemes('post-delete', $board);
+			Vichan\Functions\Theme\rebuild_themes('post-delete', $board);
 		}
 
 		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
@@ -1651,7 +1651,7 @@ function mod_edit_post($board, $edit_raw_html, $postID) {
 
 		buildIndex();
 
-		rebuildThemes('post', $board);
+		Vichan\Functions\Theme\rebuild_themes('post', $board);
 
 		header('Location: ?/' . sprintf($config['board_path'], $board) . $config['dir']['res'] . link_for($post) . '#' . $postID, true, $config['redirect_http']);
 	} else {
@@ -1689,7 +1689,7 @@ function mod_delete($board, $post) {
 	// Rebuild board
 	buildIndex();
 	// Rebuild themes
-	rebuildThemes('post-delete', $board);
+	Vichan\Functions\Theme\rebuild_themes('post-delete', $board);
 	// Redirect
 	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
 }
@@ -1711,7 +1711,7 @@ function mod_deletefile($board, $post, $file) {
 	// Rebuild board
 	buildIndex();
 	// Rebuild themes
-	rebuildThemes('post-delete', $board);
+	Vichan\Functions\Theme\rebuild_themes('post-delete', $board);
 
 	// Redirect
 	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
@@ -1756,7 +1756,7 @@ function mod_spoiler_image($board, $post, $file) {
 	buildIndex();
 
 	// Rebuild themes
-	rebuildThemes('post-delete', $board);
+	Vichan\Functions\Theme\rebuild_themes('post-delete', $board);
 
 	// Redirect
 	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
@@ -1807,7 +1807,7 @@ function mod_deletebyip($boardName, $post, $global = false) {
 
 		deletePost($post['id'], false, false);
 
-		rebuildThemes('post-delete', $board['uri']);
+		Vichan\Functions\Theme\rebuild_themes('post-delete', $board['uri']);
 
 		buildIndex();
 
@@ -2233,7 +2233,7 @@ function mod_rebuild() {
 
 		if (isset($_POST['rebuild_themes'])) {
 			$log[] = 'Regenerating theme files';
-			rebuildThemes('all');
+			Vichan\Functions\Theme\rebuild_themes('all');
 		}
 
 		if (isset($_POST['rebuild_javascript'])) {
@@ -2622,7 +2622,7 @@ function mod_themes_list() {
 	$themes = array();
 	while ($file = readdir($dir)) {
 		if ($file[0] != '.' && is_dir($config['dir']['themes'] . '/' . $file)) {
-			$themes[$file] = loadThemeConfig($file);
+			$themes[$file] = Vichan\Functions\Theme\load_theme_config($file);
 		}
 	}
 	closedir($dir);
@@ -2644,7 +2644,7 @@ function mod_theme_configure($theme_name) {
 	if (!hasPermission($config['mod']['themes']))
 		error($config['error']['noaccess']);
 
-	if (!$theme = loadThemeConfig($theme_name)) {
+	if (!$theme = Vichan\Functions\Theme\load_theme_config($theme_name)) {
 		error($config['error']['invalidtheme']);
 	}
 
@@ -2682,7 +2682,7 @@ function mod_theme_configure($theme_name) {
 		$result = true;
 		$message = false;
 		if (isset($theme['install_callback'])) {
-			$ret = $theme['install_callback'](themeSettings($theme_name));
+			$ret = $theme['install_callback'](Vichan\Functions\Theme\theme_settings($theme_name));
 			if ($ret && !empty($ret)) {
 				if (is_array($ret) && count($ret) == 2) {
 					$result = $ret[0];
@@ -2699,7 +2699,7 @@ function mod_theme_configure($theme_name) {
 		}
 
 		// Build themes
-		rebuildThemes('all');
+		Vichan\Functions\Theme\rebuild_themes('all');
 
 		mod_page(sprintf(_($result ? 'Installed theme: %s' : 'Installation failed: %s'), $theme['name']), $config['file_mod_theme_installed'], array(
 			'theme_name' => $theme_name,
@@ -2710,7 +2710,7 @@ function mod_theme_configure($theme_name) {
 		return;
 	}
 
-	$settings = themeSettings($theme_name);
+	$settings = Vichan\Functions\Theme\theme_settings($theme_name);
 
 	mod_page(sprintf(_('Configuring theme: %s'), $theme['name']), $config['file_mod_theme_config'], array(
 		'theme_name' => $theme_name,
@@ -2743,7 +2743,7 @@ function mod_theme_rebuild($theme_name) {
 	if (!hasPermission($config['mod']['themes']))
 		error($config['error']['noaccess']);
 
-	rebuildTheme($theme_name, 'all');
+	Vichan\Functions\Theme\rebuild_theme($theme_name, 'all');
 
 	mod_page(sprintf(_('Rebuilt theme: %s'), $theme_name), $config['file_mod_theme_rebuilt'], array(
 		'theme_name' => $theme_name,

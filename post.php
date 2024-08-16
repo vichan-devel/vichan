@@ -477,7 +477,7 @@ if (isset($_POST['delete'])) {
 	if (function_exists('fastcgi_finish_request'))
 		@fastcgi_finish_request();
 
-	rebuildThemes('post-delete', $board['uri']);
+	Vichan\Functions\Theme\rebuild_themes('post-delete', $board['uri']);
 
 } elseif (isset($_POST['report'])) {
 	if (!isset($_POST['board'], $_POST['reason']))
@@ -1429,9 +1429,9 @@ if (isset($_POST['delete'])) {
 		@fastcgi_finish_request();
 
 	if ($post['op'])
-		rebuildThemes('post-thread', $board['uri']);
+		Vichan\Functions\Theme\rebuild_themes('post-thread', $board['uri']);
 	else
-		rebuildThemes('post', $board['uri']);
+		Vichan\Functions\Theme\rebuild_themes('post', $board['uri']);
 
 } elseif (isset($_POST['appeal'])) {
 	if (!isset($_POST['ban_id']))

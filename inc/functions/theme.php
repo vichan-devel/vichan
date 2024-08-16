@@ -2,7 +2,7 @@
 namespace Vichan\Functions\Theme;
 
 
-function rebuildThemes(string $action, $boardname = false): void {
+function rebuild_themes(string $action, $boardname = false): void {
 	global $config, $board, $current_locale;
 
 	// Save the global variables
@@ -34,7 +34,7 @@ function rebuildThemes(string $action, $boardname = false): void {
 			echo "Rebuilding theme ".$theme['theme']."... ";
 		}
 
-		rebuildTheme($theme['theme'], $action, $boardname);
+		rebuild_theme($theme['theme'], $action, $boardname);
 
 		if (PHP_SAPI === 'cli') {
 			echo "done\n";
@@ -52,7 +52,7 @@ function rebuildThemes(string $action, $boardname = false): void {
 	}
 }
 
-function loadThemeConfig($_theme) {
+function load_theme_config($_theme) {
 	global $config;
 
 	if (!file_exists($config['dir']['themes'] . '/' . $_theme . '/info.php')) {
@@ -65,20 +65,20 @@ function loadThemeConfig($_theme) {
 	return $theme;
 }
 
-function rebuildTheme($theme, string $action, $board = false) {
+function rebuild_theme($theme, string $action, $board = false) {
 	global $config, $_theme;
 	$_theme = $theme;
 
-	$theme = loadThemeConfig($_theme);
+	$theme = load_theme_config($_theme);
 
 	if (file_exists($config['dir']['themes'] . '/' . $_theme . '/theme.php')) {
 		require_once $config['dir']['themes'] . '/' . $_theme . '/theme.php';
 
-		$theme['build_function']($action, themeSettings($_theme), $board);
+		$theme['build_function']($action, theme_settings($_theme), $board);
 	}
 }
 
-function themeSettings($theme): array {
+function theme_settings($theme): array {
 	if ($settings = \Cache::get("theme_settings_" . $theme)) {
 		return $settings;
 	}
