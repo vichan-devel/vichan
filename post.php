@@ -674,10 +674,10 @@ if (isset($_POST['delete'])) {
 				}
 			}
 		} catch (RuntimeException $e) {
-			$context->getLog()->log(Log::ERROR, "Captcha IO exception: {$e->getMessage()}");
+			$context->get(Log::class)->log(Log::ERROR, "Captcha IO exception: {$e->getMessage()}");
 			error($config['error']['remote_io_error']);
 		} catch (JsonException $e) {
-			$context->getLog()->log(Log::ERROR, "Bad JSON reply to captcha: {$e->getMessage()}");
+			$context->get(Log::class)->log(Log::ERROR, "Bad JSON reply to captcha: {$e->getMessage()}");
 			error($config['error']['remote_io_error']);
 		}
 
