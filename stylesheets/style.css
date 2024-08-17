@@ -203,7 +203,7 @@ img.banner,img.board_image {
 }
 
 div.post .post-image {
-  padding: 5px;
+  padding: 0.2em;
   margin: 0 20px 0 0;
 }
 
@@ -266,11 +266,15 @@ div.post {
 }
 
 div.post p {
-  margin: 0;
+  margin: 0.1em;
 
   line-height: 1.16em;
   font-size: 13px;
   min-height: 1.16em;
+}
+
+div.post div.head {
+  margin: 0.1em 0.4em;
 }
 
 div.post div.body {
@@ -325,19 +329,19 @@ br.clear {
   display: block;
 }
 
-span.controls {
+div.controls {
   float: right;
   margin: 0;
   padding: 0;
   font-size: 80%;
 }
 
-span.controls.op {
+div.controls.op {
   float: none;
   margin-left: 10px;
 }
 
-span.controls a {
+div.controls a {
   margin: 0;
 }
 
