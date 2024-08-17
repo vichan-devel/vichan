@@ -629,10 +629,15 @@ if (isset($_POST['delete'])) {
 
 		// Check for CAPTCHA right after opening the board so the "return" link is in there.
 		try {
+			$provider = $config['captcha']['provider'];
+			$new_thread_capt = $config['captcha']['native']['new_thread_capt'];
+			$dynamic = $config['captcha']['dynamic'];
+
 			// With our custom captcha provider
-			if ($config['captcha']['enabled'] || ($post['op'] && $config['new_thread_capt'])) {
-				$query = new NativeCaptchaQuery($context->get(HttpDriver::class), $config['domain'], $config['captcha']['provider_check']);
-				$success = $query->verify($config['captcha']['extra'], $_POST['captcha_text'], $_POST['captcha_cookie']);
+			if (($provider === 'native' && !$new_thread_capt)
+				|| ($provider === 'native' && $new_thread_capt && $post['op'])) {
+				$query = $context->get(NativeCaptchaQuery::class);
+				$success = $query->verify($_POST['captcha_text'], $_POST['captcha_cookie']);
 
 				if (!$success) {
 					error(
@@ -648,29 +653,23 @@ if (isset($_POST['delete'])) {
 				}
 			}
 			// Remote 3rd party captchas.
-			else {
-				// recaptcha
-				if ($config['recaptcha']) {
-					if (!isset($_POST['g-recaptcha-response'])) {
-						error($config['error']['bot']);
-					}
-					$response = $_POST['g-recaptcha-response'];
-					$query = RemoteCaptchaQuery::withRecaptcha($context->get(HttpDriver::class), $config['recaptcha_private']);
-				}
-				// hCaptcha
-				elseif ($config['hcaptcha']) {
-					if (!isset($_POST['h-captcha-response'])) {
-						error($config['error']['bot']);
-					}
-					$response = $_POST['h-captcha-response'];
-					$query = RemoteCaptchaQuery::withHCaptcha($context->get(HttpDriver::class), $config['hcaptcha_private']);
-				}
+			elseif ($provider && (!$dynamic || $dynamic === $_SERVER['REMOTE_ADDR'])) {
+				$query = $content->get(RemoteCaptchaQuery::class);
+				$field = $query->responseField();
 
-				if (isset($query, $response)) {
-					$success = $query->verify($response, $_SERVER['REMOTE_ADDR']);
-					if (!$success) {
-						error($config['error']['captcha']);
-					}
+				if (!isset($_POST[$field])) {
+					error($config['error']['bot']);
+				}
+				$response = $_POST[$field];
+				/*
+				 * Do not query with the IP if the mode is dynamic. This config is meant for proxies and internal
+				 * loopback addresses.
+				 */
+				$ip = $dynamic ? null : $_SERVER['REMOTE_ADDR'];
+
+				$success = $query->verify($response, $ip);
+				if (!$success) {
+					error($config['error']['captcha']);
 				}
 			}
 		} catch (RuntimeException $e) {

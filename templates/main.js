@@ -222,6 +222,36 @@ function getCookie(cookie_name) {
 	}
 }
 
+{% endraw %}
+{% if config.captcha.dynamic %}
+function is_dynamic_captcha_enabled() {
+	let cookie = get_cookie('require-captcha');
+	return cookie === '1';
+}
+
+function get_captcha_pub_key() {
+{% if config.captcha.provider === 'recaptcha' %}
+	return "{{ config.captcha.recaptcha.sitekey }}";
+{% else %}
+	return null;
+{% endif %}
+}
+
+function init_dynamic_captcha() {
+	if (!is_dynamic_captcha_enabled()) {
+		let pub_key = get_captcha_pub_key();
+		if (!pub_key) {
+			console.error("Missing public captcha key!");
+			return;
+		}
+
+		let captcha_hook = document.getElementById('captcha');
+		captcha_hook.style = "";
+	}
+}
+{% endif %}
+{% raw %}
+
 function highlightReply(id) {
 	if (typeof window.event != "undefined" && event.which == 2) {
 		// don't highlight on middle click
