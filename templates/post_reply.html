@@ -1,24 +1,24 @@
 {% apply spaceless %}
 {# tabs and new lines will be ignored #}
 <div class="post reply" id="reply_{{ post.id }}" data-board="{{ board.uri }}">
+	<p class="intro">
+		<label for="delete_{{ post.id }}">
+		{% if not index %}<a id="{{ post.id }}" class="post_anchor"></a>{% endif %}
+			<input type="checkbox" class="delete" name="delete_{{ post.id }}" id="delete_{{ post.id }}" />
+			{% include 'post/subject.html' %}
+			{% include 'post/name.html' %}
+			{% include 'post/ip.html' %}
+			{% include 'post/flag.html' %}
+		</label>
+		{% apply spaceless %}
+		{% include 'post/poster_id.html' %}
+		<label class="post-details">
+			{% include 'post/time.html' %}
+			<a class="post_no" id="post_no_{{ post.id }}" title="Link to this post" onclick="highlightReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('', config.file_page50) }}{% else %}{{ post.link }}{% endif %}">No.</a>
+			<a class="post_no" title="Reply to this post" onclick="citeReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('q', config.file_page50) }}{% else %}{{ post.link('q') }}{% endif %}">{{ post.id }}</a>
+		</label>
+	</p>
 	<div class="head">
-		<p class="intro">
-			<label for="delete_{{ post.id }}">
-			{% if not index %}<a id="{{ post.id }}" class="post_anchor"></a>{% endif %}
-				<input type="checkbox" class="delete" name="delete_{{ post.id }}" id="delete_{{ post.id }}" />
-				{% include 'post/subject.html' %}
-				{% include 'post/name.html' %}
-				{% include 'post/ip.html' %}
-				{% include 'post/flag.html' %}
-			</label>
-			{% apply spaceless %}
-			{% include 'post/poster_id.html' %}
-			<label style="text-wrap: nowrap;">
-				{% include 'post/time.html' %}
-				<a class="post_no" id="post_no_{{ post.id }}" title="Link to this post" onclick="highlightReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('', config.file_page50) }}{% else %}{{ post.link }}{% endif %}">No.</a>
-				<a class="post_no" title="Reply to this post" onclick="citeReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('q', config.file_page50) }}{% else %}{{ post.link('q') }}{% endif %}">{{ post.id }}</a>
-			</label>
-		</p>
 		{% endapply %}
 		{% include 'post/post_controls.html' %}
 		{% include 'post/fileinfo.html' %}

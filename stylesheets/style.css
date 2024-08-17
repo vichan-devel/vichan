@@ -148,7 +148,6 @@ form table tr td div label {
 
 .file {
   float: left;
-  margin-right: 2px;
 }
 
 .file:not(.multifile) .post-image {
@@ -161,11 +160,7 @@ form table tr td div label {
 
 p.fileinfo {
   display: block;
-  margin: 0 0 0 20px;
-}
-
-div.post p.fileinfo {
-  padding-left: 5px;
+  margin: 0.2em 0px;
 }
 
 div.banner {
@@ -223,16 +218,25 @@ div.post.op hr {
 }
 
 .intro {
-  display: flex;
-  justify-content: space-between;
-  margin: 0.5em 0;
-  padding: 0;
-  padding-bottom: 0.2em;
+  margin: 0.5em 0px;
+  padding: 0px;
+  line-height: 1.3em;
+}
+
+.intro span {
+  min-width: 0.3em;
+  display: inline-block;
+}
+
+.post-details {
+  text-wrap: nowrap;
+  float: right;
 }
 
 input.delete {
   float: left;
-  margin: 1px 6px 0 0;
+  margin: 1px 6px 0px 0px;
+  scale: 1.05;
 }
 
 .intro span.subject {
@@ -245,9 +249,13 @@ input.delete {
   font-weight: bold;
 }
 
-.intro span.capcode,p.intro a.capcode,p.intro a.nametag {
+.post-details span.capcode,p.intro a.capcode,p.intro a.nametag {
   color: #F00000;
   margin-left: 0;
+}
+
+.post-details a {
+  margin-left: 5px;
 }
 
 div.delete {
@@ -265,16 +273,17 @@ div.post {
   max-width: 94%!important;
 }
 
-div.post p {
-  margin: 0.1em;
-
-  line-height: 1.16em;
-  font-size: 13px;
-  min-height: 1.16em;
+div.post div.head {
+  margin: 0.1em 1em;
+  clear: both;
+  line-height: 1.3em;
 }
 
-div.post div.head {
-  margin: 0.1em 0.4em;
+div.post > p {
+    margin: 0.1em 0.4em;
+
+    font-size: 13px;
+    min-height: 1.16em;
 }
 
 div.post div.body {
@@ -329,20 +338,15 @@ br.clear {
   display: block;
 }
 
-div.controls {
-  float: right;
+span.controls {
   margin: 0;
   padding: 0;
-  font-size: 80%;
 }
 
-div.controls.op {
-  float: none;
-  margin-left: 10px;
-}
-
-div.controls a {
+span.controls a {
   margin: 0;
+  text-wrap: nowrap;
+  display: inline-block;
 }
 
 div#wrap {
@@ -937,7 +941,6 @@ pre {
 
 .poster_id {
   cursor: pointer;
-  display: inline-block;
   user-select: none;
 }
 
