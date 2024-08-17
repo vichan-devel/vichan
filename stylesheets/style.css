@@ -218,7 +218,6 @@ div.post.op hr {
 }
 
 .intro {
-  margin: 0.5em 0px;
   padding: 0px;
   line-height: 1.3em;
 }
@@ -280,10 +279,14 @@ div.post div.head {
 }
 
 div.post > p {
-    margin: 0.1em 0.4em;
+  margin: 0.1em 0.4em;
 
-    font-size: 13px;
-    min-height: 1.16em;
+  font-size: 13px;
+  min-height: 1.16em;
+
+  @media (max-width: 32em) {
+    margin-right: 1.4em;
+  }
 }
 
 div.post div.body {
