@@ -56,8 +56,8 @@
 		{% set lastcount = config.noko50_count %}
 		<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post, true) }}">[{% trans %}Last 1 Post{% plural lastcount %}Last {{ count }} Posts{% endtrans %}]</a>
 	{% endif %}
-	{% include 'post/post_controls.html' %}
 	</p>
+	{% include 'post/post_controls.html' %}
 	<div class="body">
 		{% endapply %}{% if index %}{{ post.body|truncate_body(post.link) }}{% else %}{{ post.body }}{% endif %}{% apply spaceless %}
 		{% if post.modifiers['ban message'] %}
