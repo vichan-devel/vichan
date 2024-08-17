@@ -37,6 +37,7 @@
             "inc/functions/net.php",
             "inc/functions/num.php",
             "inc/functions/format.php",
+            "inc/functions/theme.php",
             "inc/driver/http-driver.php",
             "inc/driver/log-driver.php",
             "inc/service/captcha-queries.php"

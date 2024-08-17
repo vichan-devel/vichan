@@ -15,7 +15,7 @@ class Bans {
 			$query->bindValue(':id', $ban_ids[0], PDO::PARAM_INT);
 			$query->execute() or error(db_error());
 
-			rebuildThemes('bans');
+			Vichan\Functions\Theme\rebuild_themes('bans');
 		} elseif ($len >= 1) {
 			// Build the query.
 			$query = 'DELETE FROM ``bans`` WHERE `id` IN (';
@@ -33,7 +33,7 @@ class Bans {
 
 			$query->execute() or error(db_error());
 
-			rebuildThemes('bans');
+			Vichan\Functions\Theme\rebuild_themes('bans');
 		}
 	}
 
@@ -343,7 +343,7 @@ class Bans {
 
 	static public function seen($ban_id) {
 		$query = query("UPDATE ``bans`` SET `seen` = 1 WHERE `id` = " . (int)$ban_id) or error(db_error());
-                rebuildThemes('bans');
+                Vichan\Functions\Theme\rebuild_themes('bans');
 	}
 
 	static public function purge($require_seen, $moratorium) {
@@ -358,7 +358,7 @@ class Bans {
 
 		$affected = $query->rowCount();
 		if ($affected > 0) {
-			rebuildThemes('bans');
+			Vichan\Functions\Theme\rebuild_themes('bans');
 		}
 		return $affected;
 	}
@@ -386,7 +386,7 @@ class Bans {
 
 		query("DELETE FROM ``bans`` WHERE `id` = " . (int)$ban_id) or error(db_error());
 
-		if (!$dont_rebuild) rebuildThemes('bans');
+		if (!$dont_rebuild) Vichan\Functions\Theme\rebuild_themes('bans');
 
 		return true;
 	}
@@ -465,7 +465,7 @@ class Bans {
 
 		modLog("Created a new $ban_len ban on $ban_board for $ban_ip (<small># $ban_id </small>) with $ban_reason");
 
-		rebuildThemes('bans');
+		Vichan\Functions\Theme\rebuild_themes('bans');
 
 		return $pdo->lastInsertId();
 	}
