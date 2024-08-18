@@ -126,6 +126,7 @@ if (!window.matchMedia('(any-hover: none)').matches) {
 							.attr('id', 'post-hover-' + id)
 							.attr('data-board', board)
 							.addClass('post-hover')
+							.css('border-style', 'solid')
 							.css('display', 'inline-block')
 							.css('position', 'absolute')
 							.css('font-style', 'normal')
@@ -134,12 +135,10 @@ if (!window.matchMedia('(any-hover: none)').matches) {
 						if (isScreenSmall) {
 							hoverPreview
 								.css('margin-top', '1em')
-								.css('border-top', 'solid')
-								.css('border-bottom', 'solid');
+								.css('border-left-style', 'none')
+								.css('border-right-style', 'none');
 						} else {
-							hoverPreview
-								.css('margin-left', '1em')
-								.css('border-style', 'solid');
+							hoverPreview.css('margin-left', '1em');
 						}
 
 						hoverPreview.addClass('reply').addClass('post')
