@@ -20,6 +20,18 @@
  */
 if (!window.matchMedia('(any-hover: none)').matches) {
 	onReady(function() {
+		let isScreenSmall = false
+		/*
+		 * Set up screen size detection.
+		 * If the method is not defined, suppose the screen is always not-small.
+		 */
+		if (window.matchMedia) {
+			let query = window.matchMedia('(max-width: 48em)');
+
+			query.addEventListener('change', (e) => isScreenSmall = e.matches);
+			isScreenSmall = query.matches;
+		}
+
 		let dontFetchAgain = [];
 		initHover = function() {
 			let link = $(this);
@@ -58,36 +70,82 @@ if (!window.matchMedia('(any-hover: none)').matches) {
 			let post = false;
 			let hovering = false;
 			let hoveredAt;
+
+			let updatePreviewPosition = function(pageX, pageY, hoverPreview) {
+				let scrollTop = $(window).scrollTop();
+				if (link.is("[data-thread]")) {
+					scrollTop = 0;
+				}
+				let epy = pageY;
+				if (link.is("[data-thread]")) {
+					epy -= $(window).scrollTop();
+				}
+
+				let top = (epy ? epy : hoveredAt['y']) - 10;
+
+				if (epy < scrollTop + 15) {
+					top = scrollTop;
+				} else if (epy > scrollTop + $(window).height() - hoverPreview.height() - 15) {
+					top = scrollTop + $(window).height() - hoverPreview.height() - 15;
+				}
+
+				let hovery = pageY ? pageY : hoveredAt['y'];
+				if ((hovery - top) > 20){
+					top = hovery;
+				}
+
+				let previewX;
+				if (isScreenSmall) {
+					previewX = 0;
+				} else {
+					previewX = (pageX ? pageX : hoveredAt['x']) + 1
+				}
+
+				hoverPreview.css('left', previewX).css('top', top);
+			};
+
 			link.hover(function(e) {
 				hovering = true;
 				hoveredAt = {'x': e.pageX, 'y': e.pageY};
 
 				let startHover = function(link) {
-					if (post.is(':visible') &&
-							post.offset().top >= $(window).scrollTop() &&
-							post.offset().top + post.height() <= $(window).scrollTop() + $(window).height()) {
-						// post is in view
+					if ($.contains(post[0], link[0])) {
+						// link links to itself or to op; ignore
+					} else if (post.is(':visible') &&
+						post.offset().top >= $(window).scrollTop() &&
+						post.offset().top + post.height() <= $(window).scrollTop() + $(window).height()) {
+						// Post is in view, highlight it.
 						post.addClass('highlighted');
 					} else {
-						let newPost = post.clone();
-						newPost.find('>.reply, >br').remove();
-						newPost.find('span.mentioned').remove();
-						newPost.find('a.post_anchor').remove();
+						// Creates the preview, and displays it,
+						let hoverPreview = post.clone();
+						hoverPreview.find('>.reply, >br').remove();
+						hoverPreview.find('a.post_anchor').remove();
 
-						newPost
+						hoverPreview
 							.attr('id', 'post-hover-' + id)
 							.attr('data-board', board)
 							.addClass('post-hover')
-							.css('border-style', 'solid')
-							.css('box-shadow', '1px 1px 1px #999')
-							.css('display', 'block')
+							.css('display', 'inline-block')
 							.css('position', 'absolute')
 							.css('font-style', 'normal')
-							.css('z-index', '100')
-							.addClass('reply').addClass('post')
+							.css('z-index', '100');
+
+						if (isScreenSmall) {
+							hoverPreview
+								.css('margin-top', '1em')
+								.css('border-top', 'solid')
+								.css('border-bottom', 'solid');
+						} else {
+							hoverPreview
+								.css('margin-left', '1em')
+								.css('border-style', 'solid');
+						}
+
+						hoverPreview.addClass('reply').addClass('post')
 							.insertAfter(link.parent())
 
-						link.trigger('mousemove');
+						updatePreviewPosition(e.pageX, e.pageY, hoverPreview);
 					}
 				};
 
@@ -133,6 +191,8 @@ if (!window.matchMedia('(any-hover: none)').matches) {
 					});
 				}
 			}, function() {
+				// Remove the preview.
+
 				hovering = false;
 				if (!post) {
 					return;
@@ -144,33 +204,19 @@ if (!window.matchMedia('(any-hover: none)').matches) {
 				}
 				$('.post-hover').remove();
 			}).mousemove(function(e) {
+				// Update the preview position if the mouse moves.
+
 				if (!post) {
 					return;
 				}
 
-				let hover = $('#post-hover-' + id + '[data-board="' + board + '"]');
-				if (hover.length == 0) {
+				// The actual displayed preview.
+				let hoverPreview = $('#post-hover-' + id + '[data-board="' + board + '"]');
+				if (hoverPreview.length === 0) {
 					return;
 				}
 
-				let scrollTop = $(window).scrollTop();
-				if (link.is("[data-thread]")) {
-					scrollTop = 0;
-				}
-				let epy = e.pageY;
-				if (link.is("[data-thread]")) {
-					epy -= $(window).scrollTop();
-				}
-
-				let top = (epy ? epy : hoveredAt['y']) - 10;
-
-				if (epy < scrollTop + 15) {
-					top = scrollTop;
-				} else if (epy > scrollTop + $(window).height() - hover.height() - 15) {
-					top = scrollTop + $(window).height() - hover.height() - 15;
-				}
-
-				hover.css('left', (e.pageX ? e.pageX : hoveredAt['x'])).css('top', top);
+				updatePreviewPosition(e.pageX, e.pageY, hoverPreview);
 			});
 		};
 
