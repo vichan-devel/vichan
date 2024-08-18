@@ -285,6 +285,11 @@ div.post.reply {
     background: none repeat scroll 0 0 #DDDDDD;
     border: 1px solid #CCCCCC;
     border-radius: 5px 5px 5px 5px;
+
+    @media (max-width: 48em) {
+        border-left-style: none;
+        border-right-style: none;
+    }
 }
 div.title,h1 {
     color: #FF6600;

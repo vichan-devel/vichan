@@ -94,7 +94,7 @@ form table tr th {
 form table tr th {
 	background: #AF0A0F;
 	color: #FFF;
-	border: 1px solid #800000; 
+	border: 1px solid #800000;
 }
 form table tr td div {
 	text-align: center;
@@ -213,6 +213,10 @@ div.post.reply {
 	border-style: none solid solid none;
 	border-color: #DCDCDC;
 	display: inline-block;
+
+	@media (max-width: 48em) {
+		border-right-style: none;
+	}
 }
 span.trip {
 	color: #228854;
@@ -393,7 +397,7 @@ div.blotter {
 }
 
 .desktop-style div.boardlist:nth-child(1) {
- 
+
 }
 
 .desktop-style div.boardlist:nth-child(1):hover, .desktop-style div.boardlist:nth-child(1).cb-menu {

@@ -339,14 +339,12 @@ div.post div.body {
 
 div.post.op {
   padding-top: 0px;
-<<<<<<< HEAD
-=======
+
   /* Add back in the padding that is provided by body on large screens */
   @media (max-width: 48em) {
     padding-left: 4px;
     padding-right: 4px;
   }
->>>>>>> f49a9d31 (style.css: increase breakpoint for small screen)
 }
 
 div.post.reply {
@@ -356,7 +354,6 @@ div.post.reply {
   border-color: #B7C5D9;
 
   @media (max-width: 48em) {
-    border-left-style: none;
     border-right-style: none;
   }
 }
