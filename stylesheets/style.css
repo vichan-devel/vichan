@@ -345,7 +345,6 @@ div.post.reply {
   border-color: #B7C5D9;
 
   @media (max-width: 48em) {
-    border-left-style: none;
     border-right-style: none;
   }
 }

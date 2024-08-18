@@ -38,11 +38,21 @@ div.post.reply {
 	background: #000000;
 	border: 1px dashed;
 	border-color:#00FF00;
+
+	@media (max-width: 48em) {
+		border-left-style: none;
+		border-right-style: none;
+	}
 }
 div.post.reply.highlighted {
 	background: transparent;
 	border: transparent 1px dashed;
 	border-color:#00FF00;
+
+	@media (max-width: 48em) {
+		border-left-style: none;
+		border-right-style: none;
+	}
 }
 div.post.reply div.body a:link, div.post.reply div.body a:visited {
 	color: #00FF00;
@@ -167,4 +177,3 @@ table.modlog tr th {
 .desktop-style .sub {
   background: none;
 }
-
