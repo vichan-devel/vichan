@@ -8,7 +8,7 @@
  *
  * Usage:
  *   $config['additional_javascript'][] = 'js/jquery.min.js';
- *   // $config['additional_javascript'][] = 'js/post-hover'; (optional; must come first)
+ *   // $config['additional_javascript'][] = 'js/post-hover.js'; (optional; must come first)
  *   $config['additional_javascript'][] = 'js/show-backlinks.js';
  *
  */
