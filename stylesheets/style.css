@@ -343,6 +343,11 @@ div.post.reply {
   border-width: 1px;
   border-style: none solid solid none;
   border-color: #B7C5D9;
+
+  @media (max-width: 48em) {
+    border-left-style: none;
+    border-right-style: none;
+  }
 }
 
 span.trip {
