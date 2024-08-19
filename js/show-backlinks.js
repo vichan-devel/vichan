@@ -32,7 +32,7 @@ onReady(function() {
 				}
 			}
 
-			let mentioned = post.find('p.intro span.mentioned');
+			let mentioned = post.find('.head div.mentioned');
 			if (mentioned.length === 0) {
 				mentioned = $('<span class="mentioned unimportant"></span>').prependTo(post.find('.head'));
 			}
