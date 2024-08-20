@@ -14,6 +14,7 @@ if (active_page == 'thread') {
 		let idSupport = ($('.poster_id').length > 0);
 		let threadId = (document.location.pathname + document.location.search).split('/');
 		threadId = threadId[threadId.length -1].split('+')[0].split('-')[0].split('.')[0];
+		let boardName = $('input[name="board"]').val();
 
 		$('.boardlist.bottom, footer')
 			.first()
@@ -28,9 +29,37 @@ if (active_page == 'thread') {
 		el.prepend('<span id="thread_stats_posts">0</span> ' +_('replies')+ ' |&nbsp;');
 		delete el;
 
+		function fetchPageNumber() {
+			$.getJSON('//' + document.location.host + '/' + boardName + '/threads.json', function(data) {
+				let found;
+				let page = '???';
+				let threadIdInt = parseInt(threadId);
+				for (let i = 0; data[i]; i++) {
+					let threads = data[i].threads;
+					for (let j = 0; threads[j]; j++) {
+						if (parseInt(threads[j].no) === threadIdInt) {
+							page = data[i].page +1;
+							found = true;
+							break;
+						}
+					}
+					if (found) {
+						break;
+					}
+				}
+				let threadStatsPage = $('#thread_stats_page');
+				threadStatsPage.text(page);
+				if (!found) {
+					threadStatsPage.css('color', 'red');
+				} else {
+					threadStatsPage.css('color', '');
+				}
+			});
+		}
+
 		function updateThreadStats() {
-			let op = $('#thread_' + threadId + ' > div.post.op:not(.post-hover):not(.inline)').first();
-			let replies = $('#thread_' + threadId + ' > div.post.reply:not(.post-hover):not(.inline)');
+			let op = $('#thread_' + threadId).find('div.post.op:not(.post-hover):not(.inline)').first();
+			let replies = $('#thread_' + threadId).find('div.post.reply:not(.post-hover):not(.inline)');
 			// Post count.
 			$('#thread_stats_posts').text(replies.length);
 			// Image count.
@@ -76,60 +105,12 @@ if (active_page == 'thread') {
 				$('#thread_stats_uids').text(size(ids));
 			}
 
-			let boardName = $('input[name="board"]').val();
-			$.getJSON('//' + document.location.host + '/' + boardName + '/threads.json').success(function(data) {
-				let found, page = '???';
-				for (let i = 0; data[i]; i++) {
-					let threads = data[i].threads;
-					for (let j = 0; threads[j]; j++) {
-						if (parseInt(threads[j].no) == parseInt(threadId)) {
-							page = data[i].page +1;
-							found = true;
-							break;
-						}
-					}
-					if (found) {
-						break;
-					}
-				}
-				$('#thread_stats_page').text(page);
-				if (!found) {
-					$('#thread_stats_page').css('color', 'red');
-				} else {
-					$('#thread_stats_page').css('color', '');
-				}
-			});
+			fetchPageNumber();
 		}
 
 		// Load the current page the thread is on.
 		// Uses ajax call so it gets loaded on a delay (depending on network resources available).
-		let thread_stats_page_timer = setInterval(function() {
-			let boardName = $('input[name="board"]').val();
-			$.getJSON('//' + document.location.host + '/' + boardName + '/threads.json').success(function(data) {
-				let found = false;
-				let page = '???';
-				for (let i = 0; data[i]; i++) {
-					let threads = data[i].threads;
-					for (let j = 0; threads[j]; j++) {
-						if (parseInt(threads[j].no) == parseInt(threadId)) {
-							page = data[i].page +1;
-							found = true;
-							break;
-						}
-					}
-					if (found) {
-						break;
-					}
-				}
-
-				$('#thread_stats_page').text(page);
-				if (!found) {
-					$('#thread_stats_page').css('color', 'red');
-				} else {
-					$('#thread_stats_page').css('color', '');
-				}
-			});
-		}, 30000);
+		setInterval(fetchPageNumber, 30000);
 
 		$('body').append('<style>.posts_by_id{display:none;}.poster_id:hover+.posts_by_id{display:initial}</style>');
 		updateThreadStats();
