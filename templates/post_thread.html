@@ -79,7 +79,7 @@
 					{{ count }} posts
 				{% endtrans %}
 				{% if post.omitted_images %}
-					 {% trans %}and{% endtrans %}
+					 {% trans %}and{% endtrans %} {# Keep the space, we need it for bellow #}
 				{% endif %}
 			{% endif %}
 			{% if post.omitted_images %}
