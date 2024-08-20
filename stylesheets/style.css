@@ -152,6 +152,11 @@ form table tr td div label {
   font-size: 10px;
 }
 
+.files.multifile {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .file {
   float: left;
 }
