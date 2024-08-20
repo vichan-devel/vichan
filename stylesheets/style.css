@@ -285,6 +285,7 @@ div.post {
   padding: 0.5em 0.3em;
   display: inline-block;
   max-width: 94%!important;
+  overflow-wrap: break-word;
 
   @media (max-width: 48em) {
     margin: 0.1em 0px;
