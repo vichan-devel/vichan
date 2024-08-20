@@ -64,7 +64,7 @@ if (active_page == 'thread') {
 			$('#thread_stats_posts').text(replies.length);
 			// Image count.
 			$('#thread_stats_images').text(replies.filter(function() {
-				return $(this).find('> .files').text().trim() != false;
+				return $(this).find('>> .files').text().trim() != false;
 			}).length);
 
 			// Unique ID count.
