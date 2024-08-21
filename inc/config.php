@@ -1187,6 +1187,10 @@
 	// Minify Javascript using http://code.google.com/p/minify/.
 	$config['minify_js'] = false;
 
+	// Version number for main.js (or $config['url_javascript']).
+	// You can use this to bypass the user's browsers and CDN caches.
+	$config['resource_version'] = 0;
+
 	// Dispatch thumbnail loading and image configuration with JavaScript. It will need a certain javascript
 	// code to work.
 	$config['javascript_image_dispatch'] = false;
