@@ -1191,6 +1191,9 @@
 	// code to work.
 	$config['javascript_image_dispatch'] = false;
 
+	// Version number for main.js and style.css
+	$config['resource_version'] = 1;
+
 /*
  * ====================
  *  Video embedding
