@@ -17,7 +17,7 @@
 		<h1>{{ settings.title }}</h1>
 		<div class="subtitle">{{ settings.subtitle }}</div>
 	</header>
-	
+
 	<div class="ban">
 		{% if news|length == 0 %}
 			<p style="text-align:center" class="unimportant">(No news to show.)</p>
@@ -29,13 +29,13 @@
 					{% else %}
 						<em>no subject</em>
 					{% endif %}
-					<span class="unimportant"> &mdash; by {{ entry.name }} at {{ entry.time|date(config.post_date, config.timezone) }}</span>
+					<span class="unimportant"> &mdash; by {{ entry.name }} at {{ entry.time|date(config.post_date) }}</span>
 				</h2>
 				<p>{{ entry.body }}</p>
 			{% endfor %}
 		{% endif %}
 	</div>
-	
+
 	<hr/>
 		{% include 'footer.html' %}
 </body>
