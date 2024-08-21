@@ -1,4 +1,4 @@
-<link rel="stylesheet" media="screen" href="{{ config.url_stylesheet }}">
+<link rel="stylesheet" media="screen" href="{{ config.url_stylesheet }}?v={{ config.resource_version }}">
 {% if config.url_favicon %}<link rel="shortcut icon" href="{{ config.url_favicon }}">{% endif %}
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
@@ -12,9 +12,9 @@
 	var modRoot = "{{ config.root }}" + (inMod ? "mod.php?/" : "");
 </script>
 {% if not nojavascript %}
-	<script type="text/javascript" src="{{ config.url_javascript }}"></script>
+	<script type="text/javascript" src="{{ config.url_javascript }}?v={{ config.resource_version }}"></script>
 	{% if not config.additional_javascript_compile %}
-	{% for javascript in config.additional_javascript %}<script type="text/javascript" src="{{ config.additional_javascript_url }}{{ javascript }}"></script>{% endfor %}
+	{% for javascript in config.additional_javascript %}<script type="text/javascript" src="{{ config.additional_javascript_url }}{{ javascript }}?v={{ config.resource_version }}"></script>{% endfor %}
 	{% endif %}
 	{% if mod %}
 	<script type="text/javascript" src="/js/mod/mod_snippets.js"></script>
