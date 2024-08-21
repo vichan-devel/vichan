@@ -1,4 +1,4 @@
-<script src="{{ config.additional_javascript_url }}js/mod/recent-posts.js"></script>
+<script src="{{ config.additional_javascript_url }}js/mod/recent-posts.js?v={{ config.resource_version }}"></script>
 {% if not posts|length %}
 	<p style="text-align:center" class="unimportant">({% trans 'There are no active posts.' %})</p>
 {% else %}

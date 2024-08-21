@@ -1,9 +1,9 @@
 <script src='main.js?v={{ config.resource_version }}'></script>
-<script src='js/jquery.min.js'></script>
-<script src='js/mobile-style.js'></script>
-<script src='js/strftime.min.js'></script>
-<script src='js/longtable/longtable.js'></script>
-<script src='js/mod/ban-list.js'></script>
+<script src='js/jquery.min.js?v={{ config.resource_version }}'></script>
+<script src='js/mobile-style.js?v={{ config.resource_version }}'></script>
+<script src='js/strftime.min.js?v={{ config.resource_version }}'></script>
+<script src='js/longtable/longtable.js?v={{ config.resource_version }}'></script>
+<script src='js/mod/ban-list.js?v={{ config.resource_version }}'></script>
 <link rel='stylesheet' href='stylesheets/longtable/longtable.css'>
 <link rel='stylesheet' href='stylesheets/mod/ban-list.css'>
 
@@ -32,7 +32,7 @@
 		</table>
 
 
-		
+
 	</form>
 {% if token_json %}
 	<script>$(function(){ banlist_init("{{ token_json }}", {{ boards }}); });</script>
