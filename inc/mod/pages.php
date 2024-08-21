@@ -10,6 +10,14 @@ use Vichan\Functions\Net;
 defined('TINYBOARD') or exit;
 
 
+function _link_or_copy(string $target, string $link): bool {
+    if (!link($target, $link)) {
+        error_log("Failed to link() $target to $link. Falling back to copy()");
+        return copy($target, $link);
+    }
+    return true;
+}
+
 function mod_page($title, $template, $args, $subtitle = false) {
 	global $config, $mod;
 
@@ -1348,7 +1356,7 @@ function mod_move(Context $ctx, $originBoard, $postID) {
 			error(_('Target and source board are the same.'));
 
 		// link() if leaving a shadow thread behind; else, rename().
-		$clone = $shadow ? 'link' : 'rename';
+		$clone = $shadow ? '_link_or_copy' : 'rename';
 
 		// indicate that the post is a thread
 		$post['op'] = true;
