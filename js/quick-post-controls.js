@@ -14,19 +14,17 @@
 
 $(document).ready(function() {
 	let open_form = function() {
-		let thread = $(this).parent().parent().hasClass('op');
 		let id = $(this).attr('name').match(/^delete_(\d+)$/)[1];
 
 		if (this.checked) {
 			let post_form = $('<form class="post-actions" method="post" style="margin:10px 0 0 0">' +
-				'<div style="text-align:right">' +
-					(!thread ? '<hr>' : '') +
+				'<div style="text-align:right"><hr>' +
 
 					'<input type="hidden" name="delete_' + id + '">' +
 
-					'<label for="password_' + id + '">'+_("Password")+'</label>: ' +
+					'<label for="password_' + id + '">' + _("Password")+'</label>: ' +
 					'<input id="password_' + id + '" type="password" name="password" size="11" maxlength="18">' +
-					'<input title="'+_('Delete file only')+'" type="checkbox" name="file" id="delete_file_' + id + '">' +
+					'<input title="' + _('Delete file only') + '" type="checkbox" name="file" id="delete_file_' + id + '">' +
 						'<label for="delete_file_' + id + '">' + _('File') + '</label>' +
 					' <input type="submit" name="delete" value="' + _('Delete') + '">' +
 
@@ -57,11 +55,7 @@ $(document).ready(function() {
 
 			post_form.find('input[type="password"]').val(localStorage.password);
 
-			if (thread) {
-				post_form.prependTo($(this).parent().parent().find('div.body'));
-			} else {
-				post_form.appendTo($(this).parent().parent());
-			}
+			post_form.appendTo($(this).parent().parent());
 
 			$(window).trigger('quick-post-controls', post_form);
 		} else {
