@@ -14,7 +14,7 @@
 
 $(document).ready(function() {
 	let open_form = function() {
-		let thread = $(this).parent().parent().hasClass('op');
+		let thread = $(this).parent().parent().parent().hasClass('op');
 		let id = $(this).attr('name').match(/^delete_(\d+)$/)[1];
 
 		if (this.checked) {
@@ -27,12 +27,12 @@ $(document).ready(function() {
 					'<label for="password_' + id + '">'+_("Password")+'</label>: ' +
 					'<input id="password_' + id + '" type="password" name="password" size="11" maxlength="18">' +
 					'<input title="'+_('Delete file only')+'" type="checkbox" name="file" id="delete_file_' + id + '">' +
-						'<label for="delete_file_' + id + '">' + _('File') + '</label>' +
-					' <input type="submit" name="delete" value="' + _('Delete') + '">' +
+						'<label for="delete_file_' + id + '">'+_('File')+'</label>' +
+					' <input type="submit" name="delete" value="'+_('Delete')+'">' +
 
 					'<br>' +
 
-					'<label for="reason_' + id + '">' + _('Reason') + '</label>: ' +
+					'<label for="reason_' + id + '">'+_('Reason')+'</label>: ' +
 					'<input id="reason_' + id + '" type="text" name="reason" size="20" maxlength="100">' +
 					' <input type="submit" name="report" value="' + _('Report') + '">' +
 				'</div>' +
