@@ -311,10 +311,9 @@
 			$(`<input type='hidden' name='board' value='${board}'></input>`).appendTo($("#quick-reply"));
 
 			// support if captcha is only enabled for threads
-			// pass config variable to main.
-			//if (post_captcha === 'false') {
-			//	$("#quick-reply .captcha").remove();
-			//}
+			if (post_captcha === 'false') {
+				$("#quick-reply .captcha").remove();
+			}
 		}
 		
 		// Synchronise body text with original post form
