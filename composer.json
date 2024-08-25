@@ -40,7 +40,8 @@
             "inc/functions/theme.php",
             "inc/driver/http-driver.php",
             "inc/driver/log-driver.php",
-            "inc/service/captcha-queries.php"
+            "inc/service/captcha-queries.php",
+            "inc/context.php"
         ]
     },
     "license": "Tinyboard + vichan",
