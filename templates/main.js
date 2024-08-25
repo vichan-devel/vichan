@@ -430,6 +430,7 @@ function ready() {
 
 var post_date = "{{ config.post_date }}";
 var max_images = {{ config.max_images }};
+var button_reply = "{{ config.button_reply }}";
 
 onReady(init);
 
