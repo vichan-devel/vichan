@@ -34,7 +34,7 @@ onReady(function() {
 
 			let mentioned = post.find('.head div.mentioned');
 			if (mentioned.length === 0) {
-				mentioned = $('<span class="mentioned unimportant"></span>').prependTo(post.find('.head'));
+				mentioned = $('<div class="mentioned unimportant"></div>').prependTo(post.find('.head'));
 			}
 
 			if (mentioned.find('a.mentioned-' + reply_id).length != 0) {
