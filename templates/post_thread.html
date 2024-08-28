@@ -5,6 +5,9 @@
 {% if not index %}<a id="{{ post.id }}" class="post_anchor"></a>{% endif %}
 
 <div class="post op" id="op_{{ post.id }}" {%if post.num_files > 1%}style='clear:both'{%endif%}>
+	<div class="head">
+		{% include 'post/fileinfo.html' %}
+	</div>
 	<p class="intro">
 		<label for="delete_{{ post.id }}">
 			<input type="checkbox" class="delete" name="delete_{{ post.id }}" id="delete_{{ post.id }}" />
@@ -60,7 +63,6 @@
 			<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post, true) }}">[{% trans %}Last 1 Post{% plural lastcount %}Last {{ count }} Posts{% endtrans %}]</a>
 		{% endif %}
 		{% include 'post/post_controls.html' %}
-		{% include 'post/fileinfo.html' %}
 	</div>
 	<div class="body">
 		{% endapply %}{% if index %}{{ post.body|truncate_body(post.link) }}{% else %}{{ post.body }}{% endif %}{% apply spaceless %}
