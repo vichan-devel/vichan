@@ -311,6 +311,11 @@ div.post > p {
   }
 }
 
+div.post.op > p {
+  clear: both;
+  padding-top: 1em;
+}
+
 div.post div.body {
   margin-top: 0.8em;
   padding-right: 3em;
