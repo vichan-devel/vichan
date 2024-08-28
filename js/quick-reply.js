@@ -307,7 +307,7 @@
 		if (in_index) {
 			$(`<input type='hidden' name='thread' value='${thread_id}'></input>`).appendTo($("#quick-reply"));
 			$("#quick-reply .handle").append(document.createTextNode(`(${thread_id})`));
-			$("#quick-reply input[type='submit'").attr("value", button_reply);
+			$("#quick-reply input[type='submit']").attr("value", button_reply);
 			$(`<input type='hidden' name='board' value='${board}'></input>`).appendTo($("#quick-reply"));
 
 			// support if captcha is only enabled for threads
