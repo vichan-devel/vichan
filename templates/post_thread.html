@@ -25,23 +25,23 @@
 	<div class="head">
 		{% if post.sticky %}
 			{% if config.font_awesome %}
-				<i class="fa fa-thumb-tack" title="Sticky"></i>
+				<i class="fa fa-thumb-tack" title="Sticky"></i> {# Keep this space #}
 			{% else %}
-				<img class="icon" title="Sticky" src="{{ config.image_sticky }}" alt="Sticky" />
+				<img class="icon" title="Sticky" src="{{ config.image_sticky }}" alt="Sticky" /> {# Keep this space #}
 			{% endif %}
 		{% endif %}
 		{% if post.locked %}
 			{% if config.font_awesome %}
-				<i class="fa fa-lock" title="Locked"></i>
+				<i class="fa fa-lock" title="Locked"></i> {# Keep this space #}
 			{% else %}
-				<img class="icon" title="Locked" src="{{ config.image_locked }}" alt="Locked" />
+				<img class="icon" title="Locked" src="{{ config.image_locked }}" alt="Locked" /> {# Keep this space #}
 			{% endif %}
 		{% endif %}
 		{% if post.sage and (config.mod.view_bumplock < 0 or (post.mod and post.mod|hasPermission(config.mod.view_bumplock, board.uri))) %}
 			{% if config.font_awesome %}
-				<i class="fa fa-anchor" title="Bumplocked"></i>
+				<i class="fa fa-anchor" title="Bumplocked"></i> {# Keep this space #}
 			{% else %}
-				<img class="icon" title="Bumplocked" src="{{ config.image_bumplocked }}" alt="Bumplocked" />
+				<img class="icon" title="Bumplocked" src="{{ config.image_bumplocked }}" alt="Bumplocked" /> {# Keep this space #}
 			{% endif %}
 		{% endif %}
 		{% if post.cycle %}
