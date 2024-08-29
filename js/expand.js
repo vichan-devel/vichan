@@ -13,37 +13,38 @@
  *
  */
 
-$(document).ready(function(){
-	if($('span.omitted').length == 0)
-		return; // nothing to expand
+$(document).ready(function() {
+	if ($('span.omitted').length === 0) {
+		// Nothing to expand.
+		return;
+	}
 
-	var do_expand = function() {
+	let doExpand = function() {
 		$(this)
 			.html($(this).text().replace(_("Click reply to view."), '<a href="javascript:void(0)">'+_("Click to expand")+'</a>.'))
 			.find('a').click(window.expand_fun = function() {
-				var thread = $(this).parents('[id^="thread_"]');
-				var id = thread.attr('id').replace(/^thread_/, '');
+				let thread = $(this).parents('[id^="thread_"]');
 				$.ajax({
 					url: thread.find('p.intro a.post_no:first').attr('href'),
 					context: document.body,
 					success: function(data) {
-						var last_expanded = false;
+						let lastExpanded = false;
 						$(data).find('div.post.reply').each(function() {
 							thread.find('div.hidden').remove();
-							var post_in_doc = thread.find('#' + $(this).attr('id'));
-							if(post_in_doc.length == 0) {
-								if(last_expanded) {
-									$(this).addClass('expanded').insertAfter(last_expanded).before('<br class="expanded">');
+							let postInDoc = thread.find('#' + $(this).attr('id'));
+							if (postInDoc.length === 0) {
+								if (lastExpanded) {
+									$(this).addClass('expanded').insertAfter(lastExpanded).before('<br class="expanded">');
 								} else {
 									$(this).addClass('expanded').insertAfter(thread.find('div.post:first')).after('<br class="expanded">');
 								}
-								last_expanded = $(this);
+								lastExpanded = $(this);
 								$(document).trigger('new_post', this);
 							} else {
-								last_expanded = post_in_doc;
+								lastExpanded = postInDoc;
 							}
 						});
-						
+
 
 						thread.find("span.omitted").css('display', 'none');
 
@@ -51,19 +52,20 @@ $(document).ready(function(){
 							.insertAfter(thread.find('.op div.body, .op span.omitted').last())
 							.click(function() {
 								thread.find('.expanded').remove();
-								$(this).parent().find(".omitted:not(.hide-expanded)").css('display', '');
-								$(this).parent().find(".hide-expanded").remove();
+								let parent = $(this).parent();
+								parent.find(".omitted:not(.hide-expanded)").css('display', '');
+								parent.find(".hide-expanded").remove();
 							});
 					}
 				});
 			});
 	}
 
-	$('div.post.op span.omitted').each(do_expand);
+	$('div.post.op span.omitted').each(doExpand);
 
 	$(document).on("new_post", function(e, post) {
 		if (!$(post).hasClass("reply")) {
-			$(post).find('div.post.op span.omitted').each(do_expand);
+			$(post).find('div.post.op span.omitted').each(doExpand);
 		}
 	});
 });
