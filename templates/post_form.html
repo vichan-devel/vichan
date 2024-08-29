@@ -1,6 +1,11 @@
 <form name="post" onsubmit="return doPost(this);" enctype="multipart/form-data" action="{{ config.post_url }}" method="post">
 {{ antibot.html() }}
-{% if id %}<input type="hidden" name="thread" value="{{ id }}">{% endif %}
+{% if id %}
+	<input type="hidden" name="thread" value="{{ id }}">
+	<input type="hidden" name="active-page" value="thread">
+{% else %}
+	<input type="hidden" name="active-page" value="index">
+{% endif %}
 {{ antibot.html() }}
 <input type="hidden" name="board" value="{{ board.uri }}">
 {{ antibot.html() }}
