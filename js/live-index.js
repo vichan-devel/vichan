@@ -1,16 +1,16 @@
-/*              
+/*
  * live-index.js
  * https://github.com/vichan-devel/Tinyboard/blob/master/js/live-index.js
- *      
+ *
  * Released under the MIT license
  * Copyright (c) 2014 Marcin Łabanowski <marcin@6irc.net>
- *      
+ *
  * Usage:
  *   $config['api']['enabled'] = true;
  *   $config['additional_javascript'][] = 'js/jquery.min.js';
  *   $config['additional_javascript'][] = 'js/expand.js';
  *   $config['additional_javascript'][] = 'js/live-index.js';
- *              
+ *
  */
 
 if (active_page == 'index' && (""+document.location).match(/\/(index\.html)?(\?|$|#)/))
