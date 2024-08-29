@@ -85,7 +85,7 @@ if (active_page == 'index' && (""+document.location).match(/\/(index\.html)?(\?|
 
     if ($(th).find(".new-posts").html() != msg) {
       $(th).find(".new-posts").html(msg);
-      $(th).find(".new-posts a").click(window.expand_fun);
+      $(th).find(".new-posts a").click(window.expandFun);
     }
   };
 
