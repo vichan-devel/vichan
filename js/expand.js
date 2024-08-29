@@ -21,7 +21,7 @@ $(document).ready(function() {
 	let doExpand = function() {
 		$(this)
 			.html($(this).text().concat(' <a href="javascript:void(0)">' + _('Click to expand') + '</a>.'))
-			.find('a').click(window.expand_fun = function() {
+			.find('a').click(window.expandFun = function() {
 				let thread = $(this).parents('[id^="thread_"]');
 				$.ajax({
 					url: thread.find('p.intro a.post_no:first').attr('href'),
