@@ -20,8 +20,8 @@ $(document).ready(function() {
 
 	let doExpand = function() {
 		$(this)
-			.html($(this).text().replace(_("Click reply to view."), '<a href="javascript:void(0)">' + _("Click to expand") + '</a>.'))
-			.find('a').click(window.expandFun = function() {
+			.html($(this).text().concat(' <a href="javascript:void(0)">' + _('Click to expand') + '</a>.'))
+			.find('a').click(window.expand_fun = function() {
 				let thread = $(this).parents('[id^="thread_"]');
 				$.ajax({
 					url: thread.find('p.intro a.post_no:first').attr('href'),
@@ -35,7 +35,8 @@ $(document).ready(function() {
 								if (lastExpanded) {
 									$(this).addClass('expanded').insertAfter(lastExpanded).before('<br class="expanded">');
 								} else {
-									$(this).addClass('expanded').insertAfter(thread.find('div.post:first')).after('<br class="expanded">');
+									let opBr = thread.find('div.post').first().next();
+									$(this).addClass('expanded').insertAfter(opBr).after('<br class="expanded">');
 								}
 								lastExpanded = $(this);
 								$(document).trigger('new_post', this);
