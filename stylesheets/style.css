@@ -261,6 +261,13 @@ input.delete {
   margin-left: 0;
 }
 
+@media (max-width: 48em) {
+  .user-controls {
+    clear: both;
+    float: right;
+  }
+}
+
 .post-details a {
   margin-left: 5px;
 }
