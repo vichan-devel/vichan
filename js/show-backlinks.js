@@ -14,7 +14,7 @@
 
 onReady(function() {
 	let showBackLinks = function() {
-		let reply_id = $(this).attr('id').replace(/(^reply_)|(^op_)/, '');
+		let replyId = $(this).attr('id').replace(/(^reply_)|(^op_)/, '');
 
 		$(this).find('div.body a:not([rel="nofollow"])').each(function() {
 			let id = $(this).text().match(/^>>(\d+)$/);
@@ -41,9 +41,9 @@ onReady(function() {
 				return;
 			}
 
-			let link = $('<a class="mentioned-' + reply_id + '" onclick="highlightReply(\'' + reply_id + '\');" href="#' + reply_id + '">&gt;&gt;' +
-				reply_id + '</a>');
-			link.appendTo(mentioned)
+			let link = $('<a class="mentioned-' + replyId + '" onclick="highlightReply(\'' + replyId + '\');" href="#'
+				+ replyId + '">&gt;&gt;' + replyId + '</a>');
+			link.appendTo(mentioned);
 
 			if (window.init_hover) {
 				link.each(init_hover);
