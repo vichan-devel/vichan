@@ -35,7 +35,8 @@ $(document).ready(function() {
 								if (lastExpanded) {
 									$(this).addClass('expanded').insertAfter(lastExpanded).before('<br class="expanded">');
 								} else {
-									$(this).addClass('expanded').insertAfter(thread.find('div.post:first')).after('<br class="expanded">');
+									let opBr = thread.find('div.post').first().next();
+									$(this).addClass('expanded').insertAfter(opBr).after('<br class="expanded">');
 								}
 								lastExpanded = $(this);
 								$(document).trigger('new_post', this);
