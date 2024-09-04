@@ -10,7 +10,6 @@
  * Usage:
  *   $config['additional_javascript'][] = 'js/jquery.min.js';
  *   $config['additional_javascript'][] = 'js/expand.js';
- *
  */
 
 $(document).ready(function() {
@@ -21,7 +20,7 @@ $(document).ready(function() {
 
 	let doExpand = function() {
 		$(this)
-			.html($(this).text().replace(_("Click reply to view."), '<a href="javascript:void(0)">'+_("Click to expand")+'</a>.'))
+			.html($(this).text().replace(_("Click reply to view."), '<a href="javascript:void(0)">' + _("Click to expand") + '</a>.'))
 			.find('a').click(window.expandFun = function() {
 				let thread = $(this).parents('[id^="thread_"]');
 				$.ajax({
@@ -46,15 +45,15 @@ $(document).ready(function() {
 						});
 
 
-						thread.find("span.omitted").css('display', 'none');
+						thread.find('span.omitted').css('display', 'none');
 
 						$('<span class="omitted hide-expanded"><a href="javascript:void(0)">' + _('Hide expanded replies') + '</a>.</span>')
 							.insertAfter(thread.find('.op div.body, .op span.omitted').last())
 							.click(function() {
 								thread.find('.expanded').remove();
 								let parent = $(this).parent();
-								parent.find(".omitted:not(.hide-expanded)").css('display', '');
-								parent.find(".hide-expanded").remove();
+								parent.find('.omitted:not(.hide-expanded)').css('display', '');
+								parent.find('.hide-expanded').remove();
 							});
 					}
 				});
@@ -63,8 +62,8 @@ $(document).ready(function() {
 
 	$('div.post.op span.omitted').each(doExpand);
 
-	$(document).on("new_post", function(e, post) {
-		if (!$(post).hasClass("reply")) {
+	$(document).on('new_post', function(e, post) {
+		if (!$(post).hasClass('reply')) {
 			$(post).find('div.post.op span.omitted').each(doExpand);
 		}
 	});
