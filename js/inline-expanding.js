@@ -9,31 +9,31 @@
  * Usage:
  *   $config['additional_javascript'][] = 'js/jquery.min.js';
  *   $config['additional_javascript'][] = 'js/inline-expanding.js';
- *
  */
 
-$(document).ready(function(){
+$(document).ready(function() {
 	'use strict';
 
-	var DEFAULT_MAX = 5;  // default maximum image loads
-	var inline_expand_post = function() {
-		var link = this.getElementsByTagName('a');
+	// Default maximum image loads.
+	const DEFAULT_MAX = 5;
 
-		var loadingQueue = (function () {
-			var MAX_IMAGES = localStorage.inline_expand_max || DEFAULT_MAX;   // maximum number of images to load concurrently, 0 to disable
-			var loading = 0;                                                  // number of images that is currently loading
-			var waiting = [];                                                 // waiting queue
+	let inline_expand_post = function() {
+		let link = this.getElementsByTagName('a');
 
-			var enqueue = function (ele) {
+		let loadingQueue = (function() {
+			let MAX_IMAGES = localStorage.inline_expand_max || DEFAULT_MAX; // Maximum number of images to load concurrently, 0 to disable.
+			let loading = 0;                                                // Number of images that is currently loading.
+			let waiting = [];                                               // Waiting queue.
+
+			let enqueue = function(ele) {
 				waiting.push(ele);
 			};
-			var dequeue = function () {
+			let dequeue = function() {
 				return waiting.shift();
 			};
-			var update = function() {
-				var ele;
+			let update = function() {
 				while (loading < MAX_IMAGES || MAX_IMAGES === 0) {
-					ele = dequeue();
+					let ele = dequeue();
 					if (ele) {
 						++loading;
 						ele.deferred.resolve();
@@ -43,8 +43,8 @@ $(document).ready(function(){
 				}
 			};
 			return {
-				remove: function (ele) {
-					var i = waiting.indexOf(ele);
+				remove: function(ele) {
+					let i = waiting.indexOf(ele);
 					if (i > -1) {
 						waiting.splice(i, 1);
 					}
@@ -54,14 +54,14 @@ $(document).ready(function(){
 						--loading;
 					}
 				},
-				add: function (ele) {
+				add: function(ele) {
 					ele.deferred = $.Deferred();
 					ele.deferred.done(function () {
-						var $loadstart = $.Deferred();
-						var thumb = ele.childNodes[0];
-						var img = ele.childNodes[1];
+						let $loadstart = $.Deferred();
+						let thumb = ele.childNodes[0];
+						let img = ele.childNodes[1];
 
-						var onLoadStart = function (img) {
+						let onLoadStart = function (img) {
 							if (img.naturalWidth) {
 								$loadstart.resolve(img, thumb);
 							} else {
@@ -71,7 +71,7 @@ $(document).ready(function(){
 
 						$(img).one('load', function () {
 							$.when($loadstart).done(function () {
-								//  once fully loaded, update the waiting queue
+								// Once fully loaded, update the waiting queue.
 								--loading;
 								$(ele).data('imageLoading', 'false');
 								update();
@@ -93,35 +93,36 @@ $(document).ready(function(){
 					} else {
 						enqueue(ele);
 					}
-
 				}
 			};
 		})();
 
-		for (var i = 0; i < link.length; i++) {
+		for (let i = 0; i < link.length; i++) {
 			if (typeof link[i] == "object" && link[i].childNodes && typeof link[i].childNodes[0] !== 'undefined' &&
 					link[i].childNodes[0].src && link[i].childNodes[0].className.match(/post-image/) && !link[i].className.match(/file/)) {
 				link[i].onclick = function(e) {
-					var img, post_body, still_open, canvas, scroll;
-					var thumb = this.childNodes[0];
-					var padding = 5;
-					var boardlist = $('.boardlist')[0];
-					
+					let thumb = this.childNodes[0];
+					let padding = 5;
+					let boardlist = $('.boardlist')[0];
 
-					if (thumb.className == 'hidden')
+
+					if (thumb.className == 'hidden') {
 						return false;
-					if (e.which == 2 || e.ctrlKey) //  open in new tab
+					}
+					if (e.which == 2 || e.ctrlKey) {
+						// Open in new tab.
 						return true;
+					}
 					if (!$(this).data('expanded')) {
-
-						if (~this.parentNode.className.indexOf('multifile'))
+						if (~this.parentNode.className.indexOf('multifile')) {
 							$(this).data('width', this.parentNode.style.width);
+						}
 
 						this.parentNode.removeAttribute('style');
 						$(this).data('expanded', 'true');
 
 						if (thumb.tagName === 'CANVAS') {
-							canvas = thumb;
+							let canvas = thumb;
 							thumb = thumb.nextSibling;
 							this.removeChild(canvas);
 							canvas.style.display = 'block';
@@ -130,7 +131,7 @@ $(document).ready(function(){
 						thumb.style.opacity = '0.4';
 						thumb.style.filter = 'alpha(opacity=40)';
 
-						img = document.createElement('img');
+						let img = document.createElement('img');
 						img.className = 'full-image';
 						img.style.display = 'none';
 						img.setAttribute('alt', 'Fullsized image');
@@ -140,41 +141,48 @@ $(document).ready(function(){
 					} else {
 						loadingQueue.remove(this);
 
-						scroll = false;
+						let scroll = false;
 
-						//  scroll to thumb if not triggered by 'shrink all image'
+						// Scroll to thumb if not triggered by 'shrink all image'.
 						if (e.target.className == 'full-image') {
 							scroll = true;
 						}
 
-						if (~this.parentNode.className.indexOf('multifile'))
+						if (~this.parentNode.className.indexOf('multifile')) {
 							this.parentNode.style.width = $(this).data('width');
+						}
 
 						thumb.style.opacity = '';
 						thumb.style.display = '';
-						if (thumb.nextSibling) this.removeChild(thumb.nextSibling);  //full image loaded or loading
+						if (thumb.nextSibling) {
+							// Full image loaded or loading.
+							this.removeChild(thumb.nextSibling);
+						}
 						$(this).removeData('expanded');
 						delete thumb.style.filter;
 
-						//  do the scrolling after page reflow
+						// Do the scrolling after page reflow.
 						if (scroll) {
-							post_body = $(thumb).parentsUntil('form > div').last();
+							let post_body = $(thumb).parentsUntil('form > div').last();
 
-							//  on multifile posts, determin how many other images are still expanded
-							still_open = post_body.find('.post-image').filter(function(){
+							// On multifile posts, determine how many other images are still expanded.
+							let still_open = post_body.find('.post-image').filter(function() {
 								return $(this).parent().data('expanded') == 'true';
 							}).length;
 
-							//  deal with differnt boards' menu styles
-							if ($(boardlist).css('position') == 'fixed')
+							// Deal with different boards menu styles.
+							if ($(boardlist).css('position') == 'fixed') {
 								padding += boardlist.getBoundingClientRect().height;
+							}
 
 							if (still_open > 0) {
-								if (thumb.getBoundingClientRect().top - padding < 0)
+								if (thumb.getBoundingClientRect().top - padding < 0) {
 									$(document).scrollTop($(thumb).parent().parent().offset().top - padding);
+								}
 							} else {
-								if (post_body[0].getBoundingClientRect().top - padding < 0)
+								if (post_body[0].getBoundingClientRect().top - padding < 0) {
 									$(document).scrollTop(post_body.offset().top - padding);
+								}
 							}
 						}
 
@@ -188,17 +196,18 @@ $(document).ready(function(){
 		}
 	};
 
-	//  setting up user option
+	// Setting up user option.
 	if (window.Options && Options.get_tab('general')) {
-		Options.extend_tab('general', '<span id="inline-expand-max">'+ _('Number of simultaneous image downloads (0 to disable): ') + 
-										'<input type="number" step="1" min="0" size="4"></span>');
+		Options.extend_tab('general', '<span id="inline-expand-max">' +
+			_('Number of simultaneous image downloads (0 to disable): ') +
+			'<input type="number" step="1" min="0" size="4"></span>');
 		$('#inline-expand-max input')
 			.css('width', '50px')
 			.val(localStorage.inline_expand_max || DEFAULT_MAX)
 			.on('change', function (e) {
-				// validation in case some fucktard tries to enter a negative floating point number
-				var n = parseInt(e.target.value);
-				var val = (n<0) ? 0 : n;
+				// Validation in case some fucktard tries to enter a negative floating point number.
+				let n = parseInt(e.target.value);
+				let val = (n < 0) ? 0 : n;
 
 				localStorage.inline_expand_max = val;
 			});
@@ -207,7 +216,7 @@ $(document).ready(function(){
 	if (window.jQuery) {
 		$('div[id^="thread_"]').each(inline_expand_post);
 
-		// allow to work with auto-reload.js, etc.
+		// Allow to work with auto-reload.js, etc.
 		$(document).on('new_post', function(e, post) {
 			inline_expand_post.call(post);
 		});
