@@ -222,7 +222,7 @@ function getCookie(cookie_name) {
 	}
 }
 
-{% endraw %}
+{% endverbatim %}
 {% if config.captcha.dynamic %}
 function is_dynamic_captcha_enabled() {
 	let cookie = get_cookie('require-captcha');
@@ -230,7 +230,7 @@ function is_dynamic_captcha_enabled() {
 }
 
 function get_captcha_pub_key() {
-{% if config.captcha.provider === 'recaptcha' %}
+{% if config.captcha.provider == 'recaptcha' %}
 	return "{{ config.captcha.recaptcha.sitekey }}";
 {% else %}
 	return null;
@@ -250,7 +250,7 @@ function init_dynamic_captcha() {
 	}
 }
 {% endif %}
-{% raw %}
+{% verbatim %}
 
 function highlightReply(id) {
 	if (typeof window.event != "undefined" && event.which == 2) {

@@ -100,7 +100,7 @@
 			</td>
 		</tr>
 		{% endif %}
-		{% if config.captcha.enabled %}
+		{% if config.captcha.provider == 'native' %}
 		<tr class='captcha'>
 			<th>
 				{% trans %}Verification{% endtrans %}
@@ -115,7 +115,7 @@
 				</noscript>
 			</td>
 		</tr>
-			{% elseif config.new_thread_capt %}
+		{% elseif config.captcha.native.new_thread_capt %}
 			{% if not id %}
  			<tr class='captcha'>
                         <th>
