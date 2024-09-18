@@ -871,7 +871,7 @@ if ($step == 0) {
 		),
 		array(
 			'category' => 'Misc',
-			'name' => 'HTTPS not being used',
+			'name' => 'HTTPS being used',
 			'result' => $httpsvalue,
 			'required' => false,
 			'message' => 'You are not currently using https for vichan, or at least for your backend server. If this intentional, add "$config[\'cookies\'][\'secure_login_only\'] = 0;" (or 1 if using a proxy) on a new line under "Additional configuration" on the next page.'
