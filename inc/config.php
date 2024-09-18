@@ -1155,6 +1155,10 @@
 	// <tinyboard flag style>.
 	$config['flag_style'] = 'width:16px;height:11px;';
 
+	// Lazy loading
+	// https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading
+	$config['content_lazy_loading'] = false;
+
 /*
  * ====================
  *  Javascript
