@@ -57,9 +57,10 @@ onReady(function() {
 	$('div.post.op').each(showBackLinks);
 
 	$(document).on('new_post', function(e, post) {
-		showBackLinks.call(post);
 		if ($(post).hasClass("op")) {
 			$(post).find('div.post.reply').each(showBackLinks);
+		} else {
+			$(post).parent().find('div.post.reply').each(showBackLinks);
 		}
 	});
 });
