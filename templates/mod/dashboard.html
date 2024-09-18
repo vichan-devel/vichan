@@ -6,7 +6,7 @@
 		{% for board in boards %}
 			<li>
 				<a href="?/{{ config.board_path|sprintf(board.uri) }}{{ config.file_index }}">{{ config.board_abbreviation|sprintf(board.uri) }}</a>
-					 -
+					 - 
 				{{ board.title|e }}
 				{% if board.subtitle %}
 					<small>&mdash;
@@ -70,7 +70,7 @@
 		<li>
 			<a href="?/inbox">
 				{% trans 'PM inbox' %}
-				{% if unread_pms > 0 %}<strong>{%endif %}({{ unread_pms }} unread){% if unread_pms > 0 %}</strong>{%endif %}
+				{% if unread_pms > 0 %}<strong>{%endif %} ({{ unread_pms }} unread){% if unread_pms > 0 %}</strong>{%endif %}
 			</a>
 		</li>
 	</ul>
