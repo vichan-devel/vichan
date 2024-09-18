@@ -1197,7 +1197,7 @@ if (isset($_POST['delete'])) {
 					if ($txt !== '') {
 						// This one has an effect, that the body is appended to a post body. So you can write a correct
 						// spamfilter.
-						$post['body_nomarkup'] .= "<tinyboard ocr image $key>" . htmlspecialchars($value) . "</tinyboard>";
+						$post['body_nomarkup'] .= "<tinyboard ocr image $key>" . htmlspecialchars($txt) . "</tinyboard>";
 					}
 				} catch (RuntimeException $e) {
 					$context->get(Log::class)->log(Log::ERROR, "Could not OCR image: {$e->getMessage()}");
