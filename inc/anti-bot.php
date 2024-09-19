@@ -6,8 +6,6 @@
 
 defined('TINYBOARD') or exit;
 
-$hidden_inputs_twig = [];
-
 class AntiBot {
 	public $salt;
 	public $inputs = [];
