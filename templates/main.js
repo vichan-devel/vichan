@@ -71,7 +71,7 @@ var datelocale =
 
 
 function alert(a, do_confirm, confirm_ok_action, confirm_cancel_action) {
-	var handler, div, bg, closebtn, okbtn;
+	let handler, div, bg, closebtn, okbtn;
 	let close = function() {
 		handler.fadeOut(400, function() { handler.remove(); });
 		return false;
@@ -133,11 +133,11 @@ function changeStyle(styleName, link) {
 	{% verbatim %}
 
 	if (!document.getElementById('stylesheet')) {
-		var s = document.createElement('link');
+		let s = document.createElement('link');
 		s.rel = 'stylesheet';
 		s.type = 'text/css';
 		s.id = 'stylesheet';
-		var x = document.getElementsByTagName('head')[0];
+		let x = document.getElementsByTagName('head')[0];
 		x.appendChild(s);
 	}
 
@@ -145,8 +145,8 @@ function changeStyle(styleName, link) {
 	selectedstyle = styleName;
 
 	if (document.getElementsByClassName('styles').length != 0) {
-		var styleLinks = document.getElementsByClassName('styles')[0].childNodes;
-		for (var i = 0; i < styleLinks.length; i++) {
+		let styleLinks = document.getElementsByClassName('styles')[0].childNodes;
+		for (let i = 0; i < styleLinks.length; i++) {
 			styleLinks[i].className = '';
 		}
 	}
@@ -171,7 +171,7 @@ function changeStyle(styleName, link) {
 
 	var stylesheet_choices = JSON.parse(localStorage.board_stylesheets);
 	if (board_name && stylesheet_choices[board_name]) {
-		for (var styleName in styles) {
+		for (let styleName in styles) {
 			if (styleName == stylesheet_choices[board_name]) {
 				changeStyle(styleName);
 				break;
@@ -182,7 +182,7 @@ function changeStyle(styleName, link) {
 {% else %}
 	{% verbatim %}
 	if (localStorage.stylesheet) {
-		for (var styleName in styles) {
+		for (let styleName in styles) {
 			if (styleName == localStorage.stylesheet) {
 				changeStyle(styleName);
 				break;
@@ -194,11 +194,11 @@ function changeStyle(styleName, link) {
 {% verbatim %}
 
 function initStyleChooser() {
-	var newElement = document.createElement('div');
+	let newElement = document.createElement('div');
 	newElement.className = 'styles';
 
 	for (styleName in styles) {
-		var style = document.createElement('a');
+		let style = document.createElement('a');
 		style.innerHTML = '[' + styleName + ']';
 		style.onclick = function() {
 			changeStyle(this.innerHTML.substring(1, this.innerHTML.length - 1), this);
@@ -259,8 +259,7 @@ function highlightReply(id) {
 	}
 
 	let divs = document.getElementsByTagName('div');
-	for (var i = 0; i < divs.length; i++)
-	{
+	for (let i = 0; i < divs.length; i++) {
 		if (divs[i].className.indexOf('post') != -1) {
 			divs[i].className = divs[i].className.replace(/highlighted/, '');
 		}
@@ -435,7 +434,7 @@ onReady(init);
 
 {% if config.google_analytics %}{% verbatim %}
 
-var _gaq = _gaq || [];_gaq.push(['_setAccount', '{% endverbatim %}{{ config.google_analytics }}{% verbatim %}']);{% endverbatim %}{% if config.google_analytics_domain %}{% verbatim %}_gaq.push(['_setDomainName', '{% endverbatim %}{{ config.google_analytics_domain }}{% verbatim %}']){% endverbatim %}{% endif %}{% if not config.google_analytics_domain %}{% verbatim %}_gaq.push(['_setDomainName', 'none']){% endverbatim %}{% endif %}{% verbatim %};_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();{% endverbatim %}{% endif %}
+var _gaq = _gaq || [];_gaq.push(['_setAccount', '{% endverbatim %}{{ config.google_analytics }}{% verbatim %}']);{% endverbatim %}{% if config.google_analytics_domain %}{% verbatim %}_gaq.push(['_setDomainName', '{% endverbatim %}{{ config.google_analytics_domain }}{% verbatim %}']){% endverbatim %}{% endif %}{% if not config.google_analytics_domain %}{% verbatim %}_gaq.push(['_setDomainName', 'none']){% endverbatim %}{% endif %}{% verbatim %};_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';let s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();{% endverbatim %}{% endif %}
 
 {% if config.statcounter_project and config.statcounter_security %}
 var sc = document.createElement('script');
