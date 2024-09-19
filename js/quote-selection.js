@@ -97,14 +97,7 @@ $(document).ready(function(){
 		// console.log('Deselecting text');
 		selection.removeAllRanges();
 
-		if (document.selection) {
-			// IE
-			body.focus();
-			var sel = document.selection.createRange();
-			sel.text = quote;
-			body.focus();
-		} else if (body.selectionStart || body.selectionStart == '0') {
-			// Mozilla
+		if (body.selectionStart || body.selectionStart == '0') {
 			var start = body.selectionStart;
 			var end = body.selectionEnd;
 

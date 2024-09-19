@@ -307,12 +307,7 @@ function citeReply(id, with_link) {
 		return false;
 	}
 
-	if (document.selection) {
-		// IE
-		textarea.focus();
-		let sel = document.selection.createRange();
-		sel.text = '>>' + id + '\n';
-	} else if (textarea.selectionStart || textarea.selectionStart == '0') {
+	if (textarea.selectionStart || textarea.selectionStart == '0') {
 		let start = textarea.selectionStart;
 		let end = textarea.selectionEnd;
 		textarea.value = textarea.value.substring(0, start) + '>>' + id + '\n' + textarea.value.substring(end, textarea.value.length);
