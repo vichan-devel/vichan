@@ -6,26 +6,31 @@
 
 defined('TINYBOARD') or exit;
 
-$hidden_inputs_twig = array();
+$hidden_inputs_twig = [];
 
 class AntiBot {
-	public $salt, $inputs = array(), $index = 0;
+	public $salt;
+	public $inputs = [];
+	public $index = 0;
 
 	public static function randomString($length, $uppercase = false, $special_chars = false, $unicode_chars = false) {
 		$chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-		if ($uppercase)
+		if ($uppercase) {
 			$chars .= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		if ($special_chars)
+		}
+		if ($special_chars) {
 			$chars .= ' ~!@#$%^&*()_+,./;\'[]\\{}|:<>?=-` ';
+		}
 		if ($unicode_chars) {
 			$len = strlen($chars) / 10;
-			for ($n = 0; $n < $len; $n++)
+			for ($n = 0; $n < $len; $n++) {
 				$chars .= mb_convert_encoding('&#' . mt_rand(0x2600, 0x26FF) . ';', 'UTF-8', 'HTML-ENTITIES');
+			}
 		}
 
 		$chars = preg_split('//u', $chars, -1, PREG_SPLIT_NO_EMPTY);
 
-		$ch = array();
+		$ch = [];
 
 		// fill up $ch until we reach $length
 		while (count($ch) < $length) {
@@ -36,8 +41,9 @@ class AntiBot {
 				break;
 			}
 			shuffle($keys);
-			foreach ($keys as $key)
+			foreach ($keys as $key) {
 				$ch[] = $chars[$key];
+			}
 		}
 
 		$chars = $ch;
@@ -49,20 +55,21 @@ class AntiBot {
 		$chars = preg_split('//u', $string, -1, PREG_SPLIT_NO_EMPTY);
 
 		foreach ($chars as &$c) {
-			if (mt_rand(0, 3) != 0)
+			if (mt_rand(0, 3) != 0) {
 				$c = utf8tohtml($c);
-			else
-				$c = mb_encode_numericentity($c, array(0, 0xffff, 0, 0xffff), 'UTF-8');
+			} else {
+				$c = mb_encode_numericentity($c, [ 0, 0xffff, 0, 0xffff ], 'UTF-8');
+			}
 		}
 
 		return implode('', $chars);
 	}
 
-	public function __construct(array $salt = array()) {
+	public function __construct(array $salt = []) {
 		global $config;
 
 		if (!empty($salt)) {
-			// create a salted hash of the "extra salt"
+			// Create a salted hash of the "extra salt"
 			$this->salt = implode(':', $salt);
 		} else {
 			$this->salt = '';
@@ -80,8 +87,9 @@ class AntiBot {
 			} else {
 				// Use a pre-defined confusing name
 				$name = $config['spam']['hidden_input_names'][$hidden_input_names_x++];
-				if ($hidden_input_names_x >= count($config['spam']['hidden_input_names']))
+				if ($hidden_input_names_x >= count($config['spam']['hidden_input_names'])) {
 					$hidden_input_names_x = false;
+				}
 			}
 
 			if (mt_rand(0, 2) == 0) {
@@ -98,15 +106,14 @@ class AntiBot {
 	}
 
 	public static function space() {
-		if (mt_rand(0, 3) != 0)
+		if (mt_rand(0, 3) != 0) {
 			return ' ';
+		}
 		return str_repeat(' ', mt_rand(1, 3));
 	}
 
 	public function html($count = false) {
-		global $config;
-
-		$elements = array(
+		$elements = [
 			'<input type="hidden" name="%name%" value="%value%">',
 			'<input type="hidden" value="%value%" name="%name%">',
 			'<input name="%name%" value="%value%" type="hidden">',
@@ -118,7 +125,7 @@ class AntiBot {
 			'<div style="display:none"><input type="text" name="%name%" value="%value%"></div>',
 			'<textarea style="display:none" name="%name%">%value%</textarea>',
 			'<textarea name="%name%" style="display:none">%value%</textarea>'
-		);
+		];
 
 		$html = '';
 
@@ -127,7 +134,7 @@ class AntiBot {
 		}
 
 		if ($count === true) {
-			// all elements
+			// All elements
 			$inputs = array_slice($this->inputs, $this->index);
 		} else {
 			$inputs = array_slice($this->inputs, $this->index, $count);
@@ -139,8 +146,9 @@ class AntiBot {
 			while (!$element) {
 				$element = $elements[array_rand($elements)];
 				$element = str_replace(' ', self::space(), $element);
-				if (mt_rand(0, 5) == 0)
+				if (mt_rand(0, 5) == 0) {
 					$element = str_replace('>', self::space() . '>', $element);
+				}
 				if (strpos($element, 'textarea') !== false && $value == '') {
 					// There have been some issues with mobile web browsers and empty <textarea>'s.
 					$element = false;
@@ -149,13 +157,15 @@ class AntiBot {
 
 			$element = str_replace('%name%', utf8tohtml($name), $element);
 
-			if (mt_rand(0, 2) == 0)
+			if (mt_rand(0, 2) == 0) {
 				$value = $this->make_confusing($value);
-			else
+			} else {
 				$value = utf8tohtml($value);
+			}
 
-			if (strpos($element, 'textarea') === false)
+			if (strpos($element, 'textarea') === false) {
 				$value = str_replace('"', '&quot;', $value);
+			}
 
 			$element = str_replace('%value%', $value, $element);
 
