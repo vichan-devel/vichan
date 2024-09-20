@@ -11,11 +11,11 @@ defined('TINYBOARD') or exit;
 
 
 function _link_or_copy(string $target, string $link): bool {
-    if (!link($target, $link)) {
-        error_log("Failed to link() $target to $link. Falling back to copy()");
-        return copy($target, $link);
-    }
-    return true;
+	if (!link($target, $link)) {
+		error_log("Failed to link() $target to $link. Falling back to copy()");
+		return copy($target, $link);
+	}
+	return true;
 }
 
 function mod_page($title, $template, $args, $mod, $subtitle = false) {
@@ -1092,7 +1092,7 @@ function mod_bans(Context $ctx) {
 		foreach ($unban as $id) {
 			Bans::delete($id, true, $mod['boards'], true);
 		}
-                Vichan\Functions\Theme\rebuild_themes('bans');
+		Vichan\Functions\Theme\rebuild_themes('bans');
 		header('Location: ?/bans', true, $config['redirect_http']);
 		return;
 	}
@@ -1595,7 +1595,7 @@ function mod_move(Context $ctx, $originBoard, $postID) {
 				'op' => false
 			);
 
-			$spost['body'] = $spost['body_nomarkup'] =  sprintf($config['mod']['shadow_mesage'], '>>>/' . $targetBoard . '/' . $newID);
+			$spost['body'] = $spost['body_nomarkup'] = sprintf($config['mod']['shadow_mesage'], '>>>/' . $targetBoard . '/' . $newID);
 
 			markup($spost['body']);
 
