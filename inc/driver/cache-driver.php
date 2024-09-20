@@ -122,7 +122,7 @@ class CacheDrivers {
 		};
 	}
 
-	public static function filesystem(string $prefix, string $base_path, string $lock_file) {
+	public static function filesystem(string $prefix, string $base_path, string $lock_file, int|false $collect_chance_den) {
 		if ($base_path[strlen($base_path) - 1] !== '/') {
 			$base_path = "$base_path/";
 		}
@@ -146,6 +146,7 @@ class CacheDrivers {
 			private string $prefix;
 			private string $base_path;
 			private mixed $lock_fd;
+			private int|false $collect_chance_den;
 
 
 			private function prepareKey(string $key): string {
@@ -166,10 +167,34 @@ class CacheDrivers {
 				flock($this->lock_fd, LOCK_UN);
 			}
 
-			public function __construct(string $prefix, string $base_path, mixed $lock_fd) {
+			private function collectImpl(): int {
+				// A read lock is ok, since it's alright if we delete expired items from under the feet of other processes.
+				$files = glob($this->base_path . $this->prefix . '*', GLOB_NOSORT);
+				$count = 0;
+				foreach ($files as $file) {
+					$data = file_get_contents($file);
+					$wrapped = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+					if ($wrapped['expires'] !== false && $wrapped['expires'] <= time()) {
+						if (@unlink($file)) {
+							$count++;
+						}
+					}
+				}
+				return $count;
+			}
+
+			private function maybeCollect() {
+				if ($this->collect_chance_den !== false && rand(0, $this->collect_chance_den) === 0) {
+					$this->collect_chance_den = false; // Collect only once per instance (aka process$this->collect_chance_den !== false$this->collect_chance_den !== false).
+					$this->collectImpl();
+				}
+			}
+
+			public function __construct(string $prefix, string $base_path, mixed $lock_fd, int|false $collect_chance_den) {
 				$this->prefix = $prefix;
 				$this->base_path = $base_path;
 				$this->lock_fd = $lock_fd;
+				$this->collect_chance_den = $collect_chance_den;
 			}
 
 			public function get(string $key): mixed {
@@ -185,16 +210,30 @@ class CacheDrivers {
 
 				$data = stream_get_contents($fd);
 				fclose($fd);
+				$this->maybeCollect();
 				$this->unlockCache();
-				return json_decode($data, true);
+				$wrapped = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+
+				if ($wrapped['expires'] !== false && $wrapped['expires'] <= time()) {
+					// Already, expired, pretend it doesn't exist.
+					return null;
+				} else {
+					return $wrapped['inner'];
+				}
 			}
 
 			public function set(string $key, mixed $value, mixed $expires = false): void {
 				$key = $this->prepareKey($key);
 
-				$data = json_encode($value);
+				$wrapped = [
+					'expires' => $expires ? time() + $expires : false,
+					'inner' => $value
+				];
+
+				$data = json_encode($wrapped);
 				$this->exclusiveLockCache();
 				file_put_contents($this->base_path . $key, $data);
+				$this->maybeCollect();
 				$this->unlockCache();
 			}
 
@@ -203,7 +242,15 @@ class CacheDrivers {
 
 				$this->exclusiveLockCache();
 				@unlink($this->base_path . $key);
+				$this->maybeCollect();
 				$this->unlockCache();
+			}
+
+			public function collect() {
+				$this->sharedLockCache();
+				$count = $this->collectImpl();
+				$this->unlockCache();
+				return $count;
 			}
 
 			public function flush(): void {
