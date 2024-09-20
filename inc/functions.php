@@ -1301,7 +1301,14 @@ function index($page, $mod=false, $brief = false) {
 	}
 
 	if ($config['file_board']) {
-		$body = Element($config['file_fileboard'], array('body' => $body, 'mod' => $mod));
+		$options = [
+			'body' => $body,
+			'mod' => $mod
+		];
+		if ($mod) {
+			$options['pm'] = create_pm_header();
+		}
+		$body = Element($config['file_fileboard'], $options);
 	}
 
 	return array(
@@ -1620,7 +1627,7 @@ function incrementSpamHash($hash) {
 }
 
 function buildIndex($global_api = "yes") {
-	global $board, $config, $build_pages;
+	global $board, $config, $build_pages, $mod;
 
 	$catalog_api_action = generation_strategy('sb_api', array($board['uri']));
 
@@ -1692,6 +1699,9 @@ function buildIndex($global_api = "yes") {
 			$content['pages'][$page-1]['selected'] = true;
 			$content['btn'] = getPageButtons($content['pages']);
 			$content['antibot'] = $antibot;
+			if ($mod) {
+				$content['pm'] = create_pm_header();
+			}
 
 			file_write($filename, Element($config['file_board_index'], $content));
 		}
@@ -2274,7 +2284,7 @@ function buildThread($id, $return = false, $mod = false) {
 		$hasnoko50 = $thread->postCount() >= $config['noko50_min'];
 		$antibot = $mod || $return ? false : create_antibot($board['uri'], $id);
 
-		$body = Element($config['file_thread'], array(
+		$options = [
 			'board' => $board,
 			'thread' => $thread,
 			'body' => $thread->build(),
@@ -2286,7 +2296,12 @@ function buildThread($id, $return = false, $mod = false) {
 			'antibot' => $antibot,
 			'boardlist' => createBoardlist($mod),
 			'return' => ($mod ? '?' . $board['url'] . $config['file_index'] : $config['root'] . $board['dir'] . $config['file_index'])
-		));
+		];
+		if ($mod) {
+			$options['pm'] = create_pm_header();
+		}
+
+		$body = Element($config['file_thread'], $options);
 
 		// json api
 		if ($config['api']['enabled'] && !$mod) {
@@ -2323,7 +2338,7 @@ function buildThread($id, $return = false, $mod = false) {
 }
 
 function buildThread50($id, $return = false, $mod = false, $thread = null, $antibot = false) {
-	global $board, $config, $build_pages;
+	global $board, $config;
 	$id = round($id);
 
 	if ($antibot)
@@ -2381,7 +2396,7 @@ function buildThread50($id, $return = false, $mod = false, $thread = null, $anti
 
 	$hasnoko50 = $thread->postCount() >= $config['noko50_min'];
 
-	$body = Element($config['file_thread'], array(
+	$options = [
 		'board' => $board,
 		'thread' => $thread,
 		'body' => $thread->build(false, true),
@@ -2393,7 +2408,12 @@ function buildThread50($id, $return = false, $mod = false, $thread = null, $anti
 		'antibot' => $mod ? false : ($antibot ? $antibot : create_antibot($board['uri'], $id)),
 		'boardlist' => createBoardlist($mod),
 		'return' => ($mod ? '?' . $board['url'] . $config['file_index'] : $config['root'] . $board['dir'] . $config['file_index'])
-	));
+	];
+	if ($mod) {
+		$options['pm'] = create_pm_header();
+	}
+
+	$body = Element($config['file_thread'], $options);
 
 	if ($return) {
 		return $body;

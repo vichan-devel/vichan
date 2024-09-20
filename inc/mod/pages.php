@@ -28,6 +28,7 @@ function mod_page($title, $template, $args, $subtitle = false) {
 		'title' => $title,
 		'subtitle' => $subtitle,
 		'boardlist' => createBoardlist($mod),
+		'pm' => create_pm_header(),
 		'body' => Element($template,
 				array_merge(
 					array('config' => $config, 'mod' => $mod),
@@ -511,7 +512,7 @@ function mod_new_board(Context $ctx) {
 		if (!openBoard($_POST['uri']))
 			error(_("Couldn't open board after creation."));
 
-		$query = Element('posts.sql', array('board' => $board['uri']));
+		$query = Element('posts.sql', [ 'board' => $board['uri'] ]);
 
 		if (mysql_version() < 50503)
 			$query = preg_replace('/(CHARSET=|CHARACTER SET )utf8mb4/', '$1utf8', $query);
@@ -785,6 +786,7 @@ function mod_view_board(Context $ctx, $boardName, $page_no = 1) {
 	$page['btn'] = getPageButtons($page['pages'], true);
 	$page['mod'] = true;
 	$page['config'] = $config;
+	$page['pm'] = create_pm_header();
 
 	echo Element($config['file_board_index'], $page);
 }
@@ -2358,6 +2360,7 @@ function mod_reports(Context $ctx) {
 			'report' => $report,
 			'config' => $config,
 			'mod' => $mod,
+			'pm' => create_pm_header(),
 			'token' => make_secure_link_token('reports/' . $report['id'] . '/dismiss'),
 			'token_all' => make_secure_link_token('reports/' . $report['id'] . '/dismiss&all'),
 			'token_post' => make_secure_link_token('reports/'. $report['id'] . '/dismiss&post'),
@@ -2609,6 +2612,7 @@ function mod_config(Context $ctx, $board_config = false) {
 					<p style="text-align:center">You may proceed with these changes manually by copying and pasting the following code to the end of <strong>' . $config_file . '</strong>:</p>
 					<textarea style="width:700px;height:370px;margin:auto;display:block;background:white;color:black" readonly>' . $config_append . '</textarea>
 				';
+				$page['pm'] = create_pm_header();
 				echo Element($config['file_page_template'], $page);
 				exit;
 			}
@@ -2869,7 +2873,13 @@ function mod_edit_page(Context $ctx, $id) {
 
 		$fn = (isset($board['uri']) ? ($board['uri'] . '/') : '') . $page['name'] . '.html';
 		$body = "<div class='ban'>$write</div>";
-		$html = Element($config['file_page_template'], array('config' => $config, 'boardlist' => createBoardlist(), 'body' => $body, 'title' => utf8tohtml($page['title'])));
+		$html = Element($config['file_page_template'], [
+			'config' => $config,
+			'boardlist' => createBoardlist(),
+			'body' => $body,
+			'title' => utf8tohtml($page['title']),
+			'pm' => create_pm_header()
+		]);
 		file_write($fn, $html);
 	}
 

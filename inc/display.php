@@ -401,7 +401,18 @@ class Post {
 	public function build($index=false) {
 		global $board, $config;
 
-		return Element($config['file_post_reply'], array('config' => $config, 'board' => $board, 'post' => &$this, 'index' => $index, 'mod' => $this->mod));
+		$options = [
+			'config' => $config,
+			'board' => $board,
+			'post' => &$this,
+			'index' => $index,
+			'mod' => $this->mod
+		];
+		if ($this->mod) {
+			$options['pm'] = create_pm_header();
+		}
+
+		return Element($config['file_post_reply'], $options);
 	}
 };
 
@@ -465,8 +476,21 @@ class Thread {
 
 		event('show-thread', $this);
 
+		$options = [
+			'config' => $config,
+			'board' => $board,
+			'post' => &$this,
+			'index' => $index,
+			'hasnoko50' => $hasnoko50,
+			'isnoko50' => $isnoko50,
+			'mod' => $this->mod
+		];
+		if ($this->mod) {
+			$options['pm'] = create_pm_header();
+		}
+
 		$file = ($index && $config['file_board']) ? $config['file_post_thread_fileboard'] : $config['file_post_thread'];
-		$built = Element($file, array('config' => $config, 'board' => $board, 'post' => &$this, 'index' => $index, 'hasnoko50' => $hasnoko50, 'isnoko50' => $isnoko50, 'mod' => $this->mod));
+		$built = Element($file, $options);
 
 		return $built;
 	}
