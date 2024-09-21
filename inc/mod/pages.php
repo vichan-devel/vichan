@@ -1549,7 +1549,7 @@ function mod_ban_post(Context $ctx, $board, $delete, $post, $token = false) {
 	if (!openBoard($board))
 		error($config['error']['noboard']);
 
-	if (!hasPermission($config['mod']['delete'], $board))
+	if (!hasPermission($config['mod']['ban'], $board))
 		error($config['error']['noaccess']);
 
 	$security_token = make_secure_link_token($board . '/ban/' . $post);
