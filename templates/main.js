@@ -141,7 +141,33 @@ function changeStyle(styleName, link) {
 		x.appendChild(s);
 	}
 
-	document.getElementById('stylesheet').href = styles[styleName];
+	let mainStylesheetElement = document.getElementById('stylesheet');
+	let userStylesheetElement = document.getElementById('stylesheet-user');
+
+	// Override main stylesheet with the user selected one.
+	if (!userStylesheetElement) {
+		userStylesheetElement = document.createElement('link');
+		userStylesheetElement.rel = 'stylesheet';
+		userStylesheetElement.media = 'none';
+		userStylesheetElement.type = 'text/css';
+		userStylesheetElement.id = 'stylesheet';
+		let x = document.getElementsByTagName('head')[0];
+		x.appendChild(userStylesheetElement);
+	}
+
+	// When the new one is loaded, disable the old one
+	userStylesheetElement.onload = function() {
+		this.media = 'all';
+		mainStylesheetElement.media = 'none';
+	}
+
+	let style = styles[styleName];
+	if (style !== '') {
+		// Add the version of the resource if the style is not the embedded one.
+		style += `?v=${resourceVersion}`;
+	}
+
+	document.getElementById('stylesheet').href = style;
 	selectedstyle = styleName;
 
 	if (document.getElementsByClassName('styles').length != 0) {
@@ -162,6 +188,7 @@ function changeStyle(styleName, link) {
 
 
 {% endverbatim %}
+var resourceVersion = document.currentScript.getAttribute('data-resource-version');
 {% if config.stylesheets_board %}
 	{% verbatim %}
 
