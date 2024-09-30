@@ -264,6 +264,10 @@ input.delete {
   }
 }
 
+.user-controls > a {
+  margin-left: 1ch;
+}
+
 .post-details a {
   margin-left: 5px;
 }
