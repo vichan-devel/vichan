@@ -267,6 +267,10 @@ input.delete {
   }
 }
 
+.user-controls {
+  margin-left: 0.3em;
+}
+
 .post-details a {
   margin-left: 5px;
 }
