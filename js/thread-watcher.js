@@ -45,7 +45,7 @@ watchlist.render = function(reset) {
 	} else {
 		// If the watchlist has not yet been rendered, create it.
 		let menuStyle = getComputedStyle($('.boardlist')[0]);
-		$((active_page == 'ukko') ? 'hr:first' : (active_page == 'catalog') ? 'body>span:first' : 'form[name="post"]').before(
+		$('.watchlist-container').append(
 			$('<div id="watchlist">'+
 				'<div class="watchlist-controls">'+
 					'<span><a id="clearList">['+_('Clear List')+']</a></span>&nbsp'+
@@ -152,7 +152,7 @@ $(document).ready(function() {
 	}
 
 	// Append the watchlist toggle button.
-	$('.boardlist').append(' <span>[ <a class="watchlist-toggle" href="#">' + _('watchlist') + '</a> ]</span>');
+	$('.boardlist').append('<div class="watchlist-container" style="float:right;"><a class="watchlist-toggle" href="#">[' + _('Watchlist') + ']</a></div>');
 	// Append a watch thread button after every OP post number.
 	$('.op>.intro>.post_no:odd').after('<a class="watchThread" href="#">[' + _('Watch Thread') + ']</a>');
 
