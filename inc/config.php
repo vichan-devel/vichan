@@ -1559,50 +1559,6 @@
 		'lock_ip' => true,
 		// The page that is first shown when a moderator logs in. Defaults to the dashboard (?/).
 		'default' => '/',
-
-		'link_delete' => '[D]',
-		'link_ban' => '[B]',
-		'link_bandelete' => '[&amp;D]',
-		'link_deletefile' => '[F]',
-		'link_spoilerimage' => '[S]',
-		'link_deletebyip' => '[D+]',
-		'link_deletebyip_global' => '[D++]',
-		'link_sticky' => '[Sticky]',
-		'link_desticky' => '[-Sticky]',
-		'link_lock' => '[Lock]',
-		'link_unlock' => '[-Lock]',
-		'link_bumplock' => '[Sage]',
-		'link_bumpunlock' => '[-Sage]',
-		'link_editpost' => '[Edit]',
-		'link_move' => '[Move]',
-		'link_cycle' => '[Cycle]',
-		'link_uncycle' => '[-Cycle]'
-	];
-
-	// Moderator capcodes.
-	$config['capcode'] = ' <span class="capcode">## %s</span>';
-
-	// "## Custom" becomes lightgreen, italic and bold:
-	//$config['custom_capcode']['Custom'] ='<span class="capcode" style="color:lightgreen;font-style:italic;font-weight:bold"> ## %s</span>';
-
-	// "## Mod" makes everything purple, including the name and tripcode:
-	//$config['custom_capcode']['Mod'] = array(
-	//	'<span class="capcode" style="color:purple"> ## %s</span>',
-	//	'color:purple', // Change name style; optional
-	//	'color:purple' // Change tripcode style; optional
-	//);
-
-	// "## Admin" makes everything red and bold, including the name and tripcode:
-	//$config['custom_capcode']['Admin'] = array(
-	//	'<span class="capcode" style="color:red;font-weight:bold"> ## %s</span>',
-	//	'color:red;font-weight:bold', // Change name style; optional
-	//	'color:red;font-weight:bold' // Change tripcode style; optional
-	//);
-
-	// Enable the moving of single replies
-	$config['move_replies'] = false;
-
-	$config['mod'] = [
 		// Do DNS lookups on IP addresses to get their hostname for the moderator IP pages (?/IP/x.x.x.x).
 		'dns_lookup' => true,
 		// How many recent posts, per board, to show in ?/IP/x.x.x.x.
@@ -1653,8 +1609,49 @@
 		'dismiss_reports_on_lock' => true,
 
 		// Replace ?/config with a simple text editor for editing inc/instance-config.php.
-		'config_editor_php' => false
+		'config_editor_php' => false,
+
+		'link_delete' => '[D]',
+		'link_ban' => '[B]',
+		'link_bandelete' => '[&amp;D]',
+		'link_deletefile' => '[F]',
+		'link_spoilerimage' => '[S]',
+		'link_deletebyip' => '[D+]',
+		'link_deletebyip_global' => '[D++]',
+		'link_sticky' => '[Sticky]',
+		'link_desticky' => '[-Sticky]',
+		'link_lock' => '[Lock]',
+		'link_unlock' => '[-Lock]',
+		'link_bumplock' => '[Sage]',
+		'link_bumpunlock' => '[-Sage]',
+		'link_editpost' => '[Edit]',
+		'link_move' => '[Move]',
+		'link_cycle' => '[Cycle]',
+		'link_uncycle' => '[-Cycle]'
 	];
+
+	// Moderator capcodes.
+	$config['capcode'] = ' <span class="capcode">## %s</span>';
+
+	// "## Custom" becomes lightgreen, italic and bold:
+	//$config['custom_capcode']['Custom'] ='<span class="capcode" style="color:lightgreen;font-style:italic;font-weight:bold"> ## %s</span>';
+
+	// "## Mod" makes everything purple, including the name and tripcode:
+	//$config['custom_capcode']['Mod'] = array(
+	//	'<span class="capcode" style="color:purple"> ## %s</span>',
+	//	'color:purple', // Change name style; optional
+	//	'color:purple' // Change tripcode style; optional
+	//);
+
+	// "## Admin" makes everything red and bold, including the name and tripcode:
+	//$config['custom_capcode']['Admin'] = array(
+	//	'<span class="capcode" style="color:red;font-weight:bold"> ## %s</span>',
+	//	'color:red;font-weight:bold', // Change name style; optional
+	//	'color:red;font-weight:bold' // Change tripcode style; optional
+	//);
+
+	// Enable the moving of single replies
+	$config['move_replies'] = false;
 
 /*
  * ====================
