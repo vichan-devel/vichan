@@ -4,6 +4,7 @@
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  */
 
+use Vichan\Context;
 use Vichan\Functions\Net;
 
 defined('TINYBOARD') or exit;
@@ -232,7 +233,7 @@ function make_secure_link_token(string $uri): string {
 	return substr(sha1($config['cookies']['salt'] . '-' . $uri . '-' . $mod['id']), 0, 8);
 }
 
-function check_login(bool $prompt = false): void {
+function check_login(Context $ctx, bool $prompt = false): void {
 	global $config, $mod;
 
 	$is_https = Net\is_connection_secure($config['cookies']['secure_login_only'] === 1);
@@ -246,7 +247,9 @@ function check_login(bool $prompt = false): void {
 		if (count($cookie) != 3) {
 			// Malformed cookies
 			destroyCookies();
-			if ($prompt) mod_login();
+			if ($prompt) {
+				mod_login($ctx);
+			}
 			exit;
 		}
 
@@ -259,7 +262,9 @@ function check_login(bool $prompt = false): void {
 		if ($cookie[1] !== mkhash($cookie[0], $user['password'], $cookie[2])) {
 			// Malformed cookies
 			destroyCookies();
-			if ($prompt) mod_login();
+			if ($prompt) {
+				mod_login($ctx);
+			}
 			exit;
 		}
 
