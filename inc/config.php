@@ -1429,14 +1429,10 @@
 	$config['dir'] = [
 		'img' => 'src/',
 		'thumb' => 'thumb/',
-		'res' => 'res/'
-	];
-
-	// For load balancing, having a seperate server (and domain/subdomain) for serving static content is
-	// possible. This can either be a directory or a URL. Defaults to $config['root'] . 'static/'.
-	// $config['dir']['static'] = 'http://static.example.org/';
-
-	$config['dir'] = [
+		'res' => 'res/',
+		// For load balancing, having a seperate server (and domain/subdomain) for serving static content is
+		// possible. This can either be a directory or a URL. Defaults to $config['root'] . 'static/'.
+		// $config['dir']['static'] = 'http://static.example.org/';
 		// Where to store the .html templates. This folder and the template files must exist.
 		'template' => getcwd() . '/templates',
 		// Location of vichan "themes".
