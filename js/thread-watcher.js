@@ -88,10 +88,11 @@ watchlist.add = function(sel) {
 		// Grab the reply link.;
 		let threadLink = $(sel).siblings('a:not(.watchThread)').last().attr('href');
 		// Figure out the thread name. If anon, use the thread id.
-		if ($(sel).parent().find('.subject').length) {
-			threadName = $(sel).parent().find('.subject').text().substring(0,20);
+		let subject = $(sel).parent().parent().find('.subject');
+		if (subject.length) {
+			threadName = subject.text().substring(0, 20);
 		} else {
-			threadName = $(sel).parents('div').last().attr('id');
+			threadName = $(sel).parent('div')[0].id.slice(3); // Remove "op_".
 		}
 
 		threadInfo = [board_name, threadName, postCount, threadLink];
