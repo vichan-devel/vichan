@@ -694,7 +694,7 @@ if (isset($_POST['delete'])) {
 
 
 		if ($post['mod'] = isset($_POST['mod']) && $_POST['mod']) {
-			check_login(false);
+			check_login($context, false);
 			if (!$mod) {
 				// Liar. You're not a mod.
 				error($config['error']['notamod']);
