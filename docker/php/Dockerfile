@@ -1,6 +1,6 @@
 # Based on https://github.com/dead-guru/devichan/blob/master/php-fpm/Dockerfile
 
-FROM composer AS composer
+FROM composer:lts AS composer
 FROM php:8.1-fpm-alpine
 
 RUN apk add --no-cache \
