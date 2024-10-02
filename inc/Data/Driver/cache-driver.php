@@ -1,5 +1,5 @@
 <?php
-namespace Vichan\Driver;
+namespace Vichan\Data\Driver;
 
 use RuntimeException;
 
