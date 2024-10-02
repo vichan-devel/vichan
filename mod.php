@@ -11,7 +11,10 @@ if ($config['debug']) {
 
 require_once 'inc/mod/pages.php';
 
-check_login(true);
+
+$ctx = Vichan\build_context($config);
+
+check_login($ctx, true);
 
 $query = isset($_SERVER['QUERY_STRING']) ? rawurldecode($_SERVER['QUERY_STRING']) : '';
 
@@ -135,8 +138,6 @@ foreach ($pages as $key => $callback) {
 	$new_pages[(!empty($key) and $key[0] == '!') ? $key : '!^' . $key . '(?:&[^&=]+=[^&]*)*$!u'] = $callback;
 }
 $pages = $new_pages;
-
-$ctx = Vichan\build_context($config);
 
 foreach ($pages as $uri => $handler) {
 	if (preg_match($uri, $query, $matches)) {
