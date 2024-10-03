@@ -2,7 +2,8 @@
 namespace Vichan;
 
 use RuntimeException;
-use Vichan\Driver\{HttpDriver, HttpDrivers, Log, LogDrivers};
+use Vichan\Driver\{Log, LogDrivers};
+use Vichan\Data\Driver\{HttpDriver, HttpDrivers};
 use Vichan\Service\HCaptchaQuery;
 use Vichan\Service\NativeCaptchaQuery;
 use Vichan\Service\ReCaptchaQuery;
