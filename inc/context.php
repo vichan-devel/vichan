@@ -3,7 +3,7 @@ namespace Vichan;
 
 use RuntimeException;
 use Vichan\Driver\{Log, LogDrivers};
-use Vichan\Data\Driver\{HttpDriver, HttpDrivers};
+use Vichan\Data\Driver\HttpDriver;
 use Vichan\Service\HCaptchaQuery;
 use Vichan\Service\NativeCaptchaQuery;
 use Vichan\Service\ReCaptchaQuery;
@@ -57,7 +57,7 @@ function build_context(array $config): Context {
 		},
 		HttpDriver::class => function($c) {
 			$config = $c->get('config');
-			return HttpDrivers::getHttpDriver($config['upload_by_url_timeout'], $config['max_filesize']);
+			return new HttpDriver($config['upload_by_url_timeout'], $config['max_filesize']);
 		},
 		RemoteCaptchaQuery::class => function($c) {
 			$config = $c->get('config');

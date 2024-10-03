@@ -1,9 +1,12 @@
-<?php // Honestly this is just a wrapper for cURL. Still useful to mock it and have an OOP API on PHP 7.
+<?php
 namespace Vichan\Data\Driver;
 
 defined('TINYBOARD') or exit;
 
 
+/**
+ * Honestly this is just a wrapper for cURL. Still useful to mock it and have an OOP API on PHP 7.
+ */
 class HttpDriver {
 	private mixed $inner;
 	private int $timeout;
