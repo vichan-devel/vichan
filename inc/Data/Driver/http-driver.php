@@ -4,55 +4,29 @@ namespace Vichan\Data\Driver;
 defined('TINYBOARD') or exit;
 
 
-class HttpDrivers {
-	private const DEFAULT_USER_AGENT = 'Tinyboard';
-
-
-	public static function getHttpDriver(int $timeout, int $max_file_size): HttpDriver {
-		return new HttpDriver($timeout, self::DEFAULT_USER_AGENT, $max_file_size);
-	}
-}
-
 class HttpDriver {
 	private mixed $inner;
 	private int $timeout;
-	private string $user_agent;
 	private int $max_file_size;
 
 
 	private function resetTowards(string $url, int $timeout): void {
-		curl_reset($this->inner);
-		curl_setopt_array($this->inner, array(
+		\curl_reset($this->inner);
+		\curl_setopt_array($this->inner, [
 			\CURLOPT_URL => $url,
 			\CURLOPT_TIMEOUT => $timeout,
-			\CURLOPT_USERAGENT => $this->user_agent,
+			\CURLOPT_USERAGENT => 'Tinyboard',
 			\CURLOPT_PROTOCOLS => \CURLPROTO_HTTP | \CURLPROTO_HTTPS,
-		));
+		]);
 	}
 
-	private function setSizeLimit(): void {
-		// Adapted from: https://stackoverflow.com/a/17642638
-		\curl_setopt($this->inner, \CURLOPT_NOPROGRESS, false);
-
-		if (\PHP_MAJOR_VERSION >= 8 && \PHP_MINOR_VERSION >= 2) {
-			\curl_setopt($this->inner, \CURLOPT_XFERINFOFUNCTION, function($res, $next_dl, $dl, $next_up, $up) {
-				return (int)($dl <= $this->max_file_size);
-			});
-		} else {
-			\curl_setopt($this->inner, \CURLOPT_PROGRESSFUNCTION, function($res, $next_dl, $dl, $next_up, $up) {
-				return (int)($dl <= $this->max_file_size);
-			});
-		}
-	}
-
-	function __construct(int $timeout, string $user_agent, int $max_file_size) {
+	public function __construct(int $timeout, int $max_file_size) {
 		$this->inner = \curl_init();
 		$this->timeout = $timeout;
-		$this->user_agent = $user_agent;
 		$this->max_file_size = $max_file_size;
 	}
 
-	function __destruct() {
+	public function __destruct() {
 		\curl_close($this->inner);
 	}
 
@@ -130,11 +104,16 @@ class HttpDriver {
 		}
 
 		$this->resetTowards($endpoint, $timeout);
-		\curl_setopt($this->inner, \CURLOPT_FAILONERROR, true);
-		\curl_setopt($this->inner, \CURLOPT_FOLLOWLOCATION, false);
-		\curl_setopt($this->inner, \CURLOPT_FILE, $fd);
-		\curl_setopt($this->inner, \CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-		$this->setSizeLimit();
+		// Adapted from: https://stackoverflow.com/a/17642638
+		$opt = (\PHP_MAJOR_VERSION >= 8 && \PHP_MINOR_VERSION >= 2) ? \CURLOPT_XFERINFOFUNCTION : \CURLOPT_PROGRESSFUNCTION;
+		\curl_setopt_array($this->inner, [
+			\CURLOPT_NOPROGRESS => false,
+			$opt => fn($res, $next_dl, $dl, $next_up, $up) => (int)($dl <= $this->max_file_size),
+			\CURLOPT_FAILONERROR => true,
+			\CURLOPT_FOLLOWLOCATION => false,
+			\CURLOPT_FILE => $fd,
+			\CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+		]);
 		$ret = \curl_exec($this->inner);
 
 		if ($ret === false) {
