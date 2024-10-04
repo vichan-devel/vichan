@@ -9,7 +9,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ./local-instances/${LOCAL_INSTANCE_NAME:-0}/www:/var/www/html
+      - ./local-instances/${INSTANCE:-0}/www:/var/www/html
       - ./docker/nginx/vichan.conf:/etc/nginx/conf.d/default.conf
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./docker/nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf
@@ -21,7 +21,7 @@ services:
       context: .
       dockerfile: ./docker/php/Dockerfile
     volumes:
-      - ./local-instances/${LOCAL_INSTANCE_NAME:-0}/www:/var/www
+      - ./local-instances/${INSTANCE:-0}/www:/var/www
       - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
       - ./docker/php/jit.ini:/usr/local/etc/php/conf.d/jit.ini
 
@@ -37,4 +37,4 @@ services:
       MYSQL_DATABASE: vichan
       MYSQL_ROOT_PASSWORD: password
     volumes:
-      - ./local-instances/${LOCAL_INSTANCE_NAME:-0}/mysql:/var/lib/mysql
+      - ./local-instances/${INSTANCE:-0}/mysql:/var/lib/mysql
