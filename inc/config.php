@@ -71,7 +71,7 @@
 	$config['log_system'] = [
 		/*
 		 * Log all error messages and unauthorized login attempts.
-		 * Can be "syslog", "error_log" (default), "file", "stderr" or "none".
+		 * Can be "syslog", "error_log" (default), "file", or "stderr".
 		 */
 		'type' => 'error_log',
 		// The application name used by the logging system. Defaults to "tinyboard" for backwards compatibility.
