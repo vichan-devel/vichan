@@ -6,7 +6,7 @@
 require_once 'inc/bootstrap.php';
 
 use Vichan\{Context, WebDependencyFactory};
-use Vichan\Data\Driver\{HttpDriver, Log};
+use Vichan\Data\Driver\{LogDriver, HttpDriver};
 use Vichan\Service\{RemoteCaptchaQuery, NativeCaptchaQuery};
 use Vichan\Functions\Format;
 
@@ -286,7 +286,7 @@ if (isset($_GET['Newsgroups']) && $config['nntpchan']['enabled']) {
 		$content = file_get_contents("php://input");
 	}
 	elseif ($ct == 'multipart/mixed' || $ct == 'multipart/form-data') {
-		$context->get(Log::class)->log(Log::DEBUG, 'MM: Files: ' . print_r($GLOBALS, true));
+		$context->get(LogDriver::class)->log(LogDriver::DEBUG, 'MM: Files: ' . print_r($GLOBALS, true));
 
 		$content = '';
 
@@ -454,8 +454,8 @@ if (isset($_POST['delete'])) {
 				modLog("User at $ip deleted their own post #$id");
 			}
 
-			$context->get(Log::class)->log(
-				Log::INFO,
+			$context->get(LogDriver::class)->log(
+				LogDriver::INFO,
 				'Deleted post: /' . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '')
 			);
 		}
@@ -531,7 +531,7 @@ if (isset($_POST['delete'])) {
 				error($config['error']['captcha']);
 			}
 		} catch (RuntimeException $e) {
-			$context->get(Log::class)->log(Log::ERROR, "Native captcha IO exception: {$e->getMessage()}");
+			$context->get(LogDriver::class)->log(LogDriver::ERROR, "Native captcha IO exception: {$e->getMessage()}");
 			error($config['error']['local_io_error']);
 		}
 	}
@@ -550,7 +550,7 @@ if (isset($_POST['delete'])) {
 
 		$post = $query->fetch(PDO::FETCH_ASSOC);
 		if ($post === false) {
-			$context->get(Log::class)->log(Log::INFO, "Failed to report non-existing post #{$id} in {$board['dir']}");
+			$context->get(LogDriver::class)->log(LogDriver::INFO, "Failed to report non-existing post #{$id} in {$board['dir']}");
 			error($config['error']['nopost']);
 		}
 
@@ -559,8 +559,8 @@ if (isset($_POST['delete'])) {
 			error($error);
 		}
 
-		$context->get(Log::class)->log(
-			Log::INFO,
+		$context->get(LogDriver::class)->log(
+			LogDriver::INFO,
 			'Reported post: /'
 				 . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '')
 				 . " for \"$reason\""
@@ -673,10 +673,10 @@ if (isset($_POST['delete'])) {
 				}
 			}
 		} catch (RuntimeException $e) {
-			$context->get(Log::class)->log(Log::ERROR, "Captcha IO exception: {$e->getMessage()}");
+			$context->get(LogDriver::class)->log(LogDriver::ERROR, "Captcha IO exception: {$e->getMessage()}");
 			error($config['error']['remote_io_error']);
 		} catch (JsonException $e) {
-			$context->get(Log::class)->log(Log::ERROR, "Bad JSON reply to captcha: {$e->getMessage()}");
+			$context->get(LogDriver::class)->log(LogDriver::ERROR, "Bad JSON reply to captcha: {$e->getMessage()}");
 			error($config['error']['remote_io_error']);
 		}
 
@@ -1162,7 +1162,7 @@ if (isset($_POST['delete'])) {
 					try {
 						$file['size'] = strip_image_metadata($file['tmp_name']);
 					} catch (RuntimeException $e) {
-						$context->get(Log::class)->log(Log::ERROR, "Could not strip image metadata: {$e->getMessage()}");
+						$context->get(LogDriver::class)->log(LogDriver::ERROR, "Could not strip image metadata: {$e->getMessage()}");
 						// Since EXIF metadata can countain sensible info, fail the request.
 						error(_('Could not strip EXIF metadata!'), null, $error);
 					}
@@ -1200,7 +1200,7 @@ if (isset($_POST['delete'])) {
 						$post['body_nomarkup'] .= "<tinyboard ocr image $key>" . htmlspecialchars($txt) . "</tinyboard>";
 					}
 				} catch (RuntimeException $e) {
-					$context->get(Log::class)->log(Log::ERROR, "Could not OCR image: {$e->getMessage()}");
+					$context->get(LogDriver::class)->log(LogDriver::ERROR, "Could not OCR image: {$e->getMessage()}");
 				}
 			}
 		}
@@ -1394,8 +1394,8 @@ if (isset($_POST['delete'])) {
 
 	buildThread($post['op'] ? $id : $post['thread']);
 
-	$context->get(Log::class)->log(
-		Log::INFO,
+	$context->get(LogDriver::class)->log(
+		LogDriver::INFO,
 		'New post: /' . $board['dir'] . $config['dir']['res'] . link_for($post) . (!$post['op'] ? '#' . $id : '')
 	);
 
