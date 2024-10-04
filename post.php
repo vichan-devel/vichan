@@ -6,7 +6,7 @@
 require_once 'inc/bootstrap.php';
 
 use Vichan\{Context, WebDependencyFactory};
-use Vichan\Driver\{HttpDriver, Log};
+use Vichan\Data\Driver\{HttpDriver, Log};
 use Vichan\Service\{RemoteCaptchaQuery, NativeCaptchaQuery};
 use Vichan\Functions\Format;
 

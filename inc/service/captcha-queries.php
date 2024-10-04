@@ -1,7 +1,7 @@
 <?php // Verify captchas server side.
 namespace Vichan\Service;
 
-use Vichan\Driver\HttpDriver;
+use Vichan\Data\Driver\HttpDriver;
 
 defined('TINYBOARD') or exit;
 
