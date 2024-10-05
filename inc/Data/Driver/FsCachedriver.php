@@ -30,7 +30,10 @@ class FsCacheDriver implements CacheDriver {
 	}
 
 	private function collectImpl(): int {
-		// A read lock is ok, since it's alright if we delete expired items from under the feet of other processes.
+		/*
+		 * A read lock is ok, since it's alright if we delete expired items from under the feet of other processes, and
+		 * no other process add new cache items or refresh existing ones.
+		 */
 		$files = \glob($this->base_path . $this->prefix . '*', \GLOB_NOSORT);
 		$count = 0;
 		foreach ($files as $file) {
@@ -84,6 +87,9 @@ class FsCacheDriver implements CacheDriver {
 
 		$this->sharedLockCache();
 
+		// Collect expired items first so if the target key is expired we shortcut to failure in the next lines.
+		$this->maybeCollect();
+
 		$fd = \fopen($this->base_path . $key, 'r');
 		if ($fd === false) {
 			$this->unlockCache();
@@ -92,7 +98,6 @@ class FsCacheDriver implements CacheDriver {
 
 		$data = \stream_get_contents($fd);
 		\fclose($fd);
-		$this->maybeCollect();
 		$this->unlockCache();
 		$wrapped = \json_decode($data, true, 512, \JSON_THROW_ON_ERROR);
 
@@ -114,8 +119,8 @@ class FsCacheDriver implements CacheDriver {
 
 		$data = \json_encode($wrapped);
 		$this->exclusiveLockCache();
-		\file_put_contents($this->base_path . $key, $data);
 		$this->maybeCollect();
+		\file_put_contents($this->base_path . $key, $data);
 		$this->unlockCache();
 	}
 
