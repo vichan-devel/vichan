@@ -519,10 +519,10 @@ if (isset($_POST['delete'])) {
 			$query = new NativeCaptchaQuery(
 				$context->get(HttpDriver::class),
 				$config['domain'],
-				$config['captcha']['provider_check']
+				$config['captcha']['provider_check'],
+				$config['captcha']['extra']
 			);
 			$success = $query->verify(
-				$config['captcha']['extra'],
 				$_POST['captcha_text'],
 				$_POST['captcha_cookie']
 			);
