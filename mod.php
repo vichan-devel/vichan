@@ -161,7 +161,7 @@ foreach ($pages as $uri => $handler) {
 					if ($secure_post_only)
 						error($config['error']['csrf']);
 					else {
-						mod_confirm(substr($query, 1));
+						mod_confirm($ctx, substr($query, 1));
 						exit;
 					}
 				}
