@@ -161,7 +161,7 @@ foreach ($pages as $uri => $handler) {
 					if ($secure_post_only)
 						error($config['error']['csrf']);
 					else {
-						mod_confirm(substr($query, 1));
+						mod_confirm($ctx, substr($query, 1));
 						exit;
 					}
 				}
@@ -184,10 +184,8 @@ foreach ($pages as $uri => $handler) {
 			$debug['time']['parse_mod_req'] = '~' . round((microtime(true) - $parse_start_time) * 1000, 2) . 'ms';
 		}
 
-		if (is_array($matches)) {
-			// we don't want to call named parameters (PHP 8)
-			$matches = array_values($matches);
-		}
+		// We don't want to call named parameters (PHP 8).
+		$matches = array_values($matches);
 
 		if (is_string($handler)) {
 			if ($handler[0] == ':') {

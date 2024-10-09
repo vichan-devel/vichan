@@ -34,10 +34,6 @@ function Element($templateFile, array $options) {
 	if (!$twig)
 		load_twig();
 
-	if (function_exists('create_pm_header') && ((isset($options['mod']) && $options['mod']) || isset($options['__mod'])) && !preg_match('!^mod/!', $templateFile)) {
-		$options['pm'] = create_pm_header();
-	}
-
 	if (isset($options['body']) && $config['debug']) {
 		$_debug = $debug;
 

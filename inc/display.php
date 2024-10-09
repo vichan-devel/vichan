@@ -9,7 +9,7 @@ if (realpath($_SERVER['SCRIPT_FILENAME']) == str_replace('\\', '/', __FILE__)) {
 	exit;
 }
 
-/* 
+/*
 	joaoptm78@gmail.com
 	http://www.php.net/manual/en/function.filesize.php#100097
 */
@@ -21,7 +21,7 @@ function format_bytes($size) {
 
 function doBoardListPart($list, $root, &$boards) {
 	global $config;
-	
+
 	$body = '';
 	foreach ($list as $key => $board) {
 		if (is_array($board))
@@ -34,21 +34,21 @@ function doBoardListPart($list, $root, &$boards) {
 				if (isset ($boards[$board])) {
 					$title = ' title="'.$boards[$board].'"';
 				}
-				
+
 				$body .= ' <a href="' . $root . $board . '/' . $config['file_index'] . '"'.$title.'>' . $board . '</a> /';
 			}
 		}
 	}
 	$body = preg_replace('/\/$/', '', $body);
-	
+
 	return $body;
 }
 
 function createBoardlist($mod=false) {
 	global $config;
-	
+
 	if (!isset($config['boards'])) return array('top'=>'','bottom'=>'');
-	
+
 	$xboards = listBoards();
 	$boards = array();
 	foreach ($xboards as $val) {
@@ -59,12 +59,12 @@ function createBoardlist($mod=false) {
 
 	if ($config['boardlist_wrap_bracket'] && !preg_match('/\] $/', $body))
 		$body = '[' . $body . ']';
-	
+
 	$body = trim($body);
 
 	// Message compact-boardlist.js faster, so that page looks less ugly during loading
 	$top = "<script type='text/javascript'>if (typeof do_boardlist != 'undefined') do_boardlist();</script>";
-	
+
 	return array(
 		'top' => '<div class="boardlist">' . $body . '</div>' . $top,
 		'bottom' => '<div class="boardlist bottom">' . $body . '</div>'
@@ -73,12 +73,12 @@ function createBoardlist($mod=false) {
 
 function error($message, $priority = true, $debug_stuff = []) {
 	global $board, $mod, $config, $db_error;
-	
+
 	if ($config['syslog'] && $priority !== false) {
 		// Use LOG_NOTICE instead of LOG_ERR or LOG_WARNING because most error message are not significant.
 		_syslog($priority !== true ? $priority : LOG_NOTICE, $message);
 	}
-	
+
 	if (defined('STDIN')) {
 		// Running from CLI
 		echo('Error: ' . $message . "\n");
@@ -113,7 +113,7 @@ function error($message, $priority = true, $debug_stuff = []) {
 	};
 
 
-	if ($debug_stuff) 
+	if ($debug_stuff)
 		$debug_stuff = array_filter($debug_stuff, $debug_callback);
 
 	die(Element($config['file_page_template'], array(
@@ -132,7 +132,7 @@ function error($message, $priority = true, $debug_stuff = []) {
 
 function loginForm($error=false, $username=false, $redirect=false) {
 	global $config;
-	
+
 	die(Element($config['file_page_template'], array(
 		'index' => $config['root'],
 		'title' => _('Login'),
@@ -149,34 +149,34 @@ function loginForm($error=false, $username=false, $redirect=false) {
 
 function pm_snippet($body, $len=null) {
 	global $config;
-	
+
 	if (!isset($len))
 		$len = &$config['mod']['snippet_length'];
-	
+
 	// Replace line breaks with some whitespace
 	$body = preg_replace('@<br/?>@i', '  ', $body);
-	
+
 	// Strip tags
 	$body = strip_tags($body);
-	
+
 	// Unescape HTML characters, to avoid splitting them in half
 	$body = html_entity_decode($body, ENT_COMPAT, 'UTF-8');
-	
+
 	// calculate strlen() so we can add "..." after if needed
 	$strlen = mb_strlen($body);
-	
+
 	$body = mb_substr($body, 0, $len);
-	
+
 	// Re-escape the characters.
 	return '<em>' . utf8tohtml($body) . ($strlen > $len ? '&hellip;' : '') . '</em>';
 }
 
 function capcode($cap) {
 	global $config;
-	
+
 	if (!$cap)
 		return false;
-	
+
 	$capcode = array();
 	if (isset($config['custom_capcode'][$cap])) {
 		if (is_array($config['custom_capcode'][$cap])) {
@@ -191,59 +191,59 @@ function capcode($cap) {
 	} else {
 		$capcode['cap'] = sprintf($config['capcode'], $cap);
 	}
-	
+
 	return $capcode;
 }
 
 function truncate($body, $url, $max_lines = false, $max_chars = false) {
 	global $config;
-	
+
 	if ($max_lines === false)
 		$max_lines = $config['body_truncate'];
 	if ($max_chars === false)
 		$max_chars = $config['body_truncate_char'];
-	
+
 	// We don't want to risk truncating in the middle of an HTML comment.
 	// It's easiest just to remove them all first.
 	$body = preg_replace('/<!--.*?-->/s', '', $body);
-	
+
 	$original_body = $body;
-	
+
 	$lines = substr_count($body, '<br/>');
-	
+
 	// Limit line count
 	if ($lines > $max_lines) {
 		if (preg_match('/(((.*?)<br\/>){' . $max_lines . '})/', $body, $m))
 			$body = $m[0];
 	}
-	
+
 	$body = mb_substr($body, 0, $max_chars);
-	
+
 	if ($body != $original_body) {
 		// Remove any corrupt tags at the end
 		$body = preg_replace('/<([\w]+)?([^>]*)?$/', '', $body);
-		
+
 		// Open tags
 		if (preg_match_all('/<([\w]+)[^>]*>/', $body, $open_tags)) {
-			
+
 			$tags = array();
 			for ($x=0;$x<count($open_tags[0]);$x++) {
 				if (!preg_match('/\/(\s+)?>$/', $open_tags[0][$x]))
 					$tags[] = $open_tags[1][$x];
 			}
-			
+
 			// List successfully closed tags
 			if (preg_match_all('/(<\/([\w]+))>/', $body, $closed_tags)) {
 				for ($x=0;$x<count($closed_tags[0]);$x++) {
 					unset($tags[array_search($closed_tags[2][$x], $tags)]);
 				}
 			}
-			
+
 			// remove broken HTML entity at the end (if existent)
 			$body = preg_replace('/&[^;]+$/', '', $body);
-			
+
 			$tags_no_close_needed = array("colgroup", "dd", "dt", "li", "optgroup", "option", "p", "tbody", "td", "tfoot", "th", "thead", "tr", "br", "img");
-			
+
 			// Close any open tags
 			foreach ($tags as &$tag) {
 				if (!in_array($tag, $tags_no_close_needed))
@@ -253,10 +253,10 @@ function truncate($body, $url, $max_lines = false, $max_chars = false) {
 			// remove broken HTML entity at the end (if existent)
 			$body = preg_replace('/&[^;]*$/', '', $body);
 		}
-		
+
 		$body .= '<span class="toolong">'.sprintf(_('Post too long. Click <a href="%s">here</a> to view the full text.'), $url).'</span>';
 	}
-	
+
 	return $body;
 }
 
@@ -266,21 +266,21 @@ function bidi_cleanup($data) {
 
 	$explicits	= '\xE2\x80\xAA|\xE2\x80\xAB|\xE2\x80\xAD|\xE2\x80\xAE';
 	$pdf		= '\xE2\x80\xAC';
-	
+
 	preg_match_all("!$explicits!",	$data, $m1, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
 	preg_match_all("!$pdf!", 	$data, $m2, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
-	
+
 	if (count($m1) || count($m2)){
-	
+
 		$p = array();
 		foreach ($m1 as $m){ $p[$m[0][1]] = 'push'; }
 		foreach ($m2 as $m){ $p[$m[0][1]] = 'pop'; }
 		ksort($p);
-	
+
 		$offset = 0;
 		$stack = 0;
 		foreach ($p as $pos => $type){
-	
+
 			if ($type == 'push'){
 				$stack++;
 			}else{
@@ -294,15 +294,15 @@ function bidi_cleanup($data) {
 				}
 			}
 		}
-	
+
 		# now add some pops if your stack is bigger than 0
 		for ($i=0; $i<$stack; $i++){
 			$data .= "\xE2\x80\xAC";
 		}
-	
+
 		return $data;
 	}
-	
+
 	return $data;
 }
 
@@ -317,24 +317,24 @@ function secure_link($href) {
 
 function embed_html($link) {
 	global $config;
-	
+
 	foreach ($config['embedding'] as $embed) {
 		if ($html = preg_replace($embed[0], $embed[1], $link)) {
 				if ($html == $link)
 					continue; // Nope
-			
+
 			$html = str_replace('%%tb_width%%', $config['embed_width'], $html);
 			$html = str_replace('%%tb_height%%', $config['embed_height'], $html);
-			
+
 			return $html;
 		}
 	}
-	
+
 	if ($link[0] == '<') {
 		// Prior to v0.9.6-dev-8, HTML code for embedding was stored in the database instead of the link.
 		return $link;
 	}
-	
+
 	return 'Embedding error.';
 }
 
@@ -343,7 +343,7 @@ class Post {
 		global $config;
 		if (!isset($root))
 			$root = &$config['root'];
-		
+
 		foreach ($post as $key => $value) {
 			$this->{$key} = $value;
 		}
@@ -367,22 +367,22 @@ class Post {
 				}
 			}
 		}
-		
+
 		$this->subject = utf8tohtml($this->subject);
 		$this->name = utf8tohtml($this->name);
 		$this->mod = $mod;
 		$this->root = $root;
-		
+
 		if ($this->embed)
 			$this->embed = embed_html($this->embed);
-		
+
 		$this->modifiers = extract_modifiers($this->body_nomarkup);
-		
+
 		if ($config['always_regenerate_markup']) {
 			$this->body = $this->body_nomarkup;
 			markup($this->body);
 		}
-		
+
 		if ($this->mod)
 			// Fix internal links
 			// Very complicated regex
@@ -394,14 +394,25 @@ class Post {
 	}
 	public function link($pre = '', $page = false) {
 		global $config, $board;
-		
+
 		return $this->root . $board['dir'] . $config['dir']['res'] . link_for((array)$this, $page == '50') . '#' . $pre . $this->id;
 	}
-	
+
 	public function build($index=false) {
 		global $board, $config;
-		
-		return Element($config['file_post_reply'], array('config' => $config, 'board' => $board, 'post' => &$this, 'index' => $index, 'mod' => $this->mod));
+
+		$options = [
+			'config' => $config,
+			'board' => $board,
+			'post' => &$this,
+			'index' => $index,
+			'mod' => $this->mod
+		];
+		if ($this->mod) {
+			$options['pm'] = create_pm_header();
+		}
+
+		return Element($config['file_post_reply'], $options);
 	}
 };
 
@@ -410,14 +421,14 @@ class Thread {
 		global $config;
 		if (!isset($root))
 			$root = &$config['root'];
-		
+
 		foreach ($post as $key => $value) {
 			$this->{$key} = $value;
 		}
-		
+
 		if (isset($this->files))
 			$this->files = is_string($this->files) ? json_decode($this->files) : $this->files;
-		
+
 		$this->subject = utf8tohtml($this->subject);
 		$this->name = utf8tohtml($this->name);
 		$this->mod = $mod;
@@ -427,17 +438,17 @@ class Thread {
 		$this->posts = array();
 		$this->omitted = 0;
 		$this->omitted_images = 0;
-		
+
 		if ($this->embed)
 			$this->embed = embed_html($this->embed);
-		
+
 		$this->modifiers = extract_modifiers($this->body_nomarkup);
-		
+
 		if ($config['always_regenerate_markup']) {
 			$this->body = $this->body_nomarkup;
 			markup($this->body);
 		}
-		
+
 		if ($this->mod)
 			// Fix internal links
 			// Very complicated regex
@@ -449,7 +460,7 @@ class Thread {
 	}
 	public function link($pre = '', $page = false) {
 		global $config, $board;
-		
+
 		return $this->root . $board['dir'] . $config['dir']['res'] . link_for((array)$this, $page == '50') . '#' . $pre . $this->id;
 	}
 	public function add(Post $post) {
@@ -460,15 +471,27 @@ class Thread {
 	}
 	public function build($index=false, $isnoko50=false) {
 		global $board, $config, $debug;
-		
+
 		$hasnoko50 = $this->postCount() >= $config['noko50_min'];
-		
+
 		event('show-thread', $this);
 
+		$options = [
+			'config' => $config,
+			'board' => $board,
+			'post' => &$this,
+			'index' => $index,
+			'hasnoko50' => $hasnoko50,
+			'isnoko50' => $isnoko50,
+			'mod' => $this->mod
+		];
+		if ($this->mod) {
+			$options['pm'] = create_pm_header();
+		}
+
 		$file = ($index && $config['file_board']) ? $config['file_post_thread_fileboard'] : $config['file_post_thread'];
-		$built = Element($file, array('config' => $config, 'board' => $board, 'post' => &$this, 'index' => $index, 'hasnoko50' => $hasnoko50, 'isnoko50' => $isnoko50, 'mod' => $this->mod));
-		
+		$built = Element($file, $options);
+
 		return $built;
 	}
 };
-
