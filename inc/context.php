@@ -2,8 +2,7 @@
 namespace Vichan;
 
 use RuntimeException;
-use Vichan\Driver\{Log, LogDrivers};
-use Vichan\Data\Driver\HttpDriver;
+use Vichan\Data\Driver\{HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
 use Vichan\Service\HCaptchaQuery;
 use Vichan\Service\NativeCaptchaQuery;
 use Vichan\Service\ReCaptchaQuery;
@@ -35,24 +34,22 @@ class Context {
 function build_context(array $config): Context {
 	return new Context([
 		'config' => $config,
-		Log::class => function($c) {
+		LogDriver::class => function($c) {
 			$config = $c->get('config');
 
 			$name = $config['log_system']['name'];
-			$level = $config['debug'] ? Log::DEBUG : Log::NOTICE;
+			$level = $config['debug'] ? LogDriver::DEBUG : LogDriver::NOTICE;
 			$backend = $config['log_system']['type'];
 
 			// Check 'syslog' for backwards compatibility.
 			if ((isset($config['syslog']) && $config['syslog']) || $backend === 'syslog') {
-				return LogDrivers::syslog($name, $level, $this->config['log_system']['syslog_stderr']);
+				return new SyslogLogDriver($name, $level, $this->config['log_system']['syslog_stderr']);
 			} elseif ($backend === 'file') {
-				return LogDrivers::file($name, $level, $this->config['log_system']['file_path']);
+				return new FileLogDriver($name, $level, $this->config['log_system']['file_path']);
 			} elseif ($backend === 'stderr') {
-				return LogDrivers::stderr($name, $level);
-			} elseif ($backend === 'none') {
-				return LogDrivers::none();
+				return new StderrLogDriver($name, $level);
 			} else {
-				return LogDrivers::error_log($name, $level);
+				return new ErrorLogLogDriver($name, $level);
 			}
 		},
 		HttpDriver::class => function($c) {
