@@ -712,6 +712,9 @@
 	);
 	*/
 
+	// Maximum number inline of dice rolls per markup.
+	$config['max_roll_count'] = 50;
+
 	// Allow dice rolling: an email field of the form "dice XdY+/-Z" will result in X Y-sided dice rolled and summed,
 	// with the modifier Z added, with the result displayed at the top of the post body.
 	$config['allow_roll'] = false;
