@@ -1042,6 +1042,20 @@ div.boardlist a {
   cursor: pointer;
 }
 
+/* Inline dice */
+.dice-option table {
+    border: 1px dotted black;
+    margin: 0;
+    border-collapse: collapse;
+}
+.dice-option table td {
+    text-align: center;
+    border-left: 1px dotted black;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+}
+
 #youtube-size input {
   width: 50px;
 }
