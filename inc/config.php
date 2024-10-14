@@ -787,6 +787,8 @@
  */
 
 	$config['markup'] = [
+		// Inline dice roll markup.
+		[ "/!([-+]?\d+)?([d])([-+]?\d+)([-+]\d+)?/iu", fn($m) => inline_dice_roll_markup($m, 'static/d10.svg') ],
 		// "Wiki" markup syntax ($config['wiki_markup'] in pervious versions):
 		[ "/'''(.+?)'''/", "<strong>\$1</strong>" ],
 		[ "/''(.+?)''/", "<em>\$1</em>" ],
