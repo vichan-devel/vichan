@@ -783,11 +783,13 @@
  * ====================
  */
 
-	// "Wiki" markup syntax ($config['wiki_markup'] in pervious versions):
-	$config['markup'][] = array("/'''(.+?)'''/", "<strong>\$1</strong>");
-	$config['markup'][] = array("/''(.+?)''/", "<em>\$1</em>");
-	$config['markup'][] = array("/\*\*(.+?)\*\*/", "<span class=\"spoiler\">\$1</span>");
-	$config['markup'][] = array("/^[ |\t]*==(.+?)==[ |\t]*$/m", "<span class=\"heading\">\$1</span>");
+	$config['markup'] = [
+		// "Wiki" markup syntax ($config['wiki_markup'] in pervious versions):
+		[ "/'''(.+?)'''/", "<strong>\$1</strong>" ],
+		[ "/''(.+?)''/", "<em>\$1</em>" ],
+		[ "/\*\*(.+?)\*\*/", "<span class=\"spoiler\">\$1</span>" ],
+		[ "/^[ |\t]*==(.+?)==[ |\t]*$/m", "<span class=\"heading\">\$1</span>" ],
+	];
 
 	// Code markup. This should be set to a regular expression, using tags you want to use. Examples:
 	// "/\[code\](.*?)\[\/code\]/is"
