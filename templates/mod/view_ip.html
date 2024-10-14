@@ -18,7 +18,7 @@
 			<legend>{{ notes_length }} {% trans %}note on record{% plural notes_length %}notes on record{% endtrans %}</legend>
 		</legend>
 
-		{% if notes|length > 0 %}
+		{% if notes and notes|length > 0 %}
 			<table class="modlog">
 				<tr>
 					<th>{% trans 'Staff' %}</th>
@@ -146,3 +146,12 @@
 		</table>
 	</fieldset>
 {% endif %}
+<div class="pages" style="margin-left: 50%">
+	<a href="?/user_posts/ip/{{ ip }}">[Page 1]</a>
+	{% if cursor_prev %}
+		<a href="?/user_posts/ip/{{ ip }}/cursor/{{ cursor_prev }}">[Previous Page]</a>
+	{% endif %}
+	{% if cursor_next %}
+		<a href="?/user_posts/ip/{{ ip }}/cursor/{{ cursor_next }}">[Next Page]</a>
+	{% endif %}
+</div>
