@@ -34,9 +34,10 @@
             "inc/lock.php",
             "inc/queue.php",
             "inc/functions.php",
+            "inc/functions/dice.php",
+            "inc/functions/format.php",
             "inc/functions/net.php",
             "inc/functions/num.php",
-            "inc/functions/format.php",
             "inc/functions/theme.php",
             "inc/service/captcha-queries.php",
             "inc/context.php"
