@@ -3,10 +3,9 @@
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  */
 use Vichan\Context;
-use Vichan\Data\{IpNoteQueries, ReportQueries};
-use Vichan\Functions\Format;
-use Vichan\Functions\Net;
-use Vichan\Data\Driver\CacheDriver;
+use Vichan\Data\{IpNoteQueries, UserPostQueries, ReportQueries};
+use Vichan\Functions\{Format, Net};
+use Vichan\Data\Driver\{CacheDriver, LogDriver};
 
 defined('TINYBOARD') or exit;
 
@@ -897,12 +896,10 @@ function mod_ip_remove_note(Context $ctx, $cloaked_ip, $id) {
 		error("Note $id does not exist for $cloaked_ip");
 	}
 
-	modLog("Removed a note for <a href=\"?/IP/{$cloaked_ip}\">{$cloaked_ip}</a>");
+	modLog("Removed a note for <a href=\"?/user_posts/ip/{$cloaked_ip}\">{$cloaked_ip}</a>");
 
-	header('Location: ?/IP/' . $cloaked_ip . '#notes', true, $config['redirect_http']);
+	header('Location: ?/user_posts/ip/' . $cloaked_ip . '#notes', true, $config['redirect_http']);
 }
-
-
 
 function mod_ip(Context $ctx, $cip) {
 	$ip = uncloak_ip($cip);
@@ -910,7 +907,7 @@ function mod_ip(Context $ctx, $cip) {
 	$config = $ctx->get('config');
 
 	if (filter_var($ip, FILTER_VALIDATE_IP) === false)
-		error("Invalid IP address.");
+		error('Invalid IP address.');
 
 	if (isset($_POST['ban_id'], $_POST['unban'])) {
 		if (!hasPermission($config['mod']['unban']))
@@ -918,7 +915,7 @@ function mod_ip(Context $ctx, $cip) {
 
 		Bans::delete($_POST['ban_id'], true, $mod['boards']);
 
-		header('Location: ?/IP/' . $cip . '#bans', true, $config['redirect_http']);
+		header("Location: ?/user_posts/ip/$cip#bans", true, $config['redirect_http']);
 		return;
 	}
 
@@ -940,45 +937,42 @@ function mod_ip(Context $ctx, $cip) {
 		$note_queries = $ctx->get(IpNoteQueries::class);
 		$note_queries->add($ip, $mod['id'], $_POST['note']);
 
-		modLog("Added a note for <a href=\"?/IP/{$cip}\">{$cip}</a>");
+		modLog("Added a note for <a href=\"?/user_posts/ip/{$cip}\">{$cip}</a>");
 
-		header('Location: ?/IP/' . $cip . '#notes', true, $config['redirect_http']);
+		header("Location: ?/user_posts/ip/$cip#notes", true, $config['redirect_http']);
 		return;
 	}
 
+	\header("Location: ?/user_posts/ip/$cip", true, $config['redirect_http']);
+}
 
-	$args = [];
-	$args['ip'] = $ip;
-	$args['posts'] = [];
+function mod_user_posts_by_ip(Context $ctx, string $cip, ?string $encoded_cursor = null) {
+	global $mod;
 
-	if ($config['mod']['dns_lookup'] && empty($config['ipcrypt_key']))
-		$args['hostname'] = rDNS($ip);
+	$ip = uncloak_ip($cip);
 
-	$boards = listBoards();
-	foreach ($boards as $board) {
-		openBoard($board['uri']);
-		if (!hasPermission($config['mod']['show_ip'], $board['uri']))
-			continue;
-		$query = prepare(sprintf('SELECT * FROM ``posts_%s`` WHERE `ip` = :ip ORDER BY `sticky` DESC, `id` DESC LIMIT :limit', $board['uri']));
-		$query->bindValue(':ip', $ip);
-		$query->bindValue(':limit', $config['mod']['ip_recentposts'], PDO::PARAM_INT);
-		$query->execute() or error(db_error($query));
-
-		while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
-			if (!$post['thread']) {
-				$po = new Thread($post, '?/', $mod, false);
-			} else {
-				$po = new Post($post, '?/', $mod);
-			}
-
-			if (!isset($args['posts'][$board['uri']]))
-				$args['posts'][$board['uri']] = array('board' => $board, 'posts' => []);
-			$args['posts'][$board['uri']]['posts'][] = $po->build(true);
-		}
+	if (\filter_var($ip, \FILTER_VALIDATE_IP) === false){
+		error('Invalid IP address.');
 	}
 
-	$args['boards'] = $boards;
-	$args['token'] = make_secure_link_token('ban');
+	$config = $ctx->get('config');
+
+	$args = [
+		'ip' => $ip,
+		'posts' => []
+	];
+
+	if (isset($config['mod']['ip_recentposts'])) {
+		$log = $ctx->get(LogDriver::class);
+		$log->log(LogDriver::NOTICE, "'ip_recentposts' has been deprecated. Please use 'recent_user_posts' instead");
+		$page_size = $config['mod']['ip_recentposts'];
+	} else {
+		$page_size = $config['mod']['recent_user_posts'];
+	}
+
+	if ($config['mod']['dns_lookup'] && empty($config['ipcrypt_key'])) {
+		$args['hostname'] = rDNS($ip);
+	}
 
 	if (hasPermission($config['mod']['view_ban'])) {
 		$args['bans'] = Bans::find($ip, false, true, null, $config['auto_maintenance']);
@@ -992,15 +986,61 @@ function mod_ip(Context $ctx, $cip) {
 	}
 
 	if (hasPermission($config['mod']['modlog_ip'])) {
-		$query = prepare("SELECT `username`, `mod`, `ip`, `board`, `time`, `text` FROM ``modlogs`` LEFT JOIN ``mods`` ON `mod` = ``mods``.`id` WHERE `text` LIKE :search ORDER BY `time` DESC LIMIT 50");
-		$query->bindValue(':search', '%' . $cip . '%');
-		$query->execute() or error(db_error($query));
-		$args['logs'] = $query->fetchAll(PDO::FETCH_ASSOC);
+		$ret = Cache::get("mod_page_ip_modlog_ip_$ip");
+		if (!$ret) {
+			$query = prepare("SELECT `username`, `mod`, `ip`, `board`, `time`, `text` FROM ``modlogs`` LEFT JOIN ``mods`` ON `mod` = ``mods``.`id` WHERE `text` LIKE :search ORDER BY `time` DESC LIMIT 50");
+			$query->bindValue(':search', '%' . $ip . '%');
+			$query->execute() or error(db_error($query));
+			$ret = $query->fetchAll(PDO::FETCH_ASSOC);
+			Cache::set("mod_page_ip_modlog_ip_$ip", $ret, 900);
+		}
+		$args['logs'] = $ret;
 	} else {
 		$args['logs'] = [];
 	}
 
-	$args['security_token'] = make_secure_link_token('IP/' . $cip);
+	$boards = listBoards();
+
+	$queryable_uris = [];
+	foreach ($boards as $board) {
+		$uri = $board['uri'];
+		if (hasPermission($config['mod']['show_ip'], $uri)) {
+			$queryable_uris[] = $uri;
+		}
+	}
+
+	$queries = $ctx->get(UserPostQueries::class);
+	$result = $queries->fetchPaginatedByIp($queryable_uris, $ip, $page_size, $encoded_cursor);
+
+	$args['cursor_prev'] = $result->cursor_prev;
+	$args['cursor_next'] = $result->cursor_next;
+
+	foreach($boards as $board) {
+		$uri = $board['uri'];
+		// The Thread and Post classes rely on some implicit board parameter set by openBoard.
+		openBoard($uri);
+
+		// Finally load the post contents and build them.
+		foreach ($result->by_uri[$uri] as $post) {
+			if (!$post['thread']) {
+				$po = new Thread($post, '?/', $mod, false);
+			} else {
+				$po = new Post($post, '?/', $mod);
+			}
+
+			if (!isset($args['posts'][$uri])) {
+				$args['posts'][$uri] = [ 'board' => $board, 'posts' => [] ];
+			}
+			$args['posts'][$uri]['posts'][] = $po->build(true);
+		}
+	}
+
+	$args['boards'] = $boards;
+	// Needed to create new bans.
+	$args['token'] = make_secure_link_token('ban');
+
+	// Since the security token is only used to send requests to create notes and remove bans, use "?/IP/" as the url.
+	$args['security_token'] = make_secure_link_token("IP/$cip");
 
 	mod_page(sprintf('%s: %s', _('IP'), htmlspecialchars($cip)), $config['file_mod_view_ip'], $args, $mod, $args['hostname']);
 }
@@ -1957,7 +1997,7 @@ function mod_deletebyip(Context $ctx, $boardName, $post, $global = false) {
 
 	// Record the action
 	$cip = cloak_ip($ip);
-	modLog("Deleted all posts by IP address: <a href=\"?/IP/$cip\">$cip</a>");
+	modLog("Deleted all posts by IP address: <a href=\"?/user_posts/ip/$cip\">$cip</a>");
 
 	// Redirect
 	header('Location: ?/' . sprintf($config['board_path'], $boardName) . $config['file_index'], true, $config['redirect_http']);
@@ -2544,7 +2584,7 @@ function mod_report_dismiss(Context $ctx, $id, $action) {
 
 			$report_queries->deleteByIp($ip);
 			$cip = cloak_ip($ip);
-			modLog("Dismissed all reports by <a href=\"?/IP/$cip\">$cip</a>");
+			modLog("Dismissed all reports by <a href=\"?/user_posts/ip/$cip\">$cip</a>");
 			break;
 		case '':
 		default:
