@@ -21,5 +21,20 @@ echo "Deleted $deleted_count expired antispam in $delta seconds!\n";
 $time_tot = $delta;
 $deleted_tot = $deleted_count;
 
+if ($config['cache']['enabled'] === 'fs') {
+	$fs_cache = new Vichan\Data\Driver\FsCacheDriver(
+		$config['cache']['prefix'],
+		"tmp/cache/{$config['cache']['prefix']}",
+		'.lock',
+		false
+	);
+	$start = microtime(true);
+	$fs_cache->collect();
+	$delta = microtime(true) - $start;
+	echo "Deleted $deleted_count expired filesystem cache items in $delta seconds!\n";
+	$time_tot = $delta;
+	$deleted_tot = $deleted_count;
+}
+
 $time_tot = number_format((float)$time_tot, 4, '.', '');
 modLog("Deleted $deleted_tot expired entries in {$time_tot}s with maintenance tool");
