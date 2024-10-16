@@ -712,6 +712,9 @@
 	);
 	*/
 
+	// Maximum number inline of dice rolls per markup.
+	$config['max_roll_count'] = 50;
+
 	// Allow dice rolling: an email field of the form "dice XdY+/-Z" will result in X Y-sided dice rolled and summed,
 	// with the modifier Z added, with the result displayed at the top of the post body.
 	$config['allow_roll'] = false;
@@ -783,11 +786,15 @@
  * ====================
  */
 
-	// "Wiki" markup syntax ($config['wiki_markup'] in pervious versions):
-	$config['markup'][] = array("/'''(.+?)'''/", "<strong>\$1</strong>");
-	$config['markup'][] = array("/''(.+?)''/", "<em>\$1</em>");
-	$config['markup'][] = array("/\*\*(.+?)\*\*/", "<span class=\"spoiler\">\$1</span>");
-	$config['markup'][] = array("/^[ |\t]*==(.+?)==[ |\t]*$/m", "<span class=\"heading\">\$1</span>");
+	$config['markup'] = [
+		// Inline dice roll markup.
+		[ "/!([-+]?\d+)?([d])([-+]?\d+)([-+]\d+)?/iu", fn($m) => inline_dice_roll_markup($m, 'static/d10.svg') ],
+		// "Wiki" markup syntax ($config['wiki_markup'] in pervious versions):
+		[ "/'''(.+?)'''/", "<strong>\$1</strong>" ],
+		[ "/''(.+?)''/", "<em>\$1</em>" ],
+		[ "/\*\*(.+?)\*\*/", "<span class=\"spoiler\">\$1</span>" ],
+		[ "/^[ |\t]*==(.+?)==[ |\t]*$/m", "<span class=\"heading\">\$1</span>" ],
+	];
 
 	// Code markup. This should be set to a regular expression, using tags you want to use. Examples:
 	// "/\[code\](.*?)\[\/code\]/is"
