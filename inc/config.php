@@ -327,6 +327,7 @@
 		'hash',
 		'board',
 		'thread',
+		'active-page',
 		'mod',
 		'name',
 		'email',
