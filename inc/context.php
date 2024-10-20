@@ -1,8 +1,7 @@
 <?php
 namespace Vichan;
 
-use RuntimeException;
-use Vichan\Data\Driver\{HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
+use Vichan\Data\Driver\{CacheDriver, HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
 use Vichan\Service\HCaptchaQuery;
 use Vichan\Service\NativeCaptchaQuery;
 use Vichan\Service\ReCaptchaQuery;
@@ -19,7 +18,7 @@ class Context {
 
 	public function get(string $name): mixed {
 		if (!isset($this->definitions[$name])) {
-			throw new RuntimeException("Could not find a dependency named $name");
+			throw new \RuntimeException("Could not find a dependency named $name");
 		}
 
 		$ret = $this->definitions[$name];
@@ -69,13 +68,13 @@ function build_context(array $config): Context {
 						$config['captcha']['hcaptcha']['sitekey']
 					);
 				default:
-					throw new RuntimeException('No remote captcha service available');
+					throw new \RuntimeException('No remote captcha service available');
 			}
 		},
 		NativeCaptchaQuery::class => function($c) {
 			$config = $c->get('config');
 			if ($config['captcha']['provider'] !== 'native') {
-				throw new RuntimeException('No native captcha service available');
+				throw new \RuntimeException('No native captcha service available');
 			}
 			return new NativeCaptchaQuery(
 				$c->get(HttpDriver::class),
