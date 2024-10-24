@@ -620,6 +620,10 @@ pre {
   margin: 0;
 }
 
+.theme-catalog .controls > span {
+  margin-right: 1em;
+}
+
 .theme-catalog div.thread img {
   float: none!important;
   margin: auto;
