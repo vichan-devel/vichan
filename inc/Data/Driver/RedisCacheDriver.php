@@ -29,10 +29,14 @@ class RedisCacheDriver implements CacheDriver {
 		if ($ret === false) {
 			return null;
 		}
+		if ($ret === null) {
+			return false;
+		}
 		return $ret;
 	}
 
 	public function set(string $key, mixed $value, mixed $expires = false): void {
+		$value = $value === false ? null : $value;
 		if ($expires === false) {
 			$this->inner->set($this->prefix . $key, $value);
 		} else {
