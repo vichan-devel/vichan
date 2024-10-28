@@ -45,6 +45,10 @@ class RedisCacheDriver implements CacheDriver {
 	}
 
 	public function flush(): void {
-		$this->inner->flushDB();
+		if (empty($this->prefix)) {
+			$this->inner->flushDB();
+		} else {
+			$this->inner->unlink($this->inner->keys("{$this->prefix}*"));
+		}
 	}
 }
