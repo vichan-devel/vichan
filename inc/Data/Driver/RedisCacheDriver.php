@@ -14,6 +14,9 @@ class RedisCacheDriver implements CacheDriver {
 		if ($password) {
 			$this->inner->auth($password);
 		}
+		if (!$this->inner->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_JSON)) {
+			throw new \RuntimeException('Unable to configure Redis serializer');
+		}
 		if (!$this->inner->select($database)) {
 			throw new \RuntimeException('Unable to connect to Redis!');
 		}
@@ -26,15 +29,18 @@ class RedisCacheDriver implements CacheDriver {
 		if ($ret === false) {
 			return null;
 		}
-		return \json_decode($ret, true);
+		if ($ret === null) {
+			return false;
+		}
+		return $ret;
 	}
 
 	public function set(string $key, mixed $value, mixed $expires = false): void {
+		$value = $value === false ? null : $value;
 		if ($expires === false) {
-			$this->inner->set($this->prefix . $key, \json_encode($value));
+			$this->inner->set($this->prefix . $key, $value);
 		} else {
-			$expires = $expires * 1000; // Seconds to milliseconds.
-			$this->inner->setex($this->prefix . $key, $expires, \json_encode($value));
+			$this->inner->setEx($this->prefix . $key, $expires, $value);
 		}
 	}
 
@@ -43,6 +49,10 @@ class RedisCacheDriver implements CacheDriver {
 	}
 
 	public function flush(): void {
-		$this->inner->flushDB();
+		if (empty($this->prefix)) {
+			$this->inner->flushDB();
+		} else {
+			$this->inner->unlink($this->inner->keys("{$this->prefix}*"));
+		}
 	}
 }
