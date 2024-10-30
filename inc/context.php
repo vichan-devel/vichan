@@ -3,7 +3,7 @@ namespace Vichan;
 
 use Vichan\Data\Driver\{CacheDriver, HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
 use Vichan\Service\HCaptchaQuery;
-use Vichan\Service\NativeCaptchaQuery;
+use Vichan\Service\SecureImageCaptchaQuery;
 use Vichan\Service\ReCaptchaQuery;
 use Vichan\Service\RemoteCaptchaQuery;
 
@@ -71,12 +71,12 @@ function build_context(array $config): Context {
 					throw new \RuntimeException('No remote captcha service available');
 			}
 		},
-		NativeCaptchaQuery::class => function($c) {
+		SecureImageCaptchaQuery::class => function($c) {
 			$config = $c->get('config');
 			if ($config['captcha']['provider'] !== 'native') {
 				throw new \RuntimeException('No native captcha service available');
 			}
-			return new NativeCaptchaQuery(
+			return new SecureImageCaptchaQuery(
 				$c->get(HttpDriver::class),
 				$config['domain'],
 				$config['captcha']['native']['provider_check'],
