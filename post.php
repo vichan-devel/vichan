@@ -654,7 +654,7 @@ if (isset($_POST['delete'])) {
 			}
 			// Remote 3rd party captchas.
 			elseif ($provider && (!$dynamic || $dynamic === $_SERVER['REMOTE_ADDR'])) {
-				$query = $content->get(RemoteCaptchaQuery::class);
+				$query = $context->get(RemoteCaptchaQuery::class);
 				$field = $query->responseField();
 
 				if (!isset($_POST[$field])) {
