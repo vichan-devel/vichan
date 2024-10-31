@@ -620,6 +620,10 @@ pre {
   margin: 0;
 }
 
+.theme-catalog .controls > span {
+  margin-right: 1em;
+}
+
 .theme-catalog div.thread img {
   float: none!important;
   margin: auto;
@@ -629,13 +633,20 @@ pre {
   border: 2px solid rgba(153,153,153,0);
 }
 
+/* Still for the catalog theme */
+#Grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  gap: 0.2em;
+}
+
 .theme-catalog div.thread {
   display: inline-block;
   vertical-align: top;
   text-align: center;
   font-weight: normal;
-  margin-top: 2px;
-  margin-bottom: 2px;
   padding: 2px;
   height: 300px;
   width: 205px;
@@ -653,7 +664,6 @@ pre {
 
 .theme-catalog div.threads {
   text-align: center;
-  margin-left: -20px;
 }
 
 .theme-catalog div.thread:hover {
