@@ -142,7 +142,7 @@ class Bans {
 		return array($ipstart, $ipend);
 	}
 
-	static public function findSingle(string $ip, int $ban_id, bool $require_ban_view): array|null {
+	static public function findSingle(string $ip, int $ban_id, bool $require_ban_view): ?array {
 		/**
 		 * Use OR in the query to also garbage collect bans. Ideally we should move the whole GC procedure to a separate
 		 * script, but it will require a more important restructuring.
