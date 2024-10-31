@@ -7,7 +7,7 @@ require_once 'inc/bootstrap.php';
 
 use Vichan\{Context, WebDependencyFactory};
 use Vichan\Data\Driver\{LogDriver, HttpDriver};
-use Vichan\Service\{RemoteCaptchaQuery, NativeCaptchaQuery};
+use Vichan\Service\{RemoteCaptchaQuery, SecureImageCaptchaQuery};
 use Vichan\Functions\Format;
 
 /**
@@ -516,7 +516,7 @@ if (isset($_POST['delete'])) {
 		}
 
 		try {
-			$query = new NativeCaptchaQuery(
+			$query = new SecureImageCaptchaQuery(
 				$context->get(HttpDriver::class),
 				$config['domain'],
 				$config['captcha']['provider_check'],
@@ -636,7 +636,7 @@ if (isset($_POST['delete'])) {
 			// With our custom captcha provider
 			if (($provider === 'native' && !$new_thread_capt)
 				|| ($provider === 'native' && $new_thread_capt && $post['op'])) {
-				$query = $context->get(NativeCaptchaQuery::class);
+				$query = $context->get(SecureImageCaptchaQuery::class);
 				$success = $query->verify($_POST['captcha_text'], $_POST['captcha_cookie']);
 
 				if (!$success) {

@@ -39,7 +39,6 @@
             "inc/functions/net.php",
             "inc/functions/num.php",
             "inc/functions/theme.php",
-            "inc/service/captcha-queries.php",
             "inc/context.php"
         ]
     },
