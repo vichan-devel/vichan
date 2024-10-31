@@ -45,7 +45,7 @@ $(document).ready(function(){
 				<label for="reason">{% trans 'Reason' %}</label>
 			</th>
 			<td>
-				<textarea name="reason" id="reason" rows="5" cols="30">{{ reason|e }}</textarea>
+				<textarea name="reason" id="reason" rows="5" cols="30" autofocus>{{ reason|e }}</textarea>
 			</td>
 		</tr>
 		{% if post and board and not delete %}
