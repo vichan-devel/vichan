@@ -699,6 +699,19 @@
 	// Attach country flags to posts.
 	$config['country_flags'] = false;
 
+	// Maxmind configuration for country_flags
+	$config['maxmind'] = [
+		// Path to the MaxMind GeoLite2 City database file used for IP geolocation.
+		'db_path' => '/usr/share/GeoIP/GeoLite2-City.mmdb',
+		// Array of preferred locales to use when fetching location data.
+		// The first locale in the array will be prioritized.
+		'locale' => ['en'],
+		// Default country name to use if no geolocation data is found for the IP address.
+		'country_fallback' => 'Unknown',
+		// Default country code to use if no geolocation data is found.
+		'code_fallback' => 'xx',
+	];
+
 	// Allow the user to decide whether or not he wants to display his country
 	$config['allow_no_country'] = false;
 

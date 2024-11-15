@@ -124,6 +124,30 @@ Docker
 Vichan comes with a Dockerfile and docker-compose configuration, the latter aimed primarily at development and testing.
 See the `docker/doc.md` file for more information.
 
+MaxMind support
+------------
+We use MaxMind to retrieve flags for posts. Previously, the country database was stored in `inc/lib/geoip`, but updating it in that location became unmanageable. Now, a MaxMind account is required to download the country database.
+
+### How to Set It Up
+
+1. Follow these instructions to create a free account for using GeoLite2:
+   [Create an Account on MaxMind](https://support.maxmind.com/hc/en-us/articles/4407099783707-Create-an-Account#h_01G4G4NV169TJWFCJ1KGFAM1CD)
+
+2. Download the database using maxmind website
+   
+3. (Optional) Install `geoipupdate` to download the database using CLI:
+   [GeoIP Update Installation Guide](https://github.com/maxmind/geoipupdate)
+
+      1. Edit the `/etc/GeoIP.conf` file to add your API key.
+      2. Run `geoipupdate`
+
+5. Update path in `$config['maxmind']['db_path']`
+
+6. (Optional) Set up a cron job to automatically update the database:
+   ```
+   0 0 * * 2,5 geoipupdate
+   ```
+
 vichan API
 ----------
 vichan provides by default a 4chan-compatible JSON API. For documentation on this, see:

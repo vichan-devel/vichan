@@ -8,7 +8,7 @@ require_once 'inc/bootstrap.php';
 use Vichan\{Context, WebDependencyFactory};
 use Vichan\Data\Driver\{LogDriver, HttpDriver};
 use Vichan\Service\{RemoteCaptchaQuery, SecureImageCaptchaQuery};
-use Vichan\Functions\Format;
+use Vichan\Functions\{Format, IP};
 
 /**
  * Utility functions
@@ -976,25 +976,11 @@ if (isset($_POST['delete'])) {
 
 	if (!$dropped_post)
 	if (($config['country_flags'] && !$config['allow_no_country']) || ($config['country_flags'] && $config['allow_no_country'] && !isset($_POST['no_country']))) {
-		$gi=geoip_open('inc/lib/geoip/GeoIPv6.dat', GEOIP_STANDARD);
 
-		function ipv4to6($ip) {
-			if (strpos($ip, ':') !== false) {
-				if (strpos($ip, '.') > 0)
-					$ip = substr($ip, strrpos($ip, ':')+1);
-				else return $ip;  //native ipv6
-			}
-			$iparr = array_pad(explode('.', $ip), 4, 0);
-			$part7 = base_convert(($iparr[0] * 256) + $iparr[1], 10, 16);
-			$part8 = base_convert(($iparr[2] * 256) + $iparr[3], 10, 16);
-			return '::ffff:'.$part7.':'.$part8;
-		}
+		list($flagCode, $flagName) = IP\fetch_maxmind($_SERVER['REMOTE_ADDR']);
 
-		if ($country_code = geoip_country_code_by_addr_v6($gi, ipv4to6($_SERVER['REMOTE_ADDR']))) {
-			if (!in_array(strtolower($country_code), array('eu', 'ap', 'o1', 'a1', 'a2')))
-				$post['body'] .= "\n<tinyboard flag>".strtolower($country_code)."</tinyboard>".
-				"\n<tinyboard flag alt>".geoip_country_name_by_addr_v6($gi, ipv4to6($_SERVER['REMOTE_ADDR']))."</tinyboard>";
-		}
+		$post['body'] .= "\n<tinyboard flag>".strtolower($flagCode)."</tinyboard>".
+				"\n<tinyboard flag alt>".$flagName."</tinyboard>";
 	}
 
 	if ($config['user_flag'] && isset($_POST['user_flag']) && !empty($_POST['user_flag'])) {
