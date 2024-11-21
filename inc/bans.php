@@ -268,7 +268,7 @@ class Bans {
 		return [$ipstart, $ipend];
 	}
 
-	static public function findSingle(string $ip, int $ban_id, bool $require_ban_view, bool $auto_gc): array|null {
+	static public function findSingle(string $ip, int $ban_id, bool $require_ban_view, bool $auto_gc): ?array {
 		if ($auto_gc) {
 			return self::findSingleAutoGc($ip, $ban_id, $require_ban_view);
 		} else {
