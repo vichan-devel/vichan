@@ -8,9 +8,21 @@ class RedisCacheDriver implements CacheDriver {
 	private string $prefix;
 	private \Redis $inner;
 
-	public function __construct(string $prefix, string $host, int $port, ?string $password, string $database) {
+	public function __construct(string $prefix, string $host, ?int $port, ?string $password, string $database) {
 		$this->inner = new \Redis();
-		$this->inner->connect($host, $port);
+		if (str_starts_with($host, 'unix:') || str_starts_with($host, ':')) {
+			$ret = \explode(':', $host);
+			if (count($ret) < 2) {
+				throw new \RuntimeException("Invalid unix socket path $host");
+			}
+			// Unix socket.
+			$this->inner->connect($ret[1]);
+		} elseif ($port === null) {
+			$this->inner->connect($host);
+		} else {
+			// IP + port.
+			$this->inner->connect($host, $port);
+		}
 		if ($password) {
 			$this->inner->auth($password);
 		}
