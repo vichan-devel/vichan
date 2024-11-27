@@ -964,14 +964,26 @@ if (isset($_POST['delete'])) {
 		if (mb_strlen($post['subject']) > 100) {
 			error(sprintf($config['error']['toolong'], 'subject'));
 		}
-		if (!$mod && mb_strlen($post['body']) > $config['max_body']) {
-			error($config['error']['toolong_body']);
-		}
-		if (!$mod && $config['force_body'] && mb_strlen($post['body']) < $config['min_body']) {
-			error($config['error']['tooshort_body']);
-		}
-		if (!$mod && substr_count($post['body'], "\n") >= $config['maximum_lines']) {
-			error($config['error']['toomanylines']);
+		if (!$mod) {
+			$body_mb_len = mb_strlen($post['body']);
+			$is_op = $post['op'];
+
+			if (($is_op && $config['force_body_op']) || (!$is_op && $config['force_body'])) {
+				$min_body = $is_op ? $config['min_body_op'] : $config['min_body'];
+
+				if ($body_mb_len < $min_body) {
+					error($config['error']['tooshort_body']);
+				}
+			}
+
+			$max_body = $is_op ? $config['max_body_op'] : $config['max_body'];
+			if ($body_mb_len > $max_body) {
+				error($config['error']['toolong_body']);
+			}
+
+			if (substr_count($post['body'], '\n') >= $config['maximum_lines']) {
+				error($config['error']['toomanylines']);
+			}
 		}
 	}
 	wordfilters($post['body']);
