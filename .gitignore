@@ -41,8 +41,9 @@ Thumbs.db
 !/tmp/cache/.gitkeep
 !/tmp/locks/.gitkeep
 
-#vichan custom
+# vichan custom
 favicon.ico
 /static/spoiler.png
 
+# composer
 /vendor/

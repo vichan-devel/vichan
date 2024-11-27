@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: composer
+    directory: "/"
+    schedule:
+      interval: weekly
+    # security only updates
+    open-pull-requests-limit: 0
+    labels:
+      - "dependencies"
+      - "composer"
