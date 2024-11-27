@@ -578,6 +578,8 @@
 	$config['max_threads_per_hour'] = 30;
 	// Maximum post body length.
 	$config['max_body'] = 1800;
+	// Minimum post body length.
+	$config['min_body'] = 0;
 	// Maximum number of lines allowed in a post.
 	$config['maximum_lines'] = 100;
 	// Maximum number of post body lines to show on the index page.
