@@ -967,6 +967,9 @@ if (isset($_POST['delete'])) {
 		if (!$mod && mb_strlen($post['body']) > $config['max_body']) {
 			error($config['error']['toolong_body']);
 		}
+		if (!$mod && $config['force_body'] && mb_strlen($post['body']) < $config['min_body']) {
+			error($config['error']['tooshort_body']);
+		}
 		if (!$mod && substr_count($post['body'], "\n") >= $config['maximum_lines']) {
 			error($config['error']['toomanylines']);
 		}
