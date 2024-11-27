@@ -7,6 +7,7 @@ require_once 'inc/bootstrap.php';
 
 use Vichan\{Context, WebDependencyFactory};
 use Vichan\Data\Driver\{LogDriver, HttpDriver};
+use Vichan\Data\ReportQueries;
 use Vichan\Service\{RemoteCaptchaQuery, SecureImageCaptchaQuery};
 use Vichan\Functions\{Format, IP};
 
@@ -543,6 +544,8 @@ if (isset($_POST['delete'])) {
 		error($config['error']['toolongreport']);
 	}
 
+	$report_queries = $context->get(ReportQueries::class);
+
 	foreach ($report as &$id) {
 		$query = prepare(sprintf("SELECT `id`, `thread` FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
 		$query->bindValue(':id', $id, PDO::PARAM_INT);
@@ -565,13 +568,8 @@ if (isset($_POST['delete'])) {
 				 . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '')
 				 . " for \"$reason\""
 		);
-		$query = prepare("INSERT INTO ``reports`` VALUES (NULL, :time, :ip, :board, :post, :reason)");
-		$query->bindValue(':time', time(), PDO::PARAM_INT);
-		$query->bindValue(':ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
-		$query->bindValue(':board', $board['uri'], PDO::PARAM_STR);
-		$query->bindValue(':post', $id, PDO::PARAM_INT);
-		$query->bindValue(':reason', $reason, PDO::PARAM_STR);
-		$query->execute() or error(db_error($query));
+
+		$report_queries->add($_SERVER['REMOTE_ADDR'], $board['uri'], $id, $reason);
 	}
 
 	$is_mod = isset($_POST['mod']) && $_POST['mod'];
