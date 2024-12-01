@@ -24,6 +24,7 @@ services:
       - ./local-instances/${INSTANCE:-0}/www:/var/www
       - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
       - ./docker/php/jit.ini:/usr/local/etc/php/conf.d/jit.ini
+      - redis-sock:/var/run/redis
 
   #MySQL Service
   db:
@@ -37,3 +38,13 @@ services:
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - ./local-instances/${INSTANCE:-0}/mysql:/var/lib/mysql
+
+  redis:
+    build:
+      context: ./
+      dockerfile: ./docker/redis/Dockerfile
+    volumes:
+      - redis-sock:/var/run/redis
+
+volumes:
+  redis-sock:
