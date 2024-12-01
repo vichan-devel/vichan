@@ -28,7 +28,6 @@ services:
   #MySQL Service
   db:
     image: mysql:8.0.35
-    container_name: db
     restart: unless-stopped
     tty: true
     ports:
