@@ -8,7 +8,7 @@ class RedisCacheDriver implements CacheDriver {
 	private string $prefix;
 	private \Redis $inner;
 
-	public function __construct(string $prefix, string $host, ?int $port, ?string $password, string $database) {
+	public function __construct(string $prefix, string $host, ?int $port, ?string $password, int $database) {
 		$this->inner = new \Redis();
 		if (str_starts_with($host, 'unix:') || str_starts_with($host, ':')) {
 			$ret = \explode(':', $host);
@@ -30,10 +30,10 @@ class RedisCacheDriver implements CacheDriver {
 			throw new \RuntimeException('Unable to configure Redis serializer');
 		}
 		if (!$this->inner->select($database)) {
-			throw new \RuntimeException('Unable to connect to Redis!');
+			throw new \RuntimeException('Unable to connect to Redis database!');
 		}
 
-		$$this->prefix = $prefix;
+		$this->prefix = $prefix;
 	}
 
 	public function get(string $key): mixed {

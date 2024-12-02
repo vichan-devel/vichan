@@ -174,7 +174,7 @@
 	// Redis server to use. Location, port, password, database id.
 	// Note that vichan may clear the database at times, so you may want to pick a database id just for
 	// vichan to use.
-	$config['cache']['redis'] = array('localhost', 6379, '', 1);
+	$config['cache']['redis'] = [ 'localhost', 6379, null, 1 ];
 
 	// EXPERIMENTAL: Should we cache configs? Warning: this changes board behaviour, i'd say, a lot.
 	// If you have any lambdas/includes present in your config, you should move them to instance-functions.php
