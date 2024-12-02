@@ -576,8 +576,14 @@
 
 	// Maximum numbers of threads that can be created every hour on a board.
 	$config['max_threads_per_hour'] = 30;
+	// Maximum OP body length.
+	$config['max_body_op'] = 1800;
+	// Minimum OP body length. Ignored if force_body_op is set to false.
+	$config['min_body_op'] = 0;
 	// Maximum post body length.
 	$config['max_body'] = 1800;
+	// Minimum post body length.
+	$config['min_body'] = 0;
 	// Maximum number of lines allowed in a post.
 	$config['maximum_lines'] = 100;
 	// Maximum number of post body lines to show on the index page.
