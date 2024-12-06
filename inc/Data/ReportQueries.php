@@ -149,10 +149,10 @@ class ReportQueries {
 	 * Get the report with the given id. DOES NOT PERFORM VALIDITY CHECK.
 	 *
 	 * @param int $id The id of the report to fetch.
-	 * @return ?array An array of the given report with the `board` and `ip` fields. Null if no such report exists.
+	 * @return ?array An array of the given report with the `board`, `ip` and `post` fields. Null if no such report exists.
 	 */
 	public function getReportById(int $id): array {
-		$query = prepare("SELECT `board`, `ip` FROM ``reports`` WHERE `id` = :id");
+		$query = prepare("SELECT `board`, `ip`, `post` FROM ``reports`` WHERE `id` = :id");
 		$query->bindValue(':id', $id);
 		$query->execute();
 
