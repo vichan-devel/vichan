@@ -206,6 +206,17 @@ class ReportQueries {
 	}
 
 	/**
+	 * Deletes all reports from of the given post.
+	 *
+	 * @param int $post_id The post's id.
+	 */
+	public function deleteByPost(int $post_id) {
+		$query = $this->pdo->prepare('DELETE FROM `reports` WHERE `post` = :post');
+		$query->bindValue(':post', $post_id);
+		$query->execute();
+	}
+
+	/**
 	 * Inserts a new report.
 	 *
 	 * @param string $ip Ip of the user sending the report.
