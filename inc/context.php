@@ -86,6 +86,12 @@ function build_context(array $config): Context {
 		CacheDriver::class => function($c) {
 			// Use the global for backwards compatibility.
 			return \cache::getCache();
+		},
+		\PDO::class => function($c) {
+			global $pdo;
+			// Ensure the PDO is initialized.
+			sql_open();
+			return $pdo;
 		}
 	]);
 }

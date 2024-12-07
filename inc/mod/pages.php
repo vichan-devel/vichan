@@ -3,6 +3,7 @@
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  */
 use Vichan\Context;
+use Vichan\Data\ReportQueries;
 use Vichan\Functions\Format;
 use Vichan\Functions\Net;
 use Vichan\Data\Driver\CacheDriver;
@@ -2444,43 +2445,22 @@ function mod_reports(Context $ctx) {
 	if (!hasPermission($config['mod']['reports']))
 		error($config['error']['noaccess']);
 
-	$query = prepare("SELECT * FROM ``reports`` ORDER BY `time` DESC LIMIT :limit");
-	$query->bindValue(':limit', $config['mod']['recent_reports'], PDO::PARAM_INT);
-	$query->execute() or error(db_error($query));
-	$reports = $query->fetchAll(PDO::FETCH_ASSOC);
+	$reports_limit = $config['mod']['recent_reports'];
+	$report_queries = $ctx->get(ReportQueries::class);
+	$report_rows = $report_queries->getReportsWithPosts($reports_limit);
 
-	$report_queries = [];
-	foreach ($reports as $report) {
-		if (!isset($report_queries[$report['board']]))
-			$report_queries[$report['board']] = [];
-		$report_queries[$report['board']][] = $report['post'];
+	if (\count($report_rows) > $reports_limit) {
+		\array_pop($report_rows);
+		$has_extra = true;
+	} else {
+		$has_extra = false;
 	}
 
-	$report_posts = [];
-	foreach ($report_queries as $board => $posts) {
-		$report_posts[$board] = [];
-
-		$query = query(sprintf('SELECT * FROM ``posts_%s`` WHERE `id` = ' . implode(' OR `id` = ', $posts), $board)) or error(db_error());
-		while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
-			$report_posts[$board][$post['id']] = $post;
-		}
-	}
-
-	$count = 0;
 	$body = '';
-	foreach ($reports as $report) {
-		if (!isset($report_posts[$report['board']][$report['post']])) {
-			// // Invalid report (post has since been deleted)
-			$query = prepare("DELETE FROM ``reports`` WHERE `post` = :id AND `board` = :board");
-			$query->bindValue(':id', $report['post'], PDO::PARAM_INT);
-			$query->bindValue(':board', $report['board']);
-			$query->execute() or error(db_error($query));
-			continue;
-		}
-
+	foreach ($report_rows as $report) {
 		openBoard($report['board']);
 
-		$post = &$report_posts[$report['board']][$report['post']];
+		$post = $report['post_data'];
 
 		if (!$post['thread']) {
 			// Still need to fix this:
@@ -2489,15 +2469,13 @@ function mod_reports(Context $ctx) {
 			$po = new Post($post, '?/', $mod);
 		}
 
-		// a little messy and inefficient
-		$append_html = Element($config['file_mod_report'], array(
+		// A little messy and inefficient.
+		$append_html = Element('mod/report.html', array(
 			'report' => $report,
 			'config' => $config,
 			'mod' => $mod,
-			'pm' => create_pm_header(),
 			'token' => make_secure_link_token('reports/' . $report['id'] . '/dismiss'),
-			'token_all' => make_secure_link_token('reports/' . $report['id'] . '/dismiss&all'),
-			'token_post' => make_secure_link_token('reports/'. $report['id'] . '/dismiss&post'),
+			'token_all' => make_secure_link_token('reports/' . $report['id'] . '/dismissall')
 		));
 
 		// Bug fix for https://github.com/savetheinternet/Tinyboard/issues/21
@@ -2513,14 +2491,16 @@ function mod_reports(Context $ctx) {
 
 		$body .= $po->build(true) . '<hr>';
 
-		if (isset($__old_body_truncate_char))
+		if (isset($__old_body_truncate_char)) {
 			$config['body_truncate_char'] = $__old_body_truncate_char;
-
-		$count++;
+		}
 	}
 
+	$count = \count($report_rows);
+	$header_count = $has_extra ? "{$count}+" : (string)$count;
+
 	mod_page(
-		sprintf('%s (%d)', _('Report queue'), $count),
+		sprintf('%s (%s)', _('Report queue'), $header_count),
 		$config['file_mod_reports'],
 		[
 			'reports' => $body,
@@ -2533,31 +2513,29 @@ function mod_reports(Context $ctx) {
 function mod_report_dismiss(Context $ctx, $id, $action) {
 	$config = $ctx->get('config');
 
-	$query = prepare("SELECT `post`, `board`, `ip` FROM ``reports`` WHERE `id` = :id");
-	$query->bindValue(':id', $id);
-	$query->execute() or error(db_error($query));
-	if ($report = $query->fetch(PDO::FETCH_ASSOC)) {
-		$ip = $report['ip'];
-		$board = $report['board'];
-		$post = $report['post'];
-	} else
+	$report_queries = $ctx->get(ReportQueries::class);
+	$report = $report_queries->getReportById($id);
+
+	if ($report === null) {
 		error($config['error']['404']);
+	}
+	$ip = $report['ip'];
+	$board = $report['board'];
+	$post = $report['post'];
 
 	switch($action){
 		case '&post':
 			if (!hasPermission($config['mod']['report_dismiss_post'], $board))
 				error($config['error']['noaccess']);
 
-			$query = prepare("DELETE FROM ``reports`` WHERE `post` = :post");
-			$query->bindValue(':post', $post);
+			$report_queries->deleteByPost($post);
 			modLog("Dismissed all reports for post #{$id}", $board);
 			break;
 		case '&all':
 			if (!hasPermission($config['mod']['report_dismiss_ip'], $board))
 				error($config['error']['noaccess']);
 
-			$query = prepare("DELETE FROM ``reports`` WHERE `ip` = :ip");
-			$query->bindValue(':ip', $ip);
+			$report_queries->deleteByIp($ip);
 			$cip = cloak_ip($ip);
 			modLog("Dismissed all reports by <a href=\"?/IP/$cip\">$cip</a>");
 			break;
@@ -2566,12 +2544,10 @@ function mod_report_dismiss(Context $ctx, $id, $action) {
 			if (!hasPermission($config['mod']['report_dismiss'], $board))
 				error($config['error']['noaccess']);
 
-			$query = prepare("DELETE FROM ``reports`` WHERE `id` = :id");
-			$query->bindValue(':id', $id);
+			$report_queries->deleteById($id);
 			modLog("Dismissed a report for post #{$id}", $board);
 			break;
 	}
-	$query->execute() or error(db_error($query));
 
 	header('Location: ?/reports', true, $config['redirect_http']);
 }
