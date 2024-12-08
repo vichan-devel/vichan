@@ -92,6 +92,11 @@ function build_context(array $config): Context {
 			// Ensure the PDO is initialized.
 			sql_open();
 			return $pdo;
+		},
+		ReportQueries::class => function($c) {
+			$auto_maintenance = (bool)$c->get('config')['auto_maintenance'];
+			$pdo = $c->get(\PDO::class);
+			return new ReportQueries($pdo, $auto_maintenance);
 		}
 	]);
 }
