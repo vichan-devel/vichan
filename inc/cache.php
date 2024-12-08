@@ -20,10 +20,12 @@ class Cache {
 					$config['cache']['memcached']
 				);
 			case 'redis':
+				$port = $config['cache']['redis'][1];
+				$port = empty($port) ? null : intval($port);
 				return new RedisCacheDriver(
 					$config['cache']['prefix'],
 					$config['cache']['redis'][0],
-					$config['cache']['redis'][1],
+					$port,
 					$config['cache']['redis'][2],
 					$config['cache']['redis'][3]
 				);
