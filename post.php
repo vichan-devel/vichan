@@ -713,7 +713,15 @@ if (isset($_POST['delete'])) {
 		}
 
 		if (!$post['mod']) {
-			$post['antispam_hash'] = checkSpam(array($board['uri'], isset($post['thread']) ? $post['thread'] : ($config['try_smarter'] && isset($_POST['page']) ? 0 - (int)$_POST['page'] : null)));
+
+			if (isset($_POST['active-page']) && $_POST['active-page'] === 'index') {
+				$page = isset($_POST['page']) ? (int)$_POST['page'] : 0;
+				$extra_salt = $config['try_smarter'] ? -$page : 0;
+			} else {
+				$extra_salt = $post['thread'];
+			}
+
+			$post['antispam_hash'] = checkSpam(array($board['uri'], $extra_salt));
 			if ($post['antispam_hash'] === true)
 				error($config['error']['spam']);
 		}

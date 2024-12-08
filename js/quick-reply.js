@@ -124,9 +124,17 @@
 		</style>').appendTo($('head'));
 	};
 	
-	var show_quick_reply = function(){
-		if($('div.banner').length == 0)
-			return;
+	var show_quick_reply = function(target_id){
+
+		let in_index = false;
+
+		if($('div.banner').length == 0) {
+			var thread_sel = $(`#reply_${target_id}, #op_${target_id}`).closest("[id*=thread_");
+			var thread_id = thread_sel.attr("id").replace("thread_", "");
+			var board = thread_sel.attr("data-board");
+			in_index = true;
+		}
+
 		if($('#quick-reply').length != 0)
 			return;
 		
@@ -295,6 +303,18 @@
 		
 		$postForm.appendTo($('body')).hide();
 		$origPostForm = $('form[name="post"]:first');
+
+		if (in_index) {
+			$(`<input type='hidden' name='thread' value='${thread_id}'></input>`).appendTo($("#quick-reply"));
+			$("#quick-reply .handle").append(document.createTextNode(`(${thread_id})`));
+			$("#quick-reply input[type='submit']").attr("value", button_reply);
+			$(`<input type='hidden' name='board' value='${board}'></input>`).appendTo($("#quick-reply"));
+
+			// support if captcha is only enabled for threads
+			if (post_captcha === 'false') {
+				$("#quick-reply .captcha").remove();
+			}
+		}
 		
 		// Synchronise body text with original post form
 		$origPostForm.find('textarea[name="body"]').on('change input propertychange', function() {
@@ -387,7 +407,7 @@
 	$(window).on('cite', function(e, id, with_link) {
 		if ($(this).width() <= 400)
 			return;
-		show_quick_reply();
+		show_quick_reply(id);
 		if (with_link) {
 			$(document).ready(function() {
 				if ($('#' + id).length) {
