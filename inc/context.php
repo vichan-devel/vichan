@@ -42,9 +42,9 @@ function build_context(array $config): Context {
 
 			// Check 'syslog' for backwards compatibility.
 			if ((isset($config['syslog']) && $config['syslog']) || $backend === 'syslog') {
-				return new SyslogLogDriver($name, $level, $this->config['log_system']['syslog_stderr']);
+				return new SyslogLogDriver($name, $level, $config['log_system']['syslog_stderr']);
 			} elseif ($backend === 'file') {
-				return new FileLogDriver($name, $level, $this->config['log_system']['file_path']);
+				return new FileLogDriver($name, $level, $config['log_system']['file_path']);
 			} elseif ($backend === 'stderr') {
 				return new StderrLogDriver($name, $level);
 			} else {
