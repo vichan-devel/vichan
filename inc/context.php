@@ -2,7 +2,7 @@
 namespace Vichan;
 
 use Vichan\Data\Driver\{CacheDriver, HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
-use Vichan\Data\{IpNoteQueries, ReportQueries};
+use Vichan\Data\{IpNoteQueries, UserPostQueries, ReportQueries};
 use Vichan\Service\HCaptchaQuery;
 use Vichan\Service\SecureImageCaptchaQuery;
 use Vichan\Service\ReCaptchaQuery;
@@ -108,5 +108,6 @@ function build_context(array $config): Context {
 			return new ReportQueries($pdo, $auto_maintenance);
 		},
 		IpNoteQueries::class => fn($c) => new IpNoteQueries($c->get(\PDO::class), $c->get(CacheDriver::class)),
+		UserPostQueries::class => fn($c) => new UserPostQueries($c->get(\PDO::class))
 	]);
 }
