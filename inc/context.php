@@ -2,7 +2,7 @@
 namespace Vichan;
 
 use Vichan\Data\Driver\{CacheDriver, HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
-use Vichan\Data\ReportQueries;
+use Vichan\Data\{ReportQueries, UserPostQueries};
 use Vichan\Service\HCaptchaQuery;
 use Vichan\Service\SecureImageCaptchaQuery;
 use Vichan\Service\ReCaptchaQuery;
@@ -106,6 +106,9 @@ function build_context(array $config): Context {
 			$auto_maintenance = (bool)$c->get('config')['auto_maintenance'];
 			$pdo = $c->get(\PDO::class);
 			return new ReportQueries($pdo, $auto_maintenance);
+		},
+		UserPostQueries::class => function($c) {
+			return new UserPostQueries($c->get(\PDO::class));
 		}
 	]);
 }
