@@ -676,24 +676,23 @@ function hasPermission($action = null, $board = null, $_mod = null) {
 function listBoards($just_uri = false) {
 	global $config;
 
-	$just_uri ? $cache_name = 'all_boards_uri' : $cache_name = 'all_boards';
+	$cache_name = $just_uri ? 'all_boards_uri' : 'all_boards';
 
-	if ($config['cache']['enabled'] && ($boards = cache::get($cache_name)))
+	if ($config['cache']['enabled'] && ($boards = cache::get($cache_name))) {
 		return $boards;
-
-	if (!$just_uri) {
-		$query = query("SELECT * FROM ``boards`` ORDER BY `uri`") or error(db_error());
-		$boards = $query->fetchAll();
-	} else {
-		$boards = array();
-		$query = query("SELECT `uri` FROM ``boards``") or error(db_error());
-		while ($board = $query->fetchColumn()) {
-			$boards[] = $board;
-		}
 	}
 
-	if ($config['cache']['enabled'])
+	if (!$just_uri) {
+		$query = query('SELECT * FROM ``boards`` ORDER BY `uri`');
+		$boards = $query->fetchAll();
+	} else {
+		$query = query('SELECT `uri` FROM ``boards``');
+		$boards = $query->fetchAll(\PDO::FETCH_COLUMN);
+	}
+
+	if ($config['cache']['enabled']) {
 		cache::set($cache_name, $boards);
+	}
 
 	return $boards;
 }
