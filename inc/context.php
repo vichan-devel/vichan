@@ -40,11 +40,17 @@ function build_context(array $config): Context {
 			$level = $config['debug'] ? LogDriver::DEBUG : LogDriver::NOTICE;
 			$backend = $config['log_system']['type'];
 
+			$legacy_syslog = isset($config['syslog']) && $config['syslog'];
+
 			// Check 'syslog' for backwards compatibility.
-			if ((isset($config['syslog']) && $config['syslog']) || $backend === 'syslog') {
-				return new SyslogLogDriver($name, $level, $this->config['log_system']['syslog_stderr']);
+			if ($legacy_syslog || $backend === 'syslog') {
+				$log_driver = new SyslogLogDriver($name, $level, $config['log_system']['syslog_stderr']);
+				if ($legacy_syslog) {
+					$log_driver->log(LogDriver::NOTICE, 'The configuration setting \'syslog\' is deprecated. Please use \'log_system\' instead');
+				}
+				return $log_driver;
 			} elseif ($backend === 'file') {
-				return new FileLogDriver($name, $level, $this->config['log_system']['file_path']);
+				return new FileLogDriver($name, $level, $config['log_system']['file_path']);
 			} elseif ($backend === 'stderr') {
 				return new StderrLogDriver($name, $level);
 			} else {
