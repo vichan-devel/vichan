@@ -1045,6 +1045,70 @@ function mod_user_posts_by_ip(Context $ctx, string $cip, ?string $encoded_cursor
 	mod_page(sprintf('%s: %s', _('IP'), htmlspecialchars($cip)), $config['file_mod_view_ip'], $args, $mod, $args['hostname']);
 }
 
+function mod_user_posts_by_passwd(Context $ctx, string $passwd, ?string $encoded_cursor = null) {
+	global $mod;
+
+	// The current hashPassword implementation uses sha3-256, which has a 64 character output in non-binary mode.
+	if (\strlen($passwd) != 64) {
+		error('Invalid password');
+	}
+
+	$config = $ctx->get('config');
+
+	$args = [
+		'passwd' => $passwd,
+		'posts' => []
+	];
+
+	if (isset($config['mod']['ip_recentposts'])) {
+		$log = $ctx->get(LogDriver::class);
+		$log->log(LogDriver::NOTICE, "'ip_recentposts' has been deprecated. Please use 'recent_user_posts' instead");
+		$page_size = $config['mod']['ip_recentposts'];
+	} else {
+		$page_size = $config['mod']['recent_user_posts'];
+	}
+
+	$boards = listBoards();
+
+	$queryable_uris = [];
+	foreach ($boards as $board) {
+		$uri = $board['uri'];
+		if (hasPermission($config['mod']['show_ip'], $uri)) {
+			$queryable_uris[] = $uri;
+		}
+	}
+
+	$queries = $ctx->get(UserPostQueries::class);
+	$result = $queries->fetchPaginateByPassword($queryable_uris, $passwd, $page_size, $encoded_cursor);
+
+	$args['cursor_prev'] = $result->cursor_prev;
+	$args['cursor_next'] = $result->cursor_next;
+
+	foreach($boards as $board) {
+		$uri = $board['uri'];
+		// The Thread and Post classes rely on some implicit board parameter set by openBoard.
+		openBoard($uri);
+
+		// Finally load the post contents and build them.
+		foreach ($result->by_uri[$uri] as $post) {
+			if (!$post['thread']) {
+				$po = new Thread($post, '?/', $mod, false);
+			} else {
+				$po = new Post($post, '?/', $mod);
+			}
+
+			if (!isset($args['posts'][$uri])) {
+				$args['posts'][$uri] = [ 'board' => $board, 'posts' => [] ];
+			}
+			$args['posts'][$uri]['posts'][] = $po->build(true);
+		}
+	}
+
+	$args['boards'] = $boards;
+
+	mod_page(\sprintf('%s: %s', _('Password'), \htmlspecialchars(substr($passwd, 0, 15))), 'mod/view_passwd.html', $args, $mod);
+}
+
 function mod_edit_ban(Context $ctx, $ban_id) {
 	global $mod;
 	$config = $ctx->get('config');
