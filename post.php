@@ -712,12 +712,6 @@ if (isset($_POST['delete'])) {
 				error($config['error']['noaccess']);
 		}
 
-		if (!$post['mod']) {
-			$post['antispam_hash'] = checkSpam(array($board['uri'], isset($post['thread']) ? $post['thread'] : ($config['try_smarter'] && isset($_POST['page']) ? 0 - (int)$_POST['page'] : null)));
-			if ($post['antispam_hash'] === true)
-				error($config['error']['spam']);
-		}
-
 		if ($config['robot_enable'] && $config['robot_mute']) {
 			checkMute();
 		}
