@@ -3,7 +3,11 @@
  * Performs maintenance tasks. Invoke this periodically if the auto_maintenance configuration option is turned off.
  */
 
+use Vichan\Data\ReportQueries;
+
 require dirname(__FILE__) . '/inc/cli.php';
+
+$ctx = Vichan\build_context($config);
 
 echo "Clearing expired bans...\n";
 $start = microtime(true);
@@ -19,7 +23,16 @@ $deleted_count = purge_old_antispam();
 $delta = microtime(true) - $start;
 echo "Deleted $deleted_count expired antispam in $delta seconds!\n";
 $time_tot = $delta;
-$deleted_tot = $deleted_count;
+$deleted_tot += $deleted_count;
+
+echo "Clearing invalid reports...\n";
+$report_queries = $ctx->get(ReportQueries::class);
+$start = microtime(true);
+$deleted_count = $report_queries->purge();
+$delta = microtime(true) - $start;
+echo "Deleted $deleted_count invalid reports in $delta seconds!\n";
+$time_tot += $delta;
+$deleted_tot += $deleted_count;
 
 if ($config['cache']['enabled'] === 'fs') {
 	$fs_cache = new Vichan\Data\Driver\FsCacheDriver(

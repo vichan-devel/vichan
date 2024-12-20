@@ -2,6 +2,7 @@
 namespace Vichan;
 
 use Vichan\Data\Driver\{CacheDriver, HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
+use Vichan\Data\ReportQueries;
 use Vichan\Service\HCaptchaQuery;
 use Vichan\Service\SecureImageCaptchaQuery;
 use Vichan\Service\ReCaptchaQuery;
@@ -92,6 +93,17 @@ function build_context(array $config): Context {
 		CacheDriver::class => function($c) {
 			// Use the global for backwards compatibility.
 			return \cache::getCache();
+		},
+		\PDO::class => function($c) {
+			global $pdo;
+			// Ensure the PDO is initialized.
+			sql_open();
+			return $pdo;
+		},
+		ReportQueries::class => function($c) {
+			$auto_maintenance = (bool)$c->get('config')['auto_maintenance'];
+			$pdo = $c->get(\PDO::class);
+			return new ReportQueries($pdo, $auto_maintenance);
 		}
 	]);
 }
