@@ -49,6 +49,7 @@ class FileLogDriver implements LogDriver {
 			$line = "{$this->name} $lv: $message\n";
 			\flock($this->fd, LOCK_EX);
 			\fwrite($this->fd, $line);
+			\fflush($this->fd);
 			\flock($this->fd, LOCK_UN);
 		}
 	}
