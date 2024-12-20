@@ -1,11 +1,11 @@
-<script src='main.js'></script>
-<script src='js/jquery.min.js'></script>
-<script src='js/mobile-style.js'></script>
-<script src='js/strftime.min.js'></script>
-<script src='js/longtable/longtable.js'></script>
-<script src='js/mod/ban-list.js'></script>
-<link rel='stylesheet' href='stylesheets/longtable/longtable.css'>
-<link rel='stylesheet' href='stylesheets/mod/ban-list.css'>
+<script src='main.js?v={{ config.resource_version }}' data-resource-version="{{ config.resource_version }}"></script>
+<script src='js/jquery.min.js?v={{ config.resource_version }}'></script>
+<script src='js/mobile-style.js?v={{ config.resource_version }}'></script>
+<script src='js/strftime.min.js?v={{ config.resource_version }}'></script>
+<script src='js/longtable/longtable.js?v={{ config.resource_version }}'></script>
+<script src='js/mod/ban-list.js?v={{ config.resource_version }}'></script>
+<link rel='stylesheet' href='stylesheets/longtable/longtable.css?v={{ config.resource_version }}'>
+<link rel='stylesheet' href='stylesheets/mod/ban-list.css?v={{ config.resource_version }}'>
 
 	<form action="?/bans" method="post" class="banform">
 		{% if token %}
@@ -21,7 +21,7 @@
 			<div class='buttons'>
 				<input type="text" id="search" placeholder="{% trans %}Search{% endtrans %}">
 				{% if mod %}
-				<input type="submit" name="unban" id="unban" onclick="return confirm('Are you sure you want to unban the selected IPs?');" value="{% trans 'Unban selected' %}">
+				<input type="submit" name="unban" id="unban" value="{% trans 'Unban selected' %}">
 				{% endif %}
 			</div>
 
@@ -32,7 +32,7 @@
 		</table>
 
 
-		
+
 	</form>
 {% if token_json %}
 	<script>$(function(){ banlist_init("{{ token_json }}", {{ boards }}); });</script>

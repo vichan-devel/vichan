@@ -34,17 +34,28 @@
 		</ul>
 	    </fieldset>
 	    <br>
-	    <div class="mainBox">
-	        <br>
-	        <div class="description">{{ settings.description }}</div>
-	        <br>
-	        <img class="imageofnow" src="{{ settings.imageofnow }}">
-	        <br>
-	        <div class="quoteofnow">{{ settings.quoteofnow }}</div>
-	        <br>
-	        <iframe class ="videoofnow" width="560" height="315" src="{{ settings.videoofnow }}"></iframe>
-	        <br>
-	    </div>
+		{% if settings.description or settings.imageofnow or settings.quoteofnow or settings.videoofnow %}
+			<div class="mainBox">
+				<br>
+				{% if settings.description %}
+					<div class="description">{{ settings.description }}</div>
+					<br>
+				{% endif %}
+				{% if settings.imageofnow %}
+					<img class="imageofnow" src="{{ settings.imageofnow }}">
+					<br>
+				{% endif %}
+				{% if settings.quoteofnow %}
+					<div class="quoteofnow">{{ settings.quoteofnow }}</div>
+					<br>
+				{% endif %}
+				{% if settings.videoofnow %}
+					<iframe class="videoofnow" width="560" height="315" src="{{ settings.videoofnow }}"></iframe>
+					<br>
+				{% endif %}
+			</div>
+		{% endif %}
+	
 	    <div class="ban">
 		{% if news|length == 0 %}
 			<p style="text-align:center" class="unimportant">(No news to show.)</p>

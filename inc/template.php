@@ -11,12 +11,14 @@ $twig = false;
 function load_twig() {
 	global $twig, $config;
 
+	$cache_dir = "{$config['dir']['template']}/cache/";
+
 	$loader = new Twig\Loader\FilesystemLoader($config['dir']['template']);
 	$loader->setPaths($config['dir']['template']);
 	$twig = new Twig\Environment($loader, array(
 		'autoescape' => false,
-		'cache' => is_writable('templates') || (is_dir('templates/cache') && is_writable('templates/cache')) ?
-			new Twig_Cache_TinyboardFilesystem("{$config['dir']['template']}/cache") : false,
+		'cache' => is_writable('templates/') || (is_dir($cache_dir) && is_writable($cache_dir)) ?
+			new TinyboardTwigCache($cache_dir) : false,
 		'debug' => $config['debug'],
 		'auto_reload' => $config['twig_auto_reload']
 	));
@@ -28,17 +30,13 @@ function load_twig() {
 
 function Element($templateFile, array $options) {
 	global $config, $debug, $twig, $build_pages;
-	
+
 	if (!$twig)
 		load_twig();
-	
-	if (function_exists('create_pm_header') && ((isset($options['mod']) && $options['mod']) || isset($options['__mod'])) && !preg_match('!^mod/!', $templateFile)) {
-		$options['pm'] = create_pm_header();
-	}
-	
+
 	if (isset($options['body']) && $config['debug']) {
 		$_debug = $debug;
-		
+
 		if (isset($debug['start'])) {
 			$_debug['time']['total'] = '~' . round((microtime(true) - $_debug['start']) * 1000, 2) . 'ms';
 			$_debug['time']['init'] = '~' . round(($_debug['start_debug'] - $_debug['start']) * 1000, 2) . 'ms';
@@ -56,18 +54,44 @@ function Element($templateFile, array $options) {
 				str_replace("\n", '<br/>', utf8tohtml(print_r($_debug, true))) .
 			'</pre>';
 	}
-	
+
 	// Read the template file
-	if (@file_get_contents("{$config['dir']['template']}/${templateFile}")) {
+	if (@file_get_contents("{$config['dir']['template']}/{$templateFile}")) {
 		$body = $twig->render($templateFile, $options);
-		
+
 		if ($config['minify_html'] && preg_match('/\.html$/', $templateFile)) {
 			$body = trim(preg_replace("/[\t\r\n]/", '', $body));
 		}
-		
+
 		return $body;
 	} else {
-		throw new Exception("Template file '${templateFile}' does not exist or is empty in '{$config['dir']['template']}'!");
+		throw new Exception("Template file '{$templateFile}' does not exist or is empty in '{$config['dir']['template']}'!");
+	}
+}
+
+class TinyboardTwigCache extends Twig\Cache\FilesystemCache {
+	private string $directory;
+
+	public function __construct(string $directory) {
+		parent::__construct($directory);
+		$this->directory = $directory;
+	}
+
+	/**
+	 * This function was removed in Twig 2.x due to developer views on the Twig library.
+	 * Who says we can't keep it for ourselves though?
+	 */
+	public function clear() {
+		$iter = new RecursiveIteratorIterator(
+			new RecursiveDirectoryIterator($this->directory),
+			RecursiveIteratorIterator::LEAVES_ONLY
+		);
+
+		foreach ($iter as $file) {
+			if ($file->isFile()) {
+				@unlink($file->getPathname());
+			}
+		}
 	}
 }
 
@@ -93,8 +117,8 @@ class Tinyboard extends Twig\Extension\AbstractExtension
 			new Twig\TwigFilter('date', 'twig_date_filter'),
 			new Twig\TwigFilter('poster_id', 'poster_id'),
 			new Twig\TwigFilter('count', 'count'),
-			new Twig\TwigFilter('ago', 'ago'),
-			new Twig\TwigFilter('until', 'until'),
+			new Twig\TwigFilter('ago', 'Vichan\Functions\Format\ago'),
+			new Twig\TwigFilter('until', 'Vichan\Functions\Format\until'),
 			new Twig\TwigFilter('push', 'twig_push_filter'),
 			new Twig\TwigFilter('bidi_cleanup', 'bidi_cleanup'),
 			new Twig\TwigFilter('addslashes', 'addslashes'),
@@ -102,7 +126,7 @@ class Tinyboard extends Twig\Extension\AbstractExtension
 			new Twig\TwigFilter('cloak_mask', 'cloak_mask'),
 		);
 	}
-	
+
 	/**
 	* Returns a list of functions to add to the existing list.
 	*
@@ -113,7 +137,6 @@ class Tinyboard extends Twig\Extension\AbstractExtension
 		return array(
 			new Twig\TwigFunction('time', 'time'),
 			new Twig\TwigFunction('floor', 'floor'),
-			new Twig\TwigFunction('timezone', 'twig_timezone_function'),
 			new Twig\TwigFunction('hiddenInputs', 'hiddenInputs'),
 			new Twig\TwigFunction('hiddenInputsHash', 'hiddenInputsHash'),
 			new Twig\TwigFunction('ratio', 'twig_ratio_function'),
@@ -122,7 +145,7 @@ class Tinyboard extends Twig\Extension\AbstractExtension
 			new Twig\TwigFunction('link_for', 'link_for')
 		);
 	}
-	
+
 	/**
 	* Returns the name of the extension.
 	*
@@ -134,17 +157,18 @@ class Tinyboard extends Twig\Extension\AbstractExtension
 	}
 }
 
-function twig_timezone_function() {
-	return 'Z';
-}
-
 function twig_push_filter($array, $value) {
 	array_push($array, $value);
 	return $array;
 }
 
 function twig_date_filter($date, $format) {
-	return gmstrftime($format, $date);
+    if (is_numeric($date)) {
+        $date = new DateTime("@$date", new DateTimeZone('UTC'));
+    } else {
+        $date = new DateTime($date, new DateTimeZone('UTC'));
+    }
+    return $date->format($format);
 }
 
 function twig_hasPermission_filter($mod, $permission, $board = null) {
@@ -154,7 +178,7 @@ function twig_hasPermission_filter($mod, $permission, $board = null) {
 function twig_extension_filter($value, $case_insensitive = true) {
 	$ext = mb_substr($value, mb_strrpos($value, '.') + 1);
 	if($case_insensitive)
-		$ext = mb_strtolower($ext);		
+		$ext = mb_strtolower($ext);
 	return $ext;
 }
 
@@ -179,7 +203,7 @@ function twig_filename_truncate_filter($value, $length = 30, $separator = '…')
 		$value = strrev($value);
 		$array = array_reverse(explode(".", $value, 2));
 		$array = array_map("strrev", $array);
-		
+
 		$filename = &$array[0];
 		$extension = isset($array[1]) ? $array[1] : false;
 

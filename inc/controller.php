@@ -85,24 +85,24 @@ function sb_api($b) { global $config, $build_pages;
 }
 
 function sb_ukko() {
-  rebuildTheme("ukko", "post-thread");
+  Vichan\Functions\Theme\rebuild_theme("ukko", "post-thread");
   return true;
 }
 
 function sb_catalog($b) {
   if (!openBoard($b)) return false;
 
-  rebuildTheme("catalog", "post-thread", $b); 
+  Vichan\Functions\Theme\rebuild_theme("catalog", "post-thread", $b); 
   return true;
 }
 
 function sb_recent() {
-  rebuildTheme("recent", "post-thread");
+  Vichan\Functions\Theme\rebuild_theme("recent", "post-thread");
   return true;
 }
 
 function sb_sitemap() {
-  rebuildTheme("sitemap", "all");
+  Vichan\Functions\Theme\rebuild_theme("sitemap", "all");
   return true;
 }
 

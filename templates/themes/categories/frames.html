@@ -1,7 +1,14 @@
 <!doctype html>
 <html>
 <head>
-        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta name="twitter:card" value="summary">
+	<meta name="twitter:title" content="{{ settings.title }}" />
+	<meta name="twitter:image" content="{{ config.domain }}/{{ config.logo }}" />
+	<meta property="og:title" content="{{ settings.title }}" />
+	<meta property="og:type" content="article" />
+	<meta property="og:url" content="{{ config.domain }}" />
+	<meta property="og:image" content="{{ config.domain }}/{{ config.logo }}" />
 	<link rel="stylesheet" media="screen" href="{{ config.url_stylesheet }}">
 	<style type="text/css">
 		iframe{border:none;margin:0;padding:0;height:99%;position:absolute}

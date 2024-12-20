@@ -119,6 +119,11 @@ WebM support
 ------------
 Read `inc/lib/webm/README.md` for information about enabling webm.
 
+Docker
+------------
+Vichan comes with a Dockerfile and docker-compose configuration, the latter aimed primarily at development and testing.
+See the `docker/doc.md` file for more information.
+
 vichan API
 ----------
 vichan provides by default a 4chan-compatible JSON API. For documentation on this, see:

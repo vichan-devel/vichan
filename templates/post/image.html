@@ -20,7 +20,7 @@
 					{{ config.file_thumb|sprintf(config.file_icons.default) }}
 				{% endif %}
 			"
-			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px"
+			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px" {% if config.content_lazy_loading %}loading="lazy"{% endif %}
 		>
 		</video>
 	{% else %}
@@ -39,7 +39,7 @@
 					{{ config.uri_thumb }}{{ post.thumb }}
 				{% endif %}
 			"
-			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px" alt="" 
+			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px" {% if config.content_lazy_loading %}loading="lazy"{% endif %} alt="" 
 		/>
 	{% endif %}
 </a>

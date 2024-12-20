@@ -291,6 +291,7 @@ class ImageConvert extends ImageBase {
 		} else {
 			rename($this->temp, $src);
 			chmod($src, 0664);
+			$this->temp = false;
 		}
 	}
 	public function width() {
@@ -300,8 +301,10 @@ class ImageConvert extends ImageBase {
 		return $this->height;
 	}
 	public function destroy() {
-		@unlink($this->temp);
-		$this->temp = false;
+		if ($this->temp !== false) {
+			@unlink($this->temp);
+			$this->temp = false;
+		}
 	}
 	public function resize() {
 		global $config;

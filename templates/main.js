@@ -18,92 +18,92 @@ function _(s) {
  * > alert(fmt(_("{0} users"), [3]));
  * 3 uzytkownikow
  */
-function fmt(s,a) {
+function fmt(s, a) {
 	return s.replace(/\{([0-9]+)\}/g, function(x) { return a[x[1]]; });
 }
 
-function until($timestamp) {
-        var $difference = $timestamp - Date.now()/1000|0, $num;
-        switch(true){
-        case ($difference < 60):
-                return "" + $difference + ' ' + _('second(s)');
-        case ($difference < 3600): //60*60 = 3600
-                return "" + ($num = Math.round($difference/(60))) + ' ' + _('minute(s)');
-        case ($difference < 86400): //60*60*24 = 86400
-                return "" + ($num = Math.round($difference/(3600))) + ' ' + _('hour(s)');
-        case ($difference < 604800): //60*60*24*7 = 604800
-                return "" + ($num = Math.round($difference/(86400))) + ' ' + _('day(s)');
-        case ($difference < 31536000): //60*60*24*365 = 31536000
-                return "" + ($num = Math.round($difference/(604800))) + ' ' + _('week(s)');
-        default:
-                return "" + ($num = Math.round($difference/(31536000))) + ' ' + _('year(s)');
-        }
+function until(timestamp) {
+	let difference = timestamp - Date.now() / 1000 | 0;
+	switch (true) {
+	case (difference < 60):
+		return "" + difference + ' ' + _('second(s)');
+	case (difference < 3600): // 60 * 60 = 3600
+		return "" + Math.round(difference / 60) + ' ' + _('minute(s)');
+	case (difference < 86400): // 60 * 60 * 24 = 86400
+		return "" + Math.round(difference / 3600) + ' ' + _('hour(s)');
+	case (difference < 604800): // 60 * 60 * 24 * 7 = 604800
+		return "" + Math.round(difference / 86400) + ' ' + _('day(s)');
+	case (difference < 31536000): // 60 * 60 * 24 * 365 = 31536000
+		return "" + Math.round(difference / 604800) + ' ' + _('week(s)');
+	default:
+		return "" + Math.round(difference / 31536000) + ' ' + _('year(s)');
+	}
 }
 
-function ago($timestamp) {
-        var $difference = (Date.now()/1000|0) - $timestamp, $num;
-        switch(true){
-        case ($difference < 60) :
-                return "" + $difference + ' ' + _('second(s)');
-        case ($difference < 3600): //60*60 = 3600 
-                return "" + ($num = Math.round($difference/(60))) + ' ' + _('minute(s)');
-        case ($difference <  86400): //60*60*24 = 86400
-                return "" + ($num = Math.round($difference/(3600))) + ' ' + _('hour(s)');
-        case ($difference < 604800): //60*60*24*7 = 604800
-                return "" + ($num = Math.round($difference/(86400))) + ' ' + _('day(s)');
-        case ($difference < 31536000): //60*60*24*365 = 31536000
-                return "" + ($num = Math.round($difference/(604800))) + ' ' + _('week(s)');
-        default:
-                return "" + ($num = Math.round($difference/(31536000))) + ' ' + _('year(s)');
-        }
+function ago(timestamp) {
+	let difference = (Date.now() / 1000 | 0) - timestamp;
+	switch (true) {
+	case (difference < 60):
+		return "" + difference + ' ' + _('second(s)');
+	case (difference < 3600): /// 60 * 60 = 3600
+		return "" + Math.round(difference/(60)) + ' ' + _('minute(s)');
+	case (difference < 86400): // 60 * 60 * 24 = 86400
+		return "" + Math.round(difference/(3600)) + ' ' + _('hour(s)');
+	case (difference < 604800): // 60 * 60 * 24 * 7 = 604800
+		return "" + Math.round(difference/(86400)) + ' ' + _('day(s)');
+	case (difference < 31536000): // 60 * 60 * 24 * 365 = 31536000
+		return "" + Math.round(difference/(604800)) + ' ' + _('week(s)');
+	default:
+		return "" + Math.round(difference/(31536000)) + ' ' + _('year(s)');
+	}
 }
 
 var datelocale =
-        { days: [_('Sunday'), _('Monday'), _('Tuesday'), _('Wednesday'), _('Thursday'), _('Friday'), _('Saturday')]
-        , shortDays: [_("Sun"), _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat")]
-        , months: [_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')]
-        , shortMonths: [_('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'), _('Jul'), _('Aug'), _('Sep'), _('Oct'), _('Nov'), _('Dec')]
-        , AM: _('AM')
-        , PM: _('PM')
-        , am: _('am')
-        , pm: _('pm')
-        };
+	{ days: [_('Sunday'), _('Monday'), _('Tuesday'), _('Wednesday'), _('Thursday'), _('Friday'), _('Saturday')]
+	, shortDays: [_("Sun"), _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat")]
+	, months: [_('January'), _('February'), _('March'), _('April'), _('May'), _('June'), _('July'), _('August'), _('September'), _('October'), _('November'), _('December')]
+	, shortMonths: [_('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'), _('Jul'), _('Aug'), _('Sep'), _('Oct'), _('Nov'), _('Dec')]
+	, AM: _('AM')
+	, PM: _('PM')
+	, am: _('am')
+	, pm: _('pm')
+	};
 
 
 function alert(a, do_confirm, confirm_ok_action, confirm_cancel_action) {
-      var handler, div, bg, closebtn, okbtn;
-      var close = function() {
-              handler.fadeOut(400, function() { handler.remove(); });
-              return false;
-      };
+	let handler, div, bg, closebtn, okbtn;
+	let close = function() {
+		handler.fadeOut(400, function() { handler.remove(); });
+		return false;
+	};
 
-      handler = $("<div id='alert_handler'></div>").hide().appendTo('body');
+	handler = $("<div id='alert_handler'></div>").hide().appendTo('body');
 
-      bg = $("<div id='alert_background'></div>").appendTo(handler);
+	bg = $("<div id='alert_background'></div>").appendTo(handler);
 
-      div = $("<div id='alert_div'></div>").appendTo(handler);
-      closebtn = $("<a id='alert_close' href='javascript:void(0)'><i class='fa fa-times'></i></div>")
-              .appendTo(div);
+	div = $("<div id='alert_div'></div>").appendTo(handler);
+	closebtn = $("<a id='alert_close' href='javascript:void(0)'><i class='fa fa-times'></i></div>")
+		.appendTo(div);
 
-      $("<div id='alert_message'></div>").html(a).appendTo(div);
+	$("<div id='alert_message'></div>").html(a).appendTo(div);
 
-      okbtn = $("<button class='button alert_button'>"+_("OK")+"</button>").appendTo(div);
+	okbtn = $("<button class='button alert_button'>"+_("OK")+"</button>").appendTo(div);
 
-      if (do_confirm) {
-              confirm_ok_action = (typeof confirm_ok_action !== "function") ? function(){} : confirm_ok_action;
-              confirm_cancel_action = (typeof confirm_cancel_action !== "function") ? function(){} : confirm_cancel_action;
-              okbtn.click(confirm_ok_action);
-              $("<button class='button alert_button'>"+_("Cancel")+"</button>").click(confirm_cancel_action).click(close).appendTo(div);
-              bg.click(confirm_cancel_action);
-              okbtn.click(confirm_cancel_action);
-              closebtn.click(confirm_cancel_action);
-      }
+	if (do_confirm) {
+		confirm_ok_action = (typeof confirm_ok_action !== "function") ? function(){} : confirm_ok_action;
+		confirm_cancel_action = (typeof confirm_cancel_action !== "function") ? function(){} : confirm_cancel_action;
+		okbtn.click(confirm_ok_action);
+		$("<button class='button alert_button'>"+_("Cancel")+"</button>").click(confirm_cancel_action).click(close).appendTo(div);
+		bg.click(confirm_cancel_action);
+		okbtn.click(confirm_cancel_action);
+		closebtn.click(confirm_cancel_action);
+	}
 
-      bg.click(close);
-      okbtn.click(close);
-      closebtn.click(close);
+	bg.click(close);
+	okbtn.click(close);
+	closebtn.click(close);
 
-      handler.fadeIn(400);
+	handler.fadeIn(400);
 }
 
 var saved = {};
@@ -131,46 +131,74 @@ function changeStyle(styleName, link) {
 		localStorage.stylesheet = styleName;
 	{% endif %}
 	{% verbatim %}
-	
+
 	if (!document.getElementById('stylesheet')) {
-		var s = document.createElement('link');
+		let s = document.createElement('link');
 		s.rel = 'stylesheet';
 		s.type = 'text/css';
 		s.id = 'stylesheet';
-		var x = document.getElementsByTagName('head')[0];
+		let x = document.getElementsByTagName('head')[0];
 		x.appendChild(s);
 	}
-	
-	document.getElementById('stylesheet').href = styles[styleName];
+
+	let mainStylesheetElement = document.getElementById('stylesheet');
+	let userStylesheetElement = document.getElementById('stylesheet-user');
+
+	// Override main stylesheet with the user selected one.
+	if (!userStylesheetElement) {
+		userStylesheetElement = document.createElement('link');
+		userStylesheetElement.rel = 'stylesheet';
+		userStylesheetElement.media = 'none';
+		userStylesheetElement.type = 'text/css';
+		userStylesheetElement.id = 'stylesheet';
+		let x = document.getElementsByTagName('head')[0];
+		x.appendChild(userStylesheetElement);
+	}
+
+	// When the new one is loaded, disable the old one
+	userStylesheetElement.onload = function() {
+		this.media = 'all';
+		mainStylesheetElement.media = 'none';
+	}
+
+	let style = styles[styleName];
+	if (style !== '') {
+		// Add the version of the resource if the style is not the embedded one.
+		style += `?v=${resourceVersion}`;
+	}
+
+	document.getElementById('stylesheet').href = style;
 	selectedstyle = styleName;
-	
+
 	if (document.getElementsByClassName('styles').length != 0) {
-		var styleLinks = document.getElementsByClassName('styles')[0].childNodes;
-		for (var i = 0; i < styleLinks.length; i++) {
+		let styleLinks = document.getElementsByClassName('styles')[0].childNodes;
+		for (let i = 0; i < styleLinks.length; i++) {
 			styleLinks[i].className = '';
 		}
 	}
-	
+
 	if (link) {
 		link.className = 'selected';
 	}
-	
-	if (typeof $ != 'undefined')
+
+	if (typeof $ != 'undefined') {
 		$(window).trigger('stylesheet', styleName);
+	}
 }
 
 
 {% endverbatim %}
+var resourceVersion = document.currentScript.getAttribute('data-resource-version');
 {% if config.stylesheets_board %}
 	{% verbatim %}
-	
+
 	if (!localStorage.board_stylesheets) {
 		localStorage.board_stylesheets = '{}';
 	}
-	
+
 	var stylesheet_choices = JSON.parse(localStorage.board_stylesheets);
 	if (board_name && stylesheet_choices[board_name]) {
-		for (var styleName in styles) {
+		for (let styleName in styles) {
 			if (styleName == stylesheet_choices[board_name]) {
 				changeStyle(styleName);
 				break;
@@ -181,7 +209,7 @@ function changeStyle(styleName, link) {
 {% else %}
 	{% verbatim %}
 	if (localStorage.stylesheet) {
-		for (var styleName in styles) {
+		for (let styleName in styles) {
 			if (styleName == localStorage.stylesheet) {
 				changeStyle(styleName);
 				break;
@@ -192,12 +220,12 @@ function changeStyle(styleName, link) {
 {% endif %}
 {% verbatim %}
 
-function init_stylechooser() {
-	var newElement = document.createElement('div');
+function initStyleChooser() {
+	let newElement = document.createElement('div');
 	newElement.className = 'styles';
-	
+
 	for (styleName in styles) {
-		var style = document.createElement('a');
+		let style = document.createElement('a');
 		style.innerHTML = '[' + styleName + ']';
 		style.onclick = function() {
 			changeStyle(this.innerHTML.substring(1, this.innerHTML.length - 1), this);
@@ -207,51 +235,83 @@ function init_stylechooser() {
 		}
 		style.href = 'javascript:void(0);';
 		newElement.appendChild(style);
-	}	
-	
+	}
+
 	document.getElementsByTagName('body')[0].insertBefore(newElement, document.getElementsByTagName('body')[0].lastChild.nextSibling);
 }
 
-function get_cookie(cookie_name) {
-	var results = document.cookie.match ( '(^|;) ?' + cookie_name + '=([^;]*)(;|$)');
-	if (results)
-		return (unescape(results[2]));
-	else
+function getCookie(cookie_name) {
+	let results = document.cookie.match('(^|;) ?' + cookie_name + '=([^;]*)(;|$)');
+	if (results) {
+		return unescape(results[2]);
+	} else {
 		return null;
+	}
 }
+
+{% endverbatim %}
+{% if config.captcha.dynamic %}
+function is_dynamic_captcha_enabled() {
+	let cookie = get_cookie('require-captcha');
+	return cookie === '1';
+}
+
+function get_captcha_pub_key() {
+{% if config.captcha.provider == 'recaptcha' %}
+	return "{{ config.captcha.recaptcha.sitekey }}";
+{% else %}
+	return null;
+{% endif %}
+}
+
+function init_dynamic_captcha() {
+	if (!is_dynamic_captcha_enabled()) {
+		let pub_key = get_captcha_pub_key();
+		if (!pub_key) {
+			console.error("Missing public captcha key!");
+			return;
+		}
+
+		let captcha_hook = document.getElementById('captcha');
+		captcha_hook.style = "";
+	}
+}
+{% endif %}
+{% verbatim %}
 
 function highlightReply(id) {
 	if (typeof window.event != "undefined" && event.which == 2) {
 		// don't highlight on middle click
 		return true;
 	}
-	
-	var divs = document.getElementsByTagName('div');
-	for (var i = 0; i < divs.length; i++)
-	{
-		if (divs[i].className.indexOf('post') != -1)
+
+	let divs = document.getElementsByTagName('div');
+	for (let i = 0; i < divs.length; i++) {
+		if (divs[i].className.indexOf('post') != -1) {
 			divs[i].className = divs[i].className.replace(/highlighted/, '');
+		}
 	}
 	if (id) {
-		var post = document.getElementById('reply_'+id);
-		if (post)
+		let post = document.getElementById('reply_' + id);
+		if (post) {
 			post.className += ' highlighted';
-			window.location.hash = id;
+		}
+		window.location.hash = id;
 	}
 	return true;
 }
 
 function generatePassword() {
-	var pass = '';
-	var chars = '{% endverbatim %}{{ config.genpassword_chars }}{% verbatim %}';
-	for (var i = 0; i < 8; i++) {
-		var rnd = Math.floor(Math.random() * chars.length);
+	let pass = '';
+	let chars = '{% endverbatim %}{{ config.genpassword_chars }}{% verbatim %}';
+	for (let i = 0; i < 8; i++) {
+		let rnd = Math.floor(Math.random() * chars.length);
 		pass += chars.substring(rnd, rnd + 1);
 	}
 	return pass;
 }
 
-function dopost(form) {
+function doPost(form) {
 	if (form.elements['name']) {
 		localStorage.name = form.elements['name'].value.replace(/( |^)## .+$/, '');
 	}
@@ -261,28 +321,24 @@ function dopost(form) {
 	if (form.elements['email'] && form.elements['email'].value != 'sage') {
 		localStorage.email = form.elements['email'].value;
 	}
-	
+
 	saved[document.location] = form.elements['body'].value;
 	sessionStorage.body = JSON.stringify(saved);
-	
+
 	return form.elements['body'].value != "" || (form.elements['file'] && form.elements['file'].value != "") || (form.elements.file_url && form.elements['file_url'].value != "");
 }
 
 function citeReply(id, with_link) {
-	var textarea = document.getElementById('body');
+	let textarea = document.getElementById('body');
+	if (!textarea) {
+		return false;
+	}
 
-	if (!textarea) return false;
-	
-	if (document.selection) {
-		// IE
-		textarea.focus();
-		var sel = document.selection.createRange();
-		sel.text = '>>' + id + '\n';
-	} else if (textarea.selectionStart || textarea.selectionStart == '0') {
-		var start = textarea.selectionStart;
-		var end = textarea.selectionEnd;
+	if (textarea.selectionStart || textarea.selectionStart == '0') {
+		let start = textarea.selectionStart;
+		let end = textarea.selectionEnd;
 		textarea.value = textarea.value.substring(0, start) + '>>' + id + '\n' + textarea.value.substring(end, textarea.value.length);
-		
+
 		textarea.selectionStart += ('>>' + id).length + 1;
 		textarea.selectionEnd = textarea.selectionStart;
 	} else {
@@ -290,10 +346,10 @@ function citeReply(id, with_link) {
 		textarea.value += '>>' + id + '\n';
 	}
 	if (typeof $ != 'undefined') {
-		var select = document.getSelection().toString();
+		let select = document.getSelection().toString();
 		if (select) {
-			var body = $('#reply_' + id + ', #op_' + id).find('div.body');  // TODO: support for OPs
-			var index = body.text().indexOf(select.replace('\n', ''));  // for some reason this only works like this
+			let body = $('#reply_' + id + ', #op_' + id).find('div.body');  // TODO: support for OPs
+			let index = body.text().indexOf(select.replace('\n', ''));  // for some reason this only works like this
 			if (index > -1) {
 				textarea.value += '>' + select + '\n';
 			}
@@ -308,36 +364,40 @@ function citeReply(id, with_link) {
 function rememberStuff() {
 	if (document.forms.post) {
 		if (document.forms.post.password) {
-			if (!localStorage.password)
+			if (!localStorage.password) {
 				localStorage.password = generatePassword();
+			}
 			document.forms.post.password.value = localStorage.password;
 		}
-		
-		if (localStorage.name && document.forms.post.elements['name'])
+
+		if (localStorage.name && document.forms.post.elements['name']) {
 			document.forms.post.elements['name'].value = localStorage.name;
-		if (localStorage.email && document.forms.post.elements['email'])
+		}
+		if (localStorage.email && document.forms.post.elements['email']) {
 			document.forms.post.elements['email'].value = localStorage.email;
-		
-		if (window.location.hash.indexOf('q') == 1)
+		}
+
+		if (window.location.hash.indexOf('q') == 1) {
 			citeReply(window.location.hash.substring(2), true);
-		
+		}
+
 		if (sessionStorage.body) {
-			var saved = JSON.parse(sessionStorage.body);
-			if (get_cookie('{% endverbatim %}{{ config.cookies.js }}{% verbatim %}')) {
+			let saved = JSON.parse(sessionStorage.body);
+			if (getCookie('{% endverbatim %}{{ config.cookies.js }}{% verbatim %}')) {
 				// Remove successful posts
-				var successful = JSON.parse(get_cookie('{% endverbatim %}{{ config.cookies.js }}{% verbatim %}'));
-				for (var url in successful) {
+				let successful = JSON.parse(getCookie('{% endverbatim %}{{ config.cookies.js }}{% verbatim %}'));
+				for (let url in successful) {
 					saved[url] = null;
 				}
 				sessionStorage.body = JSON.stringify(saved);
-				
+
 				document.cookie = '{% endverbatim %}{{ config.cookies.js }}{% verbatim %}={};expires=0;path=/;';
 			}
 			if (saved[document.location]) {
 				document.forms.post.body.value = saved[document.location];
 			}
 		}
-		
+
 		if (localStorage.body) {
 			document.forms.post.body.value = localStorage.body;
 			localStorage.body = '';
@@ -350,23 +410,24 @@ var script_settings = function(script_name) {
 	this.get = function(var_name, default_val) {
 		if (typeof tb_settings == 'undefined' ||
 			typeof tb_settings[this.script_name] == 'undefined' ||
-			typeof tb_settings[this.script_name][var_name] == 'undefined')
+			typeof tb_settings[this.script_name][var_name] == 'undefined') {
 			return default_val;
+		}
 		return tb_settings[this.script_name][var_name];
 	}
 };
 
 function init() {
-	init_stylechooser();
+	initStyleChooser();
 
-	{% endverbatim %}	
+	{% endverbatim %}
 	{% if config.allow_delete %}
 	if (document.forms.postcontrols) {
 		document.forms.postcontrols.password.value = localStorage.password;
 	}
 	{% endif %}
 	{% verbatim %}
-	
+
 	if (window.location.hash.indexOf('q') != 1 && window.location.hash.substring(1))
 		highlightReply(window.location.hash.substring(1));
 }
@@ -376,12 +437,12 @@ var RecaptchaOptions = {
 };
 
 onready_callbacks = [];
-function onready(fnc) {
+function onReady(fnc) {
 	onready_callbacks.push(fnc);
 }
 
 function ready() {
-	for (var i = 0; i < onready_callbacks.length; i++) {
+	for (let i = 0; i < onready_callbacks.length; i++) {
 		onready_callbacks[i]();
 	}
 }
@@ -391,11 +452,11 @@ function ready() {
 var post_date = "{{ config.post_date }}";
 var max_images = {{ config.max_images }};
 
-onready(init);
+onReady(init);
 
 {% if config.google_analytics %}{% verbatim %}
 
-var _gaq = _gaq || [];_gaq.push(['_setAccount', '{% endverbatim %}{{ config.google_analytics }}{% verbatim %}']);{% endverbatim %}{% if config.google_analytics_domain %}{% verbatim %}_gaq.push(['_setDomainName', '{% endverbatim %}{{ config.google_analytics_domain }}{% verbatim %}']){% endverbatim %}{% endif %}{% if not config.google_analytics_domain %}{% verbatim %}_gaq.push(['_setDomainName', 'none']){% endverbatim %}{% endif %}{% verbatim %};_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();{% endverbatim %}{% endif %}
+var _gaq = _gaq || [];_gaq.push(['_setAccount', '{% endverbatim %}{{ config.google_analytics }}{% verbatim %}']);{% endverbatim %}{% if config.google_analytics_domain %}{% verbatim %}_gaq.push(['_setDomainName', '{% endverbatim %}{{ config.google_analytics_domain }}{% verbatim %}']){% endverbatim %}{% endif %}{% if not config.google_analytics_domain %}{% verbatim %}_gaq.push(['_setDomainName', 'none']){% endverbatim %}{% endif %}{% verbatim %};_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';let s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();{% endverbatim %}{% endif %}
 
 {% if config.statcounter_project and config.statcounter_security %}
 var sc = document.createElement('script');
@@ -404,4 +465,3 @@ sc.innerHTML = 'var sc_project={{ config.statcounter_project }};var sc_invisible
 var s = document.getElementsByTagName('script')[0];
 s.parentNode.insertBefore(sc, s);
 {% endif %}
-

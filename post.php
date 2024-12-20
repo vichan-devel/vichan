@@ -5,6 +5,11 @@
 
 require_once 'inc/bootstrap.php';
 
+use Vichan\{Context, WebDependencyFactory};
+use Vichan\Data\Driver\{LogDriver, HttpDriver};
+use Vichan\Service\{RemoteCaptchaQuery, NativeCaptchaQuery};
+use Vichan\Functions\Format;
+
 /**
  * Utility functions
  */
@@ -62,53 +67,26 @@ function strip_symbols($input) {
 }
 
 /**
- * Download the url's target with curl.
- *
- * @param string $url Url to the file to download.
- * @param int $timeout Request timeout in seconds.
- * @param File $fd File descriptor to save the content to.
- * @return null|string Returns a string on error.
- */
-function download_file_into($url, $timeout, $fd) {
-	$err = null;
-	$curl = curl_init();
-	curl_setopt($curl, CURLOPT_URL, $url);
-	curl_setopt($curl, CURLOPT_FAILONERROR, true);
-	curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
-	curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
-	curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
-	curl_setopt($curl, CURLOPT_USERAGENT, 'Tinyboard');
-	curl_setopt($curl, CURLOPT_FILE, $fd);
-	curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
-	curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-
-	if (curl_exec($curl) === false) {
-		$err = curl_error($curl);
-	}
-
-	curl_close($curl);
-	return $err;
-}
-
-/**
  * Download a remote file from the given url.
  * The file is deleted at shutdown.
  *
+ * @param HttpDriver $http The http client.
  * @param string $file_url The url to download the file from.
  * @param int $request_timeout Timeout to retrieve the file.
  * @param array $extra_extensions Allowed file extensions.
  * @param string $tmp_dir Temporary directory to save the file into.
  * @param array $error_array An array with error codes, used to create exceptions on failure.
- * @return array Returns an array describing the file on success.
- * @throws Exception on error.
+ * @return array|false Returns an array describing the file on success, or false if the file was too large
+ * @throws InvalidArgumentException|RuntimeException Throws on invalid arguments and IO errors.
  */
-function download_file_from_url($file_url, $request_timeout, $allowed_extensions, $tmp_dir, &$error_array) {
+function download_file_from_url(HttpDriver $http, $file_url, $request_timeout, $allowed_extensions, $tmp_dir, &$error_array) {
 	if (!preg_match('@^https?://@', $file_url)) {
 		throw new InvalidArgumentException($error_array['invalidimg']);
 	}
 
-	if (mb_strpos($file_url, '?') !== false) {
-		$url_without_params = mb_substr($file_url, 0, mb_strpos($file_url, '?'));
+	$param_idx = mb_strpos($file_url, '?');
+	if ($param_idx !== false) {
+		$url_without_params = mb_substr($file_url, 0, $param_idx);
 	} else {
 		$url_without_params = $file_url;
 	}
@@ -128,10 +106,13 @@ function download_file_from_url($file_url, $request_timeout, $allowed_extensions
 
 	$fd = fopen($tmp_file, 'w');
 
-	$dl_err = download_file_into($fd, $request_timeout, $fd);
-	fclose($fd);
-	if ($dl_err !== null) {
-		throw new Exception($error_array['nomove'] . '<br/>Curl says: ' . $dl_err);
+	try {
+		$success = $http->requestGetInto($url_without_params, null, $fd, $request_timeout);
+		if (!$success) {
+			return false;
+		}
+	} finally {
+		fclose($fd);
 	}
 
 	return array(
@@ -165,6 +146,7 @@ function ocr_image(array $config, string $img_path): string {
 	return trim($ret);
 }
 
+
 /**
  * Trim an image's EXIF metadata
  *
@@ -173,7 +155,7 @@ function ocr_image(array $config, string $img_path): string {
  * @throws RuntimeException Throws on IO errors.
  */
 function strip_image_metadata(string $img_path): int {
-	$err = shell_exec_error('exiftool -overwrite_original -ignoreMinorErrors -q -q -all= ' . escapeshellarg($img_path));
+	$err = shell_exec_error('exiftool -overwrite_original -ignoreMinorErrors -q -q -all= -Orientation ' . escapeshellarg($img_path));
 	if ($err === false) {
 		throw new RuntimeException('Could not strip EXIF metadata!');
 	}
@@ -225,6 +207,7 @@ function delete_cyclical_posts(string $boardUri, int $threadId, int $cycleLimit)
  */
 
 $dropped_post = false;
+$context = Vichan\build_context($config);
 
 // Is it a post coming from NNTP? Let's extract it and pretend it's a normal post.
 if (isset($_GET['Newsgroups']) && $config['nntpchan']['enabled']) {
@@ -303,7 +286,7 @@ if (isset($_GET['Newsgroups']) && $config['nntpchan']['enabled']) {
 		$content = file_get_contents("php://input");
 	}
 	elseif ($ct == 'multipart/mixed' || $ct == 'multipart/form-data') {
-		_syslog(LOG_INFO, "MM: Files: ".print_r($GLOBALS, true)); // Debug
+		$context->get(LogDriver::class)->log(LogDriver::DEBUG, 'MM: Files: ' . print_r($GLOBALS, true));
 
 		$content = '';
 
@@ -370,7 +353,7 @@ if (isset($_GET['Newsgroups']) && $config['nntpchan']['enabled']) {
 					$ret[] = ">>".$v['id'];
 				}
 			}
-			return implode($ret, ", ");
+			return implode(", ", $ret);
 		}
 	}, $content);
 
@@ -399,10 +382,11 @@ if (isset($_POST['delete'])) {
 	if (!isset($_POST['board'], $_POST['password']))
 		error($config['error']['bot']);
 
-	$password = &$_POST['password'];
-
-	if ($password == '')
+	if (empty($_POST['password'])){
 		error($config['error']['invalidpassword']);
+	}
+
+	$password = hashPassword($_POST['password']);
 
 	$delete = array();
 	foreach ($_POST as $post => $value) {
@@ -447,14 +431,16 @@ if (isset($_POST['delete'])) {
 			}
 
 			if ($post['time'] < time() - $config['max_delete_time'] && $config['max_delete_time'] != false) {
-				error(sprintf($config['error']['delete_too_late'], until($post['time'] + $config['max_delete_time'])));
+				error(sprintf($config['error']['delete_too_late'], Format\until($post['time'] + $config['max_delete_time'])));
 			}
 
-			if ($password != '' && $post['password'] != $password && (!$thread || $thread['password'] != $password))
+			if (!hash_equals($post['password'], $password) && (!$thread || !hash_equals($thread['password'], $password))) {
 				error($config['error']['invalidpassword']);
+			}
 
-			if ($post['time'] > time() - $config['delete_time'] && (!$thread || $thread['password'] != $password)) {
-				error(sprintf($config['error']['delete_too_soon'], until($post['time'] + $config['delete_time'])));
+
+			if ($post['time'] > time() - $config['delete_time'] && (!$thread || !hash_equals($thread['password'], $password))) {
+				error(sprintf($config['error']['delete_too_soon'], Format\until($post['time'] + $config['delete_time'])));
 			}
 
 			$ip = $_SERVER['REMOTE_ADDR'];
@@ -468,8 +454,9 @@ if (isset($_POST['delete'])) {
 				modLog("User at $ip deleted their own post #$id");
 			}
 
-			_syslog(LOG_INFO, 'Deleted post: ' .
-				'/' . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '')
+			$context->get(LogDriver::class)->log(
+				LogDriver::INFO,
+				'Deleted post: /' . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '')
 			);
 		}
 	}
@@ -490,7 +477,7 @@ if (isset($_POST['delete'])) {
 	if (function_exists('fastcgi_finish_request'))
 		@fastcgi_finish_request();
 
-	rebuildThemes('post-delete', $board['uri']);
+	Vichan\Functions\Theme\rebuild_themes('post-delete', $board['uri']);
 
 } elseif (isset($_POST['report'])) {
 	if (!isset($_POST['board'], $_POST['reason']))
@@ -522,22 +509,30 @@ if (isset($_POST['delete'])) {
 	if (count($report) > $config['report_limit'])
 		error($config['error']['toomanyreports']);
 
-	if ($config['report_captcha'] && !isset($_POST['captcha_text'], $_POST['captcha_cookie'])) {
-		error($config['error']['bot']);
-	}
 
 	if ($config['report_captcha']) {
-		$ch = curl_init($config['domain'].'/'.$config['captcha']['provider_check'] . "?" . http_build_query([
-			'mode' => 'check',
-			'text' => $_POST['captcha_text'],
-			'extra' => $config['captcha']['extra'],
-			'cookie' => $_POST['captcha_cookie']
-		]));
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$resp = curl_exec($ch);
+		if (!isset($_POST['captcha_text'], $_POST['captcha_cookie'])) {
+			error($config['error']['bot']);
+		}
 
-		if ($resp !== '1') {
-			error($config['error']['captcha']);
+		try {
+			$query = new NativeCaptchaQuery(
+				$context->get(HttpDriver::class),
+				$config['domain'],
+				$config['captcha']['provider_check'],
+				$config['captcha']['extra']
+			);
+			$success = $query->verify(
+				$_POST['captcha_text'],
+				$_POST['captcha_cookie']
+			);
+
+			if (!$success) {
+				error($config['error']['captcha']);
+			}
+		} catch (RuntimeException $e) {
+			$context->get(LogDriver::class)->log(LogDriver::ERROR, "Native captcha IO exception: {$e->getMessage()}");
+			error($config['error']['local_io_error']);
 		}
 	}
 
@@ -555,9 +550,7 @@ if (isset($_POST['delete'])) {
 
 		$post = $query->fetch(PDO::FETCH_ASSOC);
 		if ($post === false) {
-			if ($config['syslog']) {
-				_syslog(LOG_INFO, "Failed to report non-existing post #{$id} in {$board['dir']}");
-			}
+			$context->get(LogDriver::class)->log(LogDriver::INFO, "Failed to report non-existing post #{$id} in {$board['dir']}");
 			error($config['error']['nopost']);
 		}
 
@@ -566,11 +559,12 @@ if (isset($_POST['delete'])) {
 			error($error);
 		}
 
-		if ($config['syslog'])
-			_syslog(LOG_INFO, 'Reported post: ' .
-				'/' . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '') .
-				' for "' . $reason . '"'
-			);
+		$context->get(LogDriver::class)->log(
+			LogDriver::INFO,
+			'Reported post: /'
+				 . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '')
+				 . " for \"$reason\""
+		);
 		$query = prepare("INSERT INTO ``reports`` VALUES (NULL, :time, :ip, :board, :post, :reason)");
 		$query->bindValue(':time', time(), PDO::PARAM_INT);
 		$query->bindValue(':ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
@@ -633,62 +627,59 @@ if (isset($_POST['delete'])) {
 		// Check if banned
 		checkBan($board['uri']);
 
-		// Check for CAPTCHA right after opening the board so the "return" link is in there
-		if ($config['recaptcha']) {
-			if (!isset($_POST['g-recaptcha-response']))
-				error($config['error']['bot']);
+		// Check for CAPTCHA right after opening the board so the "return" link is in there.
+		try {
+			$provider = $config['captcha']['provider'];
+			$new_thread_capt = $config['captcha']['native']['new_thread_capt'];
+			$dynamic = $config['captcha']['dynamic'];
 
-			// Check what reCAPTCHA has to say...
-			$resp = json_decode(file_get_contents(sprintf('https://www.recaptcha.net/recaptcha/api/siteverify?secret=%s&response=%s&remoteip=%s',
-				$config['recaptcha_private'],
-				urlencode($_POST['g-recaptcha-response']),
-				$_SERVER['REMOTE_ADDR'])), true);
+			// With our custom captcha provider
+			if (($provider === 'native' && !$new_thread_capt)
+				|| ($provider === 'native' && $new_thread_capt && $post['op'])) {
+				$query = $context->get(NativeCaptchaQuery::class);
+				$success = $query->verify($_POST['captcha_text'], $_POST['captcha_cookie']);
 
-			if (!$resp['success']) {
-				error($config['error']['captcha']);
+				if (!$success) {
+					error(
+						"{$config['error']['captcha']}
+						<script>
+							if (actually_load_captcha !== undefined)
+								actually_load_captcha(
+									\"{$config['captcha']['provider_get']}\",
+									\"{$config['captcha']['extra']}\"
+								);
+						</script>"
+					);
+				}
 			}
-		}
-		// hCaptcha
-		if ($config['hcaptcha']) {
-			if (!isset($_POST['h-captcha-response'])) {
-				error($config['error']['bot']);
+			// Remote 3rd party captchas.
+			elseif ($provider && (!$dynamic || $dynamic === $_SERVER['REMOTE_ADDR'])) {
+				$query = $content->get(RemoteCaptchaQuery::class);
+				$field = $query->responseField();
+
+				if (!isset($_POST[$field])) {
+					error($config['error']['bot']);
+				}
+				$response = $_POST[$field];
+				/*
+				 * Do not query with the IP if the mode is dynamic. This config is meant for proxies and internal
+				 * loopback addresses.
+				 */
+				$ip = $dynamic ? null : $_SERVER['REMOTE_ADDR'];
+
+				$success = $query->verify($response, $ip);
+				if (!$success) {
+					error($config['error']['captcha']);
+				}
 			}
-
-			$data = array(
-				'secret' => $config['hcaptcha_private'],
-				'response' => $_POST['h-captcha-response'],
-				'remoteip' => $_SERVER['REMOTE_ADDR']
-			);
-
-			$hcaptchaverify = curl_init();
-			curl_setopt($hcaptchaverify, CURLOPT_URL, "https://hcaptcha.com/siteverify");
-			curl_setopt($hcaptchaverify, CURLOPT_POST, true);
-			curl_setopt($hcaptchaverify, CURLOPT_POSTFIELDS, http_build_query($data));
-			curl_setopt($hcaptchaverify, CURLOPT_RETURNTRANSFER, true);
-			$hcaptcharesponse = curl_exec($hcaptchaverify);
-
-			$resp = json_decode($hcaptcharesponse, true); // Decoding $hcaptcharesponse instead of $response
-
-			if (!$resp['success']) {
-				error($config['error']['captcha']);
-			}
+		} catch (RuntimeException $e) {
+			$context->get(LogDriver::class)->log(LogDriver::ERROR, "Captcha IO exception: {$e->getMessage()}");
+			error($config['error']['remote_io_error']);
+		} catch (JsonException $e) {
+			$context->get(LogDriver::class)->log(LogDriver::ERROR, "Bad JSON reply to captcha: {$e->getMessage()}");
+			error($config['error']['remote_io_error']);
 		}
-		// Same, but now with our custom captcha provider
- 		if (($config['captcha']['enabled']) || (($post['op']) && ($config['new_thread_capt'])) ) {
-		$ch = curl_init($config['domain'].'/'.$config['captcha']['provider_check'] . "?" . http_build_query([
-			'mode' => 'check',
-			'text' => $_POST['captcha_text'],
-			'extra' => $config['captcha']['extra'],
-			'cookie' => $_POST['captcha_cookie']
-		]));
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$resp = curl_exec($ch);
 
-		if ($resp !== '1') {
-			error($config['error']['captcha'] .
-				'<script>if (actually_load_captcha !== undefined) actually_load_captcha("'.$config['captcha']['provider_get'].'", "'.$config['captcha']['extra'].'");</script>');
-		}
-	}
 
 		if (!(($post['op'] && $_POST['post'] == $config['button_newtopic']) ||
 			(!$post['op'] && $_POST['post'] == $config['button_reply'])))
@@ -703,7 +694,7 @@ if (isset($_POST['delete'])) {
 
 
 		if ($post['mod'] = isset($_POST['mod']) && $_POST['mod']) {
-			check_login(false);
+			check_login($context, false);
 			if (!$mod) {
 				// Liar. You're not a mod.
 				error($config['error']['notamod']);
@@ -719,12 +710,6 @@ if (isset($_POST['delete'])) {
 				error($config['error']['noaccess']);
 			if ($post['raw'] && !hasPermission($config['mod']['rawhtml'], $board['uri']))
 				error($config['error']['noaccess']);
-		}
-
-		if (!$post['mod']) {
-			$post['antispam_hash'] = checkSpam(array($board['uri'], isset($post['thread']) ? $post['thread'] : ($config['try_smarter'] && isset($_POST['page']) ? 0 - (int)$_POST['page'] : null)));
-			if ($post['antispam_hash'] === true)
-				error($config['error']['spam']);
 		}
 
 		if ($config['robot_enable'] && $config['robot_mute']) {
@@ -792,7 +777,21 @@ if (isset($_POST['delete'])) {
 		}
 
 		try {
-			$_FILES['file'] = download_file_from_url($_POST['file_url'], $config['upload_by_url_timeout'], $allowed_extensions, $config['tmp'], $config['error']);
+			$ret = download_file_from_url(
+				$context->get(HttpDriver::class),
+				$_POST['file_url'],
+				$config['upload_by_url_timeout'],
+				$allowed_extensions,
+				$config['tmp'],
+				$config['error']
+			);
+			if ($ret === false) {
+				error(sprintf3($config['error']['filesize'], array(
+					'filesz' => 'more than that',
+					'maxsz' => number_format($config['max_filesize'])
+				)));
+			}
+			$_FILES['file'] = $ret;
 		} catch (Exception $e) {
 			error($e->getMessage());
 		}
@@ -802,7 +801,7 @@ if (isset($_POST['delete'])) {
 	$post['subject'] = $_POST['subject'];
 	$post['email'] = str_replace(' ', '%20', htmlspecialchars($_POST['email']));
 	$post['body'] = $_POST['body'];
-	$post['password'] = $_POST['password'];
+	$post['password'] = hashPassword($_POST['password']);
 	$post['has_file'] = (!isset($post['embed']) && (($post['op'] && !isset($post['no_longer_require_an_image_for_op']) && $config['force_image_op']) || count($_FILES) > 0));
 
 	if (!$dropped_post) {
@@ -882,7 +881,12 @@ if (isset($_POST['delete'])) {
 
 	$trip = generate_tripcode($post['name']);
 	$post['name'] = $trip[0];
-	$post['trip'] = isset($trip[1]) ? $trip[1] : ''; // XX: Dropped posts and tripcodes
+	if ($config['disable_tripcodes'] && !$mod) {
+		$post['trip'] = '';
+	}
+	else {
+		$post['trip'] = isset($trip[1]) ? $trip[1] : ''; // XX: Dropped posts and tripcodes
+	}
 
 	$noko = false;
 	if (strtolower($post['email']) == 'noko') {
@@ -955,8 +959,6 @@ if (isset($_POST['delete'])) {
 			error($config['error']['toolong_body']);
 		if (!$mod && substr_count($post['body'], "\n") >= $config['maximum_lines'])
 			error($config['error']['toomanylines']);
-		if (mb_strlen($post['password']) > 20)
-			error(sprintf($config['error']['toolong'], 'password'));
 	}
 	wordfilters($post['body']);
 
@@ -1063,7 +1065,7 @@ if (isset($_POST['delete'])) {
 		if ($file['is_an_image']) {
 			if ($config['ie_mime_type_detection'] !== false) {
 				// Check IE MIME type detection XSS exploit
-				$buffer = file_get_contents($upload, null, null, null, 255);
+				$buffer = file_get_contents($upload, false, null, 0, 255);
 				if (preg_match($config['ie_mime_type_detection'], $buffer)) {
 					undoImage($post);
 					error($config['error']['mime_exploit']);
@@ -1083,19 +1085,24 @@ if (isset($_POST['delete'])) {
 				error($config['error']['maxsize']);
 			}
 
-			// The following code corrects the image orientation.
-			if ($config['convert_auto_orient'] && ($size[2] == IMAGETYPE_JPEG)) {
-				// 'redraw_image' should already fix image orientation by itself	
-				if (!($config['redraw_image'])) {
+			$file['exif_stripped'] = false;
+
+			if ($file_image_has_operable_metadata && $config['convert_auto_orient']) {
+				// The following code corrects the image orientation.
+				// Currently only works with the 'convert' option selected but it could easily be expanded to work with the rest if you can be bothered.
+				if (!($config['redraw_image'] || (($config['strip_exif'] && !$config['use_exiftool'])))) {
 					if (in_array($config['thumb_method'], array('convert', 'convert+gifsicle', 'gm', 'gm+gifsicle'))) {
 						$exif = @exif_read_data($file['tmp_name']);
 						$gm = in_array($config['thumb_method'], array('gm', 'gm+gifsicle'));
 						if (isset($exif['Orientation']) && $exif['Orientation'] != 1) {
 							$error = shell_exec_error(($gm ? 'gm ' : '') . 'convert ' .
-									escapeshellarg($file['tmp_name']) . ' -auto-orient ' . escapeshellarg($file['tmp_name']));
+									escapeshellarg($file['tmp_name']) . ' -auto-orient ' . escapeshellarg($upload));
+
 							if ($error)
 								error(_('Could not auto-orient image!'), null, $error);
 							$size = @getimagesize($file['tmp_name']);
+							if ($config['strip_exif'])
+								$file['exif_stripped'] = true;
 						}
 					}
 				}
@@ -1144,16 +1151,14 @@ if (isset($_POST['delete'])) {
 
 			$dont_copy_file = false;
 
-			if ($config['redraw_image'] || (!@$file['exif_stripped'] && $config['strip_exif'] && ($file['extension'] == 'jpg' || $file['extension'] == 'jpeg'))) {
+			if ($config['redraw_image'] || ($file_image_has_operable_metadata && !$file['exif_stripped'] && $config['strip_exif'])) {
 				if (!$config['redraw_image'] && $config['use_exiftool']) {
 					try {
 						$file['size'] = strip_image_metadata($file['tmp_name']);
 					} catch (RuntimeException $e) {
-						if ($config['syslog']) {
-							_syslog(LOG_ERR, "Could not strip image metadata: {$e->getMessage()}");
-							// Since EXIF metadata can countain sensible info, fail the request.
-							error(_('Could not strip EXIF metadata!'), null, $error);
-						}
+						$context->get(LogDriver::class)->log(LogDriver::ERROR, "Could not strip image metadata: {$e->getMessage()}");
+						// Since EXIF metadata can countain sensible info, fail the request.
+						error(_('Could not strip EXIF metadata!'), null, $error);
 					}
 				} else {
 					$image->to($file['file']);
@@ -1186,12 +1191,10 @@ if (isset($_POST['delete'])) {
 					if ($txt !== '') {
 						// This one has an effect, that the body is appended to a post body. So you can write a correct
 						// spamfilter.
-						$post['body_nomarkup'] .= "<tinyboard ocr image $key>" . htmlspecialchars($value) . "</tinyboard>";
+						$post['body_nomarkup'] .= "<tinyboard ocr image $key>" . htmlspecialchars($txt) . "</tinyboard>";
 					}
 				} catch (RuntimeException $e) {
-					if ($config['syslog']) {
-						_syslog(LOG_ERR, "Could not OCR image: {$e->getMessage()}");
-					}
+					$context->get(LogDriver::class)->log(LogDriver::ERROR, "Could not OCR image: {$e->getMessage()}");
 				}
 			}
 		}
@@ -1340,14 +1343,22 @@ if (isset($_POST['delete'])) {
 
 	if (isset($_SERVER['HTTP_REFERER'])) {
 		// Tell Javascript that we posted successfully
-		if (isset($_COOKIE[$config['cookies']['js']]))
+		if (isset($_COOKIE[$config['cookies']['js']])) {
 			$js = json_decode($_COOKIE[$config['cookies']['js']]);
-		else
-			$js = (object) array();
+		} else {
+			$js = (object)array();
+		}
 		// Tell it to delete the cached post for referer
 		$js->{$_SERVER['HTTP_REFERER']} = true;
-		// Encode and set cookie
-		setcookie($config['cookies']['js'], json_encode($js), 0, $config['cookies']['jail'] ? $config['cookies']['path'] : '/', null, false, false);
+
+		// Encode and set cookie.
+		$options = [
+			'expires' => 0,
+			'path' => $config['cookies']['jail'] ? $config['cookies']['path'] : '/',
+			'httponly' => false,
+			'samesite' => 'Strict'
+		];
+		setcookie($config['cookies']['js'], json_encode($js), $options);
 	}
 
 	$root = $post['mod'] ? $config['root'] . $config['file_mod'] . '?/' : $config['root'];
@@ -1377,9 +1388,10 @@ if (isset($_POST['delete'])) {
 
 	buildThread($post['op'] ? $id : $post['thread']);
 
-	if ($config['syslog'])
-		_syslog(LOG_INFO, 'New post: /' . $board['dir'] . $config['dir']['res'] .
-			link_for($post) . (!$post['op'] ? '#' . $id : ''));
+	$context->get(LogDriver::class)->log(
+		LogDriver::INFO,
+		'New post: /' . $board['dir'] . $config['dir']['res'] . link_for($post) . (!$post['op'] ? '#' . $id : '')
+	);
 
 	if (!$post['mod']) header('X-Associated-Content: "' . $redirect . '"');
 
@@ -1410,9 +1422,9 @@ if (isset($_POST['delete'])) {
 		@fastcgi_finish_request();
 
 	if ($post['op'])
-		rebuildThemes('post-thread', $board['uri']);
+		Vichan\Functions\Theme\rebuild_themes('post-thread', $board['uri']);
 	else
-		rebuildThemes('post', $board['uri']);
+		Vichan\Functions\Theme\rebuild_themes('post', $board['uri']);
 
 } elseif (isset($_POST['appeal'])) {
 	if (!isset($_POST['ban_id']))
@@ -1420,7 +1432,7 @@ if (isset($_POST['delete'])) {
 
 	$ban_id = (int)$_POST['ban_id'];
 
-	$ban = Bans::findSingle($_SERVER['REMOTE_ADDR'], $ban_id, $config['require_ban_view']);
+	$ban = Bans::findSingle($_SERVER['REMOTE_ADDR'], $ban_id, $config['require_ban_view'], $config['auto_maintenance']);
 
 	if (empty($ban)) {
 		error($config['error']['noban']);

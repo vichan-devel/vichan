@@ -294,7 +294,8 @@ CREATE TABLE IF NOT EXISTS `ban_appeals` (
   `message` text NOT NULL,
   `denied` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `ban_id` (`ban_id`)
+  KEY `ban_id` (`ban_id`),
+  CONSTRAINT `fk_ban_id` FOREIGN KEY (`ban_id`) REFERENCES `bans`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------

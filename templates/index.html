@@ -14,14 +14,26 @@
         </script>
 
 	{% include 'header.html' %}
+
+	{% set meta_subject %}{% if config.thread_subject_in_title and thread.subject %}{{ thread.subject|e }}{% else %}{{ thread.body_nomarkup|remove_modifiers[:256]|e }}{% endif %}{% endset %}
+
+	<meta name="description" content="{{ meta_subject }}" />
+	<meta name="twitter:card" value="summary">
+	<meta name="twitter:title" content="{{ board.url }} - {{ board.title|e }}" />
+	<meta name="twitter:description" content="{{ meta_subject }}" />
+	<meta name="twitter:image" content="{{ config.domain }}/{{ config.logo }}" />
+	<meta property="og:title" content="{{ board.url }} - {{ board.title|e }}" />
+	<meta property="og:type" content="article" />
+	<meta property="og:image" content="{{ config.domain }}/{{ config.logo }}" />
+	<meta property="og:description" content="{{ meta_subject }}" />
 	<title>{{ board.url }} - {{ board.title|e }}</title>
 </head>
 <body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %} active-{% if not no_post_form %}index{% else %}ukko{% endif %}" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
 	{{ boardlist.top }}
-	
+
 	{% if pm %}<div class="top_notice">You have <a href="?/PM/{{ pm.id }}">an unread PM</a>{% if pm.waiting > 0 %}, plus {{ pm.waiting }} more waiting{% endif %}.</div><hr />{% endif %}
 	{% if config.url_banner %}<img class="board_image" src="{{ config.url_banner }}" {% if config.banner_width or config.banner_height %}style="{% if config.banner_width %}width:{{ config.banner_width }}px{% endif %};{% if config.banner_width %}height:{{ config.banner_height }}px{% endif %}" {% endif %}alt="" />{% endif %}
-	
+
 	<header>
 		<h1>{{ board.url }} - {{ board.title|e }}</h1>
 		<div class="subtitle">
@@ -54,7 +66,7 @@
 			{{ btn.next }}
 		</div>
 	{% endif %}
-	
+
 	{% if config.global_message %}<hr /><div class="blotter">{{ config.global_message }}</div>{% endif %}
 	<hr />
 	{% if config.board_search %}
@@ -74,7 +86,7 @@
 	{{ body }}
 	{% include 'report_delete.html' %}
 	</form>
-	
+
 	<div class="pages">
 		{{ btn.prev }} {% for page in pages %}
 		 [<a {% if page.selected %}class="selected"{% endif %}{% if not page.selected %}href="{{ page.link }}"{% endif %}>{{ page.num }}</a>]{% if loop.last %} {% endif %}
@@ -83,7 +95,7 @@
 			 | <a href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.catalog_link }}">{% trans %}Catalog{% endtrans %}</a>
 		{% endif %}
 	</div>
-	
+
 	{{ boardlist.bottom }}
 
 	{{ config.ad.bottom }}
@@ -92,6 +104,6 @@
 	<script type="text/javascript">{% verbatim %}
 		ready();
 	{% endverbatim %}</script>
-	
+
 </body>
 </html>

@@ -1,4 +1,4 @@
-<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.min.js?v={{ config.resource_version }}"></script>
 <div style="text-align:center">
 <p class="unimportant">
 {% if board %}
@@ -27,7 +27,7 @@
 <table>
 <tr><th>{% trans %}URL{% endtrans %}</th><th>{% trans %}Title{% endtrans %}</th></tr>
 <tr><td><input type="text" name="page"></td><td><input type="text" name="title"></td>
-</table>	
+</table>
 <input type="submit" value="{% trans %}Create{% endtrans %}">
 </form>
 

@@ -158,6 +158,13 @@
 			$settings['no_recent'] = (int) $settings['no_recent'];
 			$query = query("SELECT * FROM ``news`` ORDER BY `time` DESC" . ($settings['no_recent'] ? ' LIMIT ' . $settings['no_recent'] : '')) or error(db_error());
 			$news = $query->fetchAll(PDO::FETCH_ASSOC);
+
+			// Excluded boards for the boardlist
+			$excluded_boards = isset($settings['excludeboardlist']) ? explode(' ', $settings['excludeboardlist']) : [];
+			$boardlist = array_filter($boards, function($board) use ($excluded_boards) {
+				return !in_array($board['uri'], $excluded_boards);
+			});
+			
 			
 			return Element('themes/index/index.html', Array(
 				'settings' => $settings,
@@ -167,7 +174,7 @@
 				'recent_posts' => $recent_posts,
 				'stats' => $stats,
 				'news' => $news,
-				'boards' => listBoards()
+				'boards' => $boardlist
 			));
 		}
 	};
