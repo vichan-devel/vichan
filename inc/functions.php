@@ -391,12 +391,6 @@ function define_groups() {
 	ksort($config['mod']['groups']);
 }
 
-function create_antibot($board, $thread = null) {
-	require_once dirname(__FILE__) . '/anti-bot.php';
-
-	return _create_antibot($board, $thread);
-}
-
 function sprintf3($str, $vars, $delim = '%') {
 	$replaces = array();
 	foreach ($vars as $k => $v) {
@@ -1528,43 +1522,6 @@ function purge_old_antispam() {
 	return $query->rowCount();
 }
 
-function _create_antibot($board, $thread) {
-	global $config, $purged_old_antispam;
-
-	$antibot = new AntiBot([$board, $thread]);
-
-	// Delete old expired antispam, skipping those with NULL expiration timestamps (infinite lifetime).
-	if (!isset($purged_old_antispam) && $config['auto_maintenance']) {
-		$purged_old_antispam = true;
-		query('DELETE FROM ``antispam`` WHERE `expires` < UNIX_TIMESTAMP()') or error(db_error());
-	}
-
-	// Keep the now invalid timestamps around for a bit to enable users to post if they're still on an old version of
-	// the HTML page.
-	// By virtue of existing, we know that we're making a new version of the page, and the user from now on may just reload.
-	if ($thread) {
-		$query = prepare('UPDATE ``antispam`` SET `expires` = UNIX_TIMESTAMP() + :expires WHERE `board` = :board AND `thread` = :thread AND `expires` IS NULL');
-	} else {
-		$query = prepare('UPDATE ``antispam`` SET `expires` = UNIX_TIMESTAMP() + :expires WHERE `board` = :board AND `thread` IS NULL AND `expires` IS NULL');
-	}
-
-	$query->bindValue(':board', $board);
-	if ($thread) {
-		$query->bindValue(':thread', $thread);
-	}
-	$query->bindValue(':expires', $config['spam']['hidden_inputs_expire']);
-	$query->execute() or error(db_error($query));
-
-	// Insert an antispam with infinite life as the HTML page of a thread might last well beyond the expiry date.
-	$query = prepare('INSERT INTO ``antispam`` VALUES (:board, :thread, :hash, UNIX_TIMESTAMP(), NULL, 0)');
-	$query->bindValue(':board', $board);
-	$query->bindValue(':thread', $thread);
-	$query->bindValue(':hash', $antibot->hash());
-	$query->execute() or error(db_error($query));
-
-	return $antibot;
-}
-
 function checkSpam(array $extra_salt = array()) {
 	global $config, $pdo;
 
@@ -1632,7 +1589,6 @@ function buildIndex($global_api = "yes") {
 	$catalog_api_action = generation_strategy('sb_api', array($board['uri']));
 
 	$pages = null;
-	$antibot = null;
 
 	if ($config['api']['enabled']) {
 		$api = new Api(
@@ -1684,21 +1640,12 @@ function buildIndex($global_api = "yes") {
 				if ($wont_build_this_page) continue;
 			}
 
-			if ($config['try_smarter']) {
-				$antibot = create_antibot($board['uri'], 0 - $page);
-				$content['current_page'] = $page;
-			}
-			elseif (!$antibot) {
-				$antibot = create_antibot($board['uri']);
-			}
-			$antibot->reset();
 			if (!$pages) {
 				$pages = getPages();
 			}
 			$content['pages'] = $pages;
 			$content['pages'][$page-1]['selected'] = true;
 			$content['btn'] = getPageButtons($content['pages']);
-			$content['antibot'] = $antibot;
 			if ($mod) {
 				$content['pm'] = create_pm_header();
 			}
@@ -2282,7 +2229,6 @@ function buildThread($id, $return = false, $mod = false) {
 			error($config['error']['nonexistant']);
 
 		$hasnoko50 = $thread->postCount() >= $config['noko50_min'];
-		$antibot = $mod || $return ? false : create_antibot($board['uri'], $id);
 
 		$options = [
 			'board' => $board,
@@ -2293,7 +2239,6 @@ function buildThread($id, $return = false, $mod = false) {
 			'mod' => $mod,
 			'hasnoko50' => $hasnoko50,
 			'isnoko50' => false,
-			'antibot' => $antibot,
 			'boardlist' => createBoardlist($mod),
 			'return' => ($mod ? '?' . $board['url'] . $config['file_index'] : $config['root'] . $board['dir'] . $config['file_index'])
 		];
@@ -2330,19 +2275,16 @@ function buildThread($id, $return = false, $mod = false) {
 	} elseif ($action == 'rebuild') {
 		$noko50fn = $board['dir'] . $config['dir']['res'] . link_for($thread, true);
 		if ($hasnoko50 || file_exists($noko50fn)) {
-			buildThread50($id, $return, $mod, $thread, $antibot);
+			buildThread50($id, $return, $mod, $thread);
 		}
 
 		file_write($board['dir'] . $config['dir']['res'] . link_for($thread), $body);
 	}
 }
 
-function buildThread50($id, $return = false, $mod = false, $thread = null, $antibot = false) {
+function buildThread50($id, $return = false, $mod = false, $thread = null) {
 	global $board, $config;
 	$id = round($id);
-
-	if ($antibot)
-		$antibot->reset();
 
 	if (!$thread) {
 		$query = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE (`thread` IS NULL AND `id` = :id) OR `thread` = :id ORDER BY `thread`,`id` DESC LIMIT :limit", $board['uri']));
@@ -2405,7 +2347,6 @@ function buildThread50($id, $return = false, $mod = false, $thread = null, $anti
 		'mod' => $mod,
 		'hasnoko50' => $hasnoko50,
 		'isnoko50' => true,
-		'antibot' => $mod ? false : ($antibot ? $antibot : create_antibot($board['uri'], $id)),
 		'boardlist' => createBoardlist($mod),
 		'return' => ($mod ? '?' . $board['url'] . $config['file_index'] : $config['root'] . $board['dir'] . $config['file_index'])
 	];
