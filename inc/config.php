@@ -1553,7 +1553,7 @@
 
 		'link_delete' => '[D]',
 		'link_ban' => '[B]',
-		'link_bandelete' => '[&amp;D]',
+		'link_bandelete' => '[B&amp;D]',
 		'link_deletefile' => '[F]',
 		'link_spoilerimage' => '[S]',
 		'link_deletebyip' => '[D+]',
