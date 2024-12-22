@@ -16,7 +16,7 @@ class Context {
 		$this->definitions = $definitions;
 	}
 
-	public function get(string $name): mixed {
+	public function get(string $name){
 		if (!isset($this->definitions[$name])) {
 			throw new \RuntimeException("Could not find a dependency named $name");
 		}
