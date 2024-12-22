@@ -1,20 +1,20 @@
 <?php
 namespace Vichan\Data\Driver;
 
-defined('TINYBOARD') or exit;
 
+defined('TINYBOARD') or exit;
 
 /**
  * A simple process-wide PHP array.
  */
 class ArrayCacheDriver implements CacheDriver {
-	private static array $inner = [];
+	private static $inner = [];
 
-	public function get(string $key): mixed {
+	public function get(string $key) {
 		return isset(self::$inner[$key]) ? self::$inner[$key] : null;
 	}
 
-	public function set(string $key, mixed $value, mixed $expires = false): void {
+	public function set(string $key, $value, $expires = false): void {
 		self::$inner[$key] = $value;
 	}
 
