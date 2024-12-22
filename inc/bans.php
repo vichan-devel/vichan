@@ -94,7 +94,7 @@ class Bans {
 		}
 	}
 
-	static private function findAutoGc(?string $ip, string|false $board, bool $get_mod_info, bool $require_ban_view, ?int $ban_id): array {
+	static private function findAutoGc(?string $ip, $board, bool $get_mod_info, bool $require_ban_view, ?int $ban_id): array {
 		$query = prepare('SELECT ``bans``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``bans``
 		' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
 		WHERE
