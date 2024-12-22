@@ -37,7 +37,7 @@ class Bans {
 		}
 	}
 
-	static private function findSingleAutoGc(string $ip, int $ban_id, bool $require_ban_view): array|null {
+	static private function findSingleAutoGc(string $ip, int $ban_id, bool $require_ban_view) {
 		// Use OR in the query to also garbage collect bans.
 		$query = prepare(
 			'SELECT ``bans``.* FROM ``bans``
@@ -70,7 +70,7 @@ class Bans {
 		return $found_ban;
 	}
 
-	static private function findSingleNoGc(int $ban_id): array|null {
+	static private function findSingleNoGc(int $ban_id) {
 		$query = prepare(
 			'SELECT ``bans``.* FROM ``bans``
 			 WHERE ``bans``.id = :id
@@ -268,7 +268,7 @@ class Bans {
 		return [$ipstart, $ipend];
 	}
 
-	static public function findSingle(string $ip, int $ban_id, bool $require_ban_view, bool $auto_gc): array|null {
+	static public function findSingle(string $ip, int $ban_id, bool $require_ban_view, bool $auto_gc) {
 		if ($auto_gc) {
 			return self::findSingleAutoGc($ip, $ban_id, $require_ban_view);
 		} else {
