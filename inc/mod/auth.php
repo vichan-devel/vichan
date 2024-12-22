@@ -10,7 +10,7 @@ use Vichan\Functions\Net;
 defined('TINYBOARD') or exit;
 
 // create a hash/salt pair for validate logins
-function mkhash(string $username, ?string $password, mixed $salt = false): array|string {
+function mkhash(string $username, $password = null, $salt = false) {
 	global $config;
 
 	if (!$salt) {
@@ -79,7 +79,7 @@ function calc_cookie_name(bool $is_https, bool $is_path_jailed, string $base_nam
 	}
 }
 
-function login(string $username, string $password): array|false {
+function login(string $username, string $password) {
 	global $mod, $config;
 
 	$query = prepare("SELECT `id`, `type`, `boards`, `password`, `version` FROM ``mods`` WHERE BINARY `username` = :username");
