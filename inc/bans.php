@@ -130,7 +130,7 @@ class Bans {
 		return $ban_list;
 	}
 
-	static private function findNoGc(?string $ip, string|false $board, bool $get_mod_info, ?int $ban_id): array {
+	static private function findNoGc(?string $ip, string $board, bool $get_mod_info, ?int $ban_id): array {
 		$query = prepare('SELECT ``bans``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``bans``
 		' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
 		WHERE
@@ -276,7 +276,7 @@ class Bans {
 		}
 	}
 
-	static public function find(?string $ip, string|false $board = false, bool $get_mod_info = false, ?int $ban_id = null, bool $auto_gc = true) {
+	static public function find(?string $ip, string $board = false, bool $get_mod_info = false, ?int $ban_id = null, bool $auto_gc = true) {
 		global $config;
 
 		if ($auto_gc) {
