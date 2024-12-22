@@ -18,7 +18,8 @@
         "gettext/gettext": "^5.5",
         "mrclay/minify": "^2.1.6",
         "geoip/geoip": "^1.17",
-        "dapphp/securimage": "^4.0"
+        "dapphp/securimage": "^4.0",
+        "erusev/parsedown":  "^1.7.4"
     },
     "autoload": {
         "classmap": ["inc/"],
@@ -32,7 +33,14 @@
             "inc/mod/auth.php",
             "inc/lock.php",
             "inc/queue.php",
-            "inc/functions.php"
+            "inc/functions.php",
+            "inc/functions/dice.php",
+            "inc/functions/format.php",
+            "inc/functions/net.php",
+            "inc/functions/num.php",
+            "inc/functions/theme.php",
+            "inc/service/captcha-queries.php",
+            "inc/context.php"
         ]
     },
     "license": "Tinyboard + vichan",

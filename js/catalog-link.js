@@ -30,17 +30,7 @@ function catalog() {
     var link = document.createElement('a');
     link.href = catalog_url;
 
-    if (pages) {
-        link.textContent = _('Catalog');
-        link.style.color = '#F10000';
-        link.style.padding = '4px';
-        link.style.paddingLeft = '9px';
-        link.style.borderLeft = '1px solid';
-        link.style.borderLeftColor = '#A8A8A8';
-        link.style.textDecoration = "underline";
-
-        pages.appendChild(link);
-    } else {
+    if (!pages) {
         link.textContent = '['+_('Catalog')+']';
         link.style.paddingLeft = '10px';
         link.style.textDecoration = "underline";

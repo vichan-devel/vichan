@@ -1,21 +1,24 @@
 <?php
-
 /*
  *  Copyright (c) 2010-2014 Tinyboard Development Group
  */
 
 require_once 'inc/bootstrap.php';
 
-if ($config['debug'])
+if ($config['debug']) {
 	$parse_start_time = microtime(true);
+}
 
 require_once 'inc/mod/pages.php';
 
-check_login(true);
+
+$ctx = Vichan\build_context($config);
+
+check_login($ctx, true);
 
 $query = isset($_SERVER['QUERY_STRING']) ? rawurldecode($_SERVER['QUERY_STRING']) : '';
 
-$pages = array(
+$pages = [
 	''					=> ':?/',			// redirect to dashboard
 	'/'					=> 'dashboard',			// dashboard
 	'/confirm/(.+)'				=> 'confirm',			// confirm action (if javascript didn't work)
@@ -109,14 +112,14 @@ $pages = array(
 			str_replace('%d', '(\d+)', preg_quote($config['file_page'], '!'))	=> 'view_thread',
 
 	'/(\%b)/' . preg_quote($config['dir']['res'], '!') .
-			str_replace(array('%d','%s'), array('(\d+)', '[a-z0-9-]+'), preg_quote($config['file_page50_slug'], '!'))	=> 'view_thread50',
+			str_replace([ '%d','%s' ], [ '(\d+)', '[a-z0-9-]+' ], preg_quote($config['file_page50_slug'], '!'))	=> 'view_thread50',
 	'/(\%b)/' . preg_quote($config['dir']['res'], '!') .
-			str_replace(array('%d','%s'), array('(\d+)', '[a-z0-9-]+'), preg_quote($config['file_page_slug'], '!'))	=> 'view_thread',
-);
+			str_replace([ '%d','%s' ], [ '(\d+)', '[a-z0-9-]+' ], preg_quote($config['file_page_slug'], '!'))	=> 'view_thread',
+];
 
 
 if (!$mod) {
-	$pages = array('!^(.+)?$!' => 'login');
+	$pages = [ '!^(.+)?$!' => 'login' ];
 } elseif (isset($_GET['status'], $_GET['r'])) {
 	header('Location: ' . $_GET['r'], true, (int)$_GET['status']);
 	exit;
@@ -126,10 +129,11 @@ if (isset($config['mod']['custom_pages'])) {
 	$pages = array_merge($pages, $config['mod']['custom_pages']);
 }
 
-$new_pages = array();
+$new_pages = [];
 foreach ($pages as $key => $callback) {
-	if (is_string($callback) && preg_match('/^secure /', $callback))
+	if (is_string($callback) && preg_match('/^secure /', $callback)) {
 		$key .= '(/(?P<token>[a-f0-9]{8}))?';
+	}
 	$key = str_replace('\%b', '?P<board>' . sprintf(substr($config['board_path'], 0, -1), $config['board_regex']), $key);
 	$new_pages[(!empty($key) and $key[0] == '!') ? $key : '!^' . $key . '(?:&[^&=]+=[^&]*)*$!u'] = $callback;
 }
@@ -137,7 +141,7 @@ $pages = $new_pages;
 
 foreach ($pages as $uri => $handler) {
 	if (preg_match($uri, $query, $matches)) {
-		$matches = array_slice($matches, 1);
+		$matches[0] = $ctx; // Replace the text captured by the full pattern with a reference to the context.
 
 		if (isset($matches['board'])) {
 			$board_match = $matches['board'];
@@ -157,7 +161,7 @@ foreach ($pages as $uri => $handler) {
 					if ($secure_post_only)
 						error($config['error']['csrf']);
 					else {
-						mod_confirm(substr($query, 1));
+						mod_confirm($ctx, substr($query, 1));
 						exit;
 					}
 				}
@@ -172,24 +176,20 @@ foreach ($pages as $uri => $handler) {
 		}
 
 		if ($config['debug']) {
-			$debug['mod_page'] = array(
+			$debug['mod_page'] = [
 				'req' => $query,
 				'match' => $uri,
 				'handler' => $handler,
-			);
+			];
 			$debug['time']['parse_mod_req'] = '~' . round((microtime(true) - $parse_start_time) * 1000, 2) . 'ms';
 		}
 
-		if (is_array($matches)) {
-			// we don't want to call named parameters (PHP 8)
-			$matches = array_values($matches);
-		}
+		// We don't want to call named parameters (PHP 8).
+		$matches = array_values($matches);
 
 		if (is_string($handler)) {
 			if ($handler[0] == ':') {
 				header('Location: ' . substr($handler, 1),  true, $config['redirect_http']);
-			} elseif (is_callable("mod_page_$handler")) {
-				call_user_func_array("mod_page_$handler", $matches);
 			} elseif (is_callable("mod_$handler")) {
 				call_user_func_array("mod_$handler", $matches);
 			} else {
@@ -206,4 +206,3 @@ foreach ($pages as $uri => $handler) {
 }
 
 error($config['error']['404']);
-

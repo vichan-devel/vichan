@@ -4,11 +4,11 @@
 <head>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<title>{{ settings.title }}</title>
-	<link rel="stylesheet" media="screen" href="{{ config.url_stylesheet }}"/>
-	<link rel="stylesheet" media="screen" href="{{ config.root }}{{ settings.css }}"/>
+	<link rel="stylesheet" media="screen" href="{{ config.url_stylesheet }}?v={{ config.resource_version }}"/>
+	<link rel="stylesheet" media="screen" href="{{ config.root }}{{ settings.css }}?v={{ config.resource_version }}"/>
 	{% if config.url_favicon %}<link rel="shortcut icon" href="{{ config.url_favicon }}" />{% endif %}
-	{% if config.default_stylesheet.1 != '' %}<link rel="stylesheet" type="text/css" id="stylesheet" href="{{ config.uri_stylesheets }}{{ config.default_stylesheet.1 }}">{% endif %}
-	{% if config.font_awesome %}<link rel="stylesheet" href="{{ config.root }}{{ config.font_awesome_css }}">{% endif %}
+	{% if config.default_stylesheet.1 != '' %}<link rel="stylesheet" type="text/css" id="stylesheet" href="{{ config.uri_stylesheets }}{{ config.default_stylesheet.1 }}?v={{ config.resource_version }}">{% endif %}
+	{% if config.font_awesome %}<link rel="stylesheet" href="{{ config.root }}{{ config.font_awesome_css }}?v={{ config.resource_version }}">{% endif %}
 	{% include 'header.html' %}
 </head>
 <body>
@@ -17,7 +17,7 @@
 		<h1>{{ settings.title }}</h1>
 		<div class="subtitle">{{ settings.subtitle }}</div>
 	</header>
-	
+
 	<div class="box-wrap">
 		<div class="box left">
 			<h2>Recent Images</h2>
@@ -36,7 +36,7 @@
 			<ul>
 				{% for post in recent_posts %}
 					<li>
-						<strong>{{ post.board_name }}</strong>: 
+						<strong>{{ post.board_name }}</strong>:
 						<a href="{{ post.link }}">
 							{{ post.snippet }}
 						</a>
@@ -53,11 +53,11 @@
 			</ul>
 		</div>
 	</div>
-	
+
 	<hr/>
 
 	{% include 'footer.html' %}
-	
+
 </body>
 </html>
 {% endapply %}

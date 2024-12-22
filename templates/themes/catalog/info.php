@@ -17,17 +17,12 @@
 		'default' => 'Catalog'
 	);
 	
-	$__boards = listBoards();
-	$__default_boards = Array();
-	foreach ($__boards as $__board)
-		$__default_boards[] = $__board['uri'];
-	
 	$theme['config'][] = Array(
 		'title' => 'Included boards',
 		'name' => 'boards',
 		'type' => 'text',
 		'comment' => '(space seperated)',
-		'default' => implode(' ', $__default_boards)
+		'default' => '*'
 	);
 	
 	$theme['config'][] = Array(

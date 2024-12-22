@@ -15,6 +15,9 @@
 
 	<meta name="description" content="{{ board.url }} - {{ board.title|e }} - {{ meta_subject }}" />
 	<meta name="twitter:card" value="summary">
+	<meta name="twitter:title" content="{{ meta_subject }}" />
+	<meta name="twitter:description" content="{{ thread.body_nomarkup|e }}" />
+	{% if thread.files.0.thumb %}<meta name="twitter:image" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.thumb }}{{ thread.files.0.thumb }}" />{% endif %}
 	<meta property="og:title" content="{{ meta_subject }}" />
 	<meta property="og:type" content="article" />
 	<meta property="og:url" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.res }}{{ thread.id }}.html" />

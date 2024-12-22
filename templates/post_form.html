@@ -1,9 +1,6 @@
-<form name="post" onsubmit="return dopost(this);" enctype="multipart/form-data" action="{{ config.post_url }}" method="post">
-{{ antibot.html() }}
+<form name="post" onsubmit="return doPost(this);" enctype="multipart/form-data" action="{{ config.post_url }}" method="post">
 {% if id %}<input type="hidden" name="thread" value="{{ id }}">{% endif %}
-{{ antibot.html() }}
 <input type="hidden" name="board" value="{{ board.uri }}">
-{{ antibot.html() }}
 {% if current_page %}
 	<input type="hidden" name="page" value="{{ current_page }}">
 {% endif %}
@@ -12,11 +9,9 @@
 		{% if not config.field_disable_name or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri)) %}<tr>
 			<th>
 				{% trans %}Name{% endtrans %}
-				{{ antibot.html() }}
 			</th>
 			<td>
 				<input type="text" name="name" size="25" maxlength="35" autocomplete="off"> {% if config.allow_no_country and config.country_flags %}<input id="no_country" name="no_country" type="checkbox"> <label for="no_country">{% trans %}Don't show my flag{% endtrans %}</label>{% endif %}
-				{{ antibot.html() }}
 			</td>
 		</tr>{% endif %}
 		{% if not config.field_disable_email or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri)) %}<tr>
@@ -26,7 +21,6 @@
 				{% else %}
 				{% trans %}Email{% endtrans %}
 				{% endif %}
-				{{ antibot.html() }}
 			</th>
 			<td>
 				{% if (mod and not post.mod|hasPermission(config.mod.bypass_field_disable, board.uri) and config.field_email_selectbox) or (not mod and config.field_email_selectbox) %}
@@ -39,17 +33,14 @@
 				{% else %}
 				<input type="text" name="email" size="25" maxlength="40" autocomplete="off">
 				{% endif %}
-				{{ antibot.html() }}
 				{% if not (not (config.field_disable_subject or (id and config.field_disable_reply_subject)) or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri))) %}
 				<input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />{% if config.spoiler_images %} <input id="spoiler" name="spoiler" type="checkbox"> <label for="spoiler">{% trans %}Spoiler Image{% endtrans %}</label>				{% endif %}
 				{% endif %}
-				{{ antibot.html() }}
 			</td>
 		</tr>{% endif %}
 		{% if not (config.field_disable_subject or (id and config.field_disable_reply_subject)) or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri)) %}<tr>
 			<th>
 				{% trans %}Subject{% endtrans %}
-				{{ antibot.html() }}
 			</th>
 			<td>
 				<input style="float:left;" type="text" name="subject" size="25" maxlength="100" autocomplete="off">
@@ -60,11 +51,9 @@
 		<tr>
 			<th>
 				{% trans %}Comment{% endtrans %}
-				{{ antibot.html() }}
 			</th>
 			<td>
 				<textarea name="body" id="body" rows="5" cols="35"></textarea>
-				{{ antibot.html() }}
 				{% if not (not (config.field_disable_subject or (id and config.field_disable_reply_subject)) or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri))) %}
 				{% if not (not config.field_disable_email or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri))) %}
 				<input accesskey="s" style="margin-left:2px;" type="submit" name="post" value="{% if id %}{{ config.button_reply }}{% else %}{{ config.button_newtopic }}{% endif %}" />{% if config.spoiler_images %} <input id="spoiler" name="spoiler" type="checkbox"> <label for="spoiler">{% trans %}Spoiler Image{% endtrans %}</label>{% endif %}
@@ -72,57 +61,57 @@
 				{% endif %}
 			</td>
 		</tr>
-		{% if config.recaptcha %}
+		{% if config.captcha.provider == 'recaptcha' %}
+		{% if config.captcha.dynamic %}
+		<tr id="captcha" style="display: none;">
+		{% else %}
 		<tr>
+		{% endif %}
 			<th>
 				{% trans %}Verification{% endtrans %}
-				{{ antibot.html() }}
 			</th>
 			<td>
-				<div class="g-recaptcha" data-sitekey="{{ config.recaptcha_public }}"></div>
-				{{ antibot.html() }}
+				<div class="g-recaptcha" data-sitekey="{{ config.captcha.recaptcha.sitekey }}"></div>
 			</td>
 		</tr>
 		{% endif %}
-		{% if config.hcaptcha %}
+		{% if config.captcha.provider == 'hcaptcha' %}
 		<tr>
 			<th>
 				{% trans %}Verification{% endtrans %}
-				{{ antibot.html() }}
 			</th>
 			<td>
-				<div class="h-captcha" data-sitekey="{{ config.hcaptcha_public }}"></div>
-				{{ antibot.html() }}
+				<div class="h-captcha" data-sitekey="{{ config.captcha.hcaptcha.sitekey }}"></div>
 			</td>
 		</tr>
 		{% endif %}
-		{% if config.captcha.enabled %}
+		{% if config.captcha.provider == 'native' %}
 		<tr class='captcha'>
 			<th>
 				{% trans %}Verification{% endtrans %}
 			</th>
 			<td>
-				<script>load_captcha("{{ config.captcha.provider_get }}", "{{ config.captcha.extra }}");</script>
+				<script>load_captcha("{{ config.captcha.native.provider_get }}", "{{ config.native.captcha.extra }}");</script>
 				<noscript>
 					<input class='captcha_text' type='text' name='captcha_text' size='32' maxlength='6' autocomplete='off'>
 					<div class="captcha_html">
-						<img src="/{{ config.captcha.provider_get }}?mode=get&raw=1">
+						<img src="/{{ config.captcha.native.provider_get }}?mode=get&raw=1">
 					</div>
 				</noscript>
 			</td>
 		</tr>
-			{% elseif config.new_thread_capt %}
- 			{% if not id %} 
+		{% elseif config.captcha.native.new_thread_capt %}
+			{% if not id %}
  			<tr class='captcha'>
                         <th>
                                 {% trans %}Verification{% endtrans %}
                         </th>
                         <td>
-                                <script>load_captcha("{{ config.captcha.provider_get }}", "{{ config.captcha.extra }}");</script>
+                                <script>load_captcha("{{ config.captcha.native.provider_get }}", "{{ config.captcha.native.extra }}");</script>
 				<noscript>
 					<input class='captcha_text' type='text' name='captcha_text' size='32' maxlength='6' autocomplete='off'>
 					<div class="captcha_html">
-						<img src="/{{ config.captcha.provider_get }}?mode=get&raw=1">
+						<img src="/{{ config.captcha.native.provider_get }}?mode=get&raw=1">
 					</div>
 				</noscript>
                         </td>
@@ -165,18 +154,16 @@
 
 				{% if config.allow_upload_by_url %}
 					<div style="float:none;text-align:left" id="upload_url">
-						<label for="file_url">{% trans %}Or URL{% endtrans %}</label>: 
+						<label for="file_url">{% trans %}Or URL{% endtrans %}</label>:
 						<input style="display:inline" type="text" id="file_url" name="file_url" size="35">
 					</div>
 				{% endif %}
-				{{ antibot.html() }}
 			</td>
 		</tr>
 		{% if config.enable_embedding %}
 		<tr id="upload_embed">
 			<th>
 				{% trans %}Embed{% endtrans %}
-				{{ antibot.html() }}
 			</th>
 			<td>
 				<input type="text" name="embed" value="" size="30" maxlength="120" autocomplete="off">
@@ -207,27 +194,21 @@
 		{% if not config.field_disable_password or (mod and post.mod|hasPermission(config.mod.bypass_field_disable, board.uri)) %}<tr>
 			<th>
 				{% trans %}Password{% endtrans %}
-				{{ antibot.html() }}
 			</th>
 			<td>
-				<input type="text" name="password" value="" size="12" maxlength="18" autocomplete="off"> 
+				<input type="text" name="password" value="" size="12" maxlength="18" autocomplete="off">
 				<span class="unimportant">{% trans %}(For file deletion.){% endtrans %}</span>
-				{{ antibot.html() }}
 			</td>
 		</tr>{% endif %}
 		{% if config.simple_spam and not id %}<tr>
 			<th>
 				{{ config.simple_spam.question }}
-				{{ antibot.html() }}
 			</th>
 			<td>
-				<input type="text" name="simple_spam" value="" size="12" maxlength="18" autocomplete="off"> 
-				{{ antibot.html() }}
+				<input type="text" name="simple_spam" value="" size="12" maxlength="18" autocomplete="off">
 			</td>
 		</tr>{% endif %}
 	</table>
-{{ antibot.html(true) }}
-<input type="hidden" name="hash" value="{{ antibot.hash() }}">
 </form>
 
 <script type="text/javascript">{% verbatim %}
