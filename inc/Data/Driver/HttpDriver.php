@@ -8,7 +8,7 @@ defined('TINYBOARD') or exit;
  * Honestly this is just a wrapper for cURL. Still useful to mock it and have an OOP API on PHP 7.
  */
 class HttpDriver {
-	private mixed $inner;
+	private $inner;
 	private int $timeout;
 	private int $max_file_size;
 
