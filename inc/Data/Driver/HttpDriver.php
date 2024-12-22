@@ -98,7 +98,7 @@ class HttpDriver {
 	 * @return bool Returns true on success, false if the file was too large.
 	 * @throws RuntimeException Throws on IO error.
 	 */
-	public function requestGetInto(string $endpoint, ?array $data, mixed $fd, int $timeout = 0): bool {
+	public function requestGetInto(string $endpoint, ?array $data, $fd, int $timeout = 0): bool {
 		if (!empty($data)) {
 			$endpoint .= '?' . \http_build_query($data);
 		}
