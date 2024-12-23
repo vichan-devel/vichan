@@ -196,7 +196,7 @@ function modLog(string $action, ?string $_board = null): void {
 	}
 }
 
-function create_pm_header(): mixed {
+function create_pm_header() {
 	global $mod, $config;
 
 	if ($config['cache']['enabled'] && ($header = cache::get('pm_unread_' . $mod['id'])) != false) {
