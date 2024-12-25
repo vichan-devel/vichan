@@ -17,6 +17,7 @@ $(function(){
   var enabled_url = $("#upload_url").length > 0;
   var enabled_embed = $("#upload_embed").length > 0;
   var enabled_oekaki = typeof window.oekaki != "undefined";
+  var enabled_tegaki = $("#tegaki-form").length > 0;
 
   var disable_all = function() {
     $("#upload").hide();
@@ -26,6 +27,7 @@ $(function(){
     $("#upload_embed").hide();
     $(".add_image").hide();
     $(".dropzone-wrap").hide();
+    $("#tegaki-form").hide();
 
     $('[id^=upload_file]').each(function(i, v) {
         $(v).val('');
@@ -66,7 +68,12 @@ $(function(){
     window.oekaki.init();
   };
 
-  if (enabled_url || enabled_embed || enabled_oekaki) {
+  enable_tegaki = function() {
+    disable_all();
+    $("#tegaki-form").show();
+  }
+
+  if (enabled_url || enabled_embed || enabled_oekaki || enabled_tegaki) {
     $("<tr><th>"+_("Select")+"</th><td id='upload_selection'></td></tr>").insertBefore("#upload");
     var my_html = "<a href='javascript:void(0)' onclick='enable_file(); return false;'>"+_("File")+"</a>";
     if (enabled_url) {
@@ -79,6 +86,9 @@ $(function(){
       my_html += " / <a href='javascript:void(0)' onclick='enable_oekaki(); return false;'>"+_("Oekaki")+"</a>";
 
       $("#confirm_oekaki_label").hide();
+    }
+    if (enabled_tegaki) {
+      my_html += " / <a href='javascript:void(0)' onclick='enable_tegaki(); return false;'>"+_("Tegaki")+"</a>";
     }
     $("#upload_selection").html(my_html);
 
