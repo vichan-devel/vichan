@@ -252,6 +252,11 @@
 					$(this).remove();
 				}
 
+				// Remove tegaki if existent
+				if ($(this).is('#tegaki-form')) {
+					$(this).remove();
+				}
+
 				// Remove upload selection
 				if ($td.is('#upload_selection')) {
 					$(this).remove();
