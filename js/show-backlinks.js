@@ -25,7 +25,7 @@ onReady(function() {
 			}
 
 			let post = $('#reply_' + id);
-			if (post.length == 0){
+			if (post.length == 0) {
 				post = $('#op_' + id);
 				if (post.length == 0) {
 					return;
@@ -34,7 +34,8 @@ onReady(function() {
 
 			let mentioned = post.find('.head div.mentioned');
 			if (mentioned.length === 0) {
-				mentioned = $('<div class="mentioned unimportant"></div>').prependTo(post.find('.head'));
+				// The op has two "head"s divs, use the second.
+				mentioned = $('<div class="mentioned unimportant"></div>').prependTo(post.find('.head').last());
 			}
 
 			if (mentioned.find('a.mentioned-' + reply_id).length != 0) {
@@ -51,13 +52,13 @@ onReady(function() {
 		});
 	};
 
-	$('div.post.reply').each(showBackLinks);
+	$('div.post').each(showBackLinks);
 
 	$(document).on('new_post', function(e, post) {
-		if ($(post).hasClass('reply')) {
+		if ($(post).hasClass('reply') || $(post).hasClass('op')) {
 			showBackLinks.call(post);
 		} else {
-			$(post).find('div.post.reply').each(showBackLinks);
+			$(post).find('div.post').each(showBackLinks);
 		}
 	});
 });
