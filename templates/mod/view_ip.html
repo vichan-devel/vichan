@@ -43,7 +43,7 @@
 		{% endif %}
 
 		{% if mod|hasPermission(config.mod.create_notes) %}
-			<form action="" method="post" style="margin:0">
+			<form action="?/IP/{{ ip|url_encode(true) }}" method="post" style="margin:0">
 				<input type="hidden" name="token" value="{{ security_token }}">
 				<table>
 					<tr>
@@ -75,7 +75,7 @@
 		<legend>{{ bans_length }} {% trans %}ban on record{% plural notes_length %}bans on record{% endtrans %}</legend>
 
 		{% for ban in bans %}
-			<form action="" method="post" style="text-align:center">
+			<form action="?/IP/{{ ip|url_encode(true) }}" method="post" style="text-align:center">
 				<input type="hidden" name="token" value="{{ security_token }}">
 				{% include 'mod/ban_history.html' %}
 				<input type="hidden" name="ban_id" value="{{ ban.id }}">
