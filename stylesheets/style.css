@@ -235,11 +235,6 @@ input.delete {
   margin: 1px 6px 0 0;
 }
 
-.intro span.subject {
-  color: #0F0C5D;
-  font-weight: bold;
-}
-
 .intro span.name {
   color: #117743;
   font-weight: bold;
@@ -267,6 +262,10 @@ div.post {
   padding: 0.5em 0.3em;
   display: inline-block;
   max-width: 94%!important;
+}
+
+div.post span {
+  width: 8px;
 }
 
 div.post p {
