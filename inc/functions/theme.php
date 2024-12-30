@@ -31,10 +31,10 @@ function rebuild_themes(string $action, $boardname = false): void {
 		}
 
 		if (PHP_SAPI === 'cli') {
-			echo "Rebuilding theme ".$theme['theme']."... ";
+			echo "Rebuilding theme ".$theme[0]."... ";
 		}
 
-		rebuild_theme($theme['theme'], $action, $boardname);
+		rebuild_theme($theme[0], $action, $boardname);
 
 		if (PHP_SAPI === 'cli') {
 			echo "done\n";
