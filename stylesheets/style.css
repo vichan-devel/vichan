@@ -351,6 +351,10 @@ div.post.reply {
   }
 }
 
+div.post.reply div.body {
+  margin-left: 1.8em;
+}
+
 span.trip {
   color: #228854;
 }
@@ -1138,11 +1142,6 @@ div.video-container {
     margin: 0px;
     box-sizing: border-box;
     margin: 0px;
-  }
-  div.post.reply div.body {
-    margin-inline-start: 10px;
-    margin-inline-end: 0px;
-    margin-left: initial !important;
   }
   .post-btn {
     margin: 0 2px 0 2px;
