@@ -246,6 +246,8 @@ input.delete {
 }
 
 .intro span.subject {
+  margin-right: 0.3em;
+
   color: #0F0C5D;
   font-weight: bold;
 }
