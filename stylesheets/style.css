@@ -286,7 +286,7 @@ div.post {
   overflow-wrap: break-word;
 
   @media (max-width: 48em) {
-    padding: 0px;
+    box-sizing: border-box;
     margin: 0px;
 
     width: 100%;
@@ -1130,7 +1130,9 @@ div.video-container {
   }
   div.post.reply {
     padding: 0.5em 0px 0.5em 0.5em;
+    margin: 0px;
     box-sizing: border-box;
+    margin: 0px;
   }
   .post-btn {
     margin: 0 2px 0 2px;
