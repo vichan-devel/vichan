@@ -294,10 +294,6 @@ div.post {
   }
 }
 
-div.post span {
-  width: 8px;
-}
-
 div.post > div.head {
   margin: 0.1em 1em;
   clear: both;
