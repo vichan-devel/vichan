@@ -1212,8 +1212,8 @@ div.video-container {
   }
 }
 
-p.fileinfo .unimportant {
-  @media (max-width: 48em) {
+@media (max-width: 48em) {
+  p.fileinfo .unimportant {
     display: none;
   }
 }
