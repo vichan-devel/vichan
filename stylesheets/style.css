@@ -1162,8 +1162,8 @@ div.video-container {
     margin: 0 2px 0 2px;
   }
   .post-image{
-    max-width: 100px;
-    max-height: 100px;
+    max-width: 150px;
+    max-height: 150px;
     object-fit: cover;
     border-radius: 4px;
     margin-left: 15px !important;
