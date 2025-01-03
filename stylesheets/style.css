@@ -1161,7 +1161,6 @@ div.video-container {
     max-height: 150px;
     object-fit: cover;
     border-radius: 4px;
-    margin-left: 15px !important;
   }
   div.post:not(.op) div.body{
     clear:none;
