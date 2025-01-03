@@ -252,6 +252,11 @@ input.delete {
   scale: 1.05;
 }
 
+.intro span.subject {
+  color: #0F0C5D;
+  font-weight: bold;
+}
+
 .intro span.name {
   color: #117743;
   font-weight: bold;
