@@ -331,10 +331,6 @@ div.post.reply div.body a {
   color: #D00;
 }
 
-div.post {
-  padding-left: 20px;
-}
-
 div.post div.body {
   word-wrap: break-word;
   white-space: pre-wrap;
@@ -1133,11 +1129,13 @@ div.video-container {
   hr {
     margin: 1em 0;
   }
-  div.post.reply {
+  div.post {
     width: 100%;
-    padding: 0.5em 0px 0.5em 0.5em;
-    margin: 0;
     max-width: 100% !important;
+  }
+  div.post.reply {
+    padding: 0.5em 0px 0.5em 0.5em;
+    margin: 0px;
     box-sizing: border-box;
     margin: 0px;
   }
