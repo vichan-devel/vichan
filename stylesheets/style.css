@@ -330,10 +330,6 @@ div.post.reply div.body a {
   color: #D00;
 }
 
-div.post {
-  padding-left: 20px;
-}
-
 div.post div.body {
   word-wrap: break-word;
   white-space: pre-wrap;
