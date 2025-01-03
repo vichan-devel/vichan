@@ -16,9 +16,9 @@
 	<a class="post_no" id="post_no_{{ post.id }}" title="Link to this post"  onclick="highlightReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('', config.file_page50) }}{% else %}{{ post.link }}{% endif %}">No.</a>
 	<a class="post_no" title="Reply to this post" onclick="citeReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('q', config.file_page50) }}{% else %}{{ post.link('q') }}{% endif %}">{{ post.id }}</a>
 	</p>
-	{% include 'post/fileinfo.html' %}
+	{% endapply %}
 	{% include 'post/post_controls.html' %}
-	{% apply spaceless %}
+	{% include 'post/fileinfo.html' %}
 	<div class="body" {% if post.files|length > 1 %}style="clear:both"{% endif %}>
 		{% endapply %}{% if index %}{{ post.body|truncate_body(post.link) }}{% else %}{{ post.body }}{% endif %}{% apply spaceless %}
 		{% if post.modifiers['ban message'] %}
