@@ -235,10 +235,15 @@ div.post.op hr {
 
 .post-details {
   text-wrap: nowrap;
+  margin-left: 0.7em;
 
   @media (max-width: 48em) {
     float: right;
   }
+}
+
+.post-details time {
+  margin-right: 0.3em;
 }
 
 input.delete {
