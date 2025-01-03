@@ -1138,10 +1138,6 @@ div.video-container {
 
 @media only screen and (max-width: 48em) {
   /* wired-7 style_m.css plus edit by perdedora */
-  body {
-    padding:0;
-    margin: 30px 12px 0;
-  }
   hr {
     margin: 1em 0;
   }
