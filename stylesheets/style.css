@@ -1198,23 +1198,11 @@ div.video-container {
     width: initial !important;
     min-width: 100px;
   }
-  .fileinfo-desktop {
-    display: none !important;
-  }
-  p.fileinfo {
-    display: flex !important;
-  }
 
   .full-image {
     max-width: 100%;
   }
-  .fileinfo-mobile {
-    display: block;
-    text-decoration: none !important;
-    font-size: 10.5pt;
-    display: block !important;
-    clear: left !important;
-  }
+
   .image-idn {
     display: none;
   }
@@ -1249,11 +1237,14 @@ div.video-container {
     margin: 0 4px !important;
   }
 }
-.fileinfo-mobile {
-  display: none;
+
+@media (max-width: 48em) {
+  p.fileinfo .unimportant {
+    display: none;
+  }
 }
 
-.fileinfo-desktop {
+p.fileinfo {
   word-break: break-all;
 }
 
