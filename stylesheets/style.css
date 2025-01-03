@@ -110,7 +110,8 @@ input[type="text"],input[type="password"],textarea {
 }
 
 textarea {
-  width: 100%;
+  box-sizing: border-box;
+  width:  100%;
 }
 
 form table tr td {
