@@ -1171,8 +1171,7 @@ div.video-container {
   }
 
   div.post .files {
-    display: inline-flex !important;
-    float:left;
+    float: left;
     flex-flow: row wrap;
     align-content: space-between;
     margin-right: 10px;
