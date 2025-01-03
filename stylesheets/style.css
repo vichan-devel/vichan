@@ -341,12 +341,6 @@ div.post div.body {
 
 div.post.op {
   padding-top: 0px;
-
-  /* Add back in the padding that is provided by body on large screens */
-  @media (max-width: 48em) {
-    padding-left: 4px;
-    padding-right: 4px;
-  }
 }
 
 div.post.reply {
@@ -1143,7 +1137,7 @@ div.video-container {
   }
   div.post.reply{
     width: 100%;
-    padding: 0.5em 0em 0.5em 0.5em;
+    padding: 0.5em 0px 0.5em 0.5em;
     margin: 0;
     max-width: 100% !important;
     box-sizing: border-box;
