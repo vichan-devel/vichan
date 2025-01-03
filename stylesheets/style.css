@@ -1005,7 +1005,7 @@ span.pln {
   color: grey;
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 48em) {
   .intro {
     clear: none;
   }
@@ -1136,7 +1136,7 @@ div.video-container {
   margin-left: 50px;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 48em) {
   /* wired-7 style_m.css plus edit by perdedora */
   body {
     padding:0;
