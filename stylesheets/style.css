@@ -287,7 +287,7 @@ div.post {
   overflow-wrap: break-word;
 
   @media (max-width: 48em) {
-    padding: 0px;
+    box-sizing: border-box;
     margin: 0px;
 
     width: 100%;
@@ -1135,10 +1135,6 @@ div.video-container {
   /* wired-7 style_m.css plus edit by perdedora */
   hr {
     margin: 1em 0;
-  }
-  div.post.reply {
-    padding: 0.5em 0px 0.5em 0.5em;
-    box-sizing: border-box;
   }
   .post-btn {
     margin: 0 2px 0 2px;
