@@ -307,9 +307,9 @@
 		// To enable the native captcha you need to change a couple of settings. Read more at: /inc/captcha/readme.md
 		'native' => [
 			// Custom captcha get provider path (if not working get the absolute path aka your url).
-			'provider_get' => '../inc/captcha/entrypoint.php',
+			'provider_get' => '/inc/captcha/entrypoint.php',
 			// Custom captcha check provider path
-			'provider_check' => '../inc/captcha/entrypoint.php',
+			'provider_check' => '/inc/captcha/entrypoint.php',
 			// Custom captcha extra field (eg. charset)
 			'extra' => 'abcdefghijklmnopqrstuvwxyz',
 			// New thread captcha. Require solving a captcha to post a thread.
