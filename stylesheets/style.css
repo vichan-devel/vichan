@@ -283,14 +283,12 @@ div.post {
   margin: 0.2em 4px;
   padding: 0.5em 0.3em;
   display: inline-block;
-  max-width: 94%!important;
+  max-width: 94%;
   overflow-wrap: break-word;
 
   @media (max-width: 48em) {
-    margin: 0.1em 0px;
-    padding: 0.5em 0px;
     width: 100%;
-    max-width: unset!important;
+    max-width: 100%;
   }
 }
 
@@ -350,7 +348,7 @@ div.post.reply {
   }
 }
 
-div.post.reply div.body {
+div.post div.body {
   margin-left: 1.8em;
 }
 
@@ -1134,10 +1132,6 @@ div.video-container {
   /* wired-7 style_m.css plus edit by perdedora */
   hr {
     margin: 1em 0;
-  }
-  div.post {
-    width: 100%;
-    max-width: 100% !important;
   }
   div.post.reply {
     padding: 0.5em 0px 0.5em 0.5em;
