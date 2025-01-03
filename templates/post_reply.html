@@ -9,9 +9,8 @@
 			{% include 'post/name.html' %}
 			{% include 'post/ip.html' %}
 			{% include 'post/flag.html' %}
+			{% include 'post/poster_id.html' %}
 		</label>
-		{% apply spaceless %}
-		{% include 'post/poster_id.html' %}
 		<label class="post-details">
 			{% include 'post/time.html' %}
 			<a class="post_no" id="post_no_{{ post.id }}" title="Link to this post" onclick="highlightReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('', config.file_page50) }}{% else %}{{ post.link }}{% endif %}">No.</a>
@@ -20,7 +19,6 @@
 		<label class="user-controls">{# Used by some js #}</label>
 	</p>
 	<div class="head">
-		{% endapply %}
 		{% include 'post/post_controls.html' %}
 		{% include 'post/fileinfo.html' %}
 	</div>

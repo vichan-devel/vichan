@@ -4,7 +4,6 @@
 <div class="thread" id="thread_{{ post.id }}" data-board="{{ board.uri }}">
 {% if not index %}<a id="{{ post.id }}" class="post_anchor"></a>{% endif %}
 
-{% endapply %}
 <div class="post op" id="op_{{ post.id }}" {%if post.num_files > 1%}style='clear:both'{%endif%}>
 	<p class="intro">
 		<label for="delete_{{ post.id }}">
@@ -13,9 +12,8 @@
 			{% include 'post/name.html' %}
 			{% include 'post/ip.html' %}
 			{% include 'post/flag.html' %}
+			{% include 'post/poster_id.html' %}
 		</label>
-		{% apply spaceless %}
-		{% include 'post/poster_id.html' %}&nbsp;
 		<label class="post-details">
 			{% include 'post/time.html' %}
 			<a class="post_no" id="post_no_{{ post.id }}" title="Link to this post" onclick="highlightReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('', '50') }}{% else %}{{ post.link }}{% endif %}">No.</a>
@@ -93,10 +91,11 @@
 	{% endif %}
 {% if not index %}
 {% endif %}
-</div><br>{% endapply %}
+</div><br>
 {% set hr = post.hr %}
 {% for post in post.posts %}
 	{% include 'post_reply.html' %}
 {% endfor %}
 <br class="clear"/>{% if hr %}<hr/>{% endif %}
 </div>
+{% endapply %}
