@@ -38,7 +38,7 @@ onReady(function() {
 				mentioned = $('<div class="mentioned unimportant"></div>').prependTo(post.find('.head').last());
 			}
 
-			if (mentioned.find('a.mentioned-' + reply_id).length != 0) {
+			if (mentioned.find('a.mentioned-' + replyId).length != 0) {
 				return;
 			}
 
