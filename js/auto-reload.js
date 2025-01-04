@@ -47,10 +47,7 @@ $(document).ready(function(){
 	var poll_interval_delay = poll_interval_mindelay;
 	var poll_current_time = poll_interval_delay;
 
-	var end_of_page = false;
-
 	var new_posts = 0;
-	var first_new_post = null;
 
 	var title = document.title;
 
@@ -112,7 +109,6 @@ $(document).ready(function(){
 			new_posts = 0;
 		}
 		update_title();
-		first_new_post = null;
 	};
 
 	// automatically updates the thread after a specified delay
@@ -154,9 +150,6 @@ $(document).ready(function(){
 				$(data).find('div.post.reply').each(function() {
 					var id = $(this).attr('id');
 					if($('#' + id).length == 0) {
-						if (!new_posts) {
-							first_new_post = this;
-						}
 						new_posts++;
 						loaded_posts++;
 						elementsToAppend.push($(this));
@@ -230,13 +223,11 @@ $(document).ready(function(){
 		// If the newest post is not visible.
 		if($(this).scrollTop() + $(this).height() <
 			$('div.post:last').position().top + $('div.post:last').height()) {
-			end_of_page = false;
 			return;
 		} else {
 			if($("#auto_update_status").is(':checked') && timeDiff(poll_interval_mindelay)) {
 				poll(manualUpdate = true);
 			}
-			end_of_page = true;
 		}
 	});
 
