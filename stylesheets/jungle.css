@@ -27,7 +27,7 @@ desktop-style .bl-menu{
 	background-image: url('img/jungle_bg1.png'), url('img/jungle_bg.png');
 	background-repeat: repeat-x, repeat;
 	background-attachment: 	 scroll, scroll;
-} 
+}
 
 .boardlist .board a {
 background: #65AB6B;
@@ -49,6 +49,10 @@ border-radius: 5px;
 -moz-box-shadow: 0px 2px 3px rgba(0,0,0,0.35);
 -o-box-shadow: 0px 2px 3px rgba(0,0,0,0.35);
 box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.35);
+
+	@media (max-width: 48em) {
+		border-right-style: none;
+	}
 }
 div.post.reply.highlighted {
 	background-image: url('img/jungle_td2.png');
@@ -62,6 +66,10 @@ border-radius: 5px;
 -moz-box-shadow: 0px 2px 3px rgba(0,0,0,0.35);
 -o-box-shadow: 0px 2px 3px rgba(0,0,0,0.35);
 box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.35);
+
+	@media (max-width: 48em) {
+		border-right-style: none;
+	}
 }
 div.post.reply div.body a {
 	color: #00E;
@@ -88,7 +96,7 @@ div.pages {
 	padding: 7px 5px;
 	color: #054500;
 	font-size: 12pt;
-	
+
 	background-image: url('img/jungle_td.png');
 	border-width: 1px;
 	border-style: inset;

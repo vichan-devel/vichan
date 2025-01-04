@@ -6,6 +6,11 @@ body {
   margin: 0 4px;
   padding-left: 4px;
   padding-right: 4px;
+
+  @media (max-width: 48em) {
+    margin: 0px;
+    padding: 0px;
+  }
 }
 
 .hidden {
@@ -105,7 +110,8 @@ input[type="text"],input[type="password"],textarea {
 }
 
 textarea {
-  width: 100%;
+  box-sizing: border-box;
+  width:  100%;
 }
 
 form table tr td {
@@ -148,7 +154,6 @@ form table tr td div label {
 
 .file {
   float: left;
-  margin-right: 2px;
 }
 
 .file:not(.multifile) .post-image {
@@ -161,11 +166,7 @@ form table tr td div label {
 
 p.fileinfo {
   display: block;
-  margin: 0 0 0 20px;
-}
-
-div.post p.fileinfo {
-  padding-left: 5px;
+  margin: 0.2em 0px;
 }
 
 div.banner {
@@ -203,7 +204,7 @@ img.banner,img.board_image {
 }
 
 div.post .post-image {
-  padding: 5px;
+  padding: 0.2em;
   margin: 0 20px 0 0;
 }
 
@@ -218,27 +219,42 @@ div.post i.fa {
   font-size: 16px;
 }
 
-div.post.op {
-  margin-right: 20px;
-  margin-bottom: 5px;
-}
-
 div.post.op hr {
   border-color: #D9BFB7;
 }
 
 .intro {
-  margin: 0.5em 0;
-  padding: 0;
-  padding-bottom: 0.2em;
+  padding: 0px;
+  line-height: 1.3em;
+}
+
+.intro span {
+  min-width: 0.3em;
+  display: inline-block;
+}
+
+.post-details {
+  text-wrap: nowrap;
+  margin-left: 0.7em;
+
+  @media (max-width: 48em) {
+    float: right;
+  }
+}
+
+.post-details time {
+  margin-right: 0.3em;
 }
 
 input.delete {
   float: left;
-  margin: 1px 6px 0 0;
+  margin: 1px 6px 0px 0px;
+  scale: 1.05;
 }
 
 .intro span.subject {
+  margin-right: 0.3em;
+
   color: #0F0C5D;
   font-weight: bold;
 }
@@ -248,9 +264,24 @@ input.delete {
   font-weight: bold;
 }
 
-.intro span.capcode,p.intro a.capcode,p.intro a.nametag {
+.post-details span.capcode,p.intro a.capcode,p.intro a.nametag {
   color: #F00000;
   margin-left: 0;
+}
+
+@media (max-width: 48em) {
+  .user-controls {
+    clear: both;
+    float: right;
+  }
+}
+
+.user-controls > a {
+  margin-left: 1ch;
+}
+
+.post-details a {
+  margin-left: 5px;
 }
 
 .intro a {
@@ -261,12 +292,49 @@ div.delete {
   float: right;
 }
 
-div.post.reply p {
-  margin: 0.3em 0 0 0;
+.required-star {
+  color: maroon;
 }
 
-div.post.reply div.body {
-  margin-left: 1.8em;
+div.post {
+  margin: 0.2em 4px;
+  padding: 0.5em 0.3em;
+  display: inline-block;
+  max-width: 94%;
+  overflow-wrap: break-word;
+
+  @media (max-width: 48em) {
+    box-sizing: border-box;
+    margin: 0px;
+
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+div.post > div.head {
+  margin: 0.1em 1em;
+  clear: both;
+  line-height: 1.3em;
+}
+
+div.post > p {
+  margin: 0.1em 0.4em;
+
+  font-size: 13px;
+  min-height: 1.16em;
+
+  @media (max-width: 48em) {
+    margin-right: 1.4em;
+  }
+}
+
+div.post.op > p {
+  clear: both;
+  padding-top: 1em;
+}
+
+div.post div.body {
   margin-top: 0.8em;
   padding-right: 3em;
   padding-bottom: 0.3em;
@@ -280,24 +348,28 @@ div.post.reply div.body a {
   color: #D00;
 }
 
-div.post {
-  padding-left: 20px;
-}
-
 div.post div.body {
   word-wrap: break-word;
   white-space: pre-wrap;
 }
 
+div.post.op {
+  padding-top: 0px;
+}
+
 div.post.reply {
   background: #D6DAF0;
-  margin: 0.2em 4px;
-  padding: 0.2em 0.3em 0.5em 0.6em;
   border-width: 1px;
   border-style: none solid solid none;
   border-color: #B7C5D9;
-  display: inline-block;
-  max-width: 94%!important;
+
+  @media (max-width: 48em) {
+    border-right-style: none;
+  }
+}
+
+div.post div.body {
+  margin-left: 1.8em;
 }
 
 span.trip {
@@ -319,19 +391,14 @@ br.clear {
 }
 
 span.controls {
-  float: right;
   margin: 0;
   padding: 0;
-  font-size: 80%;
-}
-
-span.controls.op {
-  float: none;
-  margin-left: 10px;
 }
 
 span.controls a {
   margin: 0;
+  text-wrap: nowrap;
+  display: inline-block;
 }
 
 div#wrap {
@@ -950,7 +1017,7 @@ span.pln {
   color: grey;
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 48em) {
   .intro {
     clear: none;
   }
@@ -1068,6 +1135,116 @@ div.boardlist a {
 
 #youtube-size input {
   width: 50px;
+}
+
+div.video-container {
+  display: block;
+  min-width: unset !important;
+  align-items: center;
+  max-width: 15%;
+}
+
+.yt-help {
+  margin-left: 50px;
+}
+
+@media only screen and (max-width: 48em) {
+  /* wired-7 style_m.css plus edit by perdedora */
+  hr {
+    margin: 1em 0;
+  }
+  .post-btn {
+    margin: 0 2px 0 2px;
+  }
+  .post-image{
+    max-width: 150px;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  div.post:not(.op) div.body{
+    clear:none;
+  }
+  div.post.reply div.files div.file a img.post-image {
+    margin-left: unset !important;
+  }
+
+  div.post .files {
+    float: left;
+    flex-flow: row wrap;
+    align-content: space-between;
+    margin-right: 10px;
+    margin-top: 2px;
+  }
+
+  div.thread.files {
+    display: flex;
+    flex-flow: row wrap;
+    float: left;
+  }
+  div.file.multifile {
+    min-width: unset !important;
+    width: unset !important;
+  }
+
+  div.post .file {
+    width: initial !important;
+    min-width: 100px;
+  }
+
+  .full-image {
+    max-width: 100%;
+  }
+
+  .image-idn {
+    display: none;
+  }
+  .file-url {
+    display: none;
+  }
+  div.video-container {
+    max-width: unset !important;
+  }
+  .yt-help {
+    margin-left: unset !important;
+  }
+  .intro time,
+  .name,
+  .own_post,
+  .poster_id,
+  i fa,
+  .post_no,
+  .capcode {
+    font-size: 1em;
+  }
+  .intro a:not(#reply-button) {
+    margin-left: unset !important;
+  }
+  .post-btn,
+  .hide-thread-link {
+    margin-right: 2px !important;
+  }
+  .show-image-link,
+  .hide-image-link {
+    font-size: 16px;
+    margin: 0 4px !important;
+  }
+}
+
+p.fileinfo .unimportant {
+  margin-left: 0.3em;
+
+  @media (max-width: 48em) {
+    display: none;
+  }
+}
+
+p.fileinfo {
+  word-break: break-all;
+}
+
+.file-url {
+  display: none;
 }
 
 /* File selector */

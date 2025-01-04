@@ -37,6 +37,11 @@ a.post_no:hover {
 div.post.reply {
 	background: #0E0E0E;
 	border: #414141 2px solid !important;
+
+	@media (max-width: 48em) {
+		border-left-style: none;
+		border-right-style: none;
+	}
 }
 .de-pview {
 		background: rgba(14, 14, 14, 0.84) !important;
@@ -44,6 +49,11 @@ div.post.reply {
 div.post.reply.highlighted {
 	background: transparent;
 	border: #414141 2px solid;
+
+	@media (max-width: 48em) {
+		border-left-style: none;
+		border-right-style: none;
+	}
 }
 div.post.reply div.body a:link, div.post.reply div.body a:visited {
 	color: #646464;

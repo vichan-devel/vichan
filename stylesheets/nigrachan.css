@@ -73,6 +73,10 @@ div.post.reply.post-hover {
 	border-width: 1px;
 	border-style: none solid solid none;
 	border-color: #101010;
+
+	@media (max-width: 48em) {
+		border-right-style: none;
+	}
 }
 
 div.post.reply div.body a {

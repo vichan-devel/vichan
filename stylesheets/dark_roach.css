@@ -220,6 +220,10 @@ div.post.reply {
 	border-style: none solid solid none;
 	border-color: #333333;
 	display: inline-block;
+
+	@media (max-width: 48em) {
+		border-right-style: none;
+	}
 }
 span.trip {
 	color: #CC0000;
@@ -465,7 +469,7 @@ background: #333333;
 border: 1px solid #666666;
 color: #999999;
 }
-input[type="submit"]:hover 
+input[type="submit"]:hover
 {
 	color: #9999CC;
 }
