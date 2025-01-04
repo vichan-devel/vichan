@@ -7,7 +7,7 @@
 	{% if file.file == 'deleted' %}
 		<img class="post-image deleted" src="{{ config.root }}{{ config.image_deleted }}" alt="" />
 	{% else %}
-		<p class="fileinfo">File: <a href="{{ config.uri_img }}{{ file.file }}">{{ file.file }}</a> <span class="unimportant">
+		<p class="fileinfo"><span>File: <a href="{{ config.uri_img }}{{ file.file }}">{{ file.file }}</a></span><span class="unimportant">
 		(
 			{% if file.thumb == 'spoiler' %}
 				{% trans %}Spoiler Image{% endtrans %},
