@@ -22,8 +22,6 @@
 			<a class="post_no" id="post_no_{{ post.id }}" title="Link to this post" onclick="highlightReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('', '50') }}{% else %}{{ post.link }}{% endif %}">No.</a>
 			<a class="post_no" title="Reply to this post" onclick="citeReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('q', '50') }}{% else %}{{ post.link('q') }}{% endif %}">{{ post.id }}</a>
 		</label>
-	</p>
-	<div class="head">
 		{% if post.sticky %}
 			{% if config.font_awesome %}
 				<i class="fa fa-thumb-tack" title="Sticky"></i>
@@ -52,16 +50,20 @@
 				<img class="icon" title="Cyclical" src="{{ config.image_cyclical }}" alt="Cyclical" />
 			{% endif %}
 		{% endif %}
-		{% if index %}
-			<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post) }}">[{% trans %}Reply{% endtrans %}]</a>
-		{% endif %}
-		{% if isnoko50 %}
-			<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post) }}">[{% trans %}View All{% endtrans %}]</a>
-		{% endif %}
-		{% if hasnoko50 and not isnoko50 %}
-			{% set lastcount = config.noko50_count %}
-			<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post, true) }}">[{% trans %}Last 1 Post{% plural lastcount %}Last {{ count }} Posts{% endtrans %}]</a>
-		{% endif %}
+		<label class="user-controls">
+			{% if index %}
+				<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post) }}">[{% trans %}Reply{% endtrans %}]</a>
+			{% endif %}
+			{% if isnoko50 %}
+				<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post) }}">[{% trans %}View All{% endtrans %}]</a>
+			{% endif %}
+			{% if hasnoko50 and not isnoko50 %}
+				{% set lastcount = config.noko50_count %}
+				<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post, true) }}">[{% trans %}Last 1 Post{% plural lastcount %}Last {{ count }} Posts{% endtrans %}]</a>
+			{% endif %}
+		</label>
+	</p>
+	<div class="head">
 		{% include 'post/post_controls.html' %}
 	</div>
 	<div class="body">
@@ -88,7 +90,7 @@
 				{% plural post.omitted_images %}
 					{{ count }} image replies
 				{% endtrans %}
-			{% endif %} {% trans %}omitted. Click reply to view.{% endtrans %}
+			{% endif %} {% trans %}omitted.{% endtrans %}
 		</span>
 	{% endif %}
 {% if not index %}
