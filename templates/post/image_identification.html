@@ -1,13 +1,13 @@
 {% if file.thumb != 'file' and config.image_identification %}
 	<span class='image_id'>
 		{% if config.image_identification_imgops %}
-			<a href="http://imgops.com/{{ config.domain }}{{ config.uri_img }}{{ file.file }}" target="_blank">ImgOps</a> 
+			<a href="http://imgops.com/{{ config.domain }}{{ config.uri_img }}{{ file.file }}" target="_blank">ImgOps</a>
 		{% endif %}
 		{% if config.image_identification_exif and file.file|extension == 'jpg' %}
-			<a href="http://exif.int21h.win/?url={{ config.domain }}{{ config.uri_img }}{{ file.file }}" target="_blank">Exif</a> 
+			<a href="http://exif.int21h.win/?url={{ config.domain }}{{ config.uri_img }}{{ file.file }}" target="_blank">Exif</a>
 		{% endif %}
 		{% if config.image_identification_google %}
-			<a href="https://www.google.com/searchbyimage?image_url={{ config.domain|url_encode }}{{ config.uri_img|url_encode }}{{ file.file|url_encode }}" target="_blank">Google</a> 
+			<a href="https://www.google.com/searchbyimage?image_url={{ config.domain|url_encode }}{{ config.uri_img|url_encode }}{{ file.file|url_encode }}" target="_blank">Google</a>
 		{% endif %}
 		{% if config.image_identification_iqdb %}
 			<a href="http://iqdb.org/?url={{ config.domain }}{{ config.uri_img }}{{ file.file }}" target="_blank">iqdb</a>
