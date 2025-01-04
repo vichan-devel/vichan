@@ -254,9 +254,11 @@ input.delete {
   scale: 1.05;
 }
 
-.intro span.subject {
+.intro * *, .poster_id {
   margin-right: 0.3em;
+}
 
+.intro span.subject {
   color: #0F0C5D;
   font-weight: bold;
 }
