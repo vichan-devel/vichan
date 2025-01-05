@@ -344,6 +344,8 @@ div.post div.body {
   margin-top: 0.8em;
   padding-right: 3em;
   padding-bottom: 0.3em;
+
+  word-wrap: break-word;
 }
 
 div.post.reply.highlighted {
@@ -352,11 +354,6 @@ div.post.reply.highlighted {
 
 div.post.reply div.body a {
   color: #D00;
-}
-
-div.post div.body {
-  word-wrap: break-word;
-  white-space: pre-wrap;
 }
 
 div.post.op {
