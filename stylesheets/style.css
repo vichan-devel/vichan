@@ -161,6 +161,12 @@ form table tr td div label {
   display: block;
 }
 
+@media (max-width: 48em) {
+  .files span {
+    display: block;
+  }
+}
+
 .file {
   float: left;
 }
