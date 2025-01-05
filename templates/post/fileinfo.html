@@ -1,9 +1,9 @@
 	{% if post.embed %}
 		{{ post.embed }}
-    {% else %}
-    <div class="files">
-    {% for file in post.files %}
-        <div class="file{% if post.num_files > 1 %} multifile" style="width:{{ file.thumbwidth + 40 }}px"{% else %}"{% endif %}>
+	{% else %}
+	<div class="files">
+	{% for file in post.files %}
+		<div class="file{% if post.num_files > 1 %} multifile" style="width:{{ file.thumbwidth + 40 }}px"{% else %}"{% endif %}>
 	{% if file.file == 'deleted' %}
 		<img class="post-image deleted" src="{{ config.root }}{{ config.image_deleted }}" alt="" />
 	{% else %}

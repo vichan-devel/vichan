@@ -1,7 +1,13 @@
+/* Depends on post-menu.js
+ * Usage:
+ * $config['additional_javascript'][] = 'js/jquery.min.js';
+ * $config['additional_javascript'][] = 'js/post-menu.js';
+ * $config['additional_javascript'][] = 'js/post-filter.js';
+ */
 if (active_page === 'thread' || active_page === 'index' || active_page === 'catalog' || active_page === 'ukko') {
 	$(document).on('menu_ready', function () {
 		'use strict';
-		
+
 		// returns blacklist object from storage
 		function getList() {
 			return JSON.parse(localStorage.postFilter);
@@ -64,12 +70,12 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 		}
 
 		function nameSpanToString(el) {
-			var s = ''; 
+			var s = '';
 
 			$.each($(el).contents(), function(k,v) {
 				if (v.nodeName === 'IMG')
 					s=s+$(v).attr('alt')
-				
+
 				if (v.nodeName === '#text')
 					s=s+v.nodeValue
 			});
@@ -165,7 +171,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 			}
 		};
 
-		/* 
+		/*
 		 *  hide/show the specified thread/post
 		 */
 		function hide(ele) {
@@ -198,7 +204,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 			}
 		}
 
-		/* 
+		/*
 		 *  create filter menu when the button is clicked
 		 */
 		function initPostMenu(pageData) {
@@ -338,7 +344,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 			});
 		}
 
-		/* 
+		/*
 		 *  hide/unhide thread on index view
 		 */
 		function quickToggle(ele, threadId, pageData) {
@@ -352,7 +358,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 						var postId = $(ele).find('.post_no').not('[id]').text();
 						var hidden = $(ele).data('hidden');
 						var boardId = $(ele).parents('.thread').data('board');
-					
+
 						if (hidden) {
 							blacklist.remove.post(boardId, threadId, postId, false);
 							$(this).html('[&ndash;]');
@@ -744,7 +750,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 			}
 		}
 
-		/* 
+		/*
 		 *  clear out pruned threads
 		 */
 		function purge() {
@@ -780,7 +786,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 
 			if ((timestamp() - list.lastPurge) < 86400)  // less than 1 day
 				return;
-			
+
 			for (boardId in list.nextPurge) {
 				board = list.nextPurge[boardId];
 				for (threadId in board) {
@@ -864,7 +870,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 		}
 		init();
 	});
-	
+
 	if (typeof window.Menu !== "undefined") {
 		$(document).trigger('menu_ready');
 	}

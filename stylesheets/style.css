@@ -929,9 +929,11 @@ pre {
   display: inline-block;
   user-select: none;
 }
+
 .poster_id:hover {
   color: #800000!important;
 }
+
 .poster_id::before {
   content: " ID: ";
 }
