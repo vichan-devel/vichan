@@ -1207,8 +1207,6 @@ div.video-container {
 }
 
 p.fileinfo .unimportant {
-  margin-left: 0.3em;
-
   @media (max-width: 48em) {
     display: none;
   }
