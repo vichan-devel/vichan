@@ -899,18 +899,32 @@ pre {
   margin-top: 20px;
   background: inherit;
   visibility: visible;
+
+  @media (max-width: 48em) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+  }
 }
 
 #options_div {
-  width: 620px;
-  height: 400px;
   resize: both;
   overflow: auto;
   border: 1px solid;
+
+  @media (min-width: 48em) {
+    width: 620px;
+    height: 400px;
+  }
 }
 
 #alert_div {
-  width: 500px;
+  max-width: 620px;
+
+  @media (min-width: 48em) {
+    width: 500px;
+  }
 }
 
 #alert_message {
@@ -978,14 +992,6 @@ pre {
 .options_tab h2 {
   text-align: center;
   margin-bottom: 5px;
-}
-
-.mobile-style #options_div, .mobile-style #alert_div {
-  display: block;
-  width: 100%;
-  height: 100%;
-  max-width: 620px;
-  margin: auto;
 }
 
 .mentioned {
