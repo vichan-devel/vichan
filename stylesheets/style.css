@@ -319,7 +319,7 @@ div.post {
 }
 
 div.post div.head {
-  margin: 0.1em 1em;
+  margin: 0.1em 1em 0.1em 1.4em;
   clear: both;
   line-height: 1.3em;
 }
