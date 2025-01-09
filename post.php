@@ -632,22 +632,22 @@ if (isset($_POST['delete'])) {
 			$dynamic = $config['captcha']['dynamic'];
 
 			// With our custom captcha provider
-			if (($provider === 'native' && !$new_thread_capt)
-				|| ($provider === 'native' && $new_thread_capt && $post['op'])) {
-				$query = $context->get(SecureImageCaptchaQuery::class);
-				$success = $query->verify($_POST['captcha_text'], $_POST['captcha_cookie']);
+			if ($provider === 'native') {
+				if ((!$new_thread_capt && !$post['op']) || ($new_thread_capt && $post['op'])) {
+					$query = $context->get(SecureImageCaptchaQuery::class);
+					$success = $query->verify($_POST['captcha_text'], $_POST['captcha_cookie']);
 
-				if (!$success) {
-					error(
-						"{$config['error']['captcha']}
-						<script>
-							if (actually_load_captcha !== undefined)
-								actually_load_captcha(
-									\"{$config['captcha']['provider_get']}\",
-									\"{$config['captcha']['extra']}\"
-								);
-						</script>"
-					);
+					if (!$success) {
+						error(
+							"{$config['error']['captcha']}
+							<script>
+								if (actually_load_captcha !== undefined)
+									actually_load_captcha(
+										\"{$config['captcha']['provider_get']}\"
+									);
+							</script>"
+						);
+					}
 				}
 			}
 			// Remote 3rd party captchas.
