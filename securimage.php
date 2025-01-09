@@ -22,7 +22,7 @@ switch ($mode) {
 		header("Content-type: application/json");
 		$extra = $config['captcha']['native']['extra'];
 		$cookie = rand_string(20, $extra);
-		$i = new Securimage(['send_headers' => false, 'no_exit' => true]);
+		$i = new Securimage($config['captcha']['native']['securimage_options']);
 		$i->createCode();
 		ob_start();
 		$i->show();

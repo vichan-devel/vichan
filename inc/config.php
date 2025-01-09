@@ -390,7 +390,10 @@
 			// Custom captcha extra field (eg. charset)
 			'extra' => 'abcdefghijklmnopqrstuvwxyz',
 			// New thread captcha. Require solving a captcha to post a thread.
-			'new_thread_capt' => false
+			'new_thread_capt' => false,
+			// Securimage customization options
+			// https://github.com/dapphp/securimage/blob/nextgen/examples/securimage_show_example.php#L49
+			'securimage_options' => ['send_headers' => false, 'no_exit' => true]
 		]
 	];
 
