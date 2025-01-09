@@ -19,13 +19,9 @@ function cleanup() {
 $mode = @$_GET['mode'];
 switch ($mode) {
 	case 'get':
-		if (!isset ($_GET['extra'])) {
-			$_GET['extra'] = $config['captcha']['extra'];
-		}
-
 		header("Content-type: application/json");
-		$extra = $_GET['extra'];
-		$cookie = rand_string(20, "abcdefghijklmnopqrstuvwxyz");
+		$extra = $config['captcha']['native']['extra'];
+		$cookie = rand_string(20, $extra);
 		$i = new Securimage(['send_headers' => false, 'no_exit' => true]);
 		$i->createCode();
 		ob_start();
@@ -47,12 +43,12 @@ switch ($mode) {
 		break;
 	case 'check':
 		cleanup();
-		if (!isset ($_GET['mode']) || !isset ($_GET['cookie']) || !isset ($_GET['extra']) || !isset ($_GET['text'])) {
+		if (!isset ($_GET['mode']) || !isset ($_GET['cookie']) || !isset ($_GET['text'])) {
 			die();
 		}
 
-		$query = prepare("SELECT * FROM `captchas` WHERE `cookie` = ? AND `extra` = ?");
-		$query->execute([$_GET['cookie'], $_GET['extra']]);
+		$query = prepare("SELECT * FROM `captchas` WHERE `cookie` = ?");
+		$query->execute([$_GET['cookie']]);
 
 		$ary = $query->fetchAll();
 
@@ -60,8 +56,8 @@ switch ($mode) {
 			echo "0";
 			break;
 		} else {
-			$query = prepare("DELETE FROM `captchas` WHERE `cookie` = ? AND `extra` = ?");
-			$query->execute([$_GET['cookie'], $_GET['extra']]);
+			$query = prepare("DELETE FROM `captchas` WHERE `cookie` = ?");
+			$query->execute([$_GET['cookie']]);
 		}
 
 		if ($ary[0]['text'] !== $_GET['text']) {

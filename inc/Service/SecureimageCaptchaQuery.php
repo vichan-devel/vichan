@@ -10,19 +10,16 @@ class SecureImageCaptchaQuery {
 	private HttpDriver $http;
 	private string $domain;
 	private string $provider_check;
-	private string $extra;
 
 	/**
 	 * @param HttpDriver $http The http client.
 	 * @param string $domain The server's domain.
 	 * @param string $provider_check Path to the endpoint.
-	 * @param string $extra Extra http parameters.
 	 */
-	function __construct(HttpDriver $http, string $domain, string $provider_check, string $extra) {
+	function __construct(HttpDriver $http, string $domain, string $provider_check) {
 		$this->http = $http;
 		$this->domain = $domain;
 		$this->provider_check = $provider_check;
-		$this->extra = $extra;
 	}
 
 	/**
@@ -37,7 +34,6 @@ class SecureImageCaptchaQuery {
 		$data = [
 			'mode' => 'check',
 			'text' => $user_text,
-			'extra' => $this->extra,
 			'cookie' => $user_cookie
 		];
 
