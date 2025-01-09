@@ -517,12 +517,7 @@ if (isset($_POST['delete'])) {
 		}
 
 		try {
-			$query = new SecureImageCaptchaQuery(
-				$context->get(HttpDriver::class),
-				$config['domain'],
-				$config['captcha']['provider_check'],
-				$config['captcha']['extra']
-			);
+			$query = $context->get(SecureImageCaptchaQuery::class);
 			$success = $query->verify(
 				$_POST['captcha_text'],
 				$_POST['captcha_cookie']
