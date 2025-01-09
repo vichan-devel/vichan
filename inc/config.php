@@ -393,7 +393,9 @@
 			'new_thread_capt' => false,
 			// Securimage customization options
 			// https://github.com/dapphp/securimage/blob/nextgen/examples/securimage_show_example.php#L49
-			'securimage_options' => ['send_headers' => false, 'no_exit' => true]
+			'securimage_options' => ['send_headers' => false, 'no_exit' => true],
+			// Captcha expires (in seconds)
+			'expires_in' => 320
 		]
 	];
 

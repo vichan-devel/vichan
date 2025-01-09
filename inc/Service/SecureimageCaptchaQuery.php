@@ -38,6 +38,8 @@ class SecureImageCaptchaQuery {
 		];
 
 		$ret = $this->http->requestGet($this->domain . '/' . $this->provider_check, $data);
-		return $ret === '1';
+		$resp = \json_decode($ret, true, 16, \JSON_THROW_ON_ERROR);
+
+		return isset($resp['success']) && $resp['success'];
 	}
 }
