@@ -100,38 +100,22 @@
 			</td>
 		</tr>
 		{% endif %}
-		{% if config.captcha.provider == 'native' %}
-		<tr class='captcha'>
-			<th>
-				{% trans %}Verification{% endtrans %}
-			</th>
-			<td>
-				<script>load_captcha("{{ config.captcha.native.provider_get }}", "{{ config.captcha.native.extra }}");</script>
-				<noscript>
-					<input class='captcha_text' type='text' name='captcha_text' size='32' maxlength='6' autocomplete='off'>
-					<div class="captcha_html">
-						<img src="/{{ config.captcha.native.provider_get }}?mode=get&raw=1">
-					</div>
-				</noscript>
-			</td>
-		</tr>
-		{% elseif config.captcha.native.new_thread_capt %}
-			{% if not id %}
- 			<tr class='captcha'>
-                        <th>
-                                {% trans %}Verification{% endtrans %}
-                        </th>
-                        <td>
-                                <script>load_captcha("{{ config.captcha.native.provider_get }}", "{{ config.captcha.native.extra }}");</script>
-				<noscript>
-					<input class='captcha_text' type='text' name='captcha_text' size='32' maxlength='6' autocomplete='off'>
-					<div class="captcha_html">
-						<img src="/{{ config.captcha.native.provider_get }}?mode=get&raw=1">
-					</div>
-				</noscript>
-                        </td>
-                	</tr>
-			{% endif %}
+		{% if (config.captcha.provider == 'native' and not config.captcha.native.new_thread_capt) or 
+			(config.captcha.provider == 'native' and config.captcha.native.new_thread_capt and not id) %}
+			<tr class='captcha'>
+				<th>
+					{% trans %}Verification{% endtrans %}
+				</th>
+				<td>
+					<script>load_captcha("{{ config.captcha.native.provider_get }}");</script>
+					<noscript>
+						<input class='captcha_text' type='text' name='captcha_text' size='32' maxlength='6' autocomplete='off'>
+						<div class="captcha_html">
+							<img src="/{{ config.captcha.native.provider_get }}?mode=get&raw=1">
+						</div>
+					</noscript>
+				</td>
+			</tr>
 		{% endif %}
 		{% if config.user_flag %}
 			<tr>

@@ -86,8 +86,7 @@ function build_context(array $config): Context {
 			return new SecureImageCaptchaQuery(
 				$c->get(HttpDriver::class),
 				$config['domain'],
-				$config['captcha']['native']['provider_check'],
-				$config['captcha']['native']['extra']
+				$config['captcha']['native']['provider_check']
 			);
 		},
 		CacheDriver::class => function($c) {

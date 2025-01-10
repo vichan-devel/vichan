@@ -384,13 +384,18 @@
 		// To enable the native captcha you need to change a couple of settings. Read more at: /inc/captcha/readme.md
 		'native' => [
 			// Custom captcha get provider path (if not working get the absolute path aka your url).
-			'provider_get' => '../inc/captcha/entrypoint.php',
+			'provider_get' => 'securimage.php',
 			// Custom captcha check provider path
-			'provider_check' => '../inc/captcha/entrypoint.php',
+			'provider_check' => 'securimage.php',
 			// Custom captcha extra field (eg. charset)
 			'extra' => 'abcdefghijklmnopqrstuvwxyz',
 			// New thread captcha. Require solving a captcha to post a thread.
-			'new_thread_capt' => false
+			'new_thread_capt' => false,
+			// Securimage customization options
+			// https://github.com/dapphp/securimage/blob/nextgen/examples/securimage_show_example.php#L49
+			'securimage_options' => ['send_headers' => false, 'no_exit' => true],
+			// Captcha expires (in seconds)
+			'expires_in' => 320
 		]
 	];
 
