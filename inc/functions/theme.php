@@ -14,7 +14,7 @@ function rebuild_themes(string $action, $boardname = false): void {
 		// OK, we already have themes loaded
 	} else {
 		$query = query("SELECT `theme` FROM ``theme_settings`` WHERE `name` IS NULL AND `value` IS NULL") or error(db_error());
-		$themes = $query->fetchAll(\PDO::FETCH_NUM);
+		$themes = $query->fetchAll(\PDO::FETCH_ASSOC);
 
 		\Cache::set("themes", $themes);
 	}
@@ -31,10 +31,10 @@ function rebuild_themes(string $action, $boardname = false): void {
 		}
 
 		if (PHP_SAPI === 'cli') {
-			echo "Rebuilding theme ".$theme[0]."... ";
+			echo "Rebuilding theme ".$theme['theme']."... ";
 		}
 
-		rebuild_theme($theme[0], $action, $boardname);
+		rebuild_theme($theme['theme'], $action, $boardname);
 
 		if (PHP_SAPI === 'cli') {
 			echo "done\n";
