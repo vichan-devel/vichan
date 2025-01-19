@@ -1254,7 +1254,7 @@
 	$config['embedding'] = [
 		[
 			'/^https?:\/\/(\w+\.)?youtube\.com\/watch\?v=([a-zA-Z0-9\-_]{10,11})?$/i',
-			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" id="ytplayer" src="https://www.youtube.com/embed/$2"></iframe>'
+			'<iframe style="float: left; padding: 0.6em 0.2em 0.2em 0.2em;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" id="ytplayer" src="https://www.youtube.com/embed/$2"></iframe>'
 		],
 		[
 			'/^https?:\/\/(\w+\.)?vimeo\.com\/(\d{2,10})(\?.+)?$/i',
