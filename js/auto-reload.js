@@ -139,7 +139,12 @@ $(document).ready(function(){
 
 	var poll = function(manualUpdate) {
 		stop_auto_update();
-		$('#update_secs').text(_("Updating..."));
+		let isScreenSmall = window.matchMedia('(max-width: 48em)').matches;
+		if (isScreenSmall) {
+			$('#update_secs').text('...');
+		} else {
+			$('#update_secs').text(_('Updating...'));
+		}
 
 		$.ajax({
 			url: document.location,

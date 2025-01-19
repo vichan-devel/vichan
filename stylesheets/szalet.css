@@ -4,7 +4,7 @@ body {
 	font-family: sans-serif;
 	font-size: 12px;
 	color: #99938D;
-	
+
 	background-color: #1e1e1e;
 	background-image: url('img/szalet_bg.png');
 	background-repeat:  repeat;
@@ -14,7 +14,7 @@ body {
 background-image: url('img/szalet_bg.png');
 background-repeat:  repeat;
 /*background-color: #200000;*/
-} 
+}
 
 .boardlist .board a {
 background-color: #200000;
@@ -27,7 +27,7 @@ color: #26899C;
  div.pages a.selected {
 color: #FFFCFC !important;}
 
- 
+
 a:link, a:visited, div.post.reply p.body a {
         color: #7A422C!important;
         text-decoration: none;
@@ -35,12 +35,12 @@ a:link, a:visited, div.post.reply p.body a {
 a:link:hover, a:visited:hover, div.post.reply p.body a:hover {
         color: #8A8A23!important;
 }
- 
+
 a.email span.name {
         color: #4B4B4B  !important;
- 
+
 }
- 
+
 input {
         color: #8A7656;
         background: none !important;
@@ -52,7 +52,7 @@ input, textarea {
 background:  #200000;
 color: #99938D;
 }
- 
+
 hr {
         height: 3px;
 border-width: 0px;
@@ -60,7 +60,7 @@ background: url('img/szalet_hr.png') center no-repeat;
 background-size: 100% 100%;
         overflow: hidden;
 }
- 
+
 .reflink a:hover{
         font-weight: bold;
 }
@@ -93,7 +93,7 @@ div.banner, .replymode, .catalogmode {
         font-weight: bold;
         text-align: center !important;
 }
- 
+
 .postarea {
 }
 .rules {
@@ -119,7 +119,7 @@ div.banner, .replymode, .catalogmode {
 .delbuttons {
         text-align:center;
         padding-bottom:4px;
- 
+
 }
 .managehead {
         background-color: #1e1e1e;
@@ -153,13 +153,13 @@ div.banner, .replymode, .catalogmode {
         color: #bebebe;
         font-weight:800;
 }
- 
+
 .intro span.subject {
 color: #771018;
 font-weight: bold;
 }
- 
- 
+
+
 span.name, .postername {
         color: #8A775B !important;
         font-weight:bold;
@@ -178,11 +178,16 @@ div.post.reply {
         padding: 5px;
         border: 1px #583E28 solid !important;
         background: #200000;
-       
+
         -webkit-border-radius: 10px;
         -khtml-border-radius: 10px;
         -moz-border-radius: 10px;
         border-radius: 10px;
+
+        @media (max-width: 48em) {
+                border-left-style: none;
+                border-right-style: none;
+        }
 }
 div.post.reply.highlighted {
 background: #583E28;

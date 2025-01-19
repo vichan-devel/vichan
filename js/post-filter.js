@@ -182,13 +182,13 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 
 			$(ele).data('hidden', true);
 			if ($ele.hasClass('op')) {
-				$ele.parent().find('.body, .files, .video-container').not($ele.children('.reply').children()).hide();
+				$ele.parent().find('.head, .body, .files, .video-container').not($ele.children('.reply').children()).hide();
 
 				// hide thread replies on index view
 				if (active_page == 'index' || active_page == 'ukko') $ele.parent().find('.omitted, .reply:not(.hidden), post_no, .mentioned, br').hide();
 			} else {
 				// normal posts
-				$ele.children('.body, .files, .video-container').hide();
+				$ele.children('.head, .body, .files, .video-container').hide();
 			}
 		}
 		function show(ele) {
@@ -196,11 +196,11 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 
 			$(ele).data('hidden', false);
 			if ($ele.hasClass('op')) {
-				$ele.parent().find('.body, .files, .video-container').show();
+				$ele.parent().find('.head, .body, .files, .video-container').show();
 				if (active_page == 'index') $ele.parent().find('.omitted, .reply:not(.hidden), post_no, .mentioned, br').show();
 			} else {
 				// normal posts
-				$ele.children('.body, .files, .video-container').show();
+				$ele.children('.head, .body, .files, .video-container').show();
 			}
 		}
 
@@ -226,18 +226,19 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 				submenu.add_item('filter-remove-trip', _('Tripcode'));
 
 			Menu.onclick(function (e, $buffer) {
-				var ele = e.target.parentElement.parentElement;
-				var $ele = $(ele);
+				let ele = e.target.parentElement.parentElement.parentElement;
+				let $ele = $(ele);
 
-				var threadId = $ele.parent().attr('id').replace('thread_', '');
-				var boardId = $ele.parent().data('board');
-				var postId = $ele.find('.post_no').not('[id]').text();
+				let threadNode = $ele.parent('.thread');
+				let threadId = threadNode.attr('id').replace('thread_', '');
+				let boardId = $ele.parent().data('board');
+				let postId = $ele.find('.post_no').not('[id]').text();
 				if (pageData.hasUID) {
 					var postUid = $ele.find('.poster_id').text();
 				}
 
-				var postName;
-				var postTrip = '';
+				let postName;
+				let postTrip = '';
 				if (!pageData.forcedAnon) {
 					postName = (typeof $ele.find('.name').contents()[0] == 'undefined') ? '' : nameSpanToString($ele.find('.name')[0]);
 					postTrip = $ele.find('.trip').text();

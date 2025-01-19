@@ -4,7 +4,7 @@ body {
 	font-family: sans-serif;
 	font-size: 12px;
 	color:#bebebe;
-	
+
 	background-color: #1e1e1e;
 	background-image: url('img/testorange_testo.png'), url('img/testorange_top_bg.png'), url('img/testorange_bg.png');
 	background-repeat: no-repeat, repeat-x, repeat;
@@ -15,7 +15,7 @@ body {
 .desktop-style .bl-menu{
 background-image: url('img/testorange_bg.png');
 	background-repeat: repeat;
-} 
+}
 
 .boardlist .board a {
 background-image: url('img/testorange_bg.png');
@@ -174,6 +174,11 @@ div.post.reply {
 	-khtml-border-radius: 10px;
 	-moz-border-radius: 10px;
 	border-radius: 10px;
+
+	@media (max-width: 48em) {
+		border-left-style: none;
+		border-right-style: none;
+	}
 }
 .replyhl {
 	background-color: #1e1e1e;

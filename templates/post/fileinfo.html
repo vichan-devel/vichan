@@ -1,16 +1,16 @@
 	{% if post.embed %}
 		{{ post.embed }}
 	{% else %}
-	<div class="files">
+	<div class="files {% if post.num_files > 1 %} multifile{% endif %}">
 	{% for file in post.files %}
 		<div class="file{% if post.num_files > 1 %} multifile" style="width:{{ file.thumbwidth + 40 }}px"{% else %}"{% endif %}>
 	{% if file.file == 'deleted' %}
 		<img class="post-image deleted" src="{{ config.root }}{{ config.image_deleted }}" alt="" />
 	{% else %}
-		<p class="fileinfo">File: <a href="{{ config.uri_img }}{{ file.file }}">{{ file.file }}</a> <span class="unimportant">
+		<p class="fileinfo"><span>File: <a href="{{ config.uri_img }}{{ file.file }}">{{ file.file }}</a></span><span class="unimportant">
 		(
 			{% if file.thumb == 'spoiler' %}
-				{% trans %}Spoiler Image{% endtrans %}, 
+				{% trans %}Spoiler Image{% endtrans %},
 			{% endif %}
 			{{ file.size|filesize }}
 			{% if file.width and file.height %}
@@ -20,19 +20,20 @@
 				{% endif %}
 			{% endif %}
 			{% if config.show_filename and file.filename %}
-				, 
-				{% if file.filename|length > config.max_filename_display %}
+				, {% if file.filename|length > config.max_filename_display %}
 					<a href="{{ config.uri_img }}{{ file.file|e|bidi_cleanup }}" download="{{ file.filename|e|bidi_cleanup }}" title="Save as original filename: {{ file.filename|e|bidi_cleanup }}">{{ file.filename|truncate_filename(config.max_filename_display)|e|bidi_cleanup }}</a>
 				{% else %}
 					<a href="{{ config.uri_img }}{{ file.file|e|bidi_cleanup }}" download="{{ file.filename|e|bidi_cleanup }}" title="Save as original filename">{{ file.filename|e|bidi_cleanup }}</a>
 				{% endif %}
 			{% endif %}
 		)
+		</span>
 		{% include "post/image_identification.html" %}
-		{% include "post/file_controls.html" %}</span></p>
+		{% include "post/file_controls.html" %}
+		</p>
 	{% include "post/image.html" with {'post':file} %}
 	{% endif %}
 </div>
-    {% endfor %}
+	{% endfor %}
 </div>
-    {% endif %}
+	{% endif %}

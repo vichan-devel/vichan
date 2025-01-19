@@ -21,7 +21,7 @@
  *     submenu = Menu.add_submenu('filter-menu-add', 'Add filter');
  *         submenu.add_item('filter-add-post-plus', 'Post +', 'Hide post and all replies');
  *         submenu.add_item('filter-add-id', 'ID');
- *  
+ *
  * Usage:
  *   $config['additional_javascript'][] = 'js/jquery.min.js';
  *   $config['additional_javascript'][] = 'js/post-menu.js';
@@ -163,7 +163,7 @@ cssString =
 	'.post-menu li:hover>ul {display: block; left: 100%; margin-top: -3px;}\n' +
 	'.post-menu-arrow {float: right; margin-left: 10px;}\n' +
 	'.post-menu.hidden, .post-menu .hidden {display: none;}\n' +
-	'.post-btn {transition: transform 0.1s; width: 15px; text-align: center; font-size: 10pt; opacity: 0.8; text-decoration: none; margin: -6px 0px 0px -5px !important; display: inline-block;}\n' +
+	'.post-btn {transition: transform 0.1s; width: 15px; text-align: center; font-size: 10pt; opacity: 0.8; text-decoration: none; margin: -6px 0px 0px 0px !important; display: inline-block;}\n' +
 	'.post-btn:hover {opacity: 1;}\n' +
 	'.post-btn-open {transform: rotate(90deg);}\n';
 

@@ -11,7 +11,7 @@ body {
 
 .desktop-style .bl-menu{
 background-color: #030511;
-} 
+}
 
 .boardlist .board a {
 background-color: #030511;
@@ -28,7 +28,7 @@ color: #FFFCFC !important;}
 div.post.reply div.body a {
 color: #6F0A0A;
 }
- 
+
 a:link, a:visited, div.post.reply p.body a {
         color: #355097;
         text-decoration: none;
@@ -36,9 +36,9 @@ a:link, a:visited, div.post.reply p.body a {
 a:link:hover, a:visited:hover, div.post.reply p.body a:hover {
         color: #5A8C99;
 }
- 
+
 a.email span.name {
-        color: #5A8C99 !important; 
+        color: #5A8C99 !important;
 }
 
 .intro span.capcode, p.intro a.capcode, p.intro a.nametag {
@@ -48,14 +48,14 @@ color: #6E0877;
 div.post.reply.highlighted {
 background: #000E3A;
 }
- 
+
 
 input, textarea {
      background: url("img/rect821.png") no-repeat fixed right top #030511;
     color: #47506F;
-    
+
 }
- 
+
 hr {
 	height:3px;
 	border-width: 0px;
@@ -63,7 +63,7 @@ hr {
 	background-size:100% 100%;
 	-moz-background-size:100% 100%;
 }
- 
+
 .reflink a:hover{
         font-weight: bold;
 }
@@ -96,7 +96,7 @@ div.banner, .replymode, .catalogmode {
         font-weight: bold;
         text-align: center !important;
 }
- 
+
 .postarea {
 }
 .rules {
@@ -122,7 +122,7 @@ div.banner, .replymode, .catalogmode {
 .delbuttons {
         text-align:center;
         padding-bottom:4px;
- 
+
 }
 .managehead {
         background-color: #1e1e1e;
@@ -156,13 +156,13 @@ div.banner, .replymode, .catalogmode {
         color: #bebebe;
         font-weight:800;
 }
- 
+
 .intro span.subject {
 color: #4D2C80;
 font-weight: bold;
 }
- 
- 
+
+
 span.name, .postername {
         color: #06546D !important;
         font-weight:bold;
@@ -179,16 +179,21 @@ span.omitted, .omittedposts {
 }
 div.post.reply {
         padding: 5px;
-              
+
        background:#030511 url('img/rect821.png') fixed top right no-repeat;
 	color:#47506F;
 	border: 1px solid #000E3A!important;
-       
-       
+
+
         -webkit-border-radius: 10px;
         -khtml-border-radius: 10px;
         -moz-border-radius: 10px;
         border-radius: 10px;
+
+        @media (max-width: 48em) {
+		border-left-style: none;
+		border-right-style: none;
+	}
 }
 .replyhl {
         background-color: #1e1e1e;

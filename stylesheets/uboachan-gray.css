@@ -15,6 +15,11 @@ div.post.reply {
 	background: #383838;
 	border: 1px solid #000000;
 	transition: 0.3s;
+
+	@media (max-width: 48em) {
+		border-left-style: none;
+		border-right-style: none;
+	}
 }
 div.post.reply.highlighted {
 	/*background: #202020;*/
@@ -23,6 +28,11 @@ div.post.reply.highlighted {
 	background: #282828;
 	/*border: none;*/
 	transition: 0.3s;
+
+	@media (max-width: 48em) {
+		border-left-style: none;
+		border-right-style: none;
+	}
 }
 /*Changed this*/
 div.post.reply div.body a {
