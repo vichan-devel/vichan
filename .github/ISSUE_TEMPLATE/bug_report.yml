@@ -12,7 +12,7 @@ body:
         
         Before submitting, check the [Vichan Wiki](https://vichan.info) to see if there's already a solution to your problem.
 
-  - type: input
+  - type: textarea
     id: bug_description
     attributes:
       label: "Describe the bug"
@@ -25,7 +25,7 @@ body:
     id: steps_to_reproduce
     attributes:
       label: "Steps to Reproduce"
-      description: "Provide step-by-step instructions to reproduce the issue."
+      description: "Provide step-by-step instructions to reproduce the issue. If you're unsure on how, that is alright, just try and explain as well as you can."
       placeholder: |
         1. Go to '...'
         2. Click on '....'
@@ -52,7 +52,7 @@ body:
       description: "Provide details about your server environment. If you're unsure about any of this, you might be using shared hosting (Hostinger, HostGator, Serv00, etc). If so, put the name of your hosting provider here."
       placeholder: |
         - OS: (Ubuntu, CentOS, Windows Server 2025, etc.)
-        - PHP Version: (e.g., 7.4, 8.0, 8.1)
+        - PHP Version: (e.g., 7.4, 8.0, 8.4)
         - Web Server: (Apache, NGINX, etc.)
         - Database: (MySQL, MariaDB, etc.)
         - Vichan Version: (5.2.0, 5.3.0 (dev branch), etc)
