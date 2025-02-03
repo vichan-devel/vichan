@@ -89,6 +89,12 @@ function setupVideo(thumb, url) {
 		}
 	}
 
+	function setVolume() {
+		const volume = setting("videovolume");
+		video.volume = volume;
+		video.muted = (volume === 0);
+	}
+
 	// Clicking on thumbnail expands video
 	thumb.addEventListener("click", function(e) {
 		if (setting("videoexpand") && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
@@ -105,15 +111,21 @@ function setupVideo(thumb, url) {
 			video.parentNode.parentNode.removeAttribute('style');
 			thumb.style.display = "none";
 
-			video.muted = (setting("videovolume") == 0);
-			video.volume = setting("videovolume");
+			setVolume();
 			video.controls = true;
 			if (video.readyState == 0) {
 				video.addEventListener("loadedmetadata", expand2, false);
 			} else {
 				setTimeout(expand2, 0);
 			}
-			video.play();
+			let promise = video.play();
+			if (promise !== undefined) {
+				promise.then(_ => {
+				}).catch(_ => {
+					video.muted = true;
+					video.play();
+				});
+			}
 			e.preventDefault();
 		}
 	}, false);
@@ -158,10 +170,16 @@ function setupVideo(thumb, url) {
 			videoContainer.style.display = "inline";
 			videoContainer.style.position = "fixed";
 
-			video.muted = (setting("videovolume") == 0);
-			video.volume = setting("videovolume");
+			setVolume();
 			video.controls = false;
-			video.play();
+			let promise = video.play();
+			if (promise !== undefined) {
+				promise.then(_ => {
+				}).catch(_ => {
+					video.muted = true;
+					video.play();
+				});
+			}
 		}
 	}, false);
 
