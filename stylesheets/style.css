@@ -217,7 +217,7 @@ img.banner,img.board_image {
 }
 
 div.post .post-image {
-  padding: 0.2em;
+  padding: 0.2em 0.2em 0.8em 0.2em;
   margin: 0 20px 0 0;
 }
 
