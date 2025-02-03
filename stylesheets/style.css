@@ -319,7 +319,7 @@ div.post {
 }
 
 div.post div.head {
-  margin: 0.1em 1em 0.1em 1.4em;
+  margin: 0.1em 1em 0.8em 1.4em;
   clear: both;
   line-height: 1.3em;
 }
@@ -341,7 +341,6 @@ div.post.op > p {
 }
 
 div.post div.body {
-  margin-top: 0.8em;
   margin-left: 1.4em;
   padding-right: 3em;
   padding-bottom: 0.3em;
