@@ -31,7 +31,7 @@ onReady(function() {
 		let contents = videoNode.contents();
 		let videoId = videoNode.data('video');
 		let span = $("<span>[Embed]</span>");
-		let embedNode = $('<iframe style="float:left;margin: 10px 20px" type="text/html" '+
+		let embedNode = $('<iframe style="float:left;padding: 0 20px 0 0;margin: 0.2em 0.2em 0.8em 0.2em" type="text/html" '+
 				'width="360" height="270" src="//www.youtube.com/embed/' + videoId +
 				'?autoplay=1&html5=1" allowfullscreen frameborder="0"/>');
 		span.click(function() {
