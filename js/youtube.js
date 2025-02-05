@@ -23,21 +23,36 @@
 */
 
 onReady(function() {
-	let do_embed_yt = function(tag) {
-		$('div.video-container a', tag).click(function() {
-			let videoID = $(this.parentNode).data('video');
+	const ON = "[Remove]";
+	const OFF = "[Embed]";
 
-			$(this.parentNode).html('<iframe style="float:left;margin: 10px 20px" type="text/html" ' +
-				'width="360" height="270" src="//www.youtube.com/embed/' + videoID +
+	function addEmbedButton(index, videoNode) {
+		videoNode = $(videoNode);
+		let contents = videoNode.contents();
+		let videoId = videoNode.data('video');
+		let span = $("<span>[Embed]</span>");
+		let embedNode = $('<iframe style="float:left;padding: 0 20px 0 0;margin: 0.2em 0.2em 0.8em 0.2em" type="text/html" '+
+				'width="360" height="270" src="//www.youtube.com/embed/' + videoId +
 				'?autoplay=1&html5=1" allowfullscreen frameborder="0"/>');
-
-			return false;
+		span.click(function() {
+			if (span.text() == ON){
+				videoNode.append(contents);
+				embedNode.remove();
+				span.text(OFF);
+			} else {
+				contents.detach();
+				videoNode.append(embedNode);
+				span.text(ON);
+			}
 		});
-	};
-	do_embed_yt(document);
+
+		videoNode.append(span);
+	}
+
+	$('div.video-container', document).each(addEmbedButton);
 
 	// allow to work with auto-reload.js, etc.
 	$(document).on('new_post', function(e, post) {
-		do_embed_yt(post);
+		$('div.video-container', post).each(addEmbedButton);
 	});
 });
