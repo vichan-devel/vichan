@@ -99,7 +99,7 @@ $(window).ready(function() {
 									$(form).find('input[type="submit"]').val(submit_txt);
 									$(form).find('input[type="submit"]').removeAttr('disabled');
 									$(form).find('input[name="subject"],input[name="file_url"],\
-										textarea[name="body"],input[type="file"]').val('').change();
+										textarea[name="body"],input[type="file"],input[name="embed"]').val('').change();
 								},
 								cache: false,
 								contentType: false,
