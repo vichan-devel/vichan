@@ -17,6 +17,10 @@ $(document).ready(function() {
 	// Default maximum image loads.
 	const DEFAULT_MAX = 5;
 
+	if (localStorage.inline_expand_fit_height !== 'false') {
+		$('<style id="expand-fit-height-style">.full-image { max-height: ' + window.innerHeight + 'px; }</style>').appendTo($('head'));
+	}
+
 	let inline_expand_post = function() {
 		let link = this.getElementsByTagName('a');
 
@@ -56,12 +60,12 @@ $(document).ready(function() {
 				},
 				add: function(ele) {
 					ele.deferred = $.Deferred();
-					ele.deferred.done(function () {
+					ele.deferred.done(function() {
 						let $loadstart = $.Deferred();
 						let thumb = ele.childNodes[0];
 						let img = ele.childNodes[1];
 
-						let onLoadStart = function (img) {
+						let onLoadStart = function(img) {
 							if (img.naturalWidth) {
 								$loadstart.resolve(img, thumb);
 							} else {
@@ -69,15 +73,15 @@ $(document).ready(function() {
 							}
 						};
 
-						$(img).one('load', function () {
-							$.when($loadstart).done(function () {
-								// Once fully loaded, update the waiting queue.
+						$(img).one('load', function() {
+							$.when($loadstart).done(function() {
+								//  once fully loaded, update the waiting queue
 								--loading;
 								$(ele).data('imageLoading', 'false');
 								update();
 							});
 						});
-						$loadstart.done(function (img, thumb) {
+						$loadstart.done(function(img, thumb) {
 							thumb.style.display = 'none';
 							img.style.display = '';
 						});
@@ -201,6 +205,8 @@ $(document).ready(function() {
 		Options.extend_tab('general', '<span id="inline-expand-max">' +
 			_('Number of simultaneous image downloads (0 to disable): ') +
 			'<input type="number" step="1" min="0" size="4"></span>');
+		Options.extend_tab('general', '<label id="inline-expand-fit-height"><input type="checkbox">' + _('Fit expanded images into screen height') + '</label>');
+
 		$('#inline-expand-max input')
 			.css('width', '50px')
 			.val(localStorage.inline_expand_max || DEFAULT_MAX)
@@ -211,6 +217,21 @@ $(document).ready(function() {
 
 				localStorage.inline_expand_max = val;
 			});
+
+		$('#inline-expand-fit-height input').on('change', function() {
+			if (localStorage.inline_expand_fit_height !== 'false') {
+				localStorage.inline_expand_fit_height = 'false';
+				$('#expand-fit-height-style').remove();
+			}
+			else {
+				localStorage.inline_expand_fit_height = 'true';
+				$('<style id="expand-fit-height-style">.full-image { max-height: ' + window.innerHeight + 'px; }</style>').appendTo($('head'));
+			}
+		});
+
+		if (localStorage.inline_expand_fit_height !== 'false') {
+			$('#inline-expand-fit-height input').prop('checked', true);
+		}
 	}
 
 	if (window.jQuery) {
