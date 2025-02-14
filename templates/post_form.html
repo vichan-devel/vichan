@@ -85,6 +85,16 @@
 			</td>
 		</tr>
 		{% endif %}
+		{% if config.captcha.provider == 'yandexcaptcha' %}
+		<tr>
+			<th>
+				{% trans %}Verification{% endtrans %}
+			</th>
+			<td>
+				<div style="height: 100px" id="captcha-container" class="smart-captcha" data-sitekey="{{ config.captcha.yandexcaptcha.sitekey }}"></div>
+			</td>
+		</tr>
+		{% endif %}
 		{% if config.captcha.provider == 'native' %}
 		<tr class='captcha'>
 			<th>

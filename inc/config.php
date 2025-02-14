@@ -284,7 +284,7 @@
 	$config['simple_spam'] = false;
 
 	$config['captcha'] = [
-		// Can be false, 'recaptcha', 'hcaptcha' or 'native'.
+		// Can be false, 'recaptcha', 'hcaptcha', 'yandexcaptcha' or 'native'.
 		'provider' => false,
 		/*
 		 * If not false, the captcha is dynamically injected on the client if the web server set the `captcha-required`
@@ -303,6 +303,10 @@
 		'hcaptcha' => [
 			'sitekey' => '10000000-ffff-ffff-ffff-000000000001',
 			'secret' => '0x0000000000000000000000000000000000000000',
+		],
+		'yandexcaptcha' => [
+			'sitekey' => 'ysc1_rfl88NyaKGOwimTqVEShW23JdWHlRwXg6jyPhkW2sj1voM9Y',
+			'secret' => 'ysc2_M48FXzexqG5mTESVJfS4nVWhq8lytaMGObxEVqym35Kbz0r7',
 		],
 		// To enable the native captcha you need to change a couple of settings. Read more at: /inc/captcha/readme.md
 		'native' => [

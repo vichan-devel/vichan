@@ -67,6 +67,8 @@ function build_context(array $config): Context {
 						$config['captcha']['hcaptcha']['secret'],
 						$config['captcha']['hcaptcha']['sitekey']
 					);
+				case 'yandexcaptcha':
+					return new YandexCaptchaQuery($http, $config['captcha']['yandexcaptcha']['secret']);
 				default:
 					throw new \RuntimeException('No remote captcha service available');
 			}
