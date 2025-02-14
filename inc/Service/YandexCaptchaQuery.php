@@ -15,7 +15,7 @@ class YandexCaptchaQuery implements RemoteCaptchaQuery {
 	 *
 	 * @param HttpDriver $http The http client.
 	 * @param string $secret Server side secret.
-	 * @return ReCaptchaQuery A new ReCaptchaQuery query instance.
+	 * @return YandexCaptchaQuery A new YandexCaptchaQuery query instance.
 	 */
 	public function __construct(HttpDriver $http, string $secret) {
 		$this->http = $http;
