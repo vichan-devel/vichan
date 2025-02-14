@@ -50,6 +50,6 @@
 		padding: 0 !important;
 	}
 {% endverbatim %}</style>{% endif %}
-{% if config.captcha.provider.hcaptcha %}
+{% if config.captcha.provider == 'hcaptcha' %}
 <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 {% endif %}
