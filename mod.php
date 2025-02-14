@@ -218,13 +218,13 @@ class Router {
 	public function handleRequest(Context $ctx): void {
 		foreach ($this->pages as $uri => $handler) {
 			if (preg_match($uri, $this->query, $matches)) {
-				$matches[0] = $ctx; 
+				$matches[0] = $ctx;
 
 				$this->processBoard($matches);
 
 				if (is_string($handler) && preg_match('/^secure(_POST)? /', $handler, $m)) {
 					$this->securePostOnly = isset($m[1]);
-					$this->processSecureHandler($matches);
+					$this->processSecureHandler($ctx, $matches);
 					$handler = $this->processHandler($handler);
 				}
 
@@ -278,9 +278,9 @@ class Router {
 	 *
 	 * @param array &$matches The array of route matches
 	 */
-	private function processSecureHandler(array &$matches): void {
+	private function processSecureHandler(Context $ctx, array &$matches): void {
 		if (!$this->securePostOnly || $_SERVER['REQUEST_METHOD'] === 'POST') {
-			$token = $this->getToken($matches);
+			$token = $this->getToken($ctx, $matches);
 
 			// CSRF-protected page; validate security token
 			$actual_query = preg_replace('!/([a-f0-9]{8})$!', '', $this->query);
@@ -288,7 +288,6 @@ class Router {
 				$this->error($this->config['error']['csrf']);
 			}
 		}
-
 	}
 
 	/**
@@ -297,7 +296,7 @@ class Router {
 	 * @param array &$matches The array of route matches
 	 * @return string|null The CSRF token, or null if not found
 	 */
-	private function getToken(array &$matches): ?string {
+	private function getToken(Context $ctx, array &$matches): ?string {
 		if (isset($matches['token'])) {
 			return $matches['token'];
 		} elseif (isset($_POST['token'])) {
@@ -306,7 +305,7 @@ class Router {
 			if ($this->securePostOnly) {
 				$this->error($this->config['error']['csrf']);
 			} else {
-				mod_confirm($this->ctx, substr($this->query, 1));
+				mod_confirm($ctx, substr($this->query, 1));
 				exit;
 			}
 		}
