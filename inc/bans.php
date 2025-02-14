@@ -276,7 +276,7 @@ class Bans {
 		}
 	}
 
-	static public function find(?string $ip, string|false $board = false, bool $get_mod_info = false, ?int $ban_id = null, bool $auto_gc = true) {
+	static public function find(?string $ip, string|false $board, bool $get_mod_info, ?int $ban_id, bool $auto_gc) {
 		global $config;
 
 		if ($auto_gc) {
