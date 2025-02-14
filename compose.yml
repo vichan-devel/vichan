@@ -23,6 +23,7 @@ services:
     volumes:
       - ./local-instances/${INSTANCE:-0}/www:/var/www
       - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./docker/php/logging.ini:/usr/local/etc/php/conf.d/logging.ini
       - ./docker/php/jit.ini:/usr/local/etc/php/conf.d/jit.ini
       - redis-sock:/var/run/redis
 
