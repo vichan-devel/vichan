@@ -53,3 +53,6 @@
 {% if config.captcha.provider.hcaptcha %}
 <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 {% endif %}
+{% if config.captcha.provider == 'yandexcaptcha' %}
+<script src="https://smartcaptcha.yandexcloud.net/captcha.js" defer></script>
+{% endif %}

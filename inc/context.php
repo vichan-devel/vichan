@@ -6,6 +6,7 @@ use Vichan\Data\ReportQueries;
 use Vichan\Service\HCaptchaQuery;
 use Vichan\Service\SecureImageCaptchaQuery;
 use Vichan\Service\ReCaptchaQuery;
+use Vichan\Service\YandexCaptchaQuery;
 use Vichan\Service\RemoteCaptchaQuery;
 
 defined('TINYBOARD') or exit;
@@ -74,6 +75,8 @@ function build_context(array $config): Context {
 						$config['captcha']['hcaptcha']['secret'],
 						$config['captcha']['hcaptcha']['sitekey']
 					);
+				case 'yandexcaptcha':
+					return new YandexCaptchaQuery($http, $config['captcha']['yandexcaptcha']['secret']);
 				default:
 					throw new \RuntimeException('No remote captcha service available');
 			}
