@@ -1928,7 +1928,7 @@ function remove_modifiers($body) {
 	return $body ? preg_replace('@<tinyboard ([\w\s]+)>(.+?)</tinyboard>@usm', '', $body) : null;
 }
 
-function markup(&$body, $track_cites = false, $op = false) {
+function markup(&$body, $track_cites = false) {
 	global $board, $config, $markup_urls;
 
 	$modifiers = extract_modifiers($body);
