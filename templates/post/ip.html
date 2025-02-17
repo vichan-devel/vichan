@@ -1,3 +1,4 @@
 {% if post.mod and post.mod|hasPermission(config.mod.show_ip, board.uri) %}
-	<span>[<a class="ip-link" style="margin:0;" href="?/IP/{{ post.ip|cloak_ip }}">{{ post.ip|cloak_ip }}</a>]</span>
+	<span>[<a class="ip-link" style="margin:0;" href="?/user_posts/ip/{{ post.ip|cloak_ip }}">{{ post.ip|cloak_ip }}</a>]</span>
+	<span>[<a class="ip-link" style="margin:0;" href="?/user_posts/passwd/{{ post.password }}">{{ post.password[:15] }}</a>]</span>
 {% endif %}

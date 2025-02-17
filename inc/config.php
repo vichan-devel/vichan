@@ -1605,8 +1605,8 @@
 		'default' => '/',
 		// Do DNS lookups on IP addresses to get their hostname for the moderator IP pages (?/IP/x.x.x.x).
 		'dns_lookup' => true,
-		// How many recent posts, per board, to show in ?/IP/x.x.x.x.
-		'ip_recentposts' => 5,
+		// How many recent posts, per board, to show in ?/user_posts/ip/x.x.x.x. and ?/user_posts/passwd/xxxxxxxx
+		'recent_user_posts' => 5,
 		// Number of posts to display on the reports page.
 		'recent_reports' => 10,
 		// Number of actions to show per page in the moderation log.
