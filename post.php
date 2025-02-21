@@ -1062,7 +1062,7 @@ if (isset($_POST['delete'])) {
 	if (!hasPermission($config['mod']['bypass_filters'], $board['uri']) && !$dropped_post) {
 		require_once 'inc/filters.php';
 
-		do_filters($post);
+		do_filters($context, $post);
 	}
 
 	if ($post['has_file']) {
@@ -1245,7 +1245,7 @@ if (isset($_POST['delete'])) {
 
 	// Do filters again if OCRing
 	if ($config['tesseract_ocr'] && !hasPermission($config['mod']['bypass_filters'], $board['uri']) && !$dropped_post) {
-		do_filters($post);
+		do_filters($context, $post);
 	}
 
 	if (!hasPermission($config['mod']['postunoriginal'], $board['uri']) && $config['robot_enable'] && checkRobot($post['body_nomarkup']) && !$dropped_post) {
