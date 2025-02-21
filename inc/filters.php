@@ -4,6 +4,9 @@
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  */
 
+use Vichan\Context;
+use Vichan\Data\IpNoteQueries;
+
 defined('TINYBOARD') or exit;
 
 class Filter {
@@ -149,17 +152,13 @@ class Filter {
 		}
 	}
 
-	public function action() {
+	public function action(Context $ctx) {
 		global $board;
 
 		$this->add_note = isset($this->add_note) ? $this->add_note : false;
 		if ($this->add_note) {
-			$query = prepare('INSERT INTO ``ip_notes`` VALUES (NULL, :ip, :mod, :time, :body)');
-			$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
-			$query->bindValue(':mod', -1);
-			$query->bindValue(':time', time());
-			$query->bindValue(':body', "Autoban message: ".$this->post['body']);
-			$query->execute() or error(db_error($query));
+			$note_queries = $ctx->get(IpNoteQueries::class);
+			$note_queries->add($_SERVER['REMOTE_ADDR'], -1, 'Autoban message: ' . $this->post['body']);
 		}
 		if (isset($this->action)) {
 			switch($this->action) {
@@ -233,7 +232,7 @@ function purge_flood_table() {
 	query("DELETE FROM ``flood`` WHERE `time` < $time") or error(db_error());
 }
 
-function do_filters(array $post) {
+function do_filters(Context $ctx, array $post) {
 	global $config;
 
 	if (!isset($config['filters']) || empty($config['filters'])) {
@@ -268,7 +267,7 @@ function do_filters(array $post) {
 		$filter = new Filter($filter_array);
 		$filter->flood_check = $flood_check;
 		if ($filter->check($post)) {
-			$filter->action();
+			$filter->action($ctx);
 		}
 	}
 
