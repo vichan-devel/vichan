@@ -3,7 +3,7 @@
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  */
 use Vichan\Context;
-use Vichan\Data\ReportQueries;
+use Vichan\Data\{IpNoteQueries, ReportQueries};
 use Vichan\Functions\Format;
 use Vichan\Functions\Net;
 use Vichan\Data\Driver\CacheDriver;
@@ -878,16 +878,24 @@ function mod_ip_remove_note(Context $ctx, $cloaked_ip, $id) {
 	$ip = uncloak_ip($cloaked_ip);
 	$config = $ctx->get('config');
 
-	if (!hasPermission($config['mod']['remove_notes']))
+	if (!hasPermission($config['mod']['remove_notes'])) {
 		error($config['error']['noaccess']);
+	}
 
-	if (filter_var($ip, FILTER_VALIDATE_IP) === false)
+	if (\filter_var($ip, \FILTER_VALIDATE_IP) === false) {
 		error("Invalid IP address.");
+	}
 
-	$query = prepare('DELETE FROM ``ip_notes`` WHERE `ip` = :ip AND `id` = :id');
-	$query->bindValue(':ip', $ip);
-	$query->bindValue(':id', $id);
-	$query->execute() or error(db_error($query));
+	if (!\is_numeric($id)) {
+		error('Invalid note ID');
+	}
+
+	$queries = $ctx->get(IpNoteQueries::class);
+	$deleted = $queries->deleteWhereIp((int)$id, $ip);
+
+	if (!$deleted) {
+		error("Note $id does not exist for $cloaked_ip");
+	}
 
 	modLog("Removed a note for <a href=\"?/IP/{$cloaked_ip}\">{$cloaked_ip}</a>");
 
@@ -928,12 +936,9 @@ function mod_ip(Context $ctx, $cip) {
 
 		$_POST['note'] = escape_markup_modifiers($_POST['note']);
 		markup($_POST['note']);
-		$query = prepare('INSERT INTO ``ip_notes`` VALUES (NULL, :ip, :mod, :time, :body)');
-		$query->bindValue(':ip', $ip);
-		$query->bindValue(':mod', $mod['id']);
-		$query->bindValue(':time', time());
-		$query->bindValue(':body', $_POST['note']);
-		$query->execute() or error(db_error($query));
+
+		$note_queries = $ctx->get(IpNoteQueries::class);
+		$note_queries->add($ip, $mod['id'], $_POST['note']);
 
 		modLog("Added a note for <a href=\"?/IP/{$cip}\">{$cip}</a>");
 
@@ -980,9 +985,9 @@ function mod_ip(Context $ctx, $cip) {
 	}
 
 	if (hasPermission($config['mod']['view_notes'])) {
-		$query = prepare("SELECT ``ip_notes``.*, `username` FROM ``ip_notes`` LEFT JOIN ``mods`` ON `mod` = ``mods``.`id` WHERE `ip` = :ip ORDER BY `time` DESC");
-		$query->bindValue(':ip', $ip);
-		$query->execute() or error(db_error($query));
+		$note_queries = $ctx->get(IpNoteQueries::class);
+		$note_queries->getByIp($ip);
+
 		$args['notes'] = $query->fetchAll(PDO::FETCH_ASSOC);
 	}
 
