@@ -986,9 +986,7 @@ function mod_ip(Context $ctx, $cip) {
 
 	if (hasPermission($config['mod']['view_notes'])) {
 		$note_queries = $ctx->get(IpNoteQueries::class);
-		$note_queries->getByIp($ip);
-
-		$args['notes'] = $query->fetchAll(PDO::FETCH_ASSOC);
+		$args['notes'] = $note_queries->getByIp($ip);
 	}
 
 	if (hasPermission($config['mod']['modlog_ip'])) {
