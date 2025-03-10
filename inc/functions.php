@@ -1928,7 +1928,7 @@ function remove_modifiers($body) {
 	return $body ? preg_replace('@<tinyboard ([\w\s]+)>(.+?)</tinyboard>@usm', '', $body) : null;
 }
 
-function markup(&$body, $track_cites = false, $op = false) {
+function markup(&$body, $track_cites = false) {
 	global $board, $config, $markup_urls;
 
 	$modifiers = extract_modifiers($body);
@@ -2029,12 +2029,15 @@ function markup(&$body, $track_cites = false, $op = false) {
 					link_for(array('id' => $cite, 'thread' => $cited_posts[$cite])) . '#' . $cite . '">' .
 					'&gt;&gt;' . $cite .
 					'</a>';
+			} else {
+				$replacement = "<s>&gt;&gt;$cite</s>";
+			}
 
-				$body = mb_substr_replace($body, $matches[1][0] . $replacement . $matches[3][0], $matches[0][1] + $skip_chars, mb_strlen($matches[0][0]));
-				$skip_chars += mb_strlen($matches[1][0] . $replacement . $matches[3][0]) - mb_strlen($matches[0][0]);
+			$body = mb_substr_replace($body, $matches[1][0] . $replacement . $matches[3][0], $matches[0][1] + $skip_chars, mb_strlen($matches[0][0]));
+			$skip_chars += mb_strlen($matches[1][0] . $replacement . $matches[3][0]) - mb_strlen($matches[0][0]);
 
-				if ($track_cites && $config['track_cites'])
-					$tracked_cites[] = array($board['uri'], $cite);
+			if ($track_cites && $config['track_cites']) {
+				$tracked_cites[] = array($board['uri'], $cite);
 			}
 		}
 	}
