@@ -99,6 +99,12 @@ class Router {
 			'/IP/([\w.:]+)'	=> 'secure_POST ip',	// view ip address
 			'/IP/([\w.:]+)/remove_note/(\d+)'	=> 'secure ip_remove_note',	// remove note from ip address
 
+			'/user_posts/ip/([\w.:]+)'				=> 'secure_POST user_posts_by_ip',		// view user posts by ip address
+			'/user_posts/ip/([\w.:]+)/cursor/([\w|-|_]+)'	=> 'secure_POST user_posts_by_ip',	// remove note from ip address
+
+			'/user_posts/passwd/(\w+)'				=> 'secure_POST user_posts_by_passwd',		// view user posts by ip address
+			'/user_posts/passwd/(\w+)/cursor/([\w|-|_]+)'	=> 'secure_POST user_posts_by_passwd',	// remove note from ip address
+
 			'/ban'	=> 'secure_POST ban',	// new ban
 			'/bans'	=> 'secure_POST bans',	// ban list
 			'/bans.json'	=> 'secure bans_json',	// ban list JSON

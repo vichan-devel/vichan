@@ -1,0 +1,10 @@
+{{ include('mod/user_posts_list.html', {posts: posts}) }}
+<div class="pages" style="display:flex;justify-content:center;align-items:center;width:fit-content;margin:5px auto;">
+	<a href="?/user_posts/passwd/{{ passwd }}">[Page 1]</a>
+	{% if cursor_prev %}
+		<a href="?/user_posts/passwd/{{ passwd }}/cursor/{{ cursor_prev }}">[Previous Page]</a>
+	{% endif %}
+	{% if cursor_next %}
+		<a href="?/user_posts/passwd/{{ passwd }}/cursor/{{ cursor_next }}">[Next Page]</a>
+	{% endif %}
+</div>
