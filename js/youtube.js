@@ -10,7 +10,7 @@
 *
 * Released under the MIT license
 * Copyright (c) 2013 Michael Save <savetheinternet@tinyboard.org>
-* Copyright (c) 2013-2014 Marcin Łabanowski <marcin@6irc.net> 
+* Copyright (c) 2013-2014 Marcin Łabanowski <marcin@6irc.net>
 *
 * Usage:
 *	$config['embedding'] = array();
@@ -22,13 +22,12 @@
 *
 */
 
-
-onready(function(){
-	var do_embed_yt = function(tag) {
+onReady(function() {
+	let do_embed_yt = function(tag) {
 		$('div.video-container a', tag).click(function() {
-			var videoID = $(this.parentNode).data('video');
-		
-			$(this.parentNode).html('<iframe style="float:left;margin: 10px 20px" type="text/html" '+
+			let videoID = $(this.parentNode).data('video');
+
+			$(this.parentNode).html('<iframe style="float:left;margin: 10px 20px" type="text/html" ' +
 				'width="360" height="270" src="//www.youtube.com/embed/' + videoID +
 				'?autoplay=1&html5=1" allowfullscreen frameborder="0"/>');
 
@@ -37,9 +36,8 @@ onready(function(){
 	};
 	do_embed_yt(document);
 
-        // allow to work with auto-reload.js, etc.
-        $(document).on('new_post', function(e, post) {
-                do_embed_yt(post);
-        });
+	// allow to work with auto-reload.js, etc.
+	$(document).on('new_post', function(e, post) {
+		do_embed_yt(post);
+	});
 });
-

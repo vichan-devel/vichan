@@ -13,21 +13,21 @@
  *
  */
 
-onready(function(){
-	var inline_expanding_filename = function() {
-		$(this).find(".fileinfo > a").click(function(){
-			var imagelink = $(this).parent().parent().find('a[target="_blank"]:first');
-			if(imagelink.length > 0) {
+onReady(function() {
+	let inlineExpandingFilename = function() {
+		$(this).find(".fileinfo > a").click(function() {
+			let imagelink = $(this).parent().parent().find('a[target="_blank"]:first');
+			if (imagelink.length > 0) {
 				imagelink.click();
 				return false;
 			}
 		});
 	};
 
-        $('div[id^="thread_"]').each(inline_expanding_filename);
-                                        
-        // allow to work with auto-reload.js, etc.
-        $(document).on('new_post', function(e, post) {
-                inline_expanding_filename.call(post);
-        });
+	$('div[id^="thread_"]').each(inlineExpandingFilename);
+
+	// allow to work with auto-reload.js, etc.
+	$(document).on('new_post', function(e, post) {
+		inlineExpandingFilename.call(post);
+	});
 });

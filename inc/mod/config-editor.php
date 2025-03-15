@@ -64,6 +64,10 @@ function config_vars() {
 			$var['comment'][] = $temp_comment;
 			$temp_comment = false;
 		}
+
+		if (preg_match('!^\s*\$config\[(\'log_system\'|\'captcha\')\]!', $line)) {
+            continue;
+        }
 		
 		if (preg_match('!^\s*// ([^$].*)$!', $line, $matches)) {
 			if ($var['default'] !== false) {

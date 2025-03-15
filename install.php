@@ -1,7 +1,7 @@
 <?php
 
 // Installation/upgrade file
-define('VERSION', '5.1.4');
+define('VERSION', '5.2.0');
 require 'inc/bootstrap.php';
 loadConfig();
 
@@ -689,6 +689,8 @@ if ($step == 0) {
 
 	echo Element('page.html', $page);
 } elseif ($step == 1) {
+	// The HTTPS check doesn't work properly when in those arrays, so let's run it here and pass along the result during the actual check.
+	$httpsvalue = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 	$page['title'] = 'Pre-installation test';
 
 	$can_exec = true;
@@ -733,13 +735,6 @@ if ($step == 0) {
 			'result' => PHP_VERSION_ID >= 50400,
 			'required' => true,
 			'message' => 'vichan requires PHP 7.4 or better.',
-		),
-		array(
-			'category' => 'PHP',
-			'name' => 'PHP &ge; 5.6',
-			'result' => PHP_VERSION_ID >= 50600,
-			'required' => false,
-			'message' => 'vichan works best on PHP 5.6 or better.',
 		),
 		array(
 			'category' => 'PHP',
@@ -856,14 +851,14 @@ if ($step == 0) {
 		array(
 			'category' => 'File permissions',
 			'name' => getcwd() . '/templates/cache',
-			'result' => is_writable('templates') || (is_dir('templates/cache') && is_writable('templates/cache')),
+			'result' => is_dir('templates/cache/') && is_writable('templates/cache/'),
 			'required' => true,
 			'message' => 'You must give vichan permission to create (and write to) the <code>templates/cache</code> directory or performance will be drastically reduced.'
 		),
 		array(
 			'category' => 'File permissions',
 			'name' => getcwd() . '/tmp/cache',
-			'result' => is_dir('tmp/cache') && is_writable('tmp/cache'),
+			'result' => is_dir('tmp/cache/') && is_writable('tmp/cache/'),
 			'required' => true,
 			'message' => 'You must give vichan permission to write to the <code>tmp/cache</code> directory.'
 		),
@@ -873,6 +868,13 @@ if ($step == 0) {
 			'result' => is_writable('inc/secrets.php'),
 			'required' => false,
 			'message' => 'vichan does not have permission to make changes to <code>inc/secrets.php</code>. To complete the installation, you will be asked to manually copy and paste code into the file instead.'
+		),
+		array(
+			'category' => 'Misc',
+			'name' => 'HTTPS being used',
+			'result' => $httpsvalue,
+			'required' => false,
+			'message' => 'You are not currently using https for vichan, or at least for your backend server. If this intentional, add "$config[\'cookies\'][\'secure_login_only\'] = 0;" (or 1 if using a proxy) on a new line under "Additional configuration" on the next page.'
 		),
 		array(
 			'category' => 'Misc',
@@ -919,6 +921,7 @@ if ($step == 0) {
 	$sg = new SaltGen();
 	$config['cookies']['salt'] = $sg->generate();
 	$config['secure_trip_salt'] = $sg->generate();
+	$config['secure_password_salt'] = $sg->generate();
 
 	echo Element('page.html', array(
 		'body' => Element('installer/config.html', array(
@@ -988,12 +991,16 @@ if ($step == 0) {
 	$queries[] = Element('posts.sql', array('board' => 'b'));
 
 	$sql_errors = '';
+	$sql_err_count = 0;
 	foreach ($queries as $query) {
 		if ($mysql_version < 50503)
 			$query = preg_replace('/(CHARSET=|CHARACTER SET )utf8mb4/', '$1utf8', $query);
 		$query = preg_replace('/^([\w\s]*)`([0-9a-zA-Z$_\x{0080}-\x{FFFF}]+)`/u', '$1``$2``', $query);
-		if (!query($query))
-			$sql_errors .= '<li>' . db_error() . '</li>';
+		if (!query($query)) {
+			$sql_err_count++;
+			$error = db_error();
+			$sql_errors .= "<li>$sql_err_count<ul><li>$query</li><li>$error</li></ul></li>";
+		}
 	}
 
 	$page['title'] = 'Installation complete';
@@ -1032,4 +1039,3 @@ if ($step == 0) {
 
 	echo Element('page.html', $page);
 }
-

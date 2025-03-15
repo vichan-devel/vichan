@@ -1,20 +1,8 @@
 <?php
-$dir = "static/banners/";
-$files = scandir($dir, SCANDIR_SORT_NONE);
-$images = array_diff($files, array('.', '..'));
-$name = $images[array_rand($images)];
-// open the file in a binary mode
-$fp = fopen($dir . $name, 'rb');
 
-// send the right headers
-header('Cache-Control: no-cache, no-store, must-revalidate'); // HTTP 1.1
-header('Pragma: no-cache'); // HTTP 1.0
-header('Expires: 0'); // Proxies
-$fstat = fstat($fp);
-header('Content-Type: ' . mime_content_type($dir . $name));
-header('Content-Length: ' . $fstat['size']);
+$files = scandir('static/banners/', SCANDIR_SORT_NONE);
+$files = array_diff($files, ['.', '..']);
 
-// dump the picture and stop the script
-fpassthru($fp);
-exit;
-?>
+$name = $files[array_rand($files)];
+header("Location: /static/banners/$name", true, 307);
+header('Cache-Control: no-cache');

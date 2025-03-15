@@ -15,16 +15,16 @@
  *
  */
 
-onready(function(){
-	var do_original_filename = function() {
-		var filename, truncated;
+onReady(function() {
+	let doOriginalFilename = function() {
+		let filename, truncated;
 		if ($(this).attr('title')) {
 			filename = $(this).attr('title');
 			truncated = true;
 		} else {
 			filename = $(this).text();
 		}
-		
+
 		$(this).replaceWith(
 			$('<a></a>')
 				.attr('download', filename)
@@ -34,9 +34,9 @@ onready(function(){
 			);
 	};
 
-	$('.postfilename').each(do_original_filename);
+	$('.postfilename').each(doOriginalFilename);
 
-        $(document).on('new_post', function(e, post) {
-		$(post).find('.postfilename').each(do_original_filename);
+	$(document).on('new_post', function(e, post) {
+		$(post).find('.postfilename').each(doOriginalFilename);
 	});
 });

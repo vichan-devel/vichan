@@ -129,14 +129,16 @@ var banlist_init = function(token, my_boards, inMod) {
     $(".banform").on("submit", function() { return false; });
 
     $("#unban").on("click", function() {
-      $(".banform .hiddens").remove();
-      $("<input type='hidden' name='unban' value='unban' class='hiddens'>").appendTo(".banform");
-
-      $.each(selected, function(e) {
-        $("<input type='hidden' name='ban_"+e+"' value='unban' class='hiddens'>").appendTo(".banform");
-      });
-
-      $(".banform").off("submit").submit();
+      if (confirm('Are you sure you want to unban the selected IPs?')) {
+        $(".banform .hiddens").remove();
+        $("<input type='hidden' name='unban' value='unban' class='hiddens'>").appendTo(".banform");
+    
+        $.each(selected, function(e) {
+          $("<input type='hidden' name='ban_"+e+"' value='unban' class='hiddens'>").appendTo(".banform");
+        });
+    
+        $(".banform").off("submit").submit();
+      }
     });
 
     if (device_type == 'desktop') {

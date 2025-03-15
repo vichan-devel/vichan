@@ -65,8 +65,28 @@
 	// been generated. This keeps the script from querying the database and causing strain when not needed.
 	$config['has_installed'] = '.installed';
 
-	// Use syslog() for logging all error messages and unauthorized login attempts.
+	// Deprecated, use 'log_system'.
 	$config['syslog'] = false;
+
+	$config['log_system'] = [
+		/*
+		 * Log all error messages and unauthorized login attempts.
+		 * Can be "syslog", "error_log" (default), "file", or "stderr".
+		 */
+		'type' => 'error_log',
+		// The application name used by the logging system. Defaults to "tinyboard" for backwards compatibility.
+		'name' => 'tinyboard',
+		/*
+		 * Only relevant if 'log_system' is set to "syslog". If true, double print the logs also in stderr. Defaults to
+		 * false.
+		 */
+		'syslog_stderr' => false,
+		/*
+		 * Only relevant if "log_system" is set to `file`. Sets the file that vichan will log to. Defaults to
+		 * '/var/log/vichan.log'.
+		 */
+		'file_path' => '/var/log/vichan.log',
+	];
 
 	// Use `host` via shell_exec() to lookup hostnames, avoiding query timeouts. May not work on your system.
 	// Requires safe_mode to be disabled.
@@ -78,6 +98,11 @@
 	// When executing most command-line tools (such as `convert` for ImageMagick image processing), add this
 	// to the environment path (seperated by :).
 	$config['shell_path'] = '/usr/local/bin';
+
+	// Automatically execute some maintenance tasks when some pages are opened, which may result in higher
+	// latencies.
+	// If set to false, ensure to periodically invoke the tools/maintenance.php script.
+	$config['auto_maintenance'] = true;
 
 /*
  * ====================
@@ -114,17 +139,26 @@
 
 	/*
 	 * On top of the static file caching system, you can enable the additional caching system which is
-	 * designed to minimize SQL queries and can significantly increase speed when posting or using the
-	 * moderator interface. APC is the recommended method of caching.
+	 * designed to minimize request processing can significantly increase speed when posting or using
+	 * the moderator interface.
 	 *
 	 * https://github.com/vichan-devel/vichan/wiki/cache
 	 */
 
+	// Uses a PHP array. MUST NOT be used in multiprocess environments.
 	$config['cache']['enabled'] = 'php';
+	// The recommended in-memory method of caching. Requires the extension. Due to how APCu works, this should be
+	// disabled when you run tools from the cli.
 	// $config['cache']['enabled'] = 'apcu';
+	// The Memcache server. Requires the memcached extension, with a final D.
 	// $config['cache']['enabled'] = 'memcached';
+	// The Redis server. Requires the extension.
 	// $config['cache']['enabled'] = 'redis';
+	// Use the local cache folder. Slower than native but available out of the box and compatible with multiprocess
+	// environments. You can mount a ram-based filesystem in the cache directory to improve performance.
 	// $config['cache']['enabled'] = 'fs';
+	// Technically available, offers a no-op fake cache. Don't use this outside of testing or debugging.
+	// $config['cache']['enabled'] = 'none';
 
 	// Timeout for cached objects such as posts and HTML.
 	$config['cache']['timeout'] = 60 * 60 * 48; // 48 hours
@@ -173,7 +207,7 @@
 
 	// How long should the cookies last (in seconds). Defines how long should moderators should remain logged
 	// in (0 = browser session).
-	$config['cookies']['expire'] = 60 * 60 * 24 * 30 * 6; // ~6 months
+	$config['cookies']['expire'] = 60 * 60 * 24 * 7; // 1 week.
 
 	// Make this something long and random for security.
 	$config['cookies']['salt'] = 'abcdefghijklmnopqrstuvwxyz09123456789!@#$%^&*()';
@@ -181,8 +215,19 @@
 	// Whether or not you can access the mod cookie in JavaScript. Most users should not need to change this.
 	$config['cookies']['httponly'] = true;
 
+	// Do not allow logins via unsecure connections.
+	// 0 = off. Allow logins on unencrypted HTTP connections. Should only be used in testing environments.
+	// 1 = on, trust HTTP headers. Allow logins on (at least reportedly partial) HTTPS connections. Use this only if you
+	// use a proxy, CDN or load balancer via an unencrypted connection. Be sure to filter 'HTTP_X_FORWARDED_PROTO' in
+	// the remote server, since an attacker could inject the header from the client.
+	// 2 = on, do not trust HTTP headers. Secure default, allow logins only on HTTPS connections.
+	$config['cookies']['secure_login_only'] = 2;
+
 	// Used to salt secure tripcodes ("##trip") and poster IDs (if enabled).
 	$config['secure_trip_salt'] = ')(*&^%$#@!98765432190zyxwvutsrqponmlkjihgfedcba';
+
+	// Used to salt poster passwords.
+	$config['secure_password_salt'] = 'wKJSb7M5SyzMcFWD2gPO3j2RYUSO9B789!@#$%^&*()';
 
 /*
  * ====================
@@ -230,83 +275,6 @@
 	// To prevent bump attacks; returns the thread to last position after the last post is deleted.
 	$config['anti_bump_flood'] = false;
 
-	/*
-	 * Introduction to vichan's spam filter:
-	 *
-	 * In simple terms, whenever a posting form on a page is generated (which happens whenever a
-	 * post is made), vichan will add a random amount of hidden, obscure fields to it to
-	 * confuse bots and upset hackers. These fields and their respective obscure values are
-	 * validated upon posting with a 160-bit "hash". That hash can only be used as many times
-	 * as you specify; otherwise, flooding bots could just keep reusing the same hash.
-	 * Once a new set of inputs (and the hash) are generated, old hashes for the same thread
-	 * and board are set to expire. Because you have to reload the page to get the new set
-	 * of inputs and hash, if they expire too quickly and more than one person is viewing the
-	 * page at a given time, vichan would return false positives (depending on how long the
-	 * user sits on the page before posting). If your imageboard is quite fast/popular, set
-	 * $config['spam']['hidden_inputs_max_pass'] and $config['spam']['hidden_inputs_expire'] to
-	 * something higher to avoid false positives.
-	 *
-	 * See also: https://github.com/vichan-devel/vichan/wiki/your_request_looks_automated
-	 *
-	 */
-
-	// Number of hidden fields to generate.
-	$config['spam']['hidden_inputs_min'] = 4;
-	$config['spam']['hidden_inputs_max'] = 12;
-
-	// How many times can a "hash" be used to post?
-	$config['spam']['hidden_inputs_max_pass'] = 12;
-
-	// How soon after regeneration do hashes expire (in seconds)?
-	$config['spam']['hidden_inputs_expire'] = 60 * 60 * 3; // three hours
-
-	// Whether to use Unicode characters in hidden input names and values.
-	$config['spam']['unicode'] = true;
-
-	// These are fields used to confuse the bots. Make sure they aren't actually used by vichan, or it won't work.
-	$config['spam']['hidden_input_names'] = array(
-		'user',
-		'username',
-		'login',
-		'search',
-		'q',
-		'url',
-		'firstname',
-		'lastname',
-		'text',
-		'message'
-	);
-
-	// Always update this when adding new valid fields to the post form, or EVERYTHING WILL BE DETECTED AS SPAM!
-	$config['spam']['valid_inputs'] = array(
-		'hash',
-		'board',
-		'thread',
-		'mod',
-		'name',
-		'email',
-		'subject',
-		'post',
-		'body',
-		'password',
-		'sticky',
-		'lock',
-		'raw',
-		'embed',
-		'g-recaptcha-response',
-		'h-captcha-response',
-		'captcha_cookie',
-		'captcha_text',
-		'spoiler',
-		'page',
-		'file_url',
-		'json_response',
-		'user_flag',
-		'no_country',
-		'tag',
-		'simple_spam'
-	);
-
 	// Enable simple anti-spam measure. Requires the end-user to answer a question before making a post.
 	// Works very well against uncustomized spam. Answers are case-insensitive.
 	// $config['simple_spam'] = array (
@@ -315,39 +283,39 @@
 	//);
 	$config['simple_spam'] = false;
 
-	// Enable reCaptcha to make spam even harder. Rarely necessary.
-	$config['recaptcha'] = false;
-
-	// Public and private key pair from https://www.google.com/recaptcha/admin/create
-	$config['recaptcha_public'] = '6LcXTcUSAAAAAKBxyFWIt2SO8jwx4W7wcSMRoN3f';
-	$config['recaptcha_private'] = '6LcXTcUSAAAAAOGVbVdhmEM1_SyRF4xTKe8jbzf_';
-
-	// Enable hCaptcha as an alternative to reCAPTCHA.
-	$config['hcaptcha'] = false;
-
-	// Public and private key pair for using hCaptcha.
-	$config['hcaptcha_public'] = '7a4b21e0-dc53-46f2-a9f8-91d2e74b63a0';
-	$config['hcaptcha_private'] = '0x4e9A01bE637b51dC41a7Ea9865C3fDe4aB72Cf17';
-
-	// Enable Custom Captcha you need to change a couple of settings
-	//Read more at: /inc/captcha/readme.md
-	$config['captcha'] = array();
-
-	// Enable custom captcha provider
-	$config['captcha']['enabled'] = false;
-
-	//New thread captcha
- 	//Require solving a captcha to post a thread.
- 	//Default off.
- 	$config['new_thread_capt'] = false;
-
-	// Custom captcha get provider path (if not working get the absolute path aka your url.)
-	$config['captcha']['provider_get'] = '../inc/captcha/entrypoint.php';
-	// Custom captcha check provider path
-	$config['captcha']['provider_check'] = '../inc/captcha/entrypoint.php';
-
-	// Custom captcha extra field (eg. charset)
-	$config['captcha']['extra'] = 'abcdefghijklmnopqrstuvwxyz';
+	$config['captcha'] = [
+		// Can be false, 'recaptcha', 'hcaptcha' or 'native'.
+		'provider' => false,
+		/*
+		 * If not false, the captcha is dynamically injected on the client if the web server set the `captcha-required`
+		 * cookie to 1. The configuration value should be set the IP for which the captcha should be verified.
+		 *
+		 * Example:
+		 *
+		 * // Verify the captcha for users sending posts from the loopback address.
+		 * $config['captcha']['dynamic'] = '127.0.0.1';
+		 */
+		'dynamic' => false,
+		'recaptcha' => [
+			'sitekey' => '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+			'secret' => '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe',
+		],
+		'hcaptcha' => [
+			'sitekey' => '10000000-ffff-ffff-ffff-000000000001',
+			'secret' => '0x0000000000000000000000000000000000000000',
+		],
+		// To enable the native captcha you need to change a couple of settings. Read more at: /inc/captcha/readme.md
+		'native' => [
+			// Custom captcha get provider path (if not working get the absolute path aka your url).
+			'provider_get' => '/inc/captcha/entrypoint.php',
+			// Custom captcha check provider path
+			'provider_check' => '/inc/captcha/entrypoint.php',
+			// Custom captcha extra field (eg. charset)
+			'extra' => 'abcdefghijklmnopqrstuvwxyz',
+			// New thread captcha. Require solving a captcha to post a thread.
+			'new_thread_capt' => false
+		]
+	];
 
 	// Ability to lock a board for normal users and still allow mods to post.  Could also be useful for making an archive board
 	$config['board_locked'] = false;
@@ -487,6 +455,17 @@
 	// 	'action' => 'reject'
 	// );
 
+	// Example: Expand shortened links in a post, looking for and blocking URLs that lead to an unwanted
+        // endpoint. Many botspam posts include a variety of shortened URLs which all point to the same few
+        // webhosts. You can use this filter to block the endpoint webhost instead of just the apparent URL.
+	// $config['filters'][] = array(
+	// 	'condition' => array(
+	// 		'unshorten' => '/endpoint.net/i',
+	// 	),
+	// 	'action' => 'reject',
+	// 	'message' => 'None of that, please.'
+	// );
+
 	// Filter flood prevention conditions ("flood-match") depend on a table which contains a cache of recent
 	// posts across all boards. This table is automatically purged of older posts, determining the maximum
 	// "age" by looking at each filter. However, when determining the maximum age, vichan does not look
@@ -611,6 +590,9 @@
 	// Example: Custom secure tripcode.
 	// $config['custom_tripcode']['##securetrip'] = '!!somethingelse';
 
+	//Disable tripcodes. This will make it so all new posts will act as if no tripcode exists.
+	$config['disable_tripcodes'] = false;
+
 	// Allow users to mark their image as a "spoiler" when posting. The thumbnail will be replaced with a
 	// static spoiler image instead (see $config['spoiler_image']).
 	$config['spoiler_images'] = false;
@@ -662,6 +644,9 @@
 	);
 	*/
 
+	// Maximum number inline of dice rolls per markup.
+	$config['max_roll_count'] = 50;
+
 	// Allow dice rolling: an email field of the form "dice XdY+/-Z" will result in X Y-sided dice rolled and summed,
 	// with the modifier Z added, with the result displayed at the top of the post body.
 	$config['allow_roll'] = false;
@@ -709,6 +694,9 @@
 	//);
 	$config['premade_ban_reasons'] = false;
 
+	// How often (minimum) to purge the ban list of expired bans (which have been seen).
+	$config['purge_bans'] = 60 * 60 * 12; // 12 hours
+
 	// Allow users to appeal bans through vichan.
 	$config['ban_appeals'] = false;
 
@@ -730,11 +718,15 @@
  * ====================
  */
 
-	// "Wiki" markup syntax ($config['wiki_markup'] in pervious versions):
-	$config['markup'][] = array("/'''(.+?)'''/", "<strong>\$1</strong>");
-	$config['markup'][] = array("/''(.+?)''/", "<em>\$1</em>");
-	$config['markup'][] = array("/\*\*(.+?)\*\*/", "<span class=\"spoiler\">\$1</span>");
-	$config['markup'][] = array("/^[ |\t]*==(.+?)==[ |\t]*$/m", "<span class=\"heading\">\$1</span>");
+	$config['markup'] = [
+		// Inline dice roll markup.
+		[ "/!([-+]?\d+)?([d])([-+]?\d+)([-+]\d+)?/iu", fn($m) => inline_dice_roll_markup($m, 'static/d10.svg') ],
+		// "Wiki" markup syntax ($config['wiki_markup'] in pervious versions):
+		[ "/'''(.+?)'''/", "<strong>\$1</strong>" ],
+		[ "/''(.+?)''/", "<em>\$1</em>" ],
+		[ "/\*\*(.+?)\*\*/", "<span class=\"spoiler\">\$1</span>" ],
+		[ "/^[ |\t]*==(.+?)==[ |\t]*$/m", "<span class=\"heading\">\$1</span>" ],
+	];
 
 	// Code markup. This should be set to a regular expression, using tags you want to use. Examples:
 	// "/\[code\](.*?)\[\/code\]/is"
@@ -839,12 +831,14 @@
 	$config['ie_mime_type_detection'] = '/<(?:body|head|html|img|plaintext|pre|script|table|title|a href|channel|scriptlet)/i';
 
 	// Allowed image file extensions.
-	$config['allowed_ext'][] = 'jpg';
-	$config['allowed_ext'][] = 'jpeg';
-	$config['allowed_ext'][] = 'bmp';
-	$config['allowed_ext'][] = 'gif';
-	$config['allowed_ext'][] = 'png';
-	$config['allowed_ext'][] = 'webp';
+	$config['allowed_ext'] = [
+		'jpg',
+		'jpeg',
+		'bmp',
+		'gif',
+		'png',
+		'webp'
+	];
 	// $config['allowed_ext'][] = 'svg';
 
 	// Allowed extensions for OP. Inherits from the above setting if set to false. Otherwise, it overrides both allowed_ext and
@@ -862,10 +856,12 @@
 	// };
 
 	// Thumbnail to use for the non-image file uploads.
-	$config['file_icons']['default'] = 'file.png';
-	$config['file_icons']['zip'] = 'zip.png';
-	$config['file_icons']['webm'] = 'video.png';
-	$config['file_icons']['mp4'] = 'video.png';
+	$config['file_icons'] = [
+		'default' => 'file.png',
+		'zip' => 'zip.png',
+		'webm' => 'video.png',
+		'mp4' => 'video.png'
+	];
 	// Example: Custom thumbnail for certain file extension.
 	// $config['file_icons']['extension'] = 'some_file.png';
 
@@ -897,11 +893,13 @@
 	$config['show_filename'] = true;
 
 	// WebM Settings
-	$config['webm']['use_ffmpeg'] = false;
-	$config['webm']['allow_audio'] = false;
-	$config['webm']['max_length'] = 120;
-	$config['webm']['ffmpeg_path'] = 'ffmpeg';
-	$config['webm']['ffprobe_path'] = 'ffprobe';
+	$config['webm'] = [
+		'use_ffmpeg' => false,
+		'allow_audio' => false,
+		'max_length' => 120,
+		'ffmpeg_path' => 'ffmpeg',
+		'ffprobe_path' => 'ffprobe'
+	];
 
 	// Display image identification links for ImgOps, regex.info/exif, Google Images and iqdb.
 	$config['image_identification'] = false;
@@ -976,11 +974,11 @@
 
 	// Timezone to use for displaying dates/times.
 	$config['timezone'] = 'America/Los_Angeles';
-	// The format string passed to strftime() for displaying dates.
-	// http://www.php.net/manual/en/function.strftime.php
-	$config['post_date'] = '%m/%d/%y (%a) %H:%M:%S';
+	// The format string passed to DateTime::format() for displaying dates. ISO 8601-like by default.
+	// https://www.php.net/manual/en/datetime.format.php
+	$config['post_date'] = 'm/d/y (D) H:i:s';
 	// Same as above, but used for "you are banned' pages.
-	$config['ban_date'] = '%A %e %B, %Y';
+	$config['ban_date'] = 'l j F, Y';
 
 	// The names on the post buttons. (On most imageboards, these are both just "Post").
 	$config['button_newtopic'] = _('New Topic');
@@ -1010,8 +1008,11 @@
 
 	// Custom stylesheets available for the user to choose. See the "stylesheets/" folder for a list of
 	// available stylesheets (or create your own).
-	$config['stylesheets']['Yotsuba B'] = ''; // Default; there is no additional/custom stylesheet for this.
-	$config['stylesheets']['Yotsuba'] = 'yotsuba.css';
+	$config['stylesheets'] = [
+		// Default; there is no additional/custom stylesheet for this.
+		'Yotsuba B' => '',
+		'Yotsuba' => 'yotsuba.css'
+	];
 	// $config['stylesheets']['Futaba'] = 'futaba.css';
 	// $config['stylesheets']['Dark'] = 'dark.css';
 
@@ -1093,6 +1094,10 @@
 	// <tinyboard flag style>.
 	$config['flag_style'] = 'width:16px;height:11px;';
 
+	// Lazy loading
+	// https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading
+	$config['content_lazy_loading'] = false;
+
 /*
  * ====================
  *  Javascript
@@ -1125,6 +1130,10 @@
 	// Minify Javascript using http://code.google.com/p/minify/.
 	$config['minify_js'] = false;
 
+	// Version number for main.js (or $config['url_javascript']).
+	// You can use this to bypass the user's browsers and CDN caches.
+	$config['resource_version'] = 0;
+
 	// Dispatch thumbnail loading and image configuration with JavaScript. It will need a certain javascript
 	// code to work.
 	$config['javascript_image_dispatch'] = false;
@@ -1141,11 +1150,11 @@
 	// Custom embedding (YouTube, vimeo, etc.)
 	// It's very important that you match the entire input (with ^ and $) or things will not work correctly.
 	// Be careful when creating a new embed, because depending on the URL you end up exposing yourself to an XSS.
-	$config['embedding'] = array(
+		$config['embedding'] = array(
 		array(
-			'/^https?:\/\/(\w+\.)?youtube\.com\/watch\?v=([a-zA-Z0-9\-_]{10,11})?$/i',
-			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" id="ytplayer" src="https://www.youtube.com/embed/$2"></iframe>'
-		),
+			'/^https?:\/\/(\w+\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9\-_]{10,11})?$/i',
+			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" id="ytplayer" src="https://www.youtube.com/embed/$3"></iframe>'
+		),		
 		array(
 			'/^https?:\/\/(\w+\.)?vimeo\.com\/(\d{2,10})(\?.+)?$/i',
 			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" src="https://player.vimeo.com/video/$2"></iframe>'
@@ -1159,9 +1168,10 @@
 			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0"  src="https://www.metacafe.com/embed/$2/$3/" allowfullscreen></iframe>'
 		),
 		array(
-                        '/^https?:\/\/(\w+\.)?vocaroo\.com\/([a-zA-Z0-9]{2,12})$/i',
-                        '<iframe style="float: left; margin: 10px 20px;" width="300" height="60" frameborder="0" src="https://vocaroo.com/embed/$2"></iframe>'
-		)
+			'/^https?:\/\/(\w+\.)?(vocaroo\.com\/|voca\.ro\/)([a-zA-Z0-9]{2,12})$/i',
+			'<iframe style="float: left; margin: 10px 20px;" width="300" height="60" frameborder="0" src="https://vocaroo.com/embed/$3"></iframe>'
+		),
+				
 	);
 
 	// Embedding width and height.
@@ -1174,83 +1184,86 @@
  * ====================
  */
 
-	// Error messages
-	$config['error']['bot']			= _('You look like a bot.');
-	$config['error']['referer']		= _('Your browser sent an invalid or no HTTP referer.');
-	$config['error']['toolong']		= _('The %s field was too long.');
-	$config['error']['toolong_body']	= _('The body was too long.');
-	$config['error']['tooshort_body']	= _('The body was too short or empty.');
-	$config['error']['toomanylines']	= _('Your post contains too many lines!');
-	$config['error']['noimage']		= _('You must upload an image.');
-	$config['error']['toomanyimages'] = _('You have attempted to upload too many images!');
-	$config['error']['nomove']		= _('The server failed to handle your upload.');
-	$config['error']['fileext']		= _('Unsupported image format.');
-	$config['error']['noboard']		= _('Invalid board!');
-	$config['error']['nonexistant']		= _('Thread specified does not exist.');
-	$config['error']['nopost']		= _('Post specified does not exist.');
-	$config['error']['locked']		= _('Thread locked. You may not reply at this time.');
-	$config['error']['reply_hard_limit']	= _('Thread has reached its maximum reply limit.');
-	$config['error']['image_hard_limit']	= _('Thread has reached its maximum image limit.');
-	$config['error']['nopost']		= _('You didn\'t make a post.');
-	$config['error']['flood']		= _('Flood detected; Post discarded.');
-	$config['error']['too_many_threads']	= _('The hourly thread limit has been reached. Please post in an existing thread.');
-	$config['error']['spam']		= _('Your request looks automated; Post discarded.');
-	$config['error']['simple_spam']		= _('You must answer the question to make a new thread. See the last field.');
-	$config['error']['unoriginal']		= _('Unoriginal content!');
-	$config['error']['muted']		= _('Unoriginal content! You have been muted for %d seconds.');
-	$config['error']['youaremuted']		= _('You are muted! Expires in %d seconds.');
-	$config['error']['dnsbl']		= _('Your IP address is listed in %s.');
-	$config['error']['toomanylinks']	= _('Too many links; flood detected.');
-	$config['error']['toomanycites']	= _('Too many cites; post discarded.');
-	$config['error']['toomanycross']	= _('Too many cross-board links; post discarded.');
-	$config['error']['nodelete']		= _('You didn\'t select anything to delete.');
-	$config['error']['noreport']		= _('You didn\'t select anything to report.');
-	$config['error']['toolongreport']	= _('The reason was too long.');
-	$config['error']['toomanyreports']	= _('You can\'t report that many posts at once.');
-	$config['error']['noban']			= _('That ban doesn\'t exist or is not for you.');
-	$config['error']['tooshortban']		= _('You cannot appeal a ban of this length.');
-	$config['error']['toolongappeal']	= _('The appeal was too long.');
-	$config['error']['toomanyappeals']	= _('You cannot appeal this ban again.');
-	$config['error']['pendingappeal']	= _('There is already a pending appeal for this ban.');
-	$config['error']['invalidpassword']	= _('Wrong password…');
-	$config['error']['invalidimg']		= _('Invalid image.');
-	$config['error']['phpfileserror']	= _('Upload failure (file #%index%): Error code %code%. Refer to <a href="http://php.net/manual/en/features.file-upload.errors.php">http://php.net/manual/en/features.file-upload.errors.php</a>; post discarded.');
-	$config['error']['unknownext']		= _('Unknown file extension.');
-	$config['error']['filesize']		= _('Maximum file size: %maxsz% bytes<br>Your file\'s size: %filesz% bytes');
-	$config['error']['maxsize']		= _('The file was too big.');
-	$config['error']['genwebmerror']	= _('There was a problem processing your webm.');
-	$config['error']['webmerror'] 		= _('There was a problem processing your webm.');//Is this error used anywhere ?
-	$config['error']['invalidwebm'] 	= _('Invalid webm uploaded.');
-	$config['error']['webmhasaudio'] 	= _('The uploaded webm contains an audio or another type of additional stream.');
-	$config['error']['webmtoolong']		=_('The uploaded webm is longer than %d seconds.');
-	$config['error']['fileexists']		= _('That file <a href="%s">already exists</a>!');
-	$config['error']['fileexistsinthread']	= _('That file <a href="%s">already exists</a> in this thread!');
-	$config['error']['delete_too_soon']	= _('You\'ll have to wait another %s before deleting that.');
-	$config['error']['delete_too_late']	= _('You cannot delete a post this old.');
-	$config['error']['mime_exploit']	= _('MIME type detection XSS exploit (IE) detected; post discarded.');
-	$config['error']['invalid_embed']	= _('Couldn\'t make sense of the URL of the video you tried to embed.');
-	$config['error']['captcha']		= _('You seem to have mistyped the verification.');
-	$config['error']['flag_undefined']	= _('The flag %s is undefined, your PHP version is too old!');
-	$config['error']['flag_wrongtype']	= _('defined_flags_accumulate(): The flag %s is of the wrong type!');
+	$config['error'] = [
+		// General error messages
+		'bot' 					=> _('You look like a bot.'),
+		'referer'				=> _('Your browser sent an invalid or no HTTP referer.'),
+		'toolong'				=> _('The %s field was too long.'),
+		'toolong_body'			=> _('The body was too long.'),
+		'tooshort_body'			=> _('The body was too short or empty.'),
+		'toomanylines'			=> _('Your post contains too many lines!'),
+		'noimage'				=> _('You must upload an image.'),
+		'toomanyimages' 		=> _('You have attempted to upload too many images!'),
+		'nomove'				=> _('The server failed to handle your upload.'),
+		'fileext'				=> _('Unsupported image format.'),
+		'noboard'				=> _('Invalid board!'),
+		'nonexistant'			=> _('Thread specified does not exist.'),
+		'nopost'				=> _('Post specified does not exist.'),
+		'locked'				=> _('Thread locked. You may not reply at this time.'),
+		'reply_hard_limit'		=> _('Thread has reached its maximum reply limit.'),
+		'image_hard_limit'		=> _('Thread has reached its maximum image limit.'),
+		'nopost'				=> _('You didn\'t make a post.'),
+		'flood'					=> _('Flood detected; Post discarded.'),
+		'too_many_threads'		=> _('The hourly thread limit has been reached. Please post in an existing thread.'),
+		'spam'					=> _('Your request looks automated; Post discarded.'),
+		'simple_spam'			=> _('You must answer the question to make a new thread. See the last field.'),
+		'unoriginal'			=> _('Unoriginal content!'),
+		'muted'					=> _('Unoriginal content! You have been muted for %d seconds.'),
+		'youaremuted'			=> _('You are muted! Expires in %d seconds.'),
+		'dnsbl'					=> _('Your IP address is listed in %s.'),
+		'toomanylinks'			=> _('Too many links; flood detected.'),
+		'toomanycites'			=> _('Too many cites; post discarded.'),
+		'toomanycross'			=> _('Too many cross-board links; post discarded.'),
+		'nodelete'				=> _('You didn\'t select anything to delete.'),
+		'noreport'				=> _('You didn\'t select anything to report.'),
+		'toolongreport'			=> _('The reason was too long.'),
+		'toomanyreports'		=> _('You can\'t report that many posts at once.'),
+		'noban'					=> _('That ban doesn\'t exist or is not for you.'),
+		'tooshortban'			=> _('You cannot appeal a ban of this length.'),
+		'toolongappeal'			=> _('The appeal was too long.'),
+		'toomanyappeals'		=> _('You cannot appeal this ban again.'),
+		'pendingappeal'			=> _('There is already a pending appeal for this ban.'),
+		'invalidpassword'		=> _('Wrong password…'),
+		'invalidimg'			=> _('Invalid image.'),
+		'phpfileserror'			=> _('Upload failure (file #%index%): Error code %code%. Refer to <a href=>"http://php.net/manual/en/features.file-upload.errors.php">http://php.net/manual/en/features.file-upload.errors.php</a>; post discarded.'),
+		'unknownext'			=> _('Unknown file extension.'),
+		'filesize'				=> _('Maximum file size: %maxsz% bytes<br>Your file\'s size: %filesz% bytes'),
+		'maxsize'				=> _('The file was too big.'),
+		'genwebmerror'			=> _('There was a problem processing your webm.'),
+		'invalidwebm' 			=> _('Invalid webm uploaded.'),
+		'webmhasaudio' 			=> _('The uploaded webm contains an audio or another type of additional stream.'),
+		'webmtoolong'			=>_('The uploaded webm is longer than %d seconds.'),
+		'fileexists'			=> _('That file <a href=>"%s">already exists</a>!'),
+		'fileexistsinthread'	=> _('That file <a href=>"%s">already exists</a> in this thread!'),
+		'delete_too_soon'		=> _('You\'ll have to wait another %s before deleting that.'),
+		'delete_too_late'		=> _('You cannot delete a post this old.'),
+		'mime_exploit'			=> _('MIME type detection XSS exploit (IE) detected; post discarded.'),
+		'invalid_embed'			=> _('Couldn\'t make sense of the URL of the video you tried to embed.'),
+		'captcha'				=> _('You seem to have mistyped the verification.'),
+		'flag_undefined'		=> _('The flag %s is undefined, your PHP version is too old!'),
+		'flag_wrongtype'		=> _('defined_flags_accumulate(): The flag %s is of the wrong type!'),
+		'remote_io_error'		=> _('IO error while interacting with a remote service.'),
+		'local_io_error'		=> _('IO error while interacting with a local resource or service.'),
 
-
-	// Moderator errors
-	$config['error']['toomanyunban']	= _('You are only allowed to unban %s users at a time. You tried to unban %u users.');
-	$config['error']['invalid']		= _('Invalid username and/or password.');
-	$config['error']['notamod']		= _('You are not a mod…');
-	$config['error']['invalidafter']	= _('Invalid username and/or password. Your user may have been deleted or changed.');
-	$config['error']['malformed']		= _('Invalid/malformed cookies.');
-	$config['error']['missedafield']	= _('Your browser didn\'t submit an input when it should have.');
-	$config['error']['required']		= _('The %s field is required.');
-	$config['error']['invalidfield']	= _('The %s field was invalid.');
-	$config['error']['boardexists']		= _('There is already a %s board.');
-	$config['error']['noaccess']		= _('You don\'t have permission to do that.');
-	$config['error']['invalidpost']		= _('That post doesn\'t exist…');
-	$config['error']['404']			= _('Page not found.');
-	$config['error']['modexists']		= _('That mod <a href="?/users/%d">already exists</a>!');
-	$config['error']['invalidtheme']	= _('That theme doesn\'t exist!');
-	$config['error']['csrf']		= _('Invalid security token! Please go back and try again.');
-	$config['error']['badsyntax']		= _('Your code contained PHP syntax errors. Please go back and correct them. PHP says: ');
+		// Moderator errors
+		'toomanyunban'	=> _('You are only allowed to unban %s users at a time. You tried to unban %u users.'),
+		'invalid'		=> _('Invalid username and/or password.'),
+		'insecure'		=> _('Login on insecure connections is disabled.'),
+		'notamod'		=> _('You are not a mod…'),
+		'invalidafter'	=> _('Invalid username and/or password. Your user may have been deleted or changed.'),
+		'malformed'		=> _('Invalid/malformed cookies.'),
+		'missedafield'	=> _('Your browser didn\'t submit an input when it should have.'),
+		'required'		=> _('The %s field is required.'),
+		'invalidfield'	=> _('The %s field was invalid.'),
+		'boardexists'	=> _('There is already a %s board.'),
+		'noaccess'		=> _('You don\'t have permission to do that.'),
+		'invalidpost'	=> _('That post doesn\'t exist…'),
+		'404'			=> _('Page not found.'),
+		'modexists'		=> _('That mod <a href="?/users/%d">already exists</a>!'),
+		'invalidtheme'	=> _('That theme doesn\'t exist!'),
+		'csrf'			=> _('Invalid security token! Please go back and try again.'),
+		'badsyntax'		=> _('Your code contained PHP syntax errors. Please go back and correct them. PHP says: ')
+	];
 
 /*
  * =========================
@@ -1272,8 +1285,8 @@
 
 	// The scheme and domain. This is used to get the site's absolute URL (eg. for image identification links).
 	// If you use the CLI tools, it would be wise to override this setting.
-	$config['domain'] = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 'https://' : 'http://';
-	$config['domain'] .= isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+	$config['domain'] = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 'https://' : 'http://')
+		 . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost');
 
 	// If for some reason the folders and static HTML index files aren't in the current working direcotry,
 	// enter the directory path here. Otherwise, keep it false.
@@ -1353,22 +1366,22 @@
 	// Board directory, followed by a forward-slash (/).
 	$config['board_path'] = '%s/';
 	// Misc directories.
-	$config['dir']['img'] = 'src/';
-	$config['dir']['thumb'] = 'thumb/';
-	$config['dir']['res'] = 'res/';
-
-	// For load balancing, having a seperate server (and domain/subdomain) for serving static content is
-	// possible. This can either be a directory or a URL. Defaults to $config['root'] . 'static/'.
-	// $config['dir']['static'] = 'http://static.example.org/';
-
-	// Where to store the .html templates. This folder and the template files must exist.
-	$config['dir']['template'] = getcwd() . '/templates';
-	// Location of vichan "themes".
-	$config['dir']['themes'] = getcwd() . '/templates/themes';
-	// Same as above, but a URI (accessable by web interface).
-	$config['dir']['themes_uri'] = 'templates/themes';
-	// Home directory. Used by themes.
-	$config['dir']['home'] = '';
+	$config['dir'] = [
+		'img' => 'src/',
+		'thumb' => 'thumb/',
+		'res' => 'res/',
+		// For load balancing, having a seperate server (and domain/subdomain) for serving static content is
+		// possible. This can either be a directory or a URL. Defaults to $config['root'] . 'static/'.
+		// $config['dir']['static'] = 'http://static.example.org/';
+		// Where to store the .html templates. This folder and the template files must exist.
+		'template' => getcwd() . '/templates',
+		// Location of vichan "themes".
+		'themes' => getcwd() . '/templates/themes',
+		// Same as above, but a URI (accessable by web interface).
+		'themes_uri' => 'templates/themes',
+		// Home directory. Used by themes.
+		'home' => ''
+	];
 
 	// Location of a blank 1x1 gif file. Only used when country_flags_condensed is enabled
 	// $config['image_blank'] = 'static/blank.gif';
@@ -1441,13 +1454,19 @@
 	// 5. enable smart_build_helper (see below)
 	// 6. edit the strategies (see inc/functions.php for the builtin ones). You can use lambdas. I will test
 	//    various ones and include one that works best for me.
-	$config['generation_strategies'] = array();
-	// Add a sane strategy. It forces to immediately generate a page user is about to land on. Otherwise,
-	// it has no opinion, so it needs a fallback strategy.
-	$config['generation_strategies'][] = 'strategy_sane';
-	// Add an immediate catch-all strategy. This is the default function of imageboards: generate all pages
-	// on post time.
-	$config['generation_strategies'][] = 'strategy_immediate';
+	$config['generation_strategies'] = [
+		/*
+		 * Add a sane strategy. It forces to immediately generate a page user is about to land on. Otherwise,
+		 * it has no opinion, so it needs a fallback strategy.
+		 */
+		'strategy_sane',
+		/*
+		 * Add an immediate catch-all strategy. This is the default function of imageboards: generate all pages
+		 * on post time.
+		 */
+		'strategy_immediate',
+	];
+
 	// NOT RECOMMENDED: Instead of an all-"immediate" strategy, you can use an all-"build_on_load" one (used
 	// to be initialized using $config['smart_build']; ) for all pages instead of those to be build
 	// immediately. A rebuild done in this mode should remove all your static files
@@ -1464,7 +1483,7 @@
 	$config['page_404'] = '/404.html';
 
 	// Extra controller entrypoints. Controller is used only by smart_build and advanced build.
-	$config['controller_entrypoints'] = array();
+	$config['controller_entrypoints'] = [];
 
 /*
  * ====================
@@ -1472,33 +1491,84 @@
  * ====================
  */
 
-	// Limit how many bans can be removed via the ban list. Set to false (or zero) for no limit.
-	$config['mod']['unban_limit'] = false;
-
-	// Whether or not to lock moderator sessions to IP addresses. This makes cookie theft ineffective.
-	$config['mod']['lock_ip'] = true;
-
-	// The page that is first shown when a moderator logs in. Defaults to the dashboard (?/).
-	$config['mod']['default'] = '/';
-
 	// Mod links (full HTML).
-	$config['mod']['link_delete'] = '[D]';
-	$config['mod']['link_ban'] = '[B]';
-	$config['mod']['link_bandelete'] = '[B&amp;D]';
-	$config['mod']['link_deletefile'] = '[F]';
-	$config['mod']['link_spoilerimage'] = '[S]';
-	$config['mod']['link_deletebyip'] = '[D+]';
-	$config['mod']['link_deletebyip_global'] = '[D++]';
-	$config['mod']['link_sticky'] = '[Sticky]';
-	$config['mod']['link_desticky'] = '[-Sticky]';
-	$config['mod']['link_lock'] = '[Lock]';
-	$config['mod']['link_unlock'] = '[-Lock]';
-	$config['mod']['link_bumplock'] = '[Sage]';
-	$config['mod']['link_bumpunlock'] = '[-Sage]';
-	$config['mod']['link_editpost'] = '[Edit]';
-	$config['mod']['link_move'] = '[Move]';
-	$config['mod']['link_cycle'] = '[Cycle]';
-	$config['mod']['link_uncycle'] = '[-Cycle]';
+	$config['mod'] = [
+		// Limit how many bans can be removed via the ban list. Set to false (or zero) for no limit.
+		'unban_limit' => false,
+		// Whether or not to lock moderator sessions to IP addresses. This makes cookie theft less effective.
+		'lock_ip' => true,
+		// The page that is first shown when a moderator logs in. Defaults to the dashboard (?/).
+		'default' => '/',
+		// Do DNS lookups on IP addresses to get their hostname for the moderator IP pages (?/IP/x.x.x.x).
+		'dns_lookup' => true,
+		// How many recent posts, per board, to show in ?/IP/x.x.x.x.
+		'ip_recentposts' => 5,
+		// Number of posts to display on the reports page.
+		'recent_reports' => 10,
+		// Number of actions to show per page in the moderation log.
+		'modlog_page' => 350,
+		// Number of bans to show per page in the ban list.
+		'banlist_page'=> 350,
+		// Number of news entries to display per page.
+		'news_page' => 40,
+		// Number of results to display per page.
+		'search_page' => 200,
+		// Number of entries to show per page in the moderator noticeboard.
+		'noticeboard_page' => 50,
+		// Number of entries to summarize and display on the dashboard.
+		'noticeboard_dashboard' => 5,
+
+		// Check public ban message by default.
+		'check_ban_message' => false,
+		// Default public ban message. In public ban messages, %length% is replaced with "for x days" or
+		// "permanently" (with %LENGTH% being the uppercase equivalent).
+		'default_ban_message' => _('USER WAS BANNED FOR THIS POST'),
+		// $config['mod']['default_ban_message'] = 'USER WAS BANNED %LENGTH% FOR THIS POST';
+		// HTML to append to post bodies for public bans messages (where "%s" is the message).
+		'ban_message' => '<span class="public_ban">(%s)</span>',
+
+		// When moving a thread to another board and choosing to keep a "shadow thread", an automated post (with
+		// a capcode) will be made, linking to the new location for the thread. "%s" will be replaced with a
+		// standard cross-board post citation (>>>/board/xxx)
+		'shadow_mesage' => _('Moved to %s.'),
+		// Capcode to use when posting the above message.
+		'shadow_capcode' => 'Mod',
+		// Name to use when posting the above message. If false, $config['anonymous'] will be used.
+		'shadow_name' => false,
+
+		// PHP time limit for ?/rebuild. A value of 0 should cause PHP to wait indefinitely.
+		'rebuild_timelimit' => 0,
+
+		// PM snippet (for ?/inbox) length in characters.
+		'snippet_length' => 75,
+
+		// Edit raw HTML in posts by default.
+		'raw_html_default' => false,
+
+		// Automatically dismiss all reports regarding a thread when it is locked.
+		'dismiss_reports_on_lock' => true,
+
+		// Replace ?/config with a simple text editor for editing inc/instance-config.php.
+		'config_editor_php' => false,
+
+		'link_delete' => '[D]',
+		'link_ban' => '[B]',
+		'link_bandelete' => '[B&amp;D]',
+		'link_deletefile' => '[F]',
+		'link_spoilerimage' => '[S]',
+		'link_deletebyip' => '[D+]',
+		'link_deletebyip_global' => '[D++]',
+		'link_sticky' => '[Sticky]',
+		'link_desticky' => '[-Sticky]',
+		'link_lock' => '[Lock]',
+		'link_unlock' => '[-Lock]',
+		'link_bumplock' => '[Sage]',
+		'link_bumpunlock' => '[-Sage]',
+		'link_editpost' => '[Edit]',
+		'link_move' => '[Move]',
+		'link_cycle' => '[Cycle]',
+		'link_uncycle' => '[-Cycle]'
+	];
 
 	// Moderator capcodes.
 	$config['capcode'] = ' <span class="capcode">## %s</span>';
@@ -1523,63 +1593,6 @@
 	// Enable the moving of single replies
 	$config['move_replies'] = false;
 
-	// How often (minimum) to purge the ban list of expired bans (which have been seen). Only works when
-	//  $config['cache'] is enabled and working.
-	$config['purge_bans'] = 60 * 60 * 12; // 12 hours
-
-	// Do DNS lookups on IP addresses to get their hostname for the moderator IP pages (?/IP/x.x.x.x).
-	$config['mod']['dns_lookup'] = true;
-	// How many recent posts, per board, to show in ?/IP/x.x.x.x.
-	$config['mod']['ip_recentposts'] = 5;
-
-	// Number of posts to display on the reports page.
-	$config['mod']['recent_reports'] = 10;
-	// Number of actions to show per page in the moderation log.
-	$config['mod']['modlog_page'] = 350;
-	// Number of bans to show per page in the ban list.
-	$config['mod']['banlist_page'] = 350;
-	// Number of news entries to display per page.
-	$config['mod']['news_page'] = 40;
-	// Number of results to display per page.
-	$config['mod']['search_page'] = 200;
-	// Number of entries to show per page in the moderator noticeboard.
-	$config['mod']['noticeboard_page'] = 50;
-	// Number of entries to summarize and display on the dashboard.
-	$config['mod']['noticeboard_dashboard'] = 5;
-
-	// Check public ban message by default.
-	$config['mod']['check_ban_message'] = false;
-	// Default public ban message. In public ban messages, %length% is replaced with "for x days" or
-	// "permanently" (with %LENGTH% being the uppercase equivalent).
-	$config['mod']['default_ban_message'] = _('USER WAS BANNED FOR THIS POST');
-	// $config['mod']['default_ban_message'] = 'USER WAS BANNED %LENGTH% FOR THIS POST';
-	// HTML to append to post bodies for public bans messages (where "%s" is the message).
-	$config['mod']['ban_message'] = '<span class="public_ban">(%s)</span>';
-
-	// When moving a thread to another board and choosing to keep a "shadow thread", an automated post (with
-	// a capcode) will be made, linking to the new location for the thread. "%s" will be replaced with a
-	// standard cross-board post citation (>>>/board/xxx)
-	$config['mod']['shadow_mesage'] = _('Moved to %s.');
-	// Capcode to use when posting the above message.
-	$config['mod']['shadow_capcode'] = 'Mod';
-	// Name to use when posting the above message. If false, $config['anonymous'] will be used.
-	$config['mod']['shadow_name'] = false;
-
-	// PHP time limit for ?/rebuild. A value of 0 should cause PHP to wait indefinitely.
-	$config['mod']['rebuild_timelimit'] = 0;
-
-	// PM snippet (for ?/inbox) length in characters.
-	$config['mod']['snippet_length'] = 75;
-
-	// Edit raw HTML in posts by default.
-	$config['mod']['raw_html_default'] = false;
-
-	// Automatically dismiss all reports regarding a thread when it is locked.
-	$config['mod']['dismiss_reports_on_lock'] = true;
-
-	// Replace ?/config with a simple text editor for editing inc/instance-config.php.
-	$config['mod']['config_editor_php'] = false;
-
 /*
  * ====================
  *  Mod permissions
@@ -1589,13 +1602,13 @@
 	// Probably best not to change this unless you are smart enough to figure out what you're doing. If you
 	// decide to change it, remember that it is impossible to redefinite/overwrite groups; you may only add
 	// new ones.
-	$config['mod']['groups'] = array(
+	$config['mod']['groups'] = [
 		10	=> 'Janitor',
 		20	=> 'Mod',
 		30	=> 'Admin',
 		// 98	=> 'God',
 		99	=> 'Disabled'
-	);
+	];
 
 	// If you add stuff to the above, you'll need to call this function immediately after.
 	define_groups();
@@ -1605,11 +1618,11 @@
 	// define_groups();
 
 	// Capcode permissions.
-	$config['mod']['capcode'] = array(
-	//	JANITOR		=> array('Janitor'),
-		MOD		=> array('Mod'),
+	$config['mod']['capcode'] = [
+		// JANITOR		=> [ 'Janitor' ],
+		MOD		=> [ 'Mod' ],
 		ADMIN		=> true
-	);
+	];
 
 	// Example: Allow mods to post with "## Moderator" as well
 	// $config['mod']['capcode'][MOD][] = 'Moderator';
@@ -1811,25 +1824,25 @@
  */
 
 	// Public post search settings
-	$config['search'] = array();
-
-	// Enable the search form
-	$config['search']['enable'] = false;
+	$config['search'] = [
+		// Enable the search form
+		'enable' => false,
+		// Maximal number of queries per IP address per minutes
+		'queries_per_minutes' => [ 15, 2 ],
+		// Global maximal number of queries per minutes
+		'queries_per_minutes_all' => [ 50, 2 ],
+		// Limit of search results
+		'search_limit' => 100,
+	];
 
 	// Enable search in the board index.
 	$config['board_search'] = false;
 
-	// Maximal number of queries per IP address per minutes
-	$config['search']['queries_per_minutes'] = Array(15, 2);
-
-	// Global maximal number of queries per minutes
-	$config['search']['queries_per_minutes_all'] = Array(50, 2);
-
-	// Limit of search results
-	$config['search']['search_limit'] = 100;
-
 	// Boards for searching
 	//$config['search']['boards'] = array('a', 'b', 'c', 'd', 'e');
+
+	// Blacklist boards for searching, basically the opposite of the one above
+	//$config['search']['disallowed_boards'] = array('j', 'z');
 
 	// Enable public logs? 0: NO, 1: YES, 2: YES, but drop names
 	$config['public_logs'] = 0;
@@ -1879,31 +1892,33 @@
  * state. Please join #nntpchan on Rizon in order to peer with someone.
  */
 
-	$config['nntpchan'] = array();
-
-	// Enable NNTPChan integration
-	$config['nntpchan']['enabled'] = false;
-
-	// NNTP server
-	$config['nntpchan']['server'] = "localhost:1119";
-
-	// Global dispatch array. Add your boards to it to enable them. Please make
-	// sure that this setting is set in a global context.
-	$config['nntpchan']['dispatch'] = array(); // 'overchan.test' => 'test'
-
-	// Trusted peer - an IP address of your NNTPChan instance. This peer will have
-	// increased capabilities, eg.: will evade spamfilter.
-	$config['nntpchan']['trusted_peer'] = '127.0.0.1';
-
-	// Salt for message ID generation. Keep it long and secure.
-	$config['nntpchan']['salt'] = 'change_me+please';
-
-	// A local message ID domain. Make sure to change it.
-	$config['nntpchan']['domain'] = 'example.vichan.net';
-
-	// An NNTPChan group name.
-	// Please set this setting in your board/config.php, not globally.
-	$config['nntpchan']['group'] = false; // eg. 'overchan.test'
+	$config['nntpchan'] = [
+		// Enable NNTPChan integration
+		'enabled'=> false,
+		// NNTP server
+		'server' => "localhost:1119",
+		/*
+		 * Global dispatch array. Add your boards to it to enable them. Please make
+		 * sure that this setting is set in a global context.
+		 */
+		'dispatch' => [
+			// 'overchan.test' => 'test'
+		],
+		/*
+		 * Trusted peer - an IP address of your NNTPChan instance. This peer will have increased capabilities, eg.: will
+		 * evade spamfilter.
+		 */
+		'trusted_peer' => '127.0.0.1',
+		// Salt for message ID generation. Keep it long and secure.
+		'salt' => 'change_me+please',
+		// A local message ID domain. Make sure to change it.
+		'domain' => 'example.vichan.net',
+		/*
+		 * An NNTPChan group name.
+		 * Please set this setting in your board/config.php, not globally.
+		 */
+		'group' => false, // eg. 'overchan.test'
+	];
 
 
 
