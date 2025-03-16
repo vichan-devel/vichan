@@ -55,8 +55,12 @@ function build_context(array $config): Context {
 				return new FileLogDriver($name, $level, $config['log_system']['file_path']);
 			} elseif ($backend === 'stderr') {
 				return new StderrLogDriver($name, $level);
-			} else {
+			} elseif ($backend === 'error_log') {
 				return new ErrorLogLogDriver($name, $level);
+			} else {
+				$log_driver = new ErrorLogLogDriver($name, $level);
+				$log_driver->log(LogDriver::ERROR, "Unknown 'log_system' value '$backend', using 'error_log' default");
+				return $log_driver;
 			}
 		},
 		HttpDriver::class => function($c) {
