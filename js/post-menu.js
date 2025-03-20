@@ -104,8 +104,10 @@ function buildMenu(e) {
 
 function addButton(post) {
 	var $ele = $(post);
+	// Use unicode code with ascii variant selector
+	// https://stackoverflow.com/questions/37906969/how-to-prevent-ios-from-converting-ascii-into-emoji
 	$ele.find('input.delete').after(
-		$('<a>', {href: '#', class: 'post-btn', title: 'Post menu'}).text('▶')
+		$('<a>', {href: '#', class: 'post-btn', title: 'Post menu'}).text('\u{25B6}\u{fe0e}')
 	);
 }
 
