@@ -126,29 +126,6 @@ function download_file_from_url(HttpDriver $http, $file_url, $request_timeout, $
 }
 
 /**
- * Try extract text from the given image.
- *
- * @param array $config Instance configuration.
- * @param string $img_path The file path to the image.
- * @return string|false Returns a string with the extracted text on success (if any).
- * @throws RuntimeException Throws if executing tesseract fails.
- */
-function ocr_image(array $config, string $img_path): string {
-	// The default preprocess command is an ImageMagick b/w quantization.
-	$ret = shell_exec_error(
-		sprintf($config['tesseract_preprocess_command'], escapeshellarg($img_path))
-		 . ' | tesseract stdin stdout 2>/dev/null'
-		 . $config['tesseract_params']
-	);
-	if ($ret === false) {
-		throw new RuntimeException('Unable to run tesseract');
-	}
-
-	return trim($ret);
-}
-
-
-/**
  * Trim an image's EXIF metadata
  *
  * @param string $img_path The file path to the image.
@@ -1183,27 +1160,6 @@ if (isset($_POST['delete'])) {
 			$dont_copy_file = false;
 		}
 
-		if ($config['tesseract_ocr'] && $file['thumb'] != 'file') { // Let's OCR it!
-			$fname = $file['tmp_name'];
-
-			if ($file['height'] > 500 || $file['width'] > 500) {
-				$fname = $file['thumb'];
-			}
-
-			if ($fname !== 'spoiler') { // We don't have that much CPU time, do we?
-				try {
-					$txt = ocr_image($config, $fname);
-					if ($txt !== '') {
-						// This one has an effect, that the body is appended to a post body. So you can write a correct
-						// spamfilter.
-						$post['body_nomarkup'] .= "<tinyboard ocr image $key>" . htmlspecialchars($txt) . "</tinyboard>";
-					}
-				} catch (RuntimeException $e) {
-					$context->get(LogDriver::class)->log(LogDriver::ERROR, "Could not OCR image: {$e->getMessage()}");
-				}
-			}
-		}
-
 		if (!$dont_copy_file) {
 			if (isset($file['file_tmp'])) {
 				if (!@rename($file['tmp_name'], $file['file']))
@@ -1242,11 +1198,6 @@ if (isset($_POST['delete'])) {
 			}
 		}
 		}
-
-	// Do filters again if OCRing
-	if ($config['tesseract_ocr'] && !hasPermission($config['mod']['bypass_filters'], $board['uri']) && !$dropped_post) {
-		do_filters($context, $post);
-	}
 
 	if (!hasPermission($config['mod']['postunoriginal'], $board['uri']) && $config['robot_enable'] && checkRobot($post['body_nomarkup']) && !$dropped_post) {
 		undoImage($post);
