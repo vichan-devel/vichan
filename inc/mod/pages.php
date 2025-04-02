@@ -2644,8 +2644,7 @@ function mod_config(Context $ctx, $board_config = false) {
 		error($config['error']['noboard']);
 
 	else {
-		$board_config_file = $board_config . '/config.php';
-			include $board_config_file;
+		include $board_config . '/config.php';;
 	}
 
 	if (!hasPermission($config['mod']['edit_config'], $board_config))
