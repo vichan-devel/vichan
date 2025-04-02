@@ -1175,6 +1175,10 @@
 			'/^https?:\/\/(www\.)?odysee\.com\/(?:\$\/embed\/)?(?:@[^:\/]+:[a-zA-Z0-9]+\/)?[a-zA-Z0-9\-]+:([a-zA-Z0-9]+)(\/)?(\?[^\'"<>]*)?$/i',
 			'<iframe width="%%tb_width%%" height="%%tb_height%%" src="https://odysee.com/$/embed/$2" allowfullscreen></iframe>'
 		),
+		array(
+                        '/^https?:\/\/(www\.)?kick\.com\/([a-zA-Z0-9_]+)(\?[^\'"<>]*)?$/i',
+                        '<iframe src="https://player.kick.com/$2" height="%%tb_height%%" width="%%tb_width%%" frameborder="0" scrolling="no" allowfullscreen="true"></iframe>'
+                ),
 		/*
 		array(
 			'/^https?:\/\/(www\.)?tiktok\.com\/@([a-zA-Z0-9_.]+)\/video\/([0-9]+)(\?[^\'"<>]*)?$/i',
@@ -1184,14 +1188,7 @@
 			'/^https?:\/\/(www\.)?instagram\.com\/(p|reel|tv)\/([a-zA-Z0-9_-]+)(\/)?(\?[^\'"<>]*)?$/i',
 			'<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/$2/$3/" data-instgrm-version="14" style="max-width: %%tb_width%%px; min-width: 326px; width: 100%;"></blockquote><script async src="//www.instagram.com/embed.js"></script>'
 		),
-		array(
-			'/^https?:\/\/(www\.)?(twitter|x)\.com\/([a-zA-Z0-9_]+)\/status\/([0-9]+)(\?[^\'"<>]*)?$/i',
-			'<blockquote class="twitter-tweet"><a href="https://x.com/$3/status/$4"></a></blockquote><script async src="https://platform.x.com/widgets.js"></script>'
-		),
-		array(
-			'/^https?:\/\/(www\.)?bsky\.app\/profile\/([a-zA-Z0-9_.-]+)\/post\/([a-zA-Z0-9]+)(\?[^\'"<>]*)?$/i',
-			'<iframe src="https://embed.bsky.app/profile/$2/post/$3" width="%%tb_width%%" height="300" style="border:none; overflow:hidden;" scrolling="no"></iframe>'
-		),*/
+  		*/
 		array(
 			'/^https?:\/\/(www\.)?bilibili\.com\/video\/(BV[a-zA-Z0-9]+|av[0-9]+)(\/)?(\?[^\'"<>]*)?$/i',
 			'<iframe width="%%tb_width%%" height="%%tb_height%%" src="https://player.bilibili.com/player.html?bvid=$2" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>'
