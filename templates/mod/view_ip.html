@@ -103,7 +103,7 @@
 	<fieldset>
 		<legend>{% trans 'New ban' %}</legend>
 		{% set redirect = '?/IP/' ~ ip|cloak_ip ~ '#bans' %}
-		{% include 'mod/ban_form.html' %}
+		{% include 'mod/ban_form.html' with { 'reasons': config.premade_ban_reasons } %}
 	</fieldset>
 {% endif %}
 
