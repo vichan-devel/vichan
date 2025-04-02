@@ -11,7 +11,7 @@
 	</tr>
 	<tr>
 		<th>{% trans 'IP' %}</th>
-		<td>{{ ban.cmask }}</td>
+		<td><a class="ip-link" style="margin:0;" href="?/IP/{{ ban.mask|cloak_mask }}">{{ ban.mask|cloak_mask }}</a></td>
 	</tr>
 	<tr>
 		<th>{% trans 'Reason' %}</th>
