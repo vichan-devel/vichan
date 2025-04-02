@@ -1172,10 +1172,6 @@
 			'<iframe allowfullscreen="true" width="%%tb_width%%" height="%%tb_height%%" scrolling="no" frameborder="0" style="border: none;" src="https://www.bitchute.com/embed/$2"></iframe>'
 		),
 		array(
-			'/^https?:\/\/(www\.)?kick\.com\/([a-zA-Z0-9_]+)(\?[^\'"<>]*)?$/i',
-			'<iframe src="https://kick.com/embed/$2" frameborder="0" allowfullscreen="true" scrolling="no" height="%%tb_height%%" width="%%tb_width%%"></iframe>'
-		),
-		array(
 			'/^https?:\/\/(www\.)?odysee\.com\/(?:\$\/embed\/)?(?:@[^:\/]+:[a-zA-Z0-9]+\/)?[a-zA-Z0-9\-]+:([a-zA-Z0-9]+)(\/)?(\?[^\'"<>]*)?$/i',
 			'<iframe width="%%tb_width%%" height="%%tb_height%%" src="https://odysee.com/$/embed/$2" allowfullscreen></iframe>'
 		),
