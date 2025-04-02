@@ -1234,12 +1234,35 @@ div.mix {
 	display: inline-block;
 }
 
-.ban-reason-table .warning-reason-table tr td:first-child {
-  text-align: right;
-  padding-right: 10px;
+.ban-reason-table {
+  margin: 10px auto;
+  border-collapse: collapse;
+  width: auto;
+  font-size: 10pt;
 }
 
-.ban-reason-table .warning-reason-table tr:hover td {
+.ban-reason-table th,
+.ban-reason-table td {
+  border: 1px solid #98E;
+  padding: 4px 8px;
+  text-align: left;
+}
+
+.ban-reason-table th {
+  background-color: #98E;
+  color: black;
+  font-weight: bold;
+}
+
+.ban-reason-table tr:nth-child(even) td {
+  background-color: #EEF2FF;
+}
+
+.ban-reason-table tr:nth-child(odd) td {
+  background-color: #FFFFFF;
+}
+
+.ban-reason-table tr:hover td {
+  background-color: #D6DAF0;
   cursor: pointer;
-  background-color: rgba(100%,100%,100%,0.2);
 }
