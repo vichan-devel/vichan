@@ -2643,6 +2643,10 @@ function mod_config(Context $ctx, $board_config = false) {
 	if ($board_config && !openBoard($board_config))
 		error($config['error']['noboard']);
 
+	else {
+		include $board_config . '/config.php';;
+	}
+
 	if (!hasPermission($config['mod']['edit_config'], $board_config))
 		error($config['error']['noaccess']);
 

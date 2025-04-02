@@ -1,7 +1,7 @@
 <?php
 
 // Installation/upgrade file
-define('VERSION', '5.2.0');
+define('VERSION', '5.2.1');
 require 'inc/bootstrap.php';
 loadConfig();
 

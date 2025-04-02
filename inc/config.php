@@ -1164,9 +1164,32 @@
 			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" src="https://www.dailymotion.com/embed/video/$2" allowfullscreen></iframe>'
 		),
 		array(
-			'/^https?:\/\/(\w+\.)?metacafe\.com\/watch\/(\d+)\/([a-zA-Z0-9_\-.]+)\/(\?[^\'"<>]+)?$/i',
-			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0"  src="https://www.metacafe.com/embed/$2/$3/" allowfullscreen></iframe>'
+			'/^https?:\/\/(www\.)?rumble\.com\/embed\/([a-zA-Z0-9]+)(\/\?[^\'"<>]*)?$/i',
+			'<iframe class="rumble" width="%%tb_width%%" height="%%tb_height%%" src="https://rumble.com/embed/$2/" frameborder="0" allowfullscreen></iframe>'
 		),
+		array(
+			'/^https?:\/\/(www\.)?bitchute\.com\/(?:video|embed)\/([a-zA-Z0-9]+)(\/)?(\?[^\'"<>]*)?$/i',
+			'<iframe allowfullscreen="true" width="%%tb_width%%" height="%%tb_height%%" scrolling="no" frameborder="0" style="border: none;" src="https://www.bitchute.com/embed/$2"></iframe>'
+		),
+		array(
+        		'/^https?:\/\/(?:www\.)?odysee\.com\/(?:@[^\/]+\/)?([-a-zA-Z0-9_]+:[a-zA-Z0-9]+)(\/)?(\?[^\'"<>]*)?$/i',
+        		'<iframe width="%%tb_width%%" height="%%tb_height%%" src="https://odysee.com/$/embed/$1" allowfullscreen></iframe>'
+		),
+		array(
+                        '/^https?:\/\/(www\.)?kick\.com\/([a-zA-Z0-9_]+)(\?[^\'"<>]*)?$/i',
+                        '<iframe src="https://player.kick.com/$2" height="%%tb_height%%" width="%%tb_width%%" frameborder="0" scrolling="no" allowfullscreen="true"></iframe>'
+                ),
+		/*
+  		//Both TikTok and Instagram are commented out since they contain some extra scripting you might not want natively on your website.
+		array(
+			'/^https?:\/\/(www\.)?tiktok\.com\/@([a-zA-Z0-9_.]+)\/video\/([0-9]+)(\?[^\'"<>]*)?$/i',
+			'<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@$2/video/$3" data-video-id="$3" style="max-width: %%tb_width%%px;min-width: 325px;"><section></section></blockquote><script async src="https://www.tiktok.com/embed.js"></script>'
+		),
+		array(
+			'/^https?:\/\/(www\.)?instagram\.com\/(p|reel|tv)\/([a-zA-Z0-9_-]+)(\/)?(\?[^\'"<>]*)?$/i',
+			'<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/$2/$3/" data-instgrm-version="14" style="max-width: %%tb_width%%px; min-width: 326px; width: 100%;"></blockquote><script async src="//www.instagram.com/embed.js"></script>'
+		),
+  		*/
 		array(
 			'/^https?:\/\/(\w+\.)?(vocaroo\.com\/|voca\.ro\/)([a-zA-Z0-9]{2,12})$/i',
 			'<iframe style="float: left; margin: 10px 20px;" width="300" height="60" frameborder="0" src="https://vocaroo.com/embed/$3"></iframe>'
