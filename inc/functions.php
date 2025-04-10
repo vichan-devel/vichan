@@ -865,22 +865,6 @@ function threadExists($id) {
 	return false;
 }
 
-function insertFloodPost(array $post) {
-	global $board;
-
-	$query = prepare("INSERT INTO ``flood`` VALUES (NULL, :ip, :board, :time, :posthash, :filehash, :isreply)");
-	$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
-	$query->bindValue(':board', $board['uri']);
-	$query->bindValue(':time', time());
-	$query->bindValue(':posthash', make_comment_hex($post['body_nomarkup']));
-	if ($post['has_file'])
-		$query->bindValue(':filehash', $post['filehash']);
-	else
-		$query->bindValue(':filehash', null, PDO::PARAM_NULL);
-	$query->bindValue(':isreply', !$post['op'], PDO::PARAM_INT);
-	$query->execute() or error(db_error($query));
-}
-
 function post(array $post) {
 	global $pdo, $board;
 	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :sticky, :locked, :cycle, 0, :embed, :slug)", $board['uri']));
