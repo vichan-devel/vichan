@@ -2668,8 +2668,20 @@ function mod_recent_posts(Context $ctx, $lim) {
 	if (!hasPermission($config['mod']['recent']))
 		error($config['error']['noaccess']);
 
-	$limit = (is_numeric($lim))? $lim : 25;
-	$last_time = (isset($_GET['last']) && is_numeric($_GET['last'])) ? $_GET['last'] : 0;
+	$limit = 25;
+	if (\is_numeric($lim)) {
+		$lim = \intval($lim);
+		if ($lim > 0 && $lim < 1000) {
+			$limit = $lim;
+		}
+	}
+	$last_time = 0;
+	if (isset($_GET['last']) && \is_numeric($_GET['last'])) {
+		$last = \intval($_GET['last']);
+		if ($last > 0) {
+			$last_time = $last;
+		}
+	}
 
 	$mod_boards = [];
 	$boards = listBoards();
