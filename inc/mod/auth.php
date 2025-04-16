@@ -79,7 +79,7 @@ function calc_cookie_name(bool $is_https, bool $is_path_jailed, string $base_nam
 }
 
 function login(string $username, string $password): array|false {
-	global $mod, $config;
+	global $mod;
 
 	$query = prepare("SELECT `id`, `type`, `boards`, `password`, `version` FROM ``mods`` WHERE BINARY `username` = :username");
 	$query->bindValue(':username', $username);
