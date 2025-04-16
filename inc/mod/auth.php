@@ -46,8 +46,13 @@ function crypt_password(string $password): array {
 	global $config;
 	// `salt` database field is reused as a version value. We don't want it to be 0.
 	$version = $config['password_crypt_version'] ? $config['password_crypt_version'] : 1;
-	$hash = \password_hash($password, \PASSWORD_BCRYPT);
-	return [$version, $hash];
+	$pre_hash = \hash('tiger160,3', $password, false); // Note that it's truncated to 72 in the next line.
+	$r = \password_hash($pre_hash, \PASSWORD_BCRYPT);
+	if ($r === false) {
+		throw new \RuntimeException("Could not hash password");
+	}
+
+	return [ $version, $r ];
 }
 
 function test_password(string $db_hash, string|int $version, string $input_password): array {
@@ -55,9 +60,10 @@ function test_password(string $db_hash, string|int $version, string $input_passw
 	if ($version < 2) {
 		$ok = \hash_equals($db_hash, \crypt($input_password, $db_hash));
 	} else {
-		$ok = \password_verify($input_password, $db_hash);
+		$pre_hash = \hash('tiger160,3', $input_password, false);
+		$ok = \password_verify($pre_hash, $db_hash);
 	}
-	return [$version, $ok];
+	return [ $version, $ok ];
 }
 
 function generate_salt(): string {
