@@ -66,10 +66,6 @@ function test_password(string $db_hash, string|int $version, string $input_passw
 	return $ok;
 }
 
-function generate_salt(): string {
-	return strtr(base64_encode(random_bytes(16)), '+', '.');
-}
-
 function calc_cookie_name(bool $is_https, bool $is_path_jailed, string $base_name): string {
 	if ($is_https) {
 		if ($is_path_jailed) {
