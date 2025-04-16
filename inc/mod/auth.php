@@ -47,7 +47,7 @@ function crypt_password(string $password): array {
 	// `salt` database field is reused as a version value. We don't want it to be 0.
 	$version = $config['password_crypt_version'] ? $config['password_crypt_version'] : 1;
 	$pre_hash = \hash('tiger160,3', $password, false); // Note that it's truncated to 72 in the next line.
-	$r = \password_hash($pre_hash, \PASSWORD_BCRYPT);
+	$r = \password_hash($pre_hash, \PASSWORD_BCRYPT, [ 'cost' => 12 ]);
 	if ($r === false) {
 		throw new \RuntimeException("Could not hash password");
 	}
@@ -83,7 +83,7 @@ function login(string $username, string $password): array|false {
 
 	$query = prepare("SELECT `id`, `type`, `boards`, `password`, `version` FROM ``mods`` WHERE BINARY `username` = :username");
 	$query->bindValue(':username', $username);
-	$query->execute() or error(db_error($query));
+	$query->execute();
 
 	if ($user = $query->fetch(PDO::FETCH_ASSOC)) {
 		$ok = test_password($user['password'], $user['version'], $password);
@@ -96,7 +96,7 @@ function login(string $username, string $password): array|false {
 				$query->bindValue(':password', $user['password']);
 				$query->bindValue(':version', $user['version']);
 				$query->bindValue(':id', $user['id']);
-				$query->execute() or error(db_error($query));
+				$query->execute();
 			}
 
 			return $mod = [
