@@ -14,6 +14,36 @@ class UserPostQueries {
 
 	private \PDO $pdo;
 
+
+	/**
+	 * Escapes wildcards from LIKE operators using the default escape character.
+	 */
+	private static function escapeLike(string $str): string {
+		// Escape any existing escape characters.
+		$str = \str_replace('\\', '\\\\', $str);
+		// Escape wildcard characters.
+		$str = \str_replace('%', '\\%', $str);
+		$str = \str_replace('_', '\\_', $str);
+		return $str;
+	}
+
+	/**
+	 * Joins the fragments of filter into a list of bindable parameters for the CONCAT sql function.
+	 * Given prefix = cat and fragments_count = 3, we get  [ "'%'", ":cat0%", "'%', ":cat1", "'%'" ":cat2%", "'%'" ];
+	 *
+	 * @param string $prefix The prefix for the parameter binding
+	 * @param int $fragments_count MUST BE >= 1.
+	 * @return array
+	 */
+	private static function arrayOfFragments(string $prefix, int $fragments_count): array {
+		$args = [ "'%'" ];
+		for ($i = 0; $i < $fragments_count; $i++) {
+			$args[] = ":$prefix$i";
+			$args[] = "'%'";
+		}
+		return $args;
+	}
+
 	public function __construct(\PDO $pdo) {
 		$this->pdo = $pdo;
 	}
@@ -156,5 +186,90 @@ class UserPostQueries {
 				throw new \RuntimeException("Unknown cursor type '$cursor_type'");
 			}
 		});
+	}
+
+	/**
+	 * Search among the user posts with the given filters.
+	 * The subject, name and elements of the bodies filters are fragments which are joined together with wildcards, to
+	 * allow for more flexible filtering.
+	 *
+	 * @param string $board The board where to search in.
+	 * @param array<string> $subject Fragments of the subject filter.
+	 * @param array<string> $name Fragments of the name filter.
+	 * @param array<string> $flags An array of the flag names to search among the HTML.
+	 * @param ?int $id Post id filter.
+	 * @param ?int $thread Thread id filter.
+	 * @param array<array<string>> $bodies An array whose element are arrays containing the fragments of multiple body filters, each
+	 *                                     searched independently from the others
+	 * @param integer $limit The maximum number of results.
+	 * @throws PDOException On error.
+	 * @return array<array>
+	 */
+	public function searchPosts(string $board, array $subject, array $name, array $flags, ?int $id, ?int $thread, array $bodies, int $limit): array {
+		$where_acc = [];
+
+		if (!empty($subject)) {
+			$like_arg = self::arrayOfFragments('subj', \count($subject));
+			$where_acc[] = 'subject LIKE CONCAT(' . \implode(', ', $like_arg) . ')';
+		}
+		if (!empty($name)) {
+			$like_arg = self::arrayOfFragments('name', \count($name));
+			$where_acc[] = 'name LIKE CONCAT(' . \implode(', ', $like_arg) . ')';
+		}
+		if (!empty($flags)) {
+			$flag_acc = [];
+			for ($i = 0; $i < \count($flags); $i++) {
+				// Yes, vichan stores the flag inside the generated HTML. Now you know why it's slow as shit.
+				// English lacks the words to express my feelings about it in a satisfying manner.
+				$flag_acc[] = "CONCAT('%<tinyboard>', :flag$i, '</tinyboard>%')";
+			}
+			$where_acc[] = 'body_nomarkup LIKE (' . \implode(' OR ', $flag_acc) . ')';
+		}
+		if ($id !== null) {
+			$where_acc[] = 'id = :id';
+		}
+		if ($thread !== null) {
+			$where_acc[] = 'thread = :thread';
+		}
+		for ($i = 0; $i < \count($bodies); $i++) {
+			$body = $bodies[$i];
+			$like_arg = self::arrayOfFragments("body_{$i}_", \count($body));
+			$where_acc[] = 'body_nomarkup LIKE CONCAT(' . \implode(', ', $like_arg) . ')';
+		}
+
+		if (empty($where_acc)) {
+			return [];
+		}
+
+		$sql = "SELECT * FROM `posts_$board` WHERE " . \implode(' AND ', $where_acc) . ' LIMIT :limit';
+		$query = $this->pdo->prepare($sql);
+
+		for ($i = 0; $i < \count($subject); $i++) {
+			$query->bindValue(":subj$i", self::escapeLike($subject[$i]));
+		}
+		for ($i = 0; $i < \count($name); $i++) {
+			$query->bindValue(":name$i", self::escapeLike($name[$i]));
+		}
+		for ($i = 0; $i < \count($flags); $i++) {
+			$query->bindValue(":flag$i", self::escapeLike($flags[$i]));
+		}
+		if ($id !== null) {
+			$query->bindValue(':id', $id, \PDO::PARAM_INT);
+		}
+		if ($thread !== null) {
+			$query->bindValue(':thread', $thread, \PDO::PARAM_INT);
+		}
+		for ($body_i = 0; $body_i < \count($bodies); $body_i++) {
+			$body = $bodies[$body_i];
+
+			for ($i = 0; $i < \count($body); $i++) {
+				$query->bindValue(":body_{$body_i}_{$i}", self::escapeLike($body[$i]));
+			}
+		}
+
+		$query->bindValue(':limit', $limit, \PDO::PARAM_INT);
+
+		$query->execute();
+		return $query->fetchAll(\PDO::FETCH_ASSOC);
 	}
 }
