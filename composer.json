@@ -36,6 +36,7 @@
             "inc/functions.php",
             "inc/functions/dice.php",
             "inc/functions/format.php",
+            "inc/functions/hide.php",
             "inc/functions/net.php",
             "inc/functions/num.php",
             "inc/functions/theme.php",
