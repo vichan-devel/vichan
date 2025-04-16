@@ -46,22 +46,18 @@ function crypt_password(string $password): array {
 	global $config;
 	// `salt` database field is reused as a version value. We don't want it to be 0.
 	$version = $config['password_crypt_version'] ? $config['password_crypt_version'] : 1;
-	$new_salt = generate_salt();
-	$password = crypt($password, $config['password_crypt'] . $new_salt . "$");
-	return [ $version, $password ];
+	$hash = \password_hash($password, \PASSWORD_BCRYPT);
+	return [$version, $hash];
 }
 
-function test_password(string $password, string $salt, string $test): array {
-	// Version = 0 denotes an old password hashing schema. In the same column, the
-	// password hash was kept previously
-	$version = strlen($salt) <= 8 ? (int)$salt : 0;
-
-	if ($version == 0) {
-		$comp = hash('sha256', $salt . sha1($test));
+function test_password(string $db_hash, string|int $version, string $input_password): array {
+	$version = (int)$version;
+	if ($version < 2) {
+		$ok = \hash_equals($db_hash, \crypt($input_password, $db_hash));
 	} else {
-		$comp = crypt($test, $password);
+		$ok = \password_verify($input_password, $db_hash);
 	}
-	return [ $version, hash_equals($password, $comp) ];
+	return [$version, $ok];
 }
 
 function generate_salt(): string {
@@ -91,7 +87,7 @@ function login(string $username, string $password): array|false {
 		list($version, $ok) = test_password($user['password'], $user['version'], $password);
 
 		if ($ok) {
-			if ($config['password_crypt_version'] > $version) {
+			if ((int)$user['version'] < 2) {
 				// It's time to upgrade the password hashing method!
 				list ($user['version'], $user['password']) = crypt_password($password);
 				$query = prepare("UPDATE ``mods`` SET `password` = :password, `version` = :version WHERE `id` = :id");
