@@ -55,7 +55,7 @@ function crypt_password(string $password): array {
 	return [ $version, $r ];
 }
 
-function test_password(string $db_hash, string|int $version, string $input_password): array {
+function test_password(string $db_hash, string|int $version, string $input_password): bool {
 	$version = (int)$version;
 	if ($version < 2) {
 		$ok = \hash_equals($db_hash, \crypt($input_password, $db_hash));
@@ -63,7 +63,7 @@ function test_password(string $db_hash, string|int $version, string $input_passw
 		$pre_hash = \hash('tiger160,3', $input_password, false);
 		$ok = \password_verify($pre_hash, $db_hash);
 	}
-	return [ $version, $ok ];
+	return $ok;
 }
 
 function generate_salt(): string {
@@ -90,7 +90,7 @@ function login(string $username, string $password): array|false {
 	$query->execute() or error(db_error($query));
 
 	if ($user = $query->fetch(PDO::FETCH_ASSOC)) {
-		list($version, $ok) = test_password($user['password'], $user['version'], $password);
+		$ok = test_password($user['password'], $user['version'], $password);
 
 		if ($ok) {
 			if ((int)$user['version'] < 2) {
