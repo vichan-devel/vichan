@@ -5,7 +5,7 @@
  */
 
 use Vichan\Context;
-use Vichan\Functions\Net;
+use Vichan\Functions\{Hide, Net};
 
 defined('TINYBOARD') or exit;
 
@@ -14,27 +14,28 @@ function mkhash(string $username, ?string $password, mixed $salt = false): array
 	global $config;
 
 	if (!$salt) {
-		// create some sort of salt for the hash
-		$salt = substr(base64_encode(sha1(rand() . time(), true) . $config['cookies']['salt']), 0, 15);
-
+		// Create some salt for the hash.
+		$salt = \bin2hex(\random_bytes(15)); // 20 characters.
 		$generated_salt = true;
+	} else {
+		$generated_salt = false;
 	}
 
 	// generate hash (method is not important as long as it's strong)
-	$hash = substr(
-		base64_encode(
-			md5(
-				$username . $config['cookies']['salt'] . sha1(
-					$username . $password . $salt . (
-						$config['mod']['lock_ip'] ? $_SERVER['REMOTE_ADDR'] : ''
-					), true
-				) . sha1($config['password_crypt_version']) // Log out users being logged in with older password encryption schema
-				, true
-			)
-		), 0, 20
+	$hash = \substr(
+		Hide\secure_hash(
+			$username . $config['cookies']['salt'] . Hide\secure_hash(
+				$username . $password . $salt . (
+					$config['mod']['lock_ip'] ? $_SERVER['REMOTE_ADDR'] : ''
+				), true
+			) . Hide\secure_hash($config['password_crypt_version'], true), // Log out users being logged in with older password encryption schema
+			false
+		),
+		0,
+		40
 	);
 
-	if (isset($generated_salt)) {
+	if ($generated_salt) {
 		return [ $hash, $salt ];
 	} else {
 		return $hash;
