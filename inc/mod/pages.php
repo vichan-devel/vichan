@@ -965,9 +965,9 @@ function mod_user_posts_by_ip(Context $ctx, string $cip, ?string $encoded_cursor
 	if (isset($config['mod']['ip_recentposts'])) {
 		$log = $ctx->get(LogDriver::class);
 		$log->log(LogDriver::NOTICE, "'ip_recentposts' has been deprecated. Please use 'recent_user_posts' instead");
-		$page_size = $config['mod']['ip_recentposts'];
+		$recent_user_posts = $config['mod']['ip_recentposts'];
 	} else {
-		$page_size = $config['mod']['recent_user_posts'];
+		$recent_user_posts = $config['mod']['recent_user_posts'];
 	}
 
 	if ($config['mod']['dns_lookup'] && empty($config['ipcrypt_key'])) {
@@ -1000,40 +1000,46 @@ function mod_user_posts_by_ip(Context $ctx, string $cip, ?string $encoded_cursor
 	$boards = listBoards();
 
 	$queryable_uris = [];
+	$queryable_boards = [];
 	foreach ($boards as $board) {
 		$uri = $board['uri'];
 		if (hasPermission($config['mod']['show_ip'], $uri)) {
 			$queryable_uris[] = $uri;
+			$queryable_boards[] = $board;
 		}
 	}
 
-	$queries = $ctx->get(UserPostQueries::class);
-	$result = $queries->fetchPaginatedByIp($queryable_uris, $ip, $page_size, $encoded_cursor);
+	if (\count($queryable_boards) > 0) {
+		$page_size = \max(\intdiv($recent_user_posts, \count($queryable_boards)), 1);
 
-	$args['cursor_prev'] = $result->cursor_prev;
-	$args['cursor_next'] = $result->cursor_next;
+		$queries = $ctx->get(UserPostQueries::class);
+		$result = $queries->fetchPaginatedByIp($queryable_uris, $ip, $page_size, $encoded_cursor);
 
-	foreach($boards as $board) {
-		$uri = $board['uri'];
-		// The Thread and Post classes rely on some implicit board parameter set by openBoard.
-		openBoard($uri);
+		$args['cursor_prev'] = $result->cursor_prev;
+		$args['cursor_next'] = $result->cursor_next;
 
-		// Finally load the post contents and build them.
-		foreach ($result->by_uri[$uri] as $post) {
-			if (!$post['thread']) {
-				$po = new Thread($post, '?/', $mod, false);
-			} else {
-				$po = new Post($post, '?/', $mod);
+		foreach($boards as $board) {
+			$uri = $board['uri'];
+			// The Thread and Post classes rely on some implicit board parameter set by openBoard.
+			openBoard($uri);
+
+			// Finally load the post contents and build them.
+			foreach ($result->by_uri[$uri] as $post) {
+				if (!$post['thread']) {
+					$po = new Thread($post, '?/', $mod, false);
+				} else {
+					$po = new Post($post, '?/', $mod);
+				}
+
+				if (!isset($args['posts'][$uri])) {
+					$args['posts'][$uri] = [ 'board' => $board, 'posts' => [] ];
+				}
+				$args['posts'][$uri]['posts'][] = $po->build(true);
 			}
-
-			if (!isset($args['posts'][$uri])) {
-				$args['posts'][$uri] = [ 'board' => $board, 'posts' => [] ];
-			}
-			$args['posts'][$uri]['posts'][] = $po->build(true);
 		}
 	}
 
-	$args['boards'] = $boards;
+	$args['boards'] = $queryable_boards;
 	// Needed to create new bans.
 	$args['token'] = make_secure_link_token('ban');
 
@@ -1061,48 +1067,56 @@ function mod_user_posts_by_passwd(Context $ctx, string $passwd, ?string $encoded
 	if (isset($config['mod']['ip_recentposts'])) {
 		$log = $ctx->get(LogDriver::class);
 		$log->log(LogDriver::NOTICE, "'ip_recentposts' has been deprecated. Please use 'recent_user_posts' instead");
-		$page_size = $config['mod']['ip_recentposts'];
+		$recent_user_posts = $config['mod']['ip_recentposts'];
 	} else {
-		$page_size = $config['mod']['recent_user_posts'];
+		$recent_user_posts = $config['mod']['recent_user_posts'];
 	}
 
 	$boards = listBoards();
 
 	$queryable_uris = [];
+	$queryable_boards = [];
 	foreach ($boards as $board) {
 		$uri = $board['uri'];
 		if (hasPermission($config['mod']['show_ip'], $uri)) {
 			$queryable_uris[] = $uri;
+			$queryable_boards[] = $board;
 		}
 	}
 
-	$queries = $ctx->get(UserPostQueries::class);
-	$result = $queries->fetchPaginateByPassword($queryable_uris, $passwd, $page_size, $encoded_cursor);
+	if (\count($queryable_boards) > 0) {
+		$page_size = \max(\intdiv($recent_user_posts, \count($queryable_boards)), 1);
 
-	$args['cursor_prev'] = $result->cursor_prev;
-	$args['cursor_next'] = $result->cursor_next;
+		$queries = $ctx->get(UserPostQueries::class);
+		$result = $queries->fetchPaginateByPassword($queryable_uris, $passwd, $page_size, $encoded_cursor);
 
-	foreach($boards as $board) {
-		$uri = $board['uri'];
-		// The Thread and Post classes rely on some implicit board parameter set by openBoard.
-		openBoard($uri);
+		$args['cursor_prev'] = $result->cursor_prev;
+		$args['cursor_next'] = $result->cursor_next;
 
-		// Finally load the post contents and build them.
-		foreach ($result->by_uri[$uri] as $post) {
-			if (!$post['thread']) {
-				$po = new Thread($post, '?/', $mod, false);
-			} else {
-				$po = new Post($post, '?/', $mod);
+		foreach($boards as $board) {
+			$uri = $board['uri'];
+			// The Thread and Post classes rely on some implicit board parameter set by openBoard.
+			openBoard($uri);
+
+			// Finally load the post contents and build them.
+			foreach ($result->by_uri[$uri] as $post) {
+				if (!$post['thread']) {
+					$po = new Thread($post, '?/', $mod, false);
+				} else {
+					$po = new Post($post, '?/', $mod);
+				}
+
+				if (!isset($args['posts'][$uri])) {
+					$args['posts'][$uri] = [ 'board' => $board, 'posts' => [] ];
+				}
+				$args['posts'][$uri]['posts'][] = $po->build(true);
 			}
-
-			if (!isset($args['posts'][$uri])) {
-				$args['posts'][$uri] = [ 'board' => $board, 'posts' => [] ];
-			}
-			$args['posts'][$uri]['posts'][] = $po->build(true);
 		}
 	}
 
-	$args['boards'] = $boards;
+	$args['boards'] = $queryable_boards;
+	// Needed to create new bans.
+	$args['token'] = make_secure_link_token('ban');
 
 	mod_page(\sprintf('%s: %s', _('Password'), \htmlspecialchars(substr($passwd, 0, 15))), 'mod/view_passwd.html', $args, $mod);
 }
