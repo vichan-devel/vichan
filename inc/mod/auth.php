@@ -5,7 +5,7 @@
  */
 
 use Vichan\Context;
-use Vichan\Functions\Net;
+use Vichan\Functions\{Hide, Net};
 
 defined('TINYBOARD') or exit;
 
@@ -14,27 +14,28 @@ function mkhash(string $username, ?string $password, mixed $salt = false): array
 	global $config;
 
 	if (!$salt) {
-		// create some sort of salt for the hash
-		$salt = substr(base64_encode(sha1(rand() . time(), true) . $config['cookies']['salt']), 0, 15);
-
+		// Create some salt for the hash.
+		$salt = \bin2hex(\random_bytes(15)); // 20 characters.
 		$generated_salt = true;
+	} else {
+		$generated_salt = false;
 	}
 
 	// generate hash (method is not important as long as it's strong)
-	$hash = substr(
-		base64_encode(
-			md5(
-				$username . $config['cookies']['salt'] . sha1(
-					$username . $password . $salt . (
-						$config['mod']['lock_ip'] ? $_SERVER['REMOTE_ADDR'] : ''
-					), true
-				) . sha1($config['password_crypt_version']) // Log out users being logged in with older password encryption schema
-				, true
-			)
-		), 0, 20
+	$hash = \substr(
+		Hide\secure_hash(
+			$username . $config['cookies']['salt'] . Hide\secure_hash(
+				$username . $password . $salt . (
+					$config['mod']['lock_ip'] ? $_SERVER['REMOTE_ADDR'] : ''
+				), true
+			) . Hide\secure_hash($config['password_crypt_version'], true), // Log out users being logged in with older password encryption schema
+			false
+		),
+		0,
+		40
 	);
 
-	if (isset($generated_salt)) {
+	if ($generated_salt) {
 		return [ $hash, $salt ];
 	} else {
 		return $hash;
@@ -45,26 +46,24 @@ function crypt_password(string $password): array {
 	global $config;
 	// `salt` database field is reused as a version value. We don't want it to be 0.
 	$version = $config['password_crypt_version'] ? $config['password_crypt_version'] : 1;
-	$new_salt = generate_salt();
-	$password = crypt($password, $config['password_crypt'] . $new_salt . "$");
-	return [ $version, $password ];
-}
-
-function test_password(string $password, string $salt, string $test): array {
-	// Version = 0 denotes an old password hashing schema. In the same column, the
-	// password hash was kept previously
-	$version = strlen($salt) <= 8 ? (int)$salt : 0;
-
-	if ($version == 0) {
-		$comp = hash('sha256', $salt . sha1($test));
-	} else {
-		$comp = crypt($test, $password);
+	$pre_hash = \hash('tiger160,3', $password, false); // Note that it's truncated to 72 in the next line.
+	$r = \password_hash($pre_hash, \PASSWORD_BCRYPT, [ 'cost' => 12 ]);
+	if ($r === false) {
+		throw new \RuntimeException("Could not hash password");
 	}
-	return [ $version, hash_equals($password, $comp) ];
+
+	return [ $version, $r ];
 }
 
-function generate_salt(): string {
-	return strtr(base64_encode(random_bytes(16)), '+', '.');
+function test_password(string $db_hash, string|int $version, string $input_password): bool {
+	$version = (int)$version;
+	if ($version < 2) {
+		$ok = \hash_equals($db_hash, \crypt($input_password, $db_hash));
+	} else {
+		$pre_hash = \hash('tiger160,3', $input_password, false);
+		$ok = \password_verify($pre_hash, $db_hash);
+	}
+	return $ok;
 }
 
 function calc_cookie_name(bool $is_https, bool $is_path_jailed, string $base_name): string {
@@ -80,24 +79,24 @@ function calc_cookie_name(bool $is_https, bool $is_path_jailed, string $base_nam
 }
 
 function login(string $username, string $password): array|false {
-	global $mod, $config;
+	global $mod;
 
 	$query = prepare("SELECT `id`, `type`, `boards`, `password`, `version` FROM ``mods`` WHERE BINARY `username` = :username");
 	$query->bindValue(':username', $username);
-	$query->execute() or error(db_error($query));
+	$query->execute();
 
 	if ($user = $query->fetch(PDO::FETCH_ASSOC)) {
-		list($version, $ok) = test_password($user['password'], $user['version'], $password);
+		$ok = test_password($user['password'], $user['version'], $password);
 
 		if ($ok) {
-			if ($config['password_crypt_version'] > $version) {
+			if ((int)$user['version'] < 2) {
 				// It's time to upgrade the password hashing method!
 				list ($user['version'], $user['password']) = crypt_password($password);
 				$query = prepare("UPDATE ``mods`` SET `password` = :password, `version` = :version WHERE `id` = :id");
 				$query->bindValue(':password', $user['password']);
 				$query->bindValue(':version', $user['version']);
 				$query->bindValue(':id', $user['id']);
-				$query->execute() or error(db_error($query));
+				$query->execute();
 			}
 
 			return $mod = [

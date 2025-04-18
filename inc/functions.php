@@ -10,6 +10,8 @@ if (realpath($_SERVER['SCRIPT_FILENAME']) == str_replace('\\', '/', __FILE__)) {
 	exit;
 }
 
+use Vichan\Functions\Hide;
+
 $microtime_start = microtime(true);
 
 // the user is not currently logged in as a moderator
@@ -1605,8 +1607,9 @@ function checkSpam(array $extra_salt = array()) {
 	// Use SHA1 for the hash
 	$_hash = sha1($_hash . $extra_salt);
 
-	if ($hash != $_hash)
+	if ($hash != $_hash) {
 		return true;
+	}
 
 	$query = prepare('SELECT `passed` FROM ``antispam`` WHERE `hash` = :hash');
 	$query->bindValue(':hash', $hash);
@@ -2443,11 +2446,11 @@ function rrmdir($dir) {
 function poster_id($ip, $thread) {
 	global $config;
 
-	if ($id = event('poster-id', $ip, $thread))
+	if ($id = event('poster-id', $ip, $thread)) {
 		return $id;
+	}
 
-	// Confusing, hard to brute-force, but simple algorithm
-	return substr(sha1(sha1($ip . $config['secure_trip_salt'] . $thread) . $config['secure_trip_salt']), 0, $config['poster_id_length']);
+	return \substr(Hide\secure_hash($ip . $config['secure_trip_salt'] . $thread . $config['secure_trip_salt'], false), 0, $config['poster_id_length']);
 }
 
 function generate_tripcode($name) {
@@ -2475,7 +2478,7 @@ function generate_tripcode($name) {
 		if (isset($config['custom_tripcode']["##{$trip}"]))
 			$trip = $config['custom_tripcode']["##{$trip}"];
 		else
-			$trip = '!!' . substr(crypt($trip, str_replace('+', '.', '_..A.' . substr(base64_encode(sha1($trip . $config['secure_trip_salt'], true)), 0, 4))), -10);
+			$trip = '!!' . substr(crypt($trip, str_replace('+', '.', '_..A.' . substr(Hide\secure_hash($trip . $config['secure_trip_salt'], false), 0, 4))), -10);
 	} else {
 		if (isset($config['custom_tripcode']["#{$trip}"]))
 			$trip = $config['custom_tripcode']["#{$trip}"];
