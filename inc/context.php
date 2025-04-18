@@ -1,8 +1,11 @@
 <?php
 namespace Vichan;
 
+use Vichan\Controller\FloodManager;
 use Vichan\Data\Driver\{CacheDriver, HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
-use Vichan\Data\{IpNoteQueries, UserPostQueries, ReportQueries};
+use Vichan\Data\{FloodQueries, IpNoteQueries, UserPostQueries, ReportQueries};
+use Vichan\Service\FilterService;
+use Vichan\Service\FloodService;
 use Vichan\Service\HCaptchaQuery;
 use Vichan\Service\SecureImageCaptchaQuery;
 use Vichan\Service\ReCaptchaQuery;
@@ -84,7 +87,26 @@ function build_context(array $config): Context {
 		),
 		UserPostQueries::class => fn(Context $c): UserPostQueries => new UserPostQueries(
 			$c->get(\PDO::class)
-		)
+		),
+		FloodQueries::class => fn(Context $c): FloodQueries => new FloodQueries(
+			$c->get(\PDO::class)
+		),
+		FloodService::class => fn(Context $c): FloodService => new FloodService(
+			$c->get(FloodQueries::class),
+			$c->get('config')['filters'],
+			$c->get('config')['flood_cache']
+		),
+		FilterService::class => fn(Context $c): FilterService => new FilterService(
+			$c->get('config')['filters'],
+			$c->get(FloodService::class),
+			$c->get(LogDriver::class)
+		),
+		FloodManager::class => fn(Context $c): FloodManager => new FloodManager(
+			$c->get(FilterService::class),
+			$c->get(FloodService::class),
+			$c->get(IpNoteQueries::class),
+			$c->get(LogDriver::class)
+		),
 	]);
 }
 

@@ -597,6 +597,7 @@ if (isset($_POST['delete'])) {
 		// Check if banned
 		checkBan($board['uri']);
 
+		$post['ip'] = $_SERVER['REMOTE_ADDR'];
 		// Check for CAPTCHA right after opening the board so the "return" link is in there.
 		try {
 			$provider = $config['captcha']['provider'];
@@ -1271,8 +1272,6 @@ if (isset($_POST['delete'])) {
 		// Let's broadcast it!
 		nntp_publish($message, $msgid);
 	}
-
-	insertFloodPost($post);
 
 	// Handle cyclical threads
 	if (!$post['op'] && isset($thread['cycle']) && $thread['cycle']) {
