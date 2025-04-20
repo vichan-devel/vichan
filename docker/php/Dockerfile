@@ -1,7 +1,7 @@
 # Based on https://github.com/dead-guru/devichan/blob/master/php-fpm/Dockerfile
 
 FROM composer:lts AS composer
-FROM php:8.1-fpm-alpine
+FROM php:8.3-fpm-alpine
 
 RUN apk add --no-cache \
     zlib \

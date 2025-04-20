@@ -387,7 +387,7 @@ if (file_exists($config['has_installed'])) {
 				CHANGE  `theme`  `theme` VARCHAR( 40 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL ,
 				CHANGE  `name`  `name` VARCHAR( 40 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
 				CHANGE  `value`  `value` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
-				DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;") or eror(db_error());
+				DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;") or error(db_error());
 		case 'v0.9.6-dev-10':
 			query("ALTER TABLE  `antispam`
 				CHANGE  `board`  `board` VARCHAR( 58 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;") or error(db_error());
@@ -680,12 +680,12 @@ function create_config_from_array(&$instance_config, &$array, $prefix = '') {
 session_start();
 
 if ($step == 0) {
-	// Agreeement
-	$page['body'] = '
-	<textarea style="width:700px;height:370px;margin:auto;display:block;background:white;color:black" disabled>' . htmlentities(file_get_contents('LICENSE.md')) . '</textarea>
-	<p style="text-align:center">
-		<a href="?step=1">I have read and understood the agreement. Proceed to installation.</a>
-	</p>';
+    // Agreement
+    $page['body'] = '
+    <textarea style="width:700px;height:370px;margin:auto;display:block;background:white;color:black" disabled>' . htmlentities(file_get_contents('LICENSE.md')) . '</textarea>
+    <p style="text-align:center">
+        <button onclick="window.location.href=\'?step=1\'">I have read and understood the agreement. Proceed to installation.</button>
+    </p>';
 
 	echo Element('page.html', $page);
 } elseif ($step == 1) {
@@ -914,23 +914,35 @@ if ($step == 0) {
 		'config' => $config,
 	));
 } elseif ($step == 2) {
+    $page['title'] = 'Configuration';
+    $sg = new SaltGen();
+    $config['cookies']['salt'] = $sg->generate();
+    $config['secure_trip_salt'] = $sg->generate();
+    $config['secure_password_salt'] = $sg->generate();
+    
+    // Set database configuration from Docker environment variables, leave empty if not found
+    $config['db'] = array(
+        'type' => 'mysql', // Default, required for MySQL
+        'server' => getenv('VICHAN_MYSQL__HOST') !== false ? getenv('VICHAN_MYSQL__HOST') : '',
+        'database' => getenv('VICHAN_MYSQL__NAME') !== false ? getenv('VICHAN_MYSQL__NAME') : '',
+        'user' => getenv('VICHAN_MYSQL__USER') !== false ? getenv('VICHAN_MYSQL__USER') : '',
+        'password' => getenv('VICHAN_MYSQL__PASSWORD') !== false ? getenv('VICHAN_MYSQL__PASSWORD') : '',
+    );
 
-	// Basic config
-	$page['title'] = 'Configuration';
-
-	$sg = new SaltGen();
-	$config['cookies']['salt'] = $sg->generate();
-	$config['secure_trip_salt'] = $sg->generate();
-	$config['secure_password_salt'] = $sg->generate();
-
-	echo Element('page.html', array(
-		'body' => Element('installer/config.html', array(
-			'config' => $config,
-			'more' => $_SESSION['more'],
-		)),
-		'title' => 'Configuration',
-		'config' => $config
-	));
+    // Append secure_login_only to $_SESSION['more'] if VICHAN_SECURE_LOGIN_ONLY is set from Docker environment variables
+    if (getenv('VICHAN_SECURE_LOGIN_ONLY') !== false) {
+        $secure_login_only = (int)getenv('VICHAN_SECURE_LOGIN_ONLY');
+        $_SESSION['more'] .= "\n\$config['cookies']['secure_login_only'] = $secure_login_only;";
+    }
+    
+    echo Element('page.html', array(
+        'body' => Element('installer/config.html', array(
+            'config' => $config,
+            'more' => $_SESSION['more'],
+        )),
+        'title' => 'Configuration',
+        'config' => $config
+    ));
 } elseif ($step == 3) {
 	$more = $_POST['more'];
 	unset($_POST['more']);
@@ -973,69 +985,85 @@ if ($step == 0) {
 		echo Element('page.html', $page);
 	}
 } elseif ($step == 4) {
-	// SQL installation
+    buildJavascript();
 
-	buildJavascript();
+    $sql = @file_get_contents('install.sql') or error("Couldn't load install.sql.");
 
-	$sql = @file_get_contents('install.sql') or error("Couldn't load install.sql.");
+    sql_open();
+    $mysql_version = mysql_version();
 
-	sql_open();
-	$mysql_version = mysql_version();
+    // This code is probably horrible, but what I'm trying
+    // to do is find all of the SQL queires and put them
+    // in an array.
+    preg_match_all("/(^|\n)((SET|CREATE|INSERT).+)\n\n/msU", $sql, $queries);
+    $queries = $queries[2];
 
-	// This code is probably horrible, but what I'm trying
-	// to do is find all of the SQL queires and put them
-	// in an array.
-	preg_match_all("/(^|\n)((SET|CREATE|INSERT).+)\n\n/msU", $sql, $queries);
-	$queries = $queries[2];
+    $queries[] = Element('posts.sql', array('board' => 'b'));
 
-	$queries[] = Element('posts.sql', array('board' => 'b'));
+    $sql_errors = '';
+    $sql_err_count = 0;
+    foreach ($queries as $query) {
+        if ($mysql_version < 50503)
+            $query = preg_replace('/(CHARSET=|CHARACTER SET )utf8mb4/', '$1utf8', $query);
+        $query = preg_replace('/^([\w\s]*)`([0-9a-zA-Z$_\x{0080}-\x{FFFF}]+)`/u', '$1``$2``', $query);
+        if (!query($query)) {
+            $sql_err_count++;
+            $error = db_error();
+            $sql_errors .= "<li>$sql_err_count<ul><li>$query</li><li>$error</li></ul></li>";
+        }
+    }
 
-	$sql_errors = '';
-	$sql_err_count = 0;
-	foreach ($queries as $query) {
-		if ($mysql_version < 50503)
-			$query = preg_replace('/(CHARSET=|CHARACTER SET )utf8mb4/', '$1utf8', $query);
-		$query = preg_replace('/^([\w\s]*)`([0-9a-zA-Z$_\x{0080}-\x{FFFF}]+)`/u', '$1``$2``', $query);
-		if (!query($query)) {
-			$sql_err_count++;
-			$error = db_error();
-			$sql_errors .= "<li>$sql_err_count<ul><li>$query</li><li>$error</li></ul></li>";
-		}
-	}
+    $page['title'] = 'Installation complete';
+    $page['body'] = '<p style="text-align:center">Thank you for installing vichan. Please report any bugs you discover. <a href="https://github.com/vichan-devel/vichan/wiki/Configuration-Basics">How do I edit the config files?</a></p>';
 
-	$page['title'] = 'Installation complete';
-	$page['body'] = '<p style="text-align:center">Thank you for using vichan. Please remember to report any bugs you discover. <a href="https://github.com/vichan-devel/vichan/wiki/Configuration-Basics">How do I edit the config files?</a></p>';
+    // notice and button
+    $page['body'] .= '<div class="ban"><h2>Next Steps</h2>' .
+                     '<p>You can now log in to the admin panel at <strong>/mod.php</strong> using the default credentials: <strong>Username: admin</strong>, <strong>Password: password</strong>.</p>' .
+                     '<p><strong>Important:</strong> For security, please change the administrator password immediately after logging in.</p>' .
+                     '<p style="text-align:center"><button onclick="window.location.href=\'/mod.php\'">Go to Admin Panel</button></p></div>';
 
-	if (!empty($sql_errors)) {
-		$page['body'] .= '<div class="ban"><h2>SQL errors</h2><p>SQL errors were encountered when trying to install the database. This may be the result of using a database which is already occupied with a vichan installation; if so, you can probably ignore this.</p><p>The errors encountered were:</p><ul>' . $sql_errors . '</ul><p><a href="?step=5">Ignore errors and complete installation.</a></p></div>';
-	} else {
-		$boards = listBoards();
-		foreach ($boards as &$_board) {
-			setupBoard($_board);
-			buildIndex();
-		}
+    if (!empty($sql_errors)) {
+        $page['body'] .= '<div class="ban"><h2>SQL errors</h2><p>SQL errors were encountered when trying to install the database. This may be the result of using a database which is already occupied with a vichan installation; if so, you can probably ignore this.</p><p>The errors encountered were:</p><ul>' . $sql_errors . '</ul>' .
+                         '<p style="text-align:center;color:#d00"><strong>Warning:</strong> Ignoring errors is not recommended and may cause installation issues.</p>' .
+                         '<p style="text-align:center"><button onclick="window.location.href=\'?step=5\'">Next</button></p></div>';
+    } else {
+        $boards = listBoards();
+        foreach ($boards as &$_board) {
+            setupBoard($_board);
+            buildIndex();
+        }
 
-		file_write($config['has_installed'], VERSION);
-		/*if (!file_unlink(__FILE__)) {
-			$page['body'] .= '<div class="ban"><h2>Delete install.php!</h2><p>I couldn\'t remove <strong>install.php</strong>. You will have to remove it manually.</p></div>';
-		}*/
-	}
+        file_write($config['has_installed'], VERSION);
+        /*if (!file_unlink(__FILE__)) {
+            $page['body'] .= '<div class="ban"><h2>Delete install.php!</h2><p>I couldn\'t remove <strong>install.php</strong>. You will have to remove it manually.</p></div>';
+        }*/
+    }
 
-	echo Element('page.html', $page);
+    echo Element('page.html', $page);
 } elseif ($step == 5) {
-	$page['title'] = 'Installation complete';
-	$page['body'] = '<p style="text-align:center">Thank you for using vichan. Please remember to report any bugs you discover.</p>';
+    $page['title'] = 'Installation complete';
+    $page['body'] = '<p style="text-align:center">Thank you for installing vichan. Please report any bugs you discover.</p>';
 
-	$boards = listBoards();
-	foreach ($boards as &$_board) {
-		setupBoard($_board);
-		buildIndex();
-	}
+    // onboarding notice and button to mod.php
+    $page['body'] .= '<div class="ban"><h2>Next Steps</h2>' .
+                     '<p>You can now log in to the admin panel at <strong>/mod.php</strong> using the default credentials:</p>' .
+                     '<ul>' .
+                     '<li><strong>Username:</strong> admin</li>' .
+                     '<li><strong>Password:</strong> password</li>' .
+                     '</ul>' .
+                     '<p><strong>Important:</strong> For security, please change the administrator password immediately after logging in.</p>' .
+                     '<p style="text-align:center"><button onclick="window.location.href=\'/mod.php\'">Go to Admin Panel</button></p></div>';
 
-	file_write($config['has_installed'], VERSION);
-	if (!file_unlink(__FILE__)) {
-		$page['body'] .= '<div class="ban"><h2>Delete install.php!</h2><p>I couldn\'t remove <strong>install.php</strong>. You will have to remove it manually.</p></div>';
-	}
+    $boards = listBoards();
+    foreach ($boards as &$_board) {
+        setupBoard($_board);
+        buildIndex();
+    }
 
-	echo Element('page.html', $page);
+    file_write($config['has_installed'], VERSION);
+    if (!file_unlink(__FILE__)) {
+        $page['body'] .= '<div class="ban"><h2>Delete install.php!</h2><p>I couldn\'t remove <strong>install.php</strong>. You will have to remove it manually.</p></div>';
+    }
+
+    echo Element('page.html', $page);
 }
