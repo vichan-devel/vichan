@@ -30,6 +30,7 @@ services:
       - ./local-instances/${INSTANCE:-0}/www:/var/www
       - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
       - ./docker/php/jit.ini:/usr/local/etc/php/conf.d/jit.ini
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
     environment:
       VICHAN_MYSQL__HOST: ${VICHAN_MYSQL__HOST}
       VICHAN_MYSQL__USER: ${VICHAN_MYSQL__USER}
@@ -39,6 +40,8 @@ services:
       VICHAN_REDIS_HOST: ${VICHAN_REDIS_HOST}
       VICHAN_REDIS_PORT: ${VICHAN_REDIS_PORT}
       VICHAN_REDIS_PASSWORD: ${VICHAN_REDIS_PASSWORD}
+      PHP_UPLOAD_MAX_FILESIZE: 10M
+      PHP_POST_MAX_SIZE: 10M
     depends_on:
       - db
 
