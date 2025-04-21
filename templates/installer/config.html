@@ -15,9 +15,6 @@
 
 		<label for="db_pass">Password:</label> 
 		<input type="password" id="db_pass" name="db[password]" value="{{ config.db.password }}">
-	</fieldset>
-	<p style="text-align:center" class="unimportant">The following is all later configurable. For more options, <a href="http://tinyboard.org/docs/?p=Config">edit your configuration files</a> after installing.</p>
-	<fieldset>
 	<legend>Cookies</legend>
 		<label for="cookies_mod">Moderator cookie:</label> 
 		<input type="text" id="cookies_mod" name="cookies[mod]" value="{{ config.cookies.mod }}">
@@ -52,34 +49,35 @@
 		<label for="max_filesize">Maximum image filesize (bytes):</label> 
 		<input type="text" id="max_filesize" name="max_filesize" value="{{ config.max_filesize }}">
 		<div class="expandable">
-			<legend>PHP file size limit</legend>
+			<legend>PHP File Size Limit</legend>
 			<div class="body">
-				<p>The php file size limit can be configured in php.ini ( /usr/local/etc/php/php.ini )</p>
+				<p>Configure the PHP file size limit in the <code>php.ini</code> file. If it doesn't exist, create one.</p>
 				<div class="expandable">
-					<legend>Using docker</legend>
+					<legend>Using Docker</legend>
 					<div class="body">
-						<p>if you have pulled this from <a href="https://github.com/vichan-devel/vichan">GitHub</a></p>
-						<p>Then you can set the file size limit at ./docker/php/php.ini</p>
-						<p>For example, to set the limit to 10MB, add the following lines:</p>
+						<p>Edit or create <code>./vichan/docker/php/php.ini</code> in the project root.</p>
+						<p>To set the limit to 10MB, add:</p>
 						<pre>
-upload_max_filesize = 10M
-post_max_size = 10M</pre>
+		upload_max_filesize = 10M
+		post_max_size = 10M
+						</pre>
 						<p>Then restart the containers.</p>
 					</div>
 				</div>
 				<div class="expandable">
 					<legend>Manual Configuration</legend>
 					<div class="body">
-						<p>If you are not using docker, you can set the file size limit in the php.ini file:</p>
-						<p>For example, to set the limit to 10MB, add the following lines:</p>
+						<p>Edit or create <code>/usr/local/etc/php/php.ini</code>.</p>
+						<p>To set the limit to 10MB, add:</p>
 						<pre>
-upload_max_filesize = 10M
-post_max_size = 10M</pre>
+		upload_max_filesize = 10M
+		post_max_size = 10M
+						</pre>
 						<p>Then restart the PHP server.</p>
 					</div>
 				</div>
 				<hr>
-				<p>If this is not set, the default value is 2MB.</p>
+				<p>Default limit is 2MB if not set.</p>
 			</div>
 		</div>
 		<label for="thumb_width">Thumbnail width:</label> 
