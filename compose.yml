@@ -30,6 +30,7 @@ services:
       - ./local-instances/${INSTANCE:-0}/www:/var/www
       - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
       - ./docker/php/jit.ini:/usr/local/etc/php/conf.d/jit.ini
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
     environment:
       VICHAN_MYSQL__HOST: ${VICHAN_MYSQL__HOST}
       VICHAN_MYSQL__USER: ${VICHAN_MYSQL__USER}

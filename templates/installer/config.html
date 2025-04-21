@@ -51,7 +51,37 @@
 	<legend>Images</legend>
 		<label for="max_filesize">Maximum image filesize (bytes):</label> 
 		<input type="text" id="max_filesize" name="max_filesize" value="{{ config.max_filesize }}">
-
+		<div class="expandable">
+			<legend>PHP file size limit</legend>
+			<div class="body">
+				<p>The php file size limit can be configured in php.ini ( /usr/local/etc/php/php.ini )</p>
+				<div class="expandable">
+					<legend>Using docker</legend>
+					<div class="body">
+						<p>if you have pulled this from <a href="https://github.com/vichan-devel/vichan">GitHub</a></p>
+						<p>Then you can set the file size limit at ./docker/php/php.ini</p>
+						<p>For example, to set the limit to 10MB, add the following lines:</p>
+						<pre>
+upload_max_filesize = 10M
+post_max_size = 10M</pre>
+						<p>Then restart the containers.</p>
+					</div>
+				</div>
+				<div class="expandable">
+					<legend>Manual Configuration</legend>
+					<div class="body">
+						<p>If you are not using docker, you can set the file size limit in the php.ini file:</p>
+						<p>For example, to set the limit to 10MB, add the following lines:</p>
+						<pre>
+upload_max_filesize = 10M
+post_max_size = 10M</pre>
+						<p>Then restart the PHP server.</p>
+					</div>
+				</div>
+				<hr>
+				<p>If this is not set, the default value is 2MB.</p>
+			</div>
+		</div>
 		<label for="thumb_width">Thumbnail width:</label> 
 		<input type="text" id="thumb_width" name="thumb_width" value="{{ config.thumb_width }}">
 
@@ -99,3 +129,51 @@
 		<input type="submit" value="Complete installation">
 	</p>
 </form>
+<script>
+	const expandables = document.querySelectorAll('.expandable');
+	expandables.forEach(expandable => {
+		const arrow = document.createElement('span');
+		arrow.innerHTML = ' &#9654;'; // Right arrow
+		arrow.style.cursor = 'pointer';
+		arrow.style.marginLeft = '5px';
+		expandable.querySelector('legend').appendChild(arrow);
+		expandable.querySelector('legend').style.cursor = 'pointer';
+		expandable.querySelector('legend').style.fontWeight = 'bold';
+		expandable.querySelector('legend').style.display = 'flex';
+		expandable.querySelector('legend').style.alignItems = 'center';
+		expandable.querySelector('legend').style.justifyContent = 'space-between';
+		
+
+		const label = expandable.querySelector('legend');
+		const body = expandable.querySelector('.body');
+		label.addEventListener('click', () => {
+			if (body.style.display === 'none' || body.style.display === '') {
+				body.style.display = 'block';
+				arrow.innerHTML = ' &#9660;'; // Down arrow
+			} else {
+				body.style.display = 'none';
+				arrow.innerHTML = ' &#9654;'; // Up arrow
+			}
+		});
+	});
+</script>
+
+<style>
+	.expandable {
+		border: 1px solid #ccc;
+		padding: 10px;
+		margin: 10px 0;
+	}
+	.expandable legend {
+		cursor: pointer;
+		font-weight: bold;
+	}
+	.expandable fieldset {
+		border: none;
+		padding: 0;
+		margin: 0;
+	}
+	.expandable .body {
+		display: none; /* Ensure the body is hidden initially */
+	}
+</style>
