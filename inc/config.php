@@ -143,25 +143,8 @@
 	// Configure cache
 	if ($redis_enabled) {
 		$config['cache']['enabled'] = 'redis';
-		$config['cache']['redis'] = [
-			'host' => getenv('VICHAN_REDIS_HOST') ?: 'localhost',
-			'port' => (int)(getenv('VICHAN_REDIS_PORT') ?: 6379),
-			'password' => getenv('VICHAN_REDIS_PASSWORD') ?: '',
-			'database' => 1,
-		];
 	} else {
 		$config['cache']['enabled'] = 'php';
-	}
-
-	// Configure sessions to use Redis if enabled
-	if ($redis_enabled) {
-		$config['session']['enabled'] = 'redis';
-		$config['session']['redis'] = [
-			'host' => getenv('VICHAN_REDIS_HOST') ?: 'localhost',
-			'port' => (int)(getenv('VICHAN_REDIS_PORT') ?: 6379),
-			'password' => getenv('VICHAN_REDIS_PASSWORD') ?: '',
-			'database' => 1,
-		];
 	}
 
 	// Cache timeout for cached objects
@@ -1869,6 +1852,15 @@
 	// Enable public logs? 0: NO, 1: YES, 2: YES, but drop names
 	$config['public_logs'] = 0;
 
+/*
+ * ====================
+ *  Docker settings
+ * ===================
+ */
+
+ $isDocker = is_file("/.dockerenv") || is_file("/run/.containerenv");
+ $config['docker'] = $isDocker;
+	
 /*
  * ====================
  *  Events (PHP 5.3.0+)

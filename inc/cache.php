@@ -12,6 +12,7 @@ defined('TINYBOARD') or exit;
 class Cache {
 	private static function buildCache(): CacheDriver {
 		global $config;
+		$isDocker = is_file("/.dockerenv") || is_file("/run/.containerenv");
 
 		switch ($config['cache']['enabled']) {
 			case 'memcached':
@@ -20,12 +21,31 @@ class Cache {
 					$config['cache']['memcached']
 				);
 			case 'redis':
+				$host = $config['cache']['redis'][0] ?? 'localhost';
+				$port = $config['cache']['redis'][1] ?? 6379;
+				$password = $config['cache']['redis'][2] ?? '';
+				$database = $config['cache']['redis'][3] ?? 1;
+
+				if ($isDocker) {
+					$host = getenv('VICHAN_REDIS_HOST') ?: $host;
+					$port = getenv('VICHAN_REDIS_PORT') ?: $port;
+					$password = getenv('VICHAN_REDIS_PASSWORD') ?: $password;
+					$database = getenv('VICHAN_REDIS_DATABASE') ?: $database;
+				}
+				// $log->log("Cache info:\n"
+				// 	. 'Cache driver: redis' . "\n"
+				// 	. '├ Redis host: ' . $host . "\n"
+				// 	. '├ Redis port: ' . $port . "\n"
+				// 	. '├ Redis password: ' . str_repeat('*', strlen($password)) . "\n"
+				// 	. '└ Redis database: ' . $database . "\n"
+				// );
+
 				return new RedisCacheDriver(
 					$config['cache']['prefix'],
-					$config['cache']['redis'][0],
-					$config['cache']['redis'][1],
-					$config['cache']['redis'][2],
-					$config['cache']['redis'][3]
+					$host,
+					$port,
+					$password,
+					$database
 				);
 			case 'apcu':
 				return new ApcuCacheDriver;
