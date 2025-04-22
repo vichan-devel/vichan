@@ -914,67 +914,67 @@ if ($step == 0) {
 		'config' => $config,
 	));
 } elseif ($step == 2) {
-    $page['title'] = 'Configuration';
-    $sg = new SaltGen();
+	$page['title'] = 'Configuration';
+	$sg = new SaltGen();
 
-    // Initialize configuration with defaults and override with environment variables
+	// Initialize configuration with defaults and override with environment variables
     $config['cookies'] = array(
-        'mod' => getenv('VICHAN_COOKIES_MOD') !== false ? getenv('VICHAN_COOKIES_MOD') : 'mod',
-        'salt' => $sg->generate(),
-    );
-    
-    $config['flood_time'] = getenv('VICHAN_FLOOD_TIME') !== false ? (int)getenv('VICHAN_FLOOD_TIME') : 30;
-    $config['flood_time_ip'] = getenv('VICHAN_FLOOD_TIME_IP') !== false ? (int)getenv('VICHAN_FLOOD_TIME_IP') : 120;
-    $config['flood_time_same'] = getenv('VICHAN_FLOOD_TIME_SAME') !== false ? (int)getenv('VICHAN_FLOOD_TIME_SAME') : 3600;
-    $config['max_body'] = getenv('VICHAN_MAX_BODY') !== false ? (int)getenv('VICHAN_MAX_BODY') : 1800;
-    $config['reply_limit'] = getenv('VICHAN_REPLY_LIMIT') !== false ? (int)getenv('VICHAN_REPLY_LIMIT') : 250;
-    $config['max_links'] = getenv('VICHAN_MAX_LINKS') !== false ? (int)getenv('VICHAN_MAX_LINKS') : 20;
-    
-    $config['max_filesize'] = getenv('VICHAN_IMAGES_MAX_FILESIZE') !== false ? (int)getenv('VICHAN_IMAGES_MAX_FILESIZE') : 10485760; // This is 10MB
-    $config['thumb_width'] = getenv('VICHAN_IMAGES_THUMB_WIDTH') !== false ? (int)getenv('VICHAN_IMAGES_THUMB_WIDTH') : 250;
-    $config['thumb_height'] = getenv('VICHAN_IMAGES_THUMB_HEIGHT') !== false ? (int)getenv('VICHAN_IMAGES_THUMB_HEIGHT') : 250;
-    $config['max_width'] = getenv('VICHAN_IMAGES_MAX_WIDTH') !== false ? (int)getenv('VICHAN_IMAGES_MAX_WIDTH') : 10000;
-    $config['max_height'] = getenv('VICHAN_IMAGES_MAX_HEIGHT') !== false ? (int)getenv('VICHAN_IMAGES_MAX_HEIGHT') : 10000;
-    
-    $config['threads_per_page'] = getenv('VICHAN_DISPLAY_THREADS_PER_PAGE') !== false ? (int)getenv('VICHAN_DISPLAY_THREADS_PER_PAGE') : 10;
-    $config['max_pages'] = getenv('VICHAN_DISPLAY_MAX_PAGES') !== false ? (int)getenv('VICHAN_DISPLAY_MAX_PAGES') : 11;
-    $config['threads_preview'] = getenv('VICHAN_DISPLAY_THREADS_PREVIEW') !== false ? (int)getenv('VICHAN_DISPLAY_THREADS_PREVIEW') : 5;
-    
-    $config['root'] = getenv('VICHAN_DIRECTORIES_ROOT') !== false ? getenv('VICHAN_DIRECTORIES_ROOT') : '/';
-    
-    $config['secure_trip_salt'] = $sg->generate();
-    $config['secure_password_salt'] = $sg->generate();
+		'mod' => getenv('VICHAN_COOKIES_MOD') !== false ? getenv('VICHAN_COOKIES_MOD') : 'mod',
+		'salt' => $sg->generate(),
+	);
+
+	$config['flood_time'] = getenv('VICHAN_FLOOD_TIME') !== false ? (int)getenv('VICHAN_FLOOD_TIME') : 30;
+	$config['flood_time_ip'] = getenv('VICHAN_FLOOD_TIME_IP') !== false ? (int)getenv('VICHAN_FLOOD_TIME_IP') : 120;
+	$config['flood_time_same'] = getenv('VICHAN_FLOOD_TIME_SAME') !== false ? (int)getenv('VICHAN_FLOOD_TIME_SAME') : 3600;
+	$config['max_body'] = getenv('VICHAN_MAX_BODY') !== false ? (int)getenv('VICHAN_MAX_BODY') : 1800;
+	$config['reply_limit'] = getenv('VICHAN_REPLY_LIMIT') !== false ? (int)getenv('VICHAN_REPLY_LIMIT') : 250;
+	$config['max_links'] = getenv('VICHAN_MAX_LINKS') !== false ? (int)getenv('VICHAN_MAX_LINKS') : 20;
+	
+	$config['max_filesize'] = getenv('VICHAN_IMAGES_MAX_FILESIZE') !== false ? (int)getenv('VICHAN_IMAGES_MAX_FILESIZE') : 10485760; // This is 10MB
+	$config['thumb_width'] = getenv('VICHAN_IMAGES_THUMB_WIDTH') !== false ? (int)getenv('VICHAN_IMAGES_THUMB_WIDTH') : 250;
+	$config['thumb_height'] = getenv('VICHAN_IMAGES_THUMB_HEIGHT') !== false ? (int)getenv('VICHAN_IMAGES_THUMB_HEIGHT') : 250;
+	$config['max_width'] = getenv('VICHAN_IMAGES_MAX_WIDTH') !== false ? (int)getenv('VICHAN_IMAGES_MAX_WIDTH') : 10000;
+	$config['max_height'] = getenv('VICHAN_IMAGES_MAX_HEIGHT') !== false ? (int)getenv('VICHAN_IMAGES_MAX_HEIGHT') : 10000;
+	
+	$config['threads_per_page'] = getenv('VICHAN_DISPLAY_THREADS_PER_PAGE') !== false ? (int)getenv('VICHAN_DISPLAY_THREADS_PER_PAGE') : 10;
+	$config['max_pages'] = getenv('VICHAN_DISPLAY_MAX_PAGES') !== false ? (int)getenv('VICHAN_DISPLAY_MAX_PAGES') : 11;
+	$config['threads_preview'] = getenv('VICHAN_DISPLAY_THREADS_PREVIEW') !== false ? (int)getenv('VICHAN_DISPLAY_THREADS_PREVIEW') : 5;
+	
+	$config['root'] = getenv('VICHAN_DIRECTORIES_ROOT') !== false ? getenv('VICHAN_DIRECTORIES_ROOT') : '/';
+	
+	$config['secure_trip_salt'] = $sg->generate();
+	$config['secure_password_salt'] = $sg->generate();
     
     // Set database configuration from Docker environment variables, leave empty if not found
-    $config['db'] = array(
-        'type' => 'mysql', // Default, required for MySQL
-        'server' => getenv('VICHAN_MYSQL_HOST') !== false ? getenv('VICHAN_MYSQL_HOST') : '',
-        'database' => getenv('VICHAN_MYSQL_NAME') !== false ? getenv('VICHAN_MYSQL_NAME') : '',
-        'user' => getenv('VICHAN_MYSQL_USER') !== false ? getenv('VICHAN_MYSQL_USER') : '',
-        'password' => getenv('VICHAN_MYSQL_PASSWORD') !== false ? getenv('VICHAN_MYSQL_PASSWORD') : '',
-    );
+	$config['db'] = array(
+		'type' => 'mysql', // Default, required for MySQL
+		'server' => getenv('VICHAN_MYSQL_HOST') !== false ? getenv('VICHAN_MYSQL_HOST') : '',
+		'database' => getenv('VICHAN_MYSQL_NAME') !== false ? getenv('VICHAN_MYSQL_NAME') : '',
+		'user' => getenv('VICHAN_MYSQL_USER') !== false ? getenv('VICHAN_MYSQL_USER') : '',
+		'password' => getenv('VICHAN_MYSQL_PASSWORD') !== false ? getenv('VICHAN_MYSQL_PASSWORD') : '',
+	);
     
-    // Append secure_login_only to $_SESSION['more'] if VICHAN_SECURE_LOGIN_ONLY is set
-    if (getenv('VICHAN_SECURE_LOGIN_ONLY') !== false) {
-        $secure_login_only = (int)getenv('VICHAN_SECURE_LOGIN_ONLY');
-        $_SESSION['more'] .= "\n\$config['cookies']['secure_login_only'] = $secure_login_only;";
-    }
+	// Append secure_login_only to $_SESSION['more'] if VICHAN_SECURE_LOGIN_ONLY is set
+	if (getenv('VICHAN_SECURE_LOGIN_ONLY') !== false) {
+		$secure_login_only = (int)getenv('VICHAN_SECURE_LOGIN_ONLY');
+		$_SESSION['more'] .= "\n\$config['cookies']['secure_login_only'] = $secure_login_only;";
+	}
 
     // Configuration notice at the top
-    $page['body'] = '<div class="ban"><h2>Configuration Note</h2>' .
-                    '<p style="text-align:center;">The following settings can still be configured later. For more customization options, <a href="https://github.com/vichan-devel/vichan/wiki/config" target="_blank" rel="noopener noreferrer">check the Vichan configuration wiki.</a></p></div>';
+	$page['body'] = '<div class="ban"><h2>Configuration Note</h2>' .
+					'<p style="text-align:center;">The following settings can still be configured later. For more customization options, <a href="https://github.com/vichan-devel/vichan/wiki/config" target="_blank" rel="noopener noreferrer">check the Vichan configuration wiki.</a></p></div>';
 
-    // Append the configuration form
-    $page['body'] .= Element('installer/config.html', array(
-        'config' => $config,
-        'more' => $_SESSION['more'],
-    ));
+	// Append the configuration form
+	$page['body'] .= Element('installer/config.html', array(
+		'config' => $config,
+		'more' => $_SESSION['more'],
+	));
 
-    echo Element('page.html', array(
-        'body' => $page['body'],
-        'title' => 'Configuration',
-        'config' => $config
-    ));
+	echo Element('page.html', array(
+		'body' => $page['body'],
+		'title' => 'Configuration',
+		'config' => $config
+	));
 } elseif ($step == 3) {
 	$more = $_POST['more'];
 	unset($_POST['more']);
@@ -1017,89 +1017,88 @@ if ($step == 0) {
 		echo Element('page.html', $page);
 	}
 } elseif ($step == 4) {
-    buildJavascript();
+	buildJavascript();
 
-    $sql = @file_get_contents('install.sql') or error("Couldn't load install.sql.");
+	$sql = @file_get_contents('install.sql') or error("Couldn't load install.sql.");
 
-    sql_open();
-    $mysql_version = mysql_version();
+	sql_open();
+	$mysql_version = mysql_version();
 
-    // This code is probably horrible, but what I'm trying
-    // to do is find all of the SQL queires and put them
-    // in an array.
-    preg_match_all("/(^|\n)((SET|CREATE|INSERT).+)\n\n/msU", $sql, $queries);
-    $queries = $queries[2];
+	// This code is probably horrible, but what I'm trying
+	// to do is find all of the SQL queires and put them
+	// in an array.
+	preg_match_all("/(^|\n)((SET|CREATE|INSERT).+)\n\n/msU", $sql, $queries);
+	$queries = $queries[2];
 
-    $queries[] = Element('posts.sql', array('board' => 'b'));
+	$queries[] = Element('posts.sql', array('board' => 'b'));
 
-    $sql_errors = '';
-    $sql_err_count = 0;
-    foreach ($queries as $query) {
-        if ($mysql_version < 50503)
-            $query = preg_replace('/(CHARSET=|CHARACTER SET )utf8mb4/', '$1utf8', $query);
-        $query = preg_replace('/^([\w\s]*)`([0-9a-zA-Z$_\x{0080}-\x{FFFF}]+)`/u', '$1``$2``', $query);
-        if (!query($query)) {
-            $sql_err_count++;
-            $error = db_error();
-            $sql_errors .= "<li>$sql_err_count<ul><li>$query</li><li>$error</li></ul></li>";
-        }
-    }
+	$sql_errors = '';
+	$sql_err_count = 0;
+	foreach ($queries as $query) {
+		if ($mysql_version < 50503)
+		$query = preg_replace('/(CHARSET=|CHARACTER SET )utf8mb4/', '$1utf8', $query);
+		$query = preg_replace('/^([\w\s]*)`([0-9a-zA-Z$_\x{0080}-\x{FFFF}]+)`/u', '$1``$2``', $query);
+		if (!query($query)) {
+			$sql_err_count++;
+			$error = db_error();
+			$sql_errors .= "<li>$sql_err_count<ul><li>$query</li><li>$error</li></ul></li>";
+		}
+	}
 
-    $page['title'] = 'Installation complete';
-    $page['body'] = '<p style="text-align:center">Thank you for using vichan. <a href="https://github.com/vichan-devel/vichan/issues/new/choose" target="_blank" rel="noopener noreferrer">Please report any bugs you discover.</a></p>' .
-                    '<p style="text-align:center">If you are new to vichan, <a href="https://github.com/vichan-devel/vichan/wiki" target="_blank" rel="noopener noreferrer">please check out the documentation.</a></p>';
+	$page['title'] = 'Installation complete';
+	$page['body'] = '<p style="text-align:center">Thank you for using vichan. <a href="https://github.com/vichan-devel/vichan/issues/new/choose" target="_blank" rel="noopener noreferrer">Please report any bugs you discover.</a></p>' .
+					'<p style="text-align:center">If you are new to vichan, <a href="https://github.com/vichan-devel/vichan/wiki" target="_blank" rel="noopener noreferrer">please check out the documentation.</a></p>';
 
     // Admin panel notice
-    $page['body'] .= '<div class="ban"><h2>Next Steps</h2>' .
-                     '<p>You can now log in to the admin panel at <strong>/mod.php</strong> using the default credentials:</p>' .
-                     '<p><strong>Username:</strong> admin</p>' .
-                     '<p><strong>Password:</strong> password</p>' .
-                     '<p><strong>Important:</strong> For security, please change the administrator password immediately after logging in.</p>' .
-                     '<p style="text-align:center"><button onclick="window.location.href=\'/mod.php\'">Go to Admin Panel</button></p></div>';
+	$page['body'] .= '<div class="ban"><h2>Next Steps</h2>' .
+					 '<p>You can now log in to the admin panel at <strong>/mod.php</strong> using the default credentials:</p>' .
+					 '<p><strong>Username:</strong> admin</p>' .
+					 '<p><strong>Password:</strong> password</p>' .
+					 '<p><strong>Important:</strong> For security, please change the administrator password immediately after logging in.</p>' .
+					 '<p style="text-align:center"><button onclick="window.location.href=\'/mod.php\'">Go to Admin Panel</button></p></div>';
 
 
-    if (!empty($sql_errors)) {
-        $page['body'] .= '<div class="ban"><h2>SQL errors</h2><p>SQL errors were encountered when trying to install the database. This may be the result of using a database which is already occupied with a vichan installation; if so, you can probably ignore this.</p><p>The errors encountered were:</p><ul>' . $sql_errors . '</ul>' .
-                         '<p style="text-align:center;color:#d00"><strong>Warning:</strong> Ignoring errors is not recommended and may cause installation issues.</p>' .
-                         '<p style="text-align:center"><button onclick="window.location.href=\'?step=5\'">Next</button></p></div>';
-    } else {
-        $boards = listBoards();
-        foreach ($boards as &$_board) {
-            setupBoard($_board);
-            buildIndex();
-        }
+	if (!empty($sql_errors)) {
+		$page['body'] .= '<div class="ban"><h2>SQL errors</h2><p>SQL errors were encountered when trying to install the database. This may be the result of using a database which is already occupied with a vichan installation; if so, you can probably ignore this.</p><p>The errors encountered were:</p><ul>' . $sql_errors . '</ul>' .
+						 '<p style="text-align:center;color:#d00"><strong>Warning:</strong> Ignoring errors is not recommended and may cause installation issues.</p>' .
+						 '<p style="text-align:center"><button onclick="window.location.href=\'?step=5\'">Next</button></p></div>';
+	} else {
+		$boards = listBoards();
+		foreach ($boards as &$_board) {
+			setupBoard($_board);
+			buildIndex();
+		}
 
-        file_write($config['has_installed'], VERSION);
-        /*if (!file_unlink(__FILE__)) {
-            $page['body'] .= '<div class="ban"><h2>Delete install.php!</h2><p>I couldn\'t remove <strong>install.php</strong>. You will have to remove it manually.</p></div>';
-        }*/
-    }
+		file_write($config['has_installed'], VERSION);
+		/*if (!file_unlink(__FILE__)) {
+			$page['body'] .= '<div class="ban"><h2>Delete install.php!</h2><p>I couldn\'t remove <strong>install.php</strong>. You will have to remove it manually.</p></div>';
+		}*/
+	}
 
-    echo Element('page.html', $page);
+	echo Element('page.html', $page);
 } elseif ($step == 5) {
-    $page['title'] = 'Installation complete';
-    $page['body'] = '<p style="text-align:center">Thank you for using vichan. Please report any bugs you discover.</p>' .
-                    '<p style="text-align:center">If you are new to vichan, <a href="https://github.com/vichan-devel/vichan/wiki">please check out the documentation</a>.</p>';
+	$page['title'] = 'Installation complete';
+	$page['body'] = '<p style="text-align:center">Thank you for using vichan. Please report any bugs you discover.</p>' .
+					'<p style="text-align:center">If you are new to vichan, <a href="https://github.com/vichan-devel/vichan/wiki">please check out the documentation</a>.</p>';
 
-    // Admin panel notice
-    $page['body'] .= '<div class="ban"><h2>Next Steps</h2>' .
-                     '<p>You can now log in to the admin panel at <strong>/mod.php</strong> using the default credentials:</p>' .
-                     '<p><strong>Username:</strong> admin</p>' .
-                     '<p><strong>Password:</strong> password</p>' .
-                     '<p><strong>Important:</strong> For security, please change the administrator password immediately after logging in.</p>' .
-                     '<p style="text-align:center"><button onclick="window.location.href=\'/mod.php\'">Go to Admin Panel</button></p></div>';
+	// Admin panel notice
+	$page['body'] .= '<div class="ban"><h2>Next Steps</h2>' .
+					'<p>You can now log in to the admin panel at <strong>/mod.php</strong> using the default credentials:</p>' .
+					'<p><strong>Username:</strong> admin</p>' .
+					'<p><strong>Password:</strong> password</p>' .
+					'<p><strong>Important:</strong> For security, please change the administrator password immediately after logging in.</p>' .
+					'<p style="text-align:center"><button onclick="window.location.href=\'/mod.php\'">Go to Admin Panel</button></p></div>';
 
+	$boards = listBoards();
+	foreach ($boards as &$_board) {
+		setupBoard($_board);
+		buildIndex();
+	}
 
-    $boards = listBoards();
-    foreach ($boards as &$_board) {
-        setupBoard($_board);
-        buildIndex();
-    }
+	file_write($config['has_installed'], VERSION);
+	if (!file_unlink(__FILE__)) {
+		$page['body'] .= '<div class="ban"><h2>Delete install.php!</h2><p>I couldn\'t remove <strong>install.php</strong>. You will have to remove it manually.</p></div>';
+	}
 
-    file_write($config['has_installed'], VERSION);
-    if (!file_unlink(__FILE__)) {
-        $page['body'] .= '<div class="ban"><h2>Delete install.php!</h2><p>I couldn\'t remove <strong>install.php</strong>. You will have to remove it manually.</p></div>';
-    }
-
-    echo Element('page.html', $page);
+	echo Element('page.html', $page);
 }
