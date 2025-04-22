@@ -47,7 +47,7 @@ RUN apk add --no-cache \
     && pecl install -o -f igbinary \
     && pecl install redis \
     && pecl install imagick \
-    $$ docker-php-ext-enable \
+    && docker-php-ext-enable \
         igbinary \
         redis \
         imagick \
