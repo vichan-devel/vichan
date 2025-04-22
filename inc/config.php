@@ -137,44 +137,43 @@
  * ====================
  */
 
-	/*
-	 * On top of the static file caching system, you can enable the additional caching system which is
-	 * designed to minimize request processing can significantly increase speed when posting or using
-	 * the moderator interface.
-	 *
-	 * https://github.com/vichan-devel/vichan/wiki/cache
-	 */
+	// Determine if Redis is configured via environment variables
+	$redis_enabled = getenv('VICHAN_REDIS_HOST') !== false && getenv('VICHAN_REDIS_PORT') !== false;
 
-	// Uses a PHP array. MUST NOT be used in multiprocess environments.
-	$config['cache']['enabled'] = 'php';
-	// The recommended in-memory method of caching. Requires the extension. Due to how APCu works, this should be
-	// disabled when you run tools from the cli.
-	// $config['cache']['enabled'] = 'apcu';
-	// The Memcache server. Requires the memcached extension, with a final D.
-	// $config['cache']['enabled'] = 'memcached';
-	// The Redis server. Requires the extension.
-	// $config['cache']['enabled'] = 'redis';
-	// Use the local cache folder. Slower than native but available out of the box and compatible with multiprocess
-	// environments. You can mount a ram-based filesystem in the cache directory to improve performance.
-	// $config['cache']['enabled'] = 'fs';
-	// Technically available, offers a no-op fake cache. Don't use this outside of testing or debugging.
-	// $config['cache']['enabled'] = 'none';
+	// Configure cache
+	if ($redis_enabled) {
+		$config['cache']['enabled'] = 'redis';
+		$config['cache']['redis'] = [
+			'host' => getenv('VICHAN_REDIS_HOST') ?: 'localhost',
+			'port' => (int)(getenv('VICHAN_REDIS_PORT') ?: 6379),
+			'password' => getenv('VICHAN_REDIS_PASSWORD') ?: '',
+			'database' => 1,
+		];
+	} else {
+		$config['cache']['enabled'] = 'php';
+	}
 
-	// Timeout for cached objects such as posts and HTML.
+	// Configure sessions to use Redis if enabled
+	if ($redis_enabled) {
+		$config['session']['enabled'] = 'redis';
+		$config['session']['redis'] = [
+			'host' => getenv('VICHAN_REDIS_HOST') ?: 'localhost',
+			'port' => (int)(getenv('VICHAN_REDIS_PORT') ?: 6379),
+			'password' => getenv('VICHAN_REDIS_PASSWORD') ?: '',
+			'database' => 1,
+		];
+	}
+
+	// Cache timeout for cached objects
 	$config['cache']['timeout'] = 60 * 60 * 48; // 48 hours
 
-	// Optional prefix if you're running multiple vichan instances on the same machine.
+	// Optional prefix for multiple vichan instances
 	$config['cache']['prefix'] = '';
 
-	// Memcached servers to use. Read more: http://www.php.net/manual/en/memcached.addservers.php
-	$config['cache']['memcached'] = array(
-		array('localhost', 11211)
-	);
-
-	// Redis server to use. Location, port, password, database id.
-	// Note that vichan may clear the database at times, so you may want to pick a database id just for
-	// vichan to use.
-	$config['cache']['redis'] = array('localhost', 6379, '', 1);
+	// Memcached servers (not used)
+	$config['cache']['memcached'] = [
+		['localhost', 11211]
+	];
 
 	// EXPERIMENTAL: Should we cache configs? Warning: this changes board behaviour, i'd say, a lot.
 	// If you have any lambdas/includes present in your config, you should move them to instance-functions.php

@@ -916,30 +916,62 @@ if ($step == 0) {
 } elseif ($step == 2) {
     $page['title'] = 'Configuration';
     $sg = new SaltGen();
-    $config['cookies']['salt'] = $sg->generate();
+
+    // Initialize configuration with defaults and override with environment variables
+    $config['cookies'] = array(
+        'mod' => getenv('VICHAN_COOKIES_MOD') !== false ? getenv('VICHAN_COOKIES_MOD') : 'mod',
+        'salt' => $sg->generate(),
+    );
+    
+    $config['flood_time'] = getenv('VICHAN_FLOOD_TIME') !== false ? (int)getenv('VICHAN_FLOOD_TIME') : 30;
+    $config['flood_time_ip'] = getenv('VICHAN_FLOOD_TIME_IP') !== false ? (int)getenv('VICHAN_FLOOD_TIME_IP') : 120;
+    $config['flood_time_same'] = getenv('VICHAN_FLOOD_TIME_SAME') !== false ? (int)getenv('VICHAN_FLOOD_TIME_SAME') : 3600;
+    $config['max_body'] = getenv('VICHAN_MAX_BODY') !== false ? (int)getenv('VICHAN_MAX_BODY') : 1800;
+    $config['reply_limit'] = getenv('VICHAN_REPLY_LIMIT') !== false ? (int)getenv('VICHAN_REPLY_LIMIT') : 250;
+    $config['max_links'] = getenv('VICHAN_MAX_LINKS') !== false ? (int)getenv('VICHAN_MAX_LINKS') : 20;
+    
+    $config['max_filesize'] = getenv('VICHAN_IMAGES_MAX_FILESIZE') !== false ? (int)getenv('VICHAN_IMAGES_MAX_FILESIZE') : 10485760; // This is 10MB
+    $config['thumb_width'] = getenv('VICHAN_IMAGES_THUMB_WIDTH') !== false ? (int)getenv('VICHAN_IMAGES_THUMB_WIDTH') : 250;
+    $config['thumb_height'] = getenv('VICHAN_IMAGES_THUMB_HEIGHT') !== false ? (int)getenv('VICHAN_IMAGES_THUMB_HEIGHT') : 250;
+    $config['max_width'] = getenv('VICHAN_IMAGES_MAX_WIDTH') !== false ? (int)getenv('VICHAN_IMAGES_MAX_WIDTH') : 10000;
+    $config['max_height'] = getenv('VICHAN_IMAGES_MAX_HEIGHT') !== false ? (int)getenv('VICHAN_IMAGES_MAX_HEIGHT') : 10000;
+    
+    $config['threads_per_page'] = getenv('VICHAN_DISPLAY_THREADS_PER_PAGE') !== false ? (int)getenv('VICHAN_DISPLAY_THREADS_PER_PAGE') : 10;
+    $config['max_pages'] = getenv('VICHAN_DISPLAY_MAX_PAGES') !== false ? (int)getenv('VICHAN_DISPLAY_MAX_PAGES') : 11;
+    $config['threads_preview'] = getenv('VICHAN_DISPLAY_THREADS_PREVIEW') !== false ? (int)getenv('VICHAN_DISPLAY_THREADS_PREVIEW') : 5;
+    
+    $config['root'] = getenv('VICHAN_DIRECTORIES_ROOT') !== false ? getenv('VICHAN_DIRECTORIES_ROOT') : '/';
+    
     $config['secure_trip_salt'] = $sg->generate();
     $config['secure_password_salt'] = $sg->generate();
     
     // Set database configuration from Docker environment variables, leave empty if not found
     $config['db'] = array(
         'type' => 'mysql', // Default, required for MySQL
-        'server' => getenv('VICHAN_MYSQL__HOST') !== false ? getenv('VICHAN_MYSQL__HOST') : '',
-        'database' => getenv('VICHAN_MYSQL__NAME') !== false ? getenv('VICHAN_MYSQL__NAME') : '',
-        'user' => getenv('VICHAN_MYSQL__USER') !== false ? getenv('VICHAN_MYSQL__USER') : '',
-        'password' => getenv('VICHAN_MYSQL__PASSWORD') !== false ? getenv('VICHAN_MYSQL__PASSWORD') : '',
+        'server' => getenv('VICHAN_MYSQL_HOST') !== false ? getenv('VICHAN_MYSQL_HOST') : '',
+        'database' => getenv('VICHAN_MYSQL_NAME') !== false ? getenv('VICHAN_MYSQL_NAME') : '',
+        'user' => getenv('VICHAN_MYSQL_USER') !== false ? getenv('VICHAN_MYSQL_USER') : '',
+        'password' => getenv('VICHAN_MYSQL_PASSWORD') !== false ? getenv('VICHAN_MYSQL_PASSWORD') : '',
     );
-
-    // Append secure_login_only to $_SESSION['more'] if VICHAN_SECURE_LOGIN_ONLY is set from Docker environment variables
+    
+    // Append secure_login_only to $_SESSION['more'] if VICHAN_SECURE_LOGIN_ONLY is set
     if (getenv('VICHAN_SECURE_LOGIN_ONLY') !== false) {
         $secure_login_only = (int)getenv('VICHAN_SECURE_LOGIN_ONLY');
         $_SESSION['more'] .= "\n\$config['cookies']['secure_login_only'] = $secure_login_only;";
     }
-    
+
+    // Configuration notice at the top
+    $page['body'] = '<div class="ban"><h2>Configuration Note</h2>' .
+                    '<p style="text-align:center;">The following settings can still be configured later. For more customization options, <a href="https://github.com/vichan-devel/vichan/wiki/config" target="_blank" rel="noopener noreferrer">check the Vichan configuration wiki.</a></p></div>';
+
+    // Append the configuration form
+    $page['body'] .= Element('installer/config.html', array(
+        'config' => $config,
+        'more' => $_SESSION['more'],
+    ));
+
     echo Element('page.html', array(
-        'body' => Element('installer/config.html', array(
-            'config' => $config,
-            'more' => $_SESSION['more'],
-        )),
+        'body' => $page['body'],
         'title' => 'Configuration',
         'config' => $config
     ));
@@ -1014,13 +1046,17 @@ if ($step == 0) {
     }
 
     $page['title'] = 'Installation complete';
-    $page['body'] = '<p style="text-align:center">Thank you for installing vichan. Please report any bugs you discover. <a href="https://github.com/vichan-devel/vichan/wiki/Configuration-Basics">How do I edit the config files?</a></p>';
+    $page['body'] = '<p style="text-align:center">Thank you for using vichan. <a href="https://github.com/vichan-devel/vichan/issues/new/choose" target="_blank" rel="noopener noreferrer">Please report any bugs you discover.</a></p>' .
+                    '<p style="text-align:center">If you are new to vichan, <a href="https://github.com/vichan-devel/vichan/wiki" target="_blank" rel="noopener noreferrer">please check out the documentation.</a></p>';
 
-    // notice and button
+    // Admin panel notice
     $page['body'] .= '<div class="ban"><h2>Next Steps</h2>' .
-                     '<p>You can now log in to the admin panel at <strong>/mod.php</strong> using the default credentials: <strong>Username: admin</strong>, <strong>Password: password</strong>.</p>' .
+                     '<p>You can now log in to the admin panel at <strong>/mod.php</strong> using the default credentials:</p>' .
+                     '<p><strong>Username:</strong> admin</p>' .
+                     '<p><strong>Password:</strong> password</p>' .
                      '<p><strong>Important:</strong> For security, please change the administrator password immediately after logging in.</p>' .
                      '<p style="text-align:center"><button onclick="window.location.href=\'/mod.php\'">Go to Admin Panel</button></p></div>';
+
 
     if (!empty($sql_errors)) {
         $page['body'] .= '<div class="ban"><h2>SQL errors</h2><p>SQL errors were encountered when trying to install the database. This may be the result of using a database which is already occupied with a vichan installation; if so, you can probably ignore this.</p><p>The errors encountered were:</p><ul>' . $sql_errors . '</ul>' .
@@ -1042,17 +1078,17 @@ if ($step == 0) {
     echo Element('page.html', $page);
 } elseif ($step == 5) {
     $page['title'] = 'Installation complete';
-    $page['body'] = '<p style="text-align:center">Thank you for installing vichan. Please report any bugs you discover.</p>';
+    $page['body'] = '<p style="text-align:center">Thank you for using vichan. Please report any bugs you discover.</p>' .
+                    '<p style="text-align:center">If you are new to vichan, <a href="https://github.com/vichan-devel/vichan/wiki">please check out the documentation</a>.</p>';
 
-    // onboarding notice and button to mod.php
+    // Admin panel notice
     $page['body'] .= '<div class="ban"><h2>Next Steps</h2>' .
                      '<p>You can now log in to the admin panel at <strong>/mod.php</strong> using the default credentials:</p>' .
-                     '<ul>' .
-                     '<li><strong>Username:</strong> admin</li>' .
-                     '<li><strong>Password:</strong> password</li>' .
-                     '</ul>' .
+                     '<p><strong>Username:</strong> admin</p>' .
+                     '<p><strong>Password:</strong> password</p>' .
                      '<p><strong>Important:</strong> For security, please change the administrator password immediately after logging in.</p>' .
                      '<p style="text-align:center"><button onclick="window.location.href=\'/mod.php\'">Go to Admin Panel</button></p></div>';
+
 
     $boards = listBoards();
     foreach ($boards as &$_board) {
