@@ -3,20 +3,20 @@ services:
     build:
       context: .
       dockerfile: ./docker/nginx/Dockerfile
-    container_name: vichan_frontend
+    container_name: vichan_web
     restart: unless-stopped
-    ports:
-      - "9090:80"
-#      - "9092:443" # optional for SSL
-    depends_on:
-      - db
-      - php
     volumes:
       - ./local-instances/${INSTANCE:-0}/www:/var/www/html
       - ./docker/nginx/vichan.conf:/etc/nginx/conf.d/default.conf
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./docker/nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf
 #      - ./docker/nginx/ssl:/etc/nginx/ssl # optional For SSL
+    ports:
+      - "9090:80"
+#      - "9092:443" # optional for SSL
+    depends_on:
+      - db
+      - php
     links:
       - php
 
@@ -71,6 +71,8 @@ services:
     image: mariadb:latest
     container_name: vichan_mariadb
     restart: unless-stopped
+    volumes:
+      - ./local-instances/${INSTANCE:-0}/db:/var/lib/mysql
     ports:
       - "9091:3306"
     environment:
@@ -78,17 +80,15 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    volumes:
-      - ./local-instances/${INSTANCE:-0}/db:/var/lib/mysql
 
   redis:
     image: redis:latest
     container_name: vichan_redis
     restart: unless-stopped
-    environment:
-      REDIS_PASSWORD: ${VICHAN_REDIS_PASSWORD}
     volumes:
       - ./local-instances/${INSTANCE:-0}/redis:/data
+    environment:
+      REDIS_PASSWORD: ${VICHAN_REDIS_PASSWORD}
     command: redis-server --requirepass ${VICHAN_REDIS_PASSWORD}
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "${VICHAN_REDIS_PASSWORD}", "ping"]
