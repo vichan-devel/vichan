@@ -684,7 +684,7 @@ if ($step == 0) {
     $page['body'] = '
     <textarea style="width:700px;height:370px;margin:auto;display:block;background:white;color:black" disabled>' . htmlentities(file_get_contents('LICENSE.md')) . '</textarea>
     <p style="text-align:center">
-        <button onclick="window.location.href=\'?step=1\'">I have read and understood the agreement. Proceed to installation.</button>
+		<a href="?step=1">I have read and understood the agreement. Proceed to installation.</a>
     </p>';
 
 	echo Element('page.html', $page);
