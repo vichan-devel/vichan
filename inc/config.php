@@ -1859,7 +1859,7 @@
  */
 
  $isDocker = is_file("/.dockerenv") || is_file("/run/.containerenv");
- $config['docker'] = $isDocker;
+ $config['is_docker'] = $isDocker;
 	
 /*
  * ====================

@@ -12,7 +12,6 @@ defined('TINYBOARD') or exit;
 class Cache {
 	private static function buildCache(): CacheDriver {
 		global $config;
-		$isDocker = is_file("/.dockerenv") || is_file("/run/.containerenv");
 
 		switch ($config['cache']['enabled']) {
 			case 'memcached':
@@ -26,7 +25,7 @@ class Cache {
 				$password = $config['cache']['redis'][2] ?? '';
 				$database = $config['cache']['redis'][3] ?? 1;
 
-				if ($isDocker) {
+				if ($config['is_docker']) {
 					$host = getenv('VICHAN_REDIS_HOST') ?: $host;
 					$port = getenv('VICHAN_REDIS_PORT') ?: $port;
 					$password = getenv('VICHAN_REDIS_PASSWORD') ?: $password;
