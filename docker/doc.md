@@ -61,3 +61,88 @@ Environment variables for the Docker Compose setup can be managed easily using a
 - Redis connection details
 - Secure login
 - Optional SSL certificate paths for nginx
+
+
+# Vichan Podman Setup (Docker alternative)
+
+**Podman** offers a daemonless, rootless alternative for running Vichan in containers. Podman is API-compatible with Docker, allowing you to use the existing `compose.yml` file with minimal changes, while providing a more secure and lightweight environment.
+
+This tutorial is for administrators who prefer to avoid Docker, addressing security concerns and ensuring a robust Vichan install.
+
+---
+
+## Why Podman?
+
+- **Daemonless**: Unlike Docker, Podman doesn’t require a central daemon, reducing the attack surface and eliminating the need for a privileged process.
+- **Rootless**: Podman runs containers as a non-root user by default, improving security by limiting the impact of potential container escapes.
+- **Lightweight**: Podman has a smaller footprint and is better suited for environments where simplicity and security are priorities.
+- **Docker Compatibility**: Podman supports Docker Compose files via Podman Compose, making it easy to adapt the existing Vichan setup.
+
+Learn more at: https://podman.io
+---
+
+## Prerequisites
+
+**Install Podman**
+
+The official installation tutorial can be found at: https://podman.io/docs/installation
+
+**Configure the `.env` file** as described in the main setup guide (copy `.env.example` to `.env` and update passwords).
+
+---
+
+## Steps to Run Vichan with Podman
+
+### 1. Prepare File Permissions
+
+Since Podman runs rootless, ensure the `local-instances/1/db` and `local-instances/1/www` directories are writable by your user:
+
+```bash
+chmod -R u+rw local-instances/1
+```
+
+If using SELinux (e.g., on Fedora), you may need to set the correct context:
+
+```bash
+chcon -R -t container_file_t local-instances/1
+```
+
+### 2. Start Containers with Podman Compose
+
+Run the following command from the root of the Vichan project directory to build and start all containers:
+
+```bash
+podman-compose up -d --build
+```
+
+This command mirrors `docker compose up -d --build` but uses Podman’s container engine.
+
+### 3. Rebuild Specific Containers
+
+To rebuild only the PHP container (e.g., during development):
+
+```bash
+podman-compose up -d --build php
+```
+
+---
+
+## Managing Podman Containers
+
+**List running containers:**
+
+```bash
+podman ps
+```
+
+**Stop all containers:**
+
+```bash
+podman-compose down
+```
+
+**View logs for a specific service (e.g., PHP):**
+
+```bash
+podman logs vichan_php
+```
