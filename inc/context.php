@@ -109,7 +109,8 @@ function build_context(array $config): Context {
 		FilterService::class => fn(Context $c): FilterService => new FilterService(
 			$c->get('config')['filters'],
 			$c->get(FloodService::class),
-			$c->get(LogDriver::class)
+			$c->get(LogDriver::class),
+			$c->get(DnsDriver::class)
 		),
 		FloodManager::class => fn(Context $c): FloodManager => new FloodManager(
 			$c->get(FilterService::class),
