@@ -39,10 +39,11 @@ services:
       VICHAN_MYSQL_PASSWORD: ${VICHAN_MYSQL_PASSWORD}
       # Security
       VICHAN_SECURE_LOGIN_ONLY: ${VICHAN_SECURE_LOGIN_ONLY}
-      # Redis settings
-      VICHAN_REDIS_HOST: ${VICHAN_REDIS_HOST}
-      VICHAN_REDIS_PORT: ${VICHAN_REDIS_PORT}
-      VICHAN_REDIS_PASSWORD: ${VICHAN_REDIS_PASSWORD}
+      # Cache settings
+      VICHAN_CACHE_ENGINE: ${VICHAN_CACHE_ENGINE}
+      VICHAN_CACHE_HOST: ${VICHAN_CACHE_HOST}
+      VICHAN_CACHE_PORT: ${VICHAN_CACHE_PORT}
+      VICHAN_CACHE_PASSWORD: ${VICHAN_CACHE_PASSWORD}
       # Cookies
       VICHAN_COOKIES_MOD: ${VICHAN_COOKIES_MOD}
       # Flood Control
@@ -88,10 +89,10 @@ services:
     volumes:
       - ./local-instances/${INSTANCE:-0}/redis:/data
     environment:
-      REDIS_PASSWORD: ${VICHAN_REDIS_PASSWORD}
-    command: redis-server --requirepass ${VICHAN_REDIS_PASSWORD}
+      REDIS_PASSWORD: ${VICHAN_CACHE_PASSWORD}
+    command: redis-server --requirepass ${VICHAN_CACHE_PASSWORD}
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${VICHAN_REDIS_PASSWORD}", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${VICHAN_CACHE_PASSWORD}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5

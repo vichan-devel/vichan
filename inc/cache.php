@@ -20,12 +20,22 @@ class Cache {
 					$config['cache']['memcached']
 				);
 			case 'redis':
+				$host = $config['cache']['redis'][0] ?? 'localhost';
+				$port = $config['cache']['redis'][1] ?? 6379;
+				$password = $config['cache']['redis'][2] ?? '';
+				$database = $config['cache']['redis'][3] ?? 1;
+
+				$host = getenv('VICHAN_CACHE_HOST') ?: $host;
+				$port = getenv('VICHAN_CACHE_PORT') ?: $port;
+				$password = getenv('VICHAN_CACHE_PASSWORD') ?: $password;
+				$database = getenv('VICHAN_CACHE_DATABASE') ?: $database;
+				
 				return new RedisCacheDriver(
 					$config['cache']['prefix'],
-					$config['cache']['redis'][0],
-					$config['cache']['redis'][1],
-					$config['cache']['redis'][2],
-					$config['cache']['redis'][3]
+					$host,
+					$port,
+					$password,
+					$database
 				);
 			case 'apcu':
 				return new ApcuCacheDriver;
