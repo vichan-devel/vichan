@@ -25,20 +25,11 @@ class Cache {
 				$password = $config['cache']['redis'][2] ?? '';
 				$database = $config['cache']['redis'][3] ?? 1;
 
-				if ($config['is_docker']) {
-					$host = getenv('VICHAN_REDIS_HOST') ?: $host;
-					$port = getenv('VICHAN_REDIS_PORT') ?: $port;
-					$password = getenv('VICHAN_REDIS_PASSWORD') ?: $password;
-					$database = getenv('VICHAN_REDIS_DATABASE') ?: $database;
-				}
-				// $log->log("Cache info:\n"
-				// 	. 'Cache driver: redis' . "\n"
-				// 	. '├ Redis host: ' . $host . "\n"
-				// 	. '├ Redis port: ' . $port . "\n"
-				// 	. '├ Redis password: ' . str_repeat('*', strlen($password)) . "\n"
-				// 	. '└ Redis database: ' . $database . "\n"
-				// );
-
+				$host = getenv('VICHAN_CACHE_HOST') ?: $host;
+				$port = getenv('VICHAN_CACHE_PORT') ?: $port;
+				$password = getenv('VICHAN_CACHE_PASSWORD') ?: $password;
+				$database = getenv('VICHAN_CACHE_DATABASE') ?: $database;
+				
 				return new RedisCacheDriver(
 					$config['cache']['prefix'],
 					$host,

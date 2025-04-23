@@ -137,15 +137,16 @@
  * ====================
  */
 
+	$config['cache']['enabled'] = 'php';
+	$config['cache']['redis'] = array(
+		'host' => 'localhost',
+		'port' => 6379,
+		'password' => '',
+		'database' => 1
+	);
+	
 	// Determine if Redis is configured via environment variables
-	$redis_enabled = getenv('VICHAN_REDIS_HOST') !== false && getenv('VICHAN_REDIS_PORT') !== false;
-
-	// Configure cache
-	if ($redis_enabled) {
-		$config['cache']['enabled'] = 'redis';
-	} else {
-		$config['cache']['enabled'] = 'php';
-	}
+	getenv('VICHAN_CACHE_ENGINE') && $config['cache']['enabled'] = getenv('VICHAN_CACHE_ENGINE');
 
 	// Cache timeout for cached objects
 	$config['cache']['timeout'] = 60 * 60 * 48; // 48 hours
@@ -1854,12 +1855,15 @@
 
 /*
  * ====================
- *  Docker settings
+ *  Container settings
  * ===================
  */
 
- $isDocker = is_file("/.dockerenv") || is_file("/run/.containerenv");
- $config['is_docker'] = $isDocker;
+	$isDocker = is_file("/.dockerenv") || is_file("/run/.containerenv");
+	$isKubernetes = is_file("/var/run/secrets/kubernetes.io/serviceaccount/namespace");
+	$config['is_container'] = $isDocker || $isKubernetes ? true : false;
+	$config['is_docker'] = $isDocker;
+	$config['is_kubernetes'] = $isKubernetes;
 	
 /*
  * ====================
