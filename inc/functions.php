@@ -2118,19 +2118,22 @@ function markup(&$body, $track_cites = false) {
 						'&gt;&gt;&gt;/' . $_board . '/' . $cite .
 						'</a>';
 
-					$body = mb_substr_replace($body, $matches[1][0] . $replacement . $matches[4][0], $matches[0][1] + $skip_chars, mb_strlen($matches[0][0]));
-					$skip_chars += mb_strlen($matches[1][0] . $replacement . $matches[4][0]) - mb_strlen($matches[0][0]);
-
-					if ($track_cites && $config['track_cites'])
+					if ($track_cites && $config['track_cites']) {
 						$tracked_cites[] = array($_board, $cite);
+					}
+				} else {
+					$replacement = "<s>&gt;&gt;&gt;/$_board/$cite</s>";
 				}
 			} elseif(isset($crossboard_indexes[$_board])) {
 				$replacement = '<a href="' . $crossboard_indexes[$_board] . '">' .
 						'&gt;&gt;&gt;/' . $_board . '/' .
 						'</a>';
-				$body = mb_substr_replace($body, $matches[1][0] . $replacement . $matches[4][0], $matches[0][1] + $skip_chars, mb_strlen($matches[0][0]));
-				$skip_chars += mb_strlen($matches[1][0] . $replacement . $matches[4][0]) - mb_strlen($matches[0][0]);
+			} else {
+				$replacement = "<s>&gt;&gt;&gt;/$_board/$cite</s>";
 			}
+
+			$body = mb_substr_replace($body, $matches[1][0] . $replacement . $matches[4][0], $matches[0][1] + $skip_chars, mb_strlen($matches[0][0]));
+			$skip_chars += mb_strlen($matches[1][0] . $replacement . $matches[4][0]) - mb_strlen($matches[0][0]);
 		}
 	}
 
