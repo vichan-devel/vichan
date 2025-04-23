@@ -3,10 +3,12 @@ namespace Vichan;
 
 use Vichan\Controller\FloodManager;
 use Vichan\Data\Driver\{CacheDriver, HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
+use Vichan\Data\Driver\Dns\{DnsDriver, HostDnsDriver, LibcDnsDriver};
 use Vichan\Data\{FloodQueries, IpNoteQueries, UserPostQueries, ReportQueries};
 use Vichan\Service\FilterService;
 use Vichan\Service\FloodService;
 use Vichan\Service\HCaptchaQuery;
+use Vichan\Service\IpBlacklistService;
 use Vichan\Service\SecureImageCaptchaQuery;
 use Vichan\Service\ReCaptchaQuery;
 use Vichan\Service\YandexCaptchaQuery;
@@ -71,6 +73,14 @@ function build_context(array $config): Context {
 			);
 		},
 		CacheDriver::class => fn(): CacheDriver => \Cache::getCache(),
+		DnsDriver::class => function(Context $c) {
+			$config = $c->get('config');
+			if ($config['dns_system']) {
+				return new HostDnsDriver(2);
+			} else {
+				return new LibcDnsDriver(2);
+			}
+		},
 		\PDO::class => function(): \PDO {
 			global $pdo;
 			// Ensure the PDO is initialized.
@@ -106,7 +116,7 @@ function build_context(array $config): Context {
 			$c->get(FloodService::class),
 			$c->get(IpNoteQueries::class),
 			$c->get(LogDriver::class)
-		),
+		)
 	]);
 }
 
