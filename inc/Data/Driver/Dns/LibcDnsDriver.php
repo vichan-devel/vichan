@@ -11,18 +11,28 @@ class LibcDnsDriver implements DnsDriver {
 		\putenv("RES_OPTIONS=retrans:1 retry:1 timeout:{$timeout} attempts:1");
 	}
 
-	/**
-	 * For the love of god never use this.
-	 * https://www.php.net/manual/en/function.gethostbynamel.php#119535
-	 */
 	public function nameToIPs(string $name): ?array {
-		// Add a trailing dot to not return the loopback address on failure
-		// https://www.php.net/manual/en/function.gethostbynamel.php#119535
-		$ret = \gethostbynamel("{$name}.");
+		$ret = \dns_get_record($name, DNS_A | DNS_AAAA);
 		if ($ret === false) {
 			return null;
 		}
-		return $ret;
+
+		$ips = [];
+		foreach ($ret as $dns_record) {
+			if ($dns_record['type'] == 'A') {
+				$ips[] = $dns_record['ip'];
+			} elseif ($dns_record['type'] == 'AAAA') {
+				$ips[] = $dns_record['ipv6'];
+			}
+		}
+
+		if (empty($ips)) {
+			return [];
+		} else {
+			// Stable return order.
+			\sort($ips, \SORT_STRING);
+			return $ips;
+		}
 	}
 
 	/**
