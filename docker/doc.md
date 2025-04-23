@@ -146,3 +146,15 @@ podman-compose down
 ```bash
 podman logs vichan_php
 ```
+
+## Troubleshooting
+
+### unqualified-search-registries for Docker.io
+
+1. Edit the config file with `nano /etc/containers/registries.conf`
+
+2. Add the registry for `docker.io` with `unqualified-search-registries = ["docker.io"]`
+
+3. Save and exit
+
+4. Run `podman-compose up -d`
