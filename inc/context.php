@@ -116,7 +116,17 @@ function build_context(array $config): Context {
 			$c->get(FloodService::class),
 			$c->get(IpNoteQueries::class),
 			$c->get(LogDriver::class)
-		)
+		),
+		IpBlacklistService::class => function(Context $c): IpBlacklistService {
+			$config = $c->get('config');
+			return new IpBlacklistService(
+				$c->get(DnsDriver::class),
+				$c->get(CacheDriver::class),
+				$config['dnsbl'],
+				$config['dnsbl_exceptions'],
+				$config['fcrdns']
+			);
+		}
 	]);
 }
 
