@@ -1,9 +1,7 @@
 <footer>
     <p class="unimportant" style="margin-top:20px;text-align:center;">- Tinyboard + 
         <a href="https://github.com/vichan-devel/vichan">vichan</a> {{ config.version }} 
-        {% if config.is_docker %}
-            Running in Docker
-        {% endif %}
+        {% if config.is_container %}Running Containerized{% endif %}
     -
     <br>Tinyboard Copyright &copy; 2010-2014 Tinyboard Development Group    
     <br><a href="https://github.com/vichan-devel/vichan">vichan</a> Copyright &copy; 2012-2025 vichan-devel</p>
