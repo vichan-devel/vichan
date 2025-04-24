@@ -46,12 +46,12 @@
         </ul>
         {% if errors %}
             <p style="text-align:center;color:#d00"><strong>Warning:</strong> Ignoring these problems is not recommended and may cause installation issues.</p>
-            <p style="text-align:center"><button onclick="window.location.href='?step=2'">Proceed Anyway</button></p>
+            <p style="text-align:center"><a href="?step=2"><button>Proceed Anyway</button></a></p>
         {% else %}
-            <p style="text-align:center"><button onclick="window.location.href='?step=2'">Next</button></p>
+            <p style="text-align:center"><a href="?step=2"><button>Next</button></a></p>
         {% endif %}
     {% else %}
         <p>There were no errors or warnings. Good!</p>
-        <p style="text-align:center"><button onclick="window.location.href='?step=2'">Next</button></p>
+        <p style="text-align:center"><a href="?step=2"><button>Next</button></a></p>
     {% endif %}
 </div>
