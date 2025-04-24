@@ -974,8 +974,13 @@ function mod_user_posts_by_ip(Context $ctx, string $cip, ?string $encoded_cursor
 	if ($config['mod']['dns_lookup'] && empty($config['ipcrypt_key'])) {
 		$resolver = $ctx->get(DnsDriver::class);
 		$names = $resolver->IPToNames($ip);
+
 		if (!empty($names)) {
-			$args['hostname'] = $names[0];
+			if (count($names) === 1) {
+				$args['hostname'] = $names[0];
+			} else {
+				$args['hostname'] = $names;
+			}
 		}
 	}
 
