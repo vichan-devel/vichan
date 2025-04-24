@@ -590,12 +590,12 @@ if (file_exists($config['has_installed'])) {
 		case '4.9.90':
 		case '4.9.91':
 		case '4.9.92':
-                        foreach ($boards as &$board) {
-                                query(sprintf('ALTER TABLE ``posts_%s`` ADD `slug` VARCHAR(255) DEFAULT NULL AFTER `embed`;', $board['uri'])) or error(db_error());
+						foreach ($boards as &$board) {
+								query(sprintf('ALTER TABLE ``posts_%s`` ADD `slug` VARCHAR(255) DEFAULT NULL AFTER `embed`;', $board['uri'])) or error(db_error());
 			}
-                case '4.9.93':
-                        query('ALTER TABLE ``mods`` CHANGE `password` `password` VARCHAR(255) NOT NULL;') or error(db_error());
-                        query('ALTER TABLE ``mods`` CHANGE `salt` `salt` VARCHAR(64) NOT NULL;') or error(db_error());
+				case '4.9.93':
+						query('ALTER TABLE ``mods`` CHANGE `password` `password` VARCHAR(255) NOT NULL;') or error(db_error());
+						query('ALTER TABLE ``mods`` CHANGE `salt` `salt` VARCHAR(64) NOT NULL;') or error(db_error());
 		case '5.0.0':
 			query('ALTER TABLE ``mods`` CHANGE `salt` `version` VARCHAR(64) NOT NULL;') or error(db_error());
 		case '5.0.1':
@@ -611,9 +611,9 @@ if (file_exists($config['has_installed'])) {
 			  UNIQUE KEY `u_pages` (`name`,`board`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;') or error(db_error());
 		case '5.1.1':
-                        foreach ($boards as &$board) {
-                                query(sprintf("ALTER TABLE ``posts_%s`` ADD `cycle` int(1) NOT NULL AFTER `locked`", $board['uri'])) or error(db_error());
-                        }
+						foreach ($boards as &$board) {
+								query(sprintf("ALTER TABLE ``posts_%s`` ADD `cycle` int(1) NOT NULL AFTER `locked`", $board['uri'])) or error(db_error());
+						}
 		case '5.1.2':
 			query('CREATE TABLE IF NOT EXISTS ``nntp_references`` (
 				  `board` varchar(60) NOT NULL,
@@ -680,12 +680,12 @@ function create_config_from_array(&$instance_config, &$array, $prefix = '') {
 session_start();
 
 if ($step == 0) {
-    // Agreement
-    $page['body'] = '
-    <textarea style="width:700px;height:370px;margin:auto;display:block;background:white;color:black" disabled>' . htmlentities(file_get_contents('LICENSE.md')) . '</textarea>
-    <p style="text-align:center">
+	// Agreement
+	$page['body'] = '
+	<textarea style="width:700px;height:370px;margin:auto;display:block;background:white;color:black" disabled>' . htmlentities(file_get_contents('LICENSE.md')) . '</textarea>
+	<p style="text-align:center">
 		<a href="?step=1">I have read and understood the agreement. Proceed to installation.</a>
-    </p>';
+	</p>';
 
 	echo Element('page.html', $page);
 } elseif ($step == 1) {
@@ -918,7 +918,7 @@ if ($step == 0) {
 	$sg = new SaltGen();
 
 	// Initialize configuration with defaults and override with environment variables
-    $config['cookies'] = array(
+	$config['cookies'] = array(
 		'mod' => getenv('VICHAN_COOKIES_MOD') !== false ? getenv('VICHAN_COOKIES_MOD') : 'mod',
 		'salt' => $sg->generate(),
 	);
@@ -944,8 +944,8 @@ if ($step == 0) {
 	
 	$config['secure_trip_salt'] = $sg->generate();
 	$config['secure_password_salt'] = $sg->generate();
-    
-    // Set database configuration from Docker environment variables, leave empty if not found
+	
+	// Set database configuration from Docker environment variables, leave empty if not found
 	$config['db'] = array(
 		'type' => 'mysql', // Default, required for MySQL
 		'server' => getenv('VICHAN_MYSQL_HOST') !== false ? getenv('VICHAN_MYSQL_HOST') : '',
@@ -953,14 +953,14 @@ if ($step == 0) {
 		'user' => getenv('VICHAN_MYSQL_USER') !== false ? getenv('VICHAN_MYSQL_USER') : '',
 		'password' => getenv('VICHAN_MYSQL_PASSWORD') !== false ? getenv('VICHAN_MYSQL_PASSWORD') : '',
 	);
-    
+	
 	// Append secure_login_only to $_SESSION['more'] if VICHAN_SECURE_LOGIN_ONLY is set
 	if (getenv('VICHAN_SECURE_LOGIN_ONLY') !== false) {
 		$secure_login_only = (int)getenv('VICHAN_SECURE_LOGIN_ONLY');
 		$_SESSION['more'] .= "\n\$config['cookies']['secure_login_only'] = $secure_login_only;";
 	}
 
-    // Configuration notice at the top
+	// Configuration notice at the top
 	$page['body'] = '<div class="ban"><h2>Configuration Note</h2>' .
 					'<p style="text-align:center;">The following settings can still be configured later. For more customization options, <a href="https://github.com/vichan-devel/vichan/wiki/config" target="_blank" rel="noopener noreferrer">check the Vichan configuration wiki.</a></p></div>';
 
@@ -1049,19 +1049,19 @@ if ($step == 0) {
 	$page['body'] = '<p style="text-align:center">Thank you for using vichan. <a href="https://github.com/vichan-devel/vichan/issues/new/choose" target="_blank" rel="noopener noreferrer">Please report any bugs you discover.</a></p>' .
 					'<p style="text-align:center">If you are new to vichan, <a href="https://github.com/vichan-devel/vichan/wiki" target="_blank" rel="noopener noreferrer">please check out the documentation.</a></p>';
 
-    // Admin panel notice
+	// Admin panel notice
 	$page['body'] .= '<div class="ban"><h2>Next Steps</h2>' .
 					 '<p>You can now log in to the admin panel at <strong>/mod.php</strong> using the default credentials:</p>' .
 					 '<p><strong>Username:</strong> admin</p>' .
 					 '<p><strong>Password:</strong> password</p>' .
 					 '<p><strong>Important:</strong> For security, please change the administrator password immediately after logging in.</p>' .
-					 '<p style="text-align:center"><button onclick="window.location.href=\'/mod.php\'">Go to Admin Panel</button></p></div>';
+					 '<p style="text-align:center"><a href="/mod.php"><button>Go to Admin Panel</button></a></p></div>';
 
 
 	if (!empty($sql_errors)) {
 		$page['body'] .= '<div class="ban"><h2>SQL errors</h2><p>SQL errors were encountered when trying to install the database. This may be the result of using a database which is already occupied with a vichan installation; if so, you can probably ignore this.</p><p>The errors encountered were:</p><ul>' . $sql_errors . '</ul>' .
 						 '<p style="text-align:center;color:#d00"><strong>Warning:</strong> Ignoring errors is not recommended and may cause installation issues.</p>' .
-						 '<p style="text-align:center"><button onclick="window.location.href=\'?step=5\'">Next</button></p></div>';
+						 '<p style="text-align:center"><a href="?step=5"><button>Next</button></a></p></div>';
 	} else {
 		$boards = listBoards();
 		foreach ($boards as &$_board) {
@@ -1087,7 +1087,7 @@ if ($step == 0) {
 					'<p><strong>Username:</strong> admin</p>' .
 					'<p><strong>Password:</strong> password</p>' .
 					'<p><strong>Important:</strong> For security, please change the administrator password immediately after logging in.</p>' .
-					'<p style="text-align:center"><button onclick="window.location.href=\'/mod.php\'">Go to Admin Panel</button></p></div>';
+					'<p style="text-align:center"><a href="/mod.php"><button>Go to Admin Panel</button></a></p></div>';
 
 	$boards = listBoards();
 	foreach ($boards as &$_board) {
