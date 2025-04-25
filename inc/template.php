@@ -233,11 +233,11 @@ function twig_secure_link($href) {
  */
 
 function twig_check_container() {
-	global $config;
-	$isDocker = is_file("/.dockerenv") || is_file("/run/.containerenv");
-	$isKubernetes = is_file("/var/run/secrets/kubernetes.io/serviceaccount/namespace");
-	$config['is_container'] = $isDocker || $isKubernetes ? true : false;
-	$config['is_docker'] = $isDocker;
-	$config['is_kubernetes'] = $isKubernetes;
-	return $config['is_container'];
+	static $is_container = null;
+	if ($is_container === null) {
+		$is_docker = \is_file("/.dockerenv") || \is_file("/run/.containerenv");
+		$is_kubernetes = \is_file("/var/run/secrets/kubernetes.io/serviceaccount/namespace");
+		$is_container = $is_docker || $is_kubernetes;
+	}
+	return $is_container;
 }
