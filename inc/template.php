@@ -142,7 +142,8 @@ class Tinyboard extends Twig\Extension\AbstractExtension
 			new Twig\TwigFunction('ratio', 'twig_ratio_function'),
 			new Twig\TwigFunction('secure_link_confirm', 'twig_secure_link_confirm'),
 			new Twig\TwigFunction('secure_link', 'twig_secure_link'),
-			new Twig\TwigFunction('link_for', 'link_for')
+			new Twig\TwigFunction('link_for', 'link_for'),
+			new Twig\TwigFunction('check_container', 'twig_check_container')
 		);
 	}
 
