@@ -16,7 +16,13 @@
 		<h1>{{ title }}</h1>
 		<div class="subtitle">
 			{% if subtitle %}
-				{{ subtitle }}
+				{% if subtitle is iterable %}
+					{% for s in subtitle %}
+						{{ s }}{% if not loop.last %}<br>{% endif %}
+					{% endfor %}
+				{% else %}
+					{{ subtitle }}
+				{% endif %}
 			{% endif %}
 			{% if mod and not hide_dashboard_link %}<p><a href="?/">{% trans %}Return to dashboard{% endtrans %}</a></p>{% endif %}
 		</div>

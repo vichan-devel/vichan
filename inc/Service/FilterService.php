@@ -3,6 +3,7 @@
 namespace Vichan\Service;
 
 use Throwable;
+use Vichan\Data\Driver\Dns\DnsDriver;
 use Vichan\Data\Driver\LogDriver;
 
 /**
@@ -24,6 +25,11 @@ class FilterService {
 	 */
 	private LogDriver $logger;
 
+	/**
+	 * @var DnsDriver Dns driver for reverse DNS lookup.
+	 */
+	private DnsDriver $dns_resolver;
+
 
 	/**
 	 * Filter service constructor
@@ -31,11 +37,13 @@ class FilterService {
 	 * @param array<int, array<string, mixed>> $filters The config filters.
 	 * @param FloodService $floodService The FloodService.
 	 * @param LogDriver $logger The LogDriver.
+	 * @param DnsDriver $dns_resolver DnsResolver for hostname matching.
 	 */
-	public function __construct(array $filters, FloodService $floodService, LogDriver $logger) {
+	public function __construct(array $filters, FloodService $floodService, LogDriver $logger, DnsDriver $dns_resolver) {
 		$this->filters = $filters;
 		$this->floodService = $floodService;
 		$this->logger = $logger;
+		$this->dns_resolver = $dns_resolver;
 	}
 
 	/**
@@ -260,13 +268,17 @@ class FilterService {
 					return false;
 				}
 
-				$hostname = \rDNS($post['ip']);
-				if ($hostname === $post['ip']) {
-					$this->logger->log(LogDriver::WARNING, "RDNS lookup failed for IP: {$post['ip']}");
+				$hostnames = $this->dns_resolver->IPToNames($post['ip']);
+				if ($hostnames === null) {
 					return false;
 				}
 
-				return $this->checkRegex($value, $hostname, 'RDNS');
+				foreach ($hostnames as $name) {
+					if ($this->checkRegex($value, $name, 'RDNS')) {
+						return true;
+					}
+				}
+				return false;
 			case 'agent':
 				$this->validateType($value, 'array', 'Agent condition list');
 				return $this->matchAgentCondition($value);

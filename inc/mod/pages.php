@@ -6,6 +6,7 @@ use Vichan\Context;
 use Vichan\Data\{IpNoteQueries, UserPostQueries, ReportQueries};
 use Vichan\Functions\{Format, Net};
 use Vichan\Data\Driver\{CacheDriver, LogDriver};
+use Vichan\Data\Driver\Dns\DnsDriver;
 
 defined('TINYBOARD') or exit;
 
@@ -971,7 +972,16 @@ function mod_user_posts_by_ip(Context $ctx, string $cip, ?string $encoded_cursor
 	}
 
 	if ($config['mod']['dns_lookup'] && empty($config['ipcrypt_key'])) {
-		$args['hostname'] = rDNS($ip);
+		$resolver = $ctx->get(DnsDriver::class);
+		$names = $resolver->IPToNames($ip);
+
+		if (!empty($names)) {
+			if (count($names) === 1) {
+				$args['hostname'] = $names[0];
+			} else {
+				$args['hostname'] = $names;
+			}
+		}
 	}
 
 	if (hasPermission($config['mod']['view_ban'])) {
