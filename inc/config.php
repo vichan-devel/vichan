@@ -1150,8 +1150,10 @@
 	// Show page navigation links at the top as well.
 	$config['page_nav_top'] = false;
 
-	// Show "Catalog" link in page navigation. Use with the Catalog theme. Set to false to disable.
-	$config['catalog_link'] = 'catalog.html';
+	// Link to the catalog page in page navigation, relative to the board. Use with the Catalog theme.
+	// Set to false to disable.
+	// Usually you will set this to 'catalog.html' to link to /<board>/catalog.html
+	$config['catalog_link'] = false;
 
 	// Board categories. Only used in the "Categories" theme.
 	// $config['categories'] = array(
