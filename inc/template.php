@@ -226,11 +226,11 @@ function twig_secure_link($href) {
 	return $href . '/' . make_secure_link_token($href);
 }
 
-// /*
-//  * ====================
-//  *  Container Detection
-//  * ===================
-//  */
+/*
+ * ====================
+ *  Container Detection
+ * ===================
+ */
 
 function twig_check_container() {
 	global $config;
