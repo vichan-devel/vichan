@@ -225,3 +225,19 @@ function twig_secure_link_confirm($text, $title, $confirm_message, $href) {
 function twig_secure_link($href) {
 	return $href . '/' . make_secure_link_token($href);
 }
+
+// /*
+//  * ====================
+//  *  Container Detection
+//  * ===================
+//  */
+
+function twig_check_container() {
+	global $config;
+	$isDocker = is_file("/.dockerenv") || is_file("/run/.containerenv");
+	$isKubernetes = is_file("/var/run/secrets/kubernetes.io/serviceaccount/namespace");
+	$config['is_container'] = $isDocker || $isKubernetes ? true : false;
+	$config['is_docker'] = $isDocker;
+	$config['is_kubernetes'] = $isKubernetes;
+	return $config['is_container'];
+}
