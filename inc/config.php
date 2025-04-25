@@ -137,16 +137,37 @@
  * ====================
  */
 
+	/*
+	 * On top of the static file caching system, you can enable the additional caching system which is
+	 * designed to minimize request processing can significantly increase speed when posting or using
+	 * the moderator interface.
+	 *
+	 * https://github.com/vichan-devel/vichan/wiki/cache
+	 */
+
+	// Uses a PHP array. MUST NOT be used in multiprocess environments.
+	// This will be ignored if a environment variable ( VICHAN_CACHE_ENGINE ) is set.
 	$config['cache']['enabled'] = 'php';
+	// The recommended in-memory method of caching. Requires the extension. Due to how APCu works, this should be
+	// disabled when you run tools from the cli.
+	// $config['cache']['enabled'] = 'apcu';
+	// The Memcache server. Requires the memcached extension, with a final D.
+	// $config['cache']['enabled'] = 'memcached';
+	// The Redis server. Requires the extension.
+	// $config['cache']['enabled'] = 'redis';
+	// Use the local cache folder. Slower than native but available out of the box and compatible with multiprocess
+	// environments. You can mount a ram-based filesystem in the cache directory to improve performance.
+	// $config['cache']['enabled'] = 'fs';
+	// Technically available, offers a no-op fake cache. Don't use this outside of testing or debugging.
+	// $config['cache']['enabled'] = 'none';
+
+	// Timeout for cached objects such as posts and HTML.
 	$config['cache']['redis'] = array(
 		'host' => 'localhost',
 		'port' => 6379,
 		'password' => '',
 		'database' => 1
 	);
-	
-	// Determine if Redis is configured via environment variables
-	getenv('VICHAN_CACHE_ENGINE') && $config['cache']['enabled'] = getenv('VICHAN_CACHE_ENGINE');
 
 	// Cache timeout for cached objects
 	$config['cache']['timeout'] = 60 * 60 * 48; // 48 hours
@@ -182,7 +203,7 @@
 	// Used for communicating with Javascript; telling it when posts were successful.
 	$config['cookies']['js'] = 'serv';
 
-	// Cookies path. Defaults to $config['root']. If $config['root'] is a URL, you need to set this. Should
+	// Cooakies path. Defaults to $config['root']. If $config['root'] is a URL, you need to set this. Should
 	// be '/' or '/board/', depending on your installation.
 	// $config['cookies']['path'] = '/';
 	// Where to set the 'path' parameter to $config['cookies']['path'] when creating cookies. Recommended.
@@ -1852,18 +1873,6 @@
 
 	// Enable public logs? 0: NO, 1: YES, 2: YES, but drop names
 	$config['public_logs'] = 0;
-
-/*
- * ====================
- *  Container settings
- * ===================
- */
-
-	$isDocker = is_file("/.dockerenv") || is_file("/run/.containerenv");
-	$isKubernetes = is_file("/var/run/secrets/kubernetes.io/serviceaccount/namespace");
-	$config['is_container'] = $isDocker || $isKubernetes ? true : false;
-	$config['is_docker'] = $isDocker;
-	$config['is_kubernetes'] = $isKubernetes;
 	
 /*
  * ====================

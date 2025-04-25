@@ -12,6 +12,8 @@ defined('TINYBOARD') or exit;
 class Cache {
 	private static function buildCache(): CacheDriver {
 		global $config;
+		// Determine if Redis is configured via environment variables
+		getenv('VICHAN_CACHE_ENGINE') && $config['cache']['enabled'] = getenv('VICHAN_CACHE_ENGINE');
 
 		switch ($config['cache']['enabled']) {
 			case 'memcached':
@@ -20,10 +22,10 @@ class Cache {
 					$config['cache']['memcached']
 				);
 			case 'redis':
-				$host = $config['cache']['redis'][0] ?? 'localhost';
-				$port = $config['cache']['redis'][1] ?? 6379;
-				$password = $config['cache']['redis'][2] ?? '';
-				$database = $config['cache']['redis'][3] ?? 1;
+				$host = $config['cache']['redis']["host"] ?? 'localhost';
+				$port = $config['cache']['redis']["port"] ?? 6379;
+				$password = $config['cache']['redis']["password"] ?? '';
+				$database = $config['cache']['redis']["database"] ?? 1;
 
 				$host = getenv('VICHAN_CACHE_HOST') ?: $host;
 				$port = getenv('VICHAN_CACHE_PORT') ?: $port;
