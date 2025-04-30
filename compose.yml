@@ -69,7 +69,7 @@ services:
       - db
 
   db:
-    image: mariadb:lts
+    image: mysql:lts
     container_name: vichan_mariadb
     restart: unless-stopped
     volumes:
