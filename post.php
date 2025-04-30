@@ -373,7 +373,7 @@ if (isset($_POST['delete'])) {
 	}
 
 	$blacklist = $context->get(IpBlacklistService::class)->isIpBlacklisted($_SERVER['REMOTE_ADDR']);
-	if ($blacklist !== false) {
+	if ($blacklist !== null) {
 		error(\sprintf($config['error']['dnsbl'], $blacklist));
 	}
 
@@ -471,7 +471,7 @@ if (isset($_POST['delete'])) {
 	}
 
 	$blacklist = $context->get(IpBlacklistService::class)->isIpBlacklisted($_SERVER['REMOTE_ADDR']);
-	if ($blacklist !== false) {
+	if ($blacklist !== null) {
 		error(\sprintf($config['error']['dnsbl'], $blacklist));
 	}
 
@@ -667,7 +667,7 @@ if (isset($_POST['delete'])) {
 			error($config['error']['referer']);
 
 		$blacklist = $context->get(IpBlacklistService::class)->isIpBlacklisted($_SERVER['REMOTE_ADDR']);
-		if ($blacklist !== false) {
+		if ($blacklist !== null) {
 			error(\sprintf($config['error']['dnsbl'], $blacklist));
 		}
 
