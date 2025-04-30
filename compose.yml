@@ -70,12 +70,12 @@ services:
 
   db:
     image: mysql:lts
-    container_name: vichan_mariadb
+    container_name: vichan_db
     restart: unless-stopped
     volumes:
       - ./local-instances/${INSTANCE:-0}/db:/var/lib/mysql
-    ports:
-      - "9082:3306"
+    # ports:
+    #   - "9082:3306" # optional for external access
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
