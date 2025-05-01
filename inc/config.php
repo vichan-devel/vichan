@@ -203,7 +203,7 @@
 	// Used for communicating with Javascript; telling it when posts were successful.
 	$config['cookies']['js'] = 'serv';
 
-	// Cooakies path. Defaults to $config['root']. If $config['root'] is a URL, you need to set this. Should
+	// Cookies path. Defaults to $config['root']. If $config['root'] is a URL, you need to set this. Should
 	// be '/' or '/board/', depending on your installation.
 	// $config['cookies']['path'] = '/';
 	// Where to set the 'path' parameter to $config['cookies']['path'] when creating cookies. Recommended.
