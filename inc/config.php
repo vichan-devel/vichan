@@ -1873,7 +1873,7 @@
 
 	// Enable public logs? 0: NO, 1: YES, 2: YES, but drop names
 	$config['public_logs'] = 0;
-	
+
 /*
  * ====================
  *  Events (PHP 5.3.0+)
