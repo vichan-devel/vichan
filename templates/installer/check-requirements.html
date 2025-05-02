@@ -17,10 +17,10 @@
 						<i style="font-size:11pt;color:#090" class="fa fa-check"></i>
 					{% else %}
 						{% if test.required %}
-							{%  set errors = errors + 1 %}
+							{% set errors = errors + 1 %}
 							<i style="font-size:11pt;color:#d00" class="fa fa-exclamation"></i>
 						{% else %}
-							{%  set warnings = warnings + 1 %}
+							{% set warnings = warnings + 1 %}
 							<i style="font-size:11pt;color:#f80" class="fa fa-warning"></i>
 						{% endif %}
 					{% endif %}
@@ -45,12 +45,13 @@
 			{% endfor %}
 		</ul>
 		{% if errors %}
-			<p style="text-align:center"><a href="?step=2">Click here to ignore errors and attempt installing anyway (not recommended).</a></p>
+			<p style="text-align:center;color:#d00"><strong>Warning:</strong> Ignoring these problems is not recommended and may cause installation issues.</p>
+			<p style="text-align:center"><a href="?step=2"><button>Proceed Anyway</button></a></p>
 		{% else %}
-			<p style="text-align:center"><a href="?step=2">Click here to proceed with installation.</a></p>
+			<p style="text-align:center"><a href="?step=2"><button>Next</button></a></p>
 		{% endif %}
 	{% else %}
 		<p>There were no errors or warnings. Good!</p>
-		<p style="text-align:center"><a href="?step=2">Clik here to proceed with installation.</a></p>
+		<p style="text-align:center"><a href="?step=2"><button>Next</button></a></p>
 	{% endif %}
 </div>

@@ -146,6 +146,7 @@
 	 */
 
 	// Uses a PHP array. MUST NOT be used in multiprocess environments.
+	// This will be ignored if a environment variable ( VICHAN_CACHE_ENGINE ) is set.
 	$config['cache']['enabled'] = 'php';
 	// The recommended in-memory method of caching. Requires the extension. Due to how APCu works, this should be
 	// disabled when you run tools from the cli.
@@ -161,20 +162,23 @@
 	// $config['cache']['enabled'] = 'none';
 
 	// Timeout for cached objects such as posts and HTML.
-	$config['cache']['timeout'] = 60 * 60 * 48; // 48 hours
-
-	// Optional prefix if you're running multiple vichan instances on the same machine.
-	$config['cache']['prefix'] = '';
-
-	// Memcached servers to use. Read more: http://www.php.net/manual/en/memcached.addservers.php
-	$config['cache']['memcached'] = array(
-		array('localhost', 11211)
+	$config['cache']['redis'] = array(
+		'host' => 'localhost',
+		'port' => 6379,
+		'password' => '',
+		'database' => 1
 	);
 
-	// Redis server to use. Location, port, password, database id.
-	// Note that vichan may clear the database at times, so you may want to pick a database id just for
-	// vichan to use.
-	$config['cache']['redis'] = array('localhost', 6379, '', 1);
+	// Cache timeout for cached objects
+	$config['cache']['timeout'] = 60 * 60 * 48; // 48 hours
+
+	// Optional prefix for multiple vichan instances
+	$config['cache']['prefix'] = '';
+
+	// Memcached servers (not used)
+	$config['cache']['memcached'] = [
+		['localhost', 11211]
+	];
 
 	// EXPERIMENTAL: Should we cache configs? Warning: this changes board behaviour, i'd say, a lot.
 	// If you have any lambdas/includes present in your config, you should move them to instance-functions.php

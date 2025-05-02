@@ -387,7 +387,7 @@ if (file_exists($config['has_installed'])) {
 				CHANGE  `theme`  `theme` VARCHAR( 40 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL ,
 				CHANGE  `name`  `name` VARCHAR( 40 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
 				CHANGE  `value`  `value` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL ,
-				DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;") or eror(db_error());
+				DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;") or error(db_error());
 		case 'v0.9.6-dev-10':
 			query("ALTER TABLE  `antispam`
 				CHANGE  `board`  `board` VARCHAR( 58 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;") or error(db_error());
@@ -590,12 +590,12 @@ if (file_exists($config['has_installed'])) {
 		case '4.9.90':
 		case '4.9.91':
 		case '4.9.92':
-                        foreach ($boards as &$board) {
-                                query(sprintf('ALTER TABLE ``posts_%s`` ADD `slug` VARCHAR(255) DEFAULT NULL AFTER `embed`;', $board['uri'])) or error(db_error());
+						foreach ($boards as &$board) {
+								query(sprintf('ALTER TABLE ``posts_%s`` ADD `slug` VARCHAR(255) DEFAULT NULL AFTER `embed`;', $board['uri'])) or error(db_error());
 			}
-                case '4.9.93':
-                        query('ALTER TABLE ``mods`` CHANGE `password` `password` VARCHAR(255) NOT NULL;') or error(db_error());
-                        query('ALTER TABLE ``mods`` CHANGE `salt` `salt` VARCHAR(64) NOT NULL;') or error(db_error());
+				case '4.9.93':
+						query('ALTER TABLE ``mods`` CHANGE `password` `password` VARCHAR(255) NOT NULL;') or error(db_error());
+						query('ALTER TABLE ``mods`` CHANGE `salt` `salt` VARCHAR(64) NOT NULL;') or error(db_error());
 		case '5.0.0':
 			query('ALTER TABLE ``mods`` CHANGE `salt` `version` VARCHAR(64) NOT NULL;') or error(db_error());
 		case '5.0.1':
@@ -611,9 +611,9 @@ if (file_exists($config['has_installed'])) {
 			  UNIQUE KEY `u_pages` (`name`,`board`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;') or error(db_error());
 		case '5.1.1':
-                        foreach ($boards as &$board) {
-                                query(sprintf("ALTER TABLE ``posts_%s`` ADD `cycle` int(1) NOT NULL AFTER `locked`", $board['uri'])) or error(db_error());
-                        }
+						foreach ($boards as &$board) {
+								query(sprintf("ALTER TABLE ``posts_%s`` ADD `cycle` int(1) NOT NULL AFTER `locked`", $board['uri'])) or error(db_error());
+						}
 		case '5.1.2':
 			query('CREATE TABLE IF NOT EXISTS ``nntp_references`` (
 				  `board` varchar(60) NOT NULL,
@@ -680,7 +680,7 @@ function create_config_from_array(&$instance_config, &$array, $prefix = '') {
 session_start();
 
 if ($step == 0) {
-	// Agreeement
+	// Agreement
 	$page['body'] = '
 	<textarea style="width:700px;height:370px;margin:auto;display:block;background:white;color:black" disabled>' . htmlentities(file_get_contents('LICENSE.md')) . '</textarea>
 	<p style="text-align:center">
@@ -914,20 +914,64 @@ if ($step == 0) {
 		'config' => $config,
 	));
 } elseif ($step == 2) {
-
-	// Basic config
 	$page['title'] = 'Configuration';
-
 	$sg = new SaltGen();
-	$config['cookies']['salt'] = $sg->generate();
+
+	// Initialize configuration with defaults and override with environment variables
+	$config['cookies'] = array(
+		'mod' => getenv('VICHAN_COOKIES_MOD') !== false ? getenv('VICHAN_COOKIES_MOD') : 'mod',
+		'salt' => $sg->generate(),
+	);
+
+	$config['flood_time'] = getenv('VICHAN_FLOOD_TIME') !== false ? (int)getenv('VICHAN_FLOOD_TIME') : 30;
+	$config['flood_time_ip'] = getenv('VICHAN_FLOOD_TIME_IP') !== false ? (int)getenv('VICHAN_FLOOD_TIME_IP') : 120;
+	$config['flood_time_same'] = getenv('VICHAN_FLOOD_TIME_SAME') !== false ? (int)getenv('VICHAN_FLOOD_TIME_SAME') : 3600;
+	$config['max_body'] = getenv('VICHAN_MAX_BODY') !== false ? (int)getenv('VICHAN_MAX_BODY') : 1800;
+	$config['reply_limit'] = getenv('VICHAN_REPLY_LIMIT') !== false ? (int)getenv('VICHAN_REPLY_LIMIT') : 250;
+	$config['max_links'] = getenv('VICHAN_MAX_LINKS') !== false ? (int)getenv('VICHAN_MAX_LINKS') : 20;
+	
+	$config['max_filesize'] = getenv('VICHAN_IMAGES_MAX_FILESIZE') !== false ? (int)getenv('VICHAN_IMAGES_MAX_FILESIZE') : 10485760; // This is 10MB
+	$config['thumb_width'] = getenv('VICHAN_IMAGES_THUMB_WIDTH') !== false ? (int)getenv('VICHAN_IMAGES_THUMB_WIDTH') : 250;
+	$config['thumb_height'] = getenv('VICHAN_IMAGES_THUMB_HEIGHT') !== false ? (int)getenv('VICHAN_IMAGES_THUMB_HEIGHT') : 250;
+	$config['max_width'] = getenv('VICHAN_IMAGES_MAX_WIDTH') !== false ? (int)getenv('VICHAN_IMAGES_MAX_WIDTH') : 10000;
+	$config['max_height'] = getenv('VICHAN_IMAGES_MAX_HEIGHT') !== false ? (int)getenv('VICHAN_IMAGES_MAX_HEIGHT') : 10000;
+	
+	$config['threads_per_page'] = getenv('VICHAN_DISPLAY_THREADS_PER_PAGE') !== false ? (int)getenv('VICHAN_DISPLAY_THREADS_PER_PAGE') : 10;
+	$config['max_pages'] = getenv('VICHAN_DISPLAY_MAX_PAGES') !== false ? (int)getenv('VICHAN_DISPLAY_MAX_PAGES') : 11;
+	$config['threads_preview'] = getenv('VICHAN_DISPLAY_THREADS_PREVIEW') !== false ? (int)getenv('VICHAN_DISPLAY_THREADS_PREVIEW') : 5;
+	
+	$config['root'] = getenv('VICHAN_DIRECTORIES_ROOT') !== false ? getenv('VICHAN_DIRECTORIES_ROOT') : '/';
+	
 	$config['secure_trip_salt'] = $sg->generate();
 	$config['secure_password_salt'] = $sg->generate();
+	
+	// Set database configuration from Docker environment variables, leave empty if not found
+	$config['db'] = array(
+		'type' => 'mysql', // Default, required for MySQL
+		'server' => getenv('VICHAN_MYSQL_HOST') !== false ? getenv('VICHAN_MYSQL_HOST') : '',
+		'database' => getenv('VICHAN_MYSQL_NAME') !== false ? getenv('VICHAN_MYSQL_NAME') : '',
+		'user' => getenv('VICHAN_MYSQL_USER') !== false ? getenv('VICHAN_MYSQL_USER') : '',
+		'password' => getenv('VICHAN_MYSQL_PASSWORD') !== false ? getenv('VICHAN_MYSQL_PASSWORD') : '',
+	);
+	
+	// Append secure_login_only to $_SESSION['more'] if VICHAN_SECURE_LOGIN_ONLY is set
+	if (getenv('VICHAN_SECURE_LOGIN_ONLY') !== false) {
+		$secure_login_only = (int)getenv('VICHAN_SECURE_LOGIN_ONLY');
+		$_SESSION['more'] .= "\n\$config['cookies']['secure_login_only'] = $secure_login_only;";
+	}
+
+	// Configuration notice at the top
+	$page['body'] = '<div class="ban"><h2>Configuration Note</h2>' .
+					'<p style="text-align:center;">The following settings can still be configured later. For more customization options, <a href="https://github.com/vichan-devel/vichan/wiki/config" target="_blank" rel="noopener noreferrer">check the Vichan configuration wiki.</a></p></div>';
+
+	// Append the configuration form
+	$page['body'] .= Element('installer/config.html', array(
+		'config' => $config,
+		'more' => $_SESSION['more'],
+	));
 
 	echo Element('page.html', array(
-		'body' => Element('installer/config.html', array(
-			'config' => $config,
-			'more' => $_SESSION['more'],
-		)),
+		'body' => $page['body'],
 		'title' => 'Configuration',
 		'config' => $config
 	));
@@ -973,8 +1017,6 @@ if ($step == 0) {
 		echo Element('page.html', $page);
 	}
 } elseif ($step == 4) {
-	// SQL installation
-
 	buildJavascript();
 
 	$sql = @file_get_contents('install.sql') or error("Couldn't load install.sql.");
@@ -994,7 +1036,7 @@ if ($step == 0) {
 	$sql_err_count = 0;
 	foreach ($queries as $query) {
 		if ($mysql_version < 50503)
-			$query = preg_replace('/(CHARSET=|CHARACTER SET )utf8mb4/', '$1utf8', $query);
+		$query = preg_replace('/(CHARSET=|CHARACTER SET )utf8mb4/', '$1utf8', $query);
 		$query = preg_replace('/^([\w\s]*)`([0-9a-zA-Z$_\x{0080}-\x{FFFF}]+)`/u', '$1``$2``', $query);
 		if (!query($query)) {
 			$sql_err_count++;
@@ -1004,10 +1046,22 @@ if ($step == 0) {
 	}
 
 	$page['title'] = 'Installation complete';
-	$page['body'] = '<p style="text-align:center">Thank you for using vichan. Please remember to report any bugs you discover. <a href="https://github.com/vichan-devel/vichan/wiki/Configuration-Basics">How do I edit the config files?</a></p>';
+	$page['body'] = '<p style="text-align:center">Thank you for using vichan. <a href="https://github.com/vichan-devel/vichan/issues/new/choose" target="_blank" rel="noopener noreferrer">Please report any bugs you discover.</a></p>' .
+					'<p style="text-align:center">If you are new to vichan, <a href="https://github.com/vichan-devel/vichan/wiki" target="_blank" rel="noopener noreferrer">please check out the documentation.</a></p>';
+
+	// Admin panel notice
+	$page['body'] .= '<div class="ban"><h2>Next Steps</h2>' .
+					 '<p>You can now log in to the admin panel at <strong>/mod.php</strong> using the default credentials:</p>' .
+					 '<p><strong>Username:</strong> admin</p>' .
+					 '<p><strong>Password:</strong> password</p>' .
+					 '<p><strong>Important:</strong> For security, please change the administrator password immediately after logging in.</p>' .
+					 '<p style="text-align:center"><a href="/mod.php"><button>Go to Admin Panel</button></a></p></div>';
+
 
 	if (!empty($sql_errors)) {
-		$page['body'] .= '<div class="ban"><h2>SQL errors</h2><p>SQL errors were encountered when trying to install the database. This may be the result of using a database which is already occupied with a vichan installation; if so, you can probably ignore this.</p><p>The errors encountered were:</p><ul>' . $sql_errors . '</ul><p><a href="?step=5">Ignore errors and complete installation.</a></p></div>';
+		$page['body'] .= '<div class="ban"><h2>SQL errors</h2><p>SQL errors were encountered when trying to install the database. This may be the result of using a database which is already occupied with a vichan installation; if so, you can probably ignore this.</p><p>The errors encountered were:</p><ul>' . $sql_errors . '</ul>' .
+						 '<p style="text-align:center;color:#d00"><strong>Warning:</strong> Ignoring errors is not recommended and may cause installation issues.</p>' .
+						 '<p style="text-align:center"><a href="?step=5"><button>Next</button></a></p></div>';
 	} else {
 		$boards = listBoards();
 		foreach ($boards as &$_board) {
@@ -1024,7 +1078,16 @@ if ($step == 0) {
 	echo Element('page.html', $page);
 } elseif ($step == 5) {
 	$page['title'] = 'Installation complete';
-	$page['body'] = '<p style="text-align:center">Thank you for using vichan. Please remember to report any bugs you discover.</p>';
+	$page['body'] = '<p style="text-align:center">Thank you for using vichan. Please report any bugs you discover.</p>' .
+					'<p style="text-align:center">If you are new to vichan, <a href="https://github.com/vichan-devel/vichan/wiki">please check out the documentation</a>.</p>';
+
+	// Admin panel notice
+	$page['body'] .= '<div class="ban"><h2>Next Steps</h2>' .
+					'<p>You can now log in to the admin panel at <strong>/mod.php</strong> using the default credentials:</p>' .
+					'<p><strong>Username:</strong> admin</p>' .
+					'<p><strong>Password:</strong> password</p>' .
+					'<p><strong>Important:</strong> For security, please change the administrator password immediately after logging in.</p>' .
+					'<p style="text-align:center"><a href="/mod.php"><button>Go to Admin Panel</button></a></p></div>';
 
 	$boards = listBoards();
 	foreach ($boards as &$_board) {

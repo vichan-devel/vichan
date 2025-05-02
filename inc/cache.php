@@ -12,20 +12,32 @@ defined('TINYBOARD') or exit;
 class Cache {
 	private static function buildCache(): CacheDriver {
 		global $config;
+		// Determine if the cache engine is configured via environment variables.
+		$engine = \getenv('VICHAN_CACHE_ENGINE') ?: $config['cache']['enabled'];
 
-		switch ($config['cache']['enabled']) {
+		switch ($engine) {
 			case 'memcached':
 				return new MemcachedCacheDriver(
 					$config['cache']['prefix'],
 					$config['cache']['memcached']
 				);
 			case 'redis':
+				$host = $config['cache']['redis']["host"] ?? 'localhost';
+				$port = $config['cache']['redis']["port"] ?? 6379;
+				$password = $config['cache']['redis']["password"] ?? '';
+				$database = $config['cache']['redis']["database"] ?? 1;
+
+				$host = getenv('VICHAN_CACHE_HOST') ?: $host;
+				$port = getenv('VICHAN_CACHE_PORT') ?: $port;
+				$password = getenv('VICHAN_CACHE_PASSWORD') ?: $password;
+				$database = getenv('VICHAN_CACHE_DATABASE') ?: $database;
+
 				return new RedisCacheDriver(
 					$config['cache']['prefix'],
-					$config['cache']['redis'][0],
-					$config['cache']['redis'][1],
-					$config['cache']['redis'][2],
-					$config['cache']['redis'][3]
+					$host,
+					$port,
+					$password,
+					$database
 				);
 			case 'apcu':
 				return new ApcuCacheDriver;
