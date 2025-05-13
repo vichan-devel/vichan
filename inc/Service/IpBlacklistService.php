@@ -204,7 +204,7 @@ class IpBlacklistService {
 		foreach ($names as $name) {
 			// Validate the response.
 			$resolved_ips = $this->resolver->nameToIps($name);
-			if ($resolved_ips !== null && \is_array($ret, $resolved_ips)) {
+			if ($resolved_ips !== null && \in_array($ret, $resolved_ips)) {
 				$acc[] = $name;
 			}
 		}
