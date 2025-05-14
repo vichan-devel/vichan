@@ -82,7 +82,9 @@ To migrate from a Kusaba X board, use http://github.com/vichan-devel/Tinyboard-M
 
 Demo
 --------
-Demo with the most updated version of [Vichan](https://vichan.27chan.org).
+Demo with the most updated version of [Vichan](https://demo.vichan.info).
+
+This version of vichan has admin, janitor, and moderator access on it, with the usernames being admin, mod, and janny respectfully and the password being password. This test instance resets hourly.
 
 1. PHP 8.1
 2. MySQL 5.7
