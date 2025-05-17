@@ -6,7 +6,7 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
-class Tinyboard extends AbstractExtension
+class TinyboardExtension extends AbstractExtension
 {
 	/**
 	* Returns a list of filters to add to the existing list.
