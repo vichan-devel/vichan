@@ -18,14 +18,14 @@ function load_twig() {
 	$twig = new Twig\Environment($loader, array(
 		'autoescape' => false,
 		'cache' => is_writable('templates/') || (is_dir($cache_dir) && is_writable($cache_dir)) ?
-			new TinyboardTwigCache($cache_dir) : false,
+			new Vichan\Twig\FilesystemCache\TinyboardFilesystem($cache_dir) : false,
 		'debug' => $config['debug'],
 		'auto_reload' => $config['twig_auto_reload']
 	));
 	if ($config['debug'])
 		$twig->addExtension(new \Twig\Extension\DebugExtension());
-	$twig->addExtension(new Tinyboard());
-	$twig->addExtension(new PhpMyAdmin\Twig\Extensions\I18nExtension());
+	$twig->addExtension(new Vichan\Twig\Extensions\TinyboardExtension());
+	$twig->addExtension(new Vichan\Twig\Extensions\I18nExtension());
 }
 
 function Element($templateFile, array $options) {
@@ -66,94 +66,6 @@ function Element($templateFile, array $options) {
 		return $body;
 	} else {
 		throw new Exception("Template file '{$templateFile}' does not exist or is empty in '{$config['dir']['template']}'!");
-	}
-}
-
-class TinyboardTwigCache extends Twig\Cache\FilesystemCache {
-	private string $directory;
-
-	public function __construct(string $directory) {
-		parent::__construct($directory);
-		$this->directory = $directory;
-	}
-
-	/**
-	 * This function was removed in Twig 2.x due to developer views on the Twig library.
-	 * Who says we can't keep it for ourselves though?
-	 */
-	public function clear() {
-		$iter = new RecursiveIteratorIterator(
-			new RecursiveDirectoryIterator($this->directory),
-			RecursiveIteratorIterator::LEAVES_ONLY
-		);
-
-		foreach ($iter as $file) {
-			if ($file->isFile()) {
-				@unlink($file->getPathname());
-			}
-		}
-	}
-}
-
-class Tinyboard extends Twig\Extension\AbstractExtension
-{
-	/**
-	* Returns a list of filters to add to the existing list.
-	*
-	* @return array An array of filters
-	*/
-	public function getFilters()
-	{
-		return array(
-			new Twig\TwigFilter('filesize', 'format_bytes'),
-			new Twig\TwigFilter('truncate', 'twig_truncate_filter'),
-			new Twig\TwigFilter('truncate_body', 'truncate'),
-			new Twig\TwigFilter('truncate_filename', 'twig_filename_truncate_filter'),
-			new Twig\TwigFilter('extension', 'twig_extension_filter'),
-			new Twig\TwigFilter('sprintf', 'sprintf'),
-			new Twig\TwigFilter('capcode', 'capcode'),
-			new Twig\TwigFilter('remove_modifiers', 'remove_modifiers'),
-			new Twig\TwigFilter('hasPermission', 'twig_hasPermission_filter'),
-			new Twig\TwigFilter('date', 'twig_date_filter'),
-			new Twig\TwigFilter('poster_id', 'poster_id'),
-			new Twig\TwigFilter('count', 'count'),
-			new Twig\TwigFilter('ago', 'Vichan\Functions\Format\ago'),
-			new Twig\TwigFilter('until', 'Vichan\Functions\Format\until'),
-			new Twig\TwigFilter('push', 'twig_push_filter'),
-			new Twig\TwigFilter('bidi_cleanup', 'bidi_cleanup'),
-			new Twig\TwigFilter('addslashes', 'addslashes'),
-			new Twig\TwigFilter('cloak_ip', 'cloak_ip'),
-			new Twig\TwigFilter('cloak_mask', 'cloak_mask'),
-		);
-	}
-
-	/**
-	* Returns a list of functions to add to the existing list.
-	*
-	* @return array An array of filters
-	*/
-	public function getFunctions()
-	{
-		return array(
-			new Twig\TwigFunction('time', 'time'),
-			new Twig\TwigFunction('floor', 'floor'),
-			new Twig\TwigFunction('hiddenInputs', 'hiddenInputs'),
-			new Twig\TwigFunction('hiddenInputsHash', 'hiddenInputsHash'),
-			new Twig\TwigFunction('ratio', 'twig_ratio_function'),
-			new Twig\TwigFunction('secure_link_confirm', 'twig_secure_link_confirm'),
-			new Twig\TwigFunction('secure_link', 'twig_secure_link'),
-			new Twig\TwigFunction('link_for', 'link_for')
-		);
-	}
-
-	/**
-	* Returns the name of the extension.
-	*
-	* @return string The extension name
-	*/
-	public function getName()
-	{
-		return 'tinyboard';
 	}
 }
 
