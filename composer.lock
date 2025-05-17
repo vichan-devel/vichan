@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "95168426d3589b3f5bfd79a5f97b5343",
+    "content-hash": "f2d012a971c444e04acac6243fbf72e6",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -84,16 +84,16 @@
         },
         {
             "name": "dapphp/securimage",
-            "version": "4.0.2",
+            "version": "dev-nextgen",
             "source": {
                 "type": "git",
-                "url": "https://github.com/dapphp/securimage.git",
-                "reference": "aabde76d839d75a238970661187f83312c2eeda7"
+                "url": "https://github.com/Alex300/securimage.git",
+                "reference": "7fe09987b9f86866e5e37642f8e6e00299fe7063"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dapphp/securimage/zipball/aabde76d839d75a238970661187f83312c2eeda7",
-                "reference": "aabde76d839d75a238970661187f83312c2eeda7",
+                "url": "https://api.github.com/repos/Alex300/securimage/zipball/7fe09987b9f86866e5e37642f8e6e00299fe7063",
+                "reference": "7fe09987b9f86866e5e37642f8e6e00299fe7063",
                 "shasum": ""
             },
             "require": {
@@ -107,14 +107,13 @@
             },
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "Securimage\\": "./"
-                },
                 "classmap": [
                     "securimage.php"
-                ]
+                ],
+                "psr-4": {
+                    "Securimage\\": "./"
+                }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -127,17 +126,15 @@
             "description": "PHP CAPTCHA Library",
             "homepage": "https://www.phpcaptcha.org",
             "keywords": [
-                "Forms",
                 "anti-spam",
                 "captcha",
+                "forms",
                 "security"
             ],
             "support": {
-                "issues": "https://github.com/dapphp/securimage/issues",
-                "source": "https://github.com/dapphp/securimage/tree/4.0.2"
+                "source": "https://github.com/Alex300/securimage/tree/nextgen"
             },
-            "abandoned": true,
-            "time": "2020-05-30T10:05:48+00:00"
+            "time": "2024-09-30T08:46:02+00:00"
         },
         {
             "name": "erusev/parsedown",
@@ -918,7 +915,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "dapphp/securimage": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

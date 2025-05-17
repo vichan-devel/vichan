@@ -2,6 +2,12 @@
     "name": "vichan-devel/vichan",
     "description": "vichan imageboard",
     "type": "project",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/alex300/securimage.git"
+        }
+    ],
     "require": {
         "php": ">=8.1",
         "ext-mbstring": ">=7.4",
@@ -11,7 +17,7 @@
         "lifo/ip": "^1.0",
         "gettext/gettext": "^5.5",
         "mrclay/minify": "^2.1.6",
-        "dapphp/securimage": "^4.0",
+        "dapphp/securimage": "dev-nextgen",
         "erusev/parsedown":  "^1.7.4",
         "geoip2/geoip2": "^2.13"
     },
