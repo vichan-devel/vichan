@@ -1,5 +1,3 @@
-{% apply spaceless %}
-{# tabs and new lines will be ignored #}
 <div class="post reply" id="reply_{{ post.id }}" data-board="{{ board.uri }}">
 	<p class="intro">
 		<label for="delete_{{ post.id }}">
@@ -23,11 +21,10 @@
 		{% include 'post/fileinfo.html' %}
 	</div>
 	<div class="body" {% if post.files|length > 1 %}style="clear:both"{% endif %}>
-		{% endapply %}{% if index %}{{ post.body|truncate_body(post.link) }}{% else %}{{ post.body }}{% endif %}{% apply spaceless %}
+		{% if index %}{{ post.body|truncate_body(post.link) }}{% else %}{{ post.body }}{% endif %}
 		{% if post.modifiers['ban message'] %}
 			{{ config.mod.ban_message|sprintf(post.modifiers['ban message']) }}
 		{% endif %}
 	</div>
 </div>
 <br/>
-{% endapply %}

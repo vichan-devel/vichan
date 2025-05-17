@@ -149,7 +149,7 @@
 		}
 
 		$temp = '';
-		while($post = $query->fetch()) {
+		while($post = $query->fetch(PDO::FETCH_ASSOC)) {
 			if(!$post['thread']) {
 				$po = new Thread($post);
 			} else {
