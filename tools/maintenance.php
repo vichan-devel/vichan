@@ -3,7 +3,7 @@
  * Performs maintenance tasks. Invoke this periodically if the auto_maintenance configuration option is turned off.
  */
 
-use Vichan\Data\Queries\ReportQueries;
+use Vichan\Data\{ReportQueries, SearchQueries};
 
 require dirname(__FILE__) . '/inc/cli.php';
 
@@ -45,9 +45,17 @@ if ($config['cache']['enabled'] === 'fs') {
 	$fs_cache->collect();
 	$delta = microtime(true) - $start;
 	echo "Deleted $deleted_count expired filesystem cache items in $delta seconds!\n";
-	$time_tot = $delta;
+	$time_tot += $delta;
 	$deleted_tot = $deleted_count;
 }
+
+echo "Clearing old search log...\n";
+$search_queries = $ctx->get(SearchQueries::class);
+$start = microtime(true);
+$deleted_count = $search_queries->purgeExpired();
+$delta = microtime(true) - $start;
+$time_tot += $delta;
+$deleted_tot = $deleted_count;
 
 $time_tot = number_format((float)$time_tot, 4, '.', '');
 modLog("Deleted $deleted_tot expired entries in {$time_tot}s with maintenance tool");
