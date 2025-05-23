@@ -4,7 +4,7 @@ namespace Vichan;
 use Vichan\Controller\FloodManager;
 use Vichan\Data\Driver\{CacheDriver, HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
 use Vichan\Data\Driver\Dns\{DnsDriver, HostDnsDriver, LibcDnsDriver};
-use Vichan\Data\Queries\{FloodQueries, IpNoteQueries, UserPostQueries, ReportQueries};
+use Vichan\Data\Queries\{FloodQueries, IpNoteQueries, UserPostQueries, ReportQueries, SearchQueries};
 use Vichan\Service\FilterService;
 use Vichan\Service\FloodService;
 use Vichan\Service\HCaptchaQuery;
@@ -101,6 +101,20 @@ function build_context(array $config): Context {
 		FloodQueries::class => fn(Context $c): FloodQueries => new FloodQueries(
 			$c->get(\PDO::class)
 		),
+		SearchQueries::class => function($c) {
+			$config = $c->get('config');
+			list($queries_for_single, $range_for_single_min) = $config['search']['queries_per_minutes'];
+			list($queries_for_all, $range_for_all_min) = $config['search']['queries_per_minutes_all'];
+
+			return new SearchQueries(
+				$c->get(\PDO::class),
+				$queries_for_single,
+				$range_for_single_min * 60,
+				$queries_for_all,
+				$range_for_all_min * 60,
+				(bool)$config['auto_maintenance']
+			);
+		},
 		FloodService::class => fn(Context $c): FloodService => new FloodService(
 			$c->get(FloodQueries::class),
 			$c->get('config')['filters'],
