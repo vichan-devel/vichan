@@ -3,7 +3,7 @@ namespace Vichan\Service;
 
 use Vichan\Data\{FiltersParseResult, SearchFilters};
 use Vichan\Data\Driver\LogDriver;
-use Vichan\Data\Queries\UserPostQueries;
+use Vichan\Data\Queries\{UserPostQueries, SearchQueries};
 
 
 class SearchService {
@@ -34,6 +34,7 @@ class SearchService {
 
 	private LogDriver $log;
 	private UserPostQueries $user_queries;
+	private SearchQueries $search_queries;
 	private ?array $flag_map;
 	private float $max_weight;
 	private int $max_query_length;
@@ -246,6 +247,7 @@ class SearchService {
 	/**
 	 * @param LogDriver $log Log river.
 	 * @param UserPostQueries $user_queries User posts queries.
+	 * @param SearchQueries $search_queries Search queries for flood detection.
 	 * @param ?array $flag_map The key-value map of user flags, or null to disable flag search.
 	 * @param float $max_weight The maximum weight of the parsed user query. Body filters that go beyond this limit are discarded.
 	 * @param int $max_query_length Maximum length of the raw input query before it's truncated.
@@ -255,6 +257,7 @@ class SearchService {
 	public function __construct(
 		LogDriver $log,
 		UserPostQueries $user_queries,
+		SearchQueries $search_queries,
 		?array $flag_map,
 		float $max_weight,
 		int $max_query_length,
@@ -263,6 +266,7 @@ class SearchService {
 	) {
 		$this->log = $log;
 		$this->user_queries = $user_queries;
+		$this->search_queries = $search_queries;
 		$this->flag_map = $flag_map;
 		$this->max_weight = $max_weight;
 		$this->max_query_length = $max_query_length;
@@ -374,6 +378,17 @@ class SearchService {
 			$filters->body,
 			$this->post_limit
 		);
+	}
+
+	/**
+	 * Check if the IP-query pair passes the limit.
+	 *
+	 * @param string $ip Source IP.
+	 * @param string $phrase The search query.
+	 * @return bool True if the request goes over the limit.
+	 */
+	public function checkFlood(string $ip, string $raw_query) {
+		return $this->search_queries->checkFlood($ip, $raw_query);
 	}
 
 	/**
