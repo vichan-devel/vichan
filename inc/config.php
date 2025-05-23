@@ -1881,6 +1881,9 @@
 		'queries_per_minutes_all' => [ 50, 2 ],
 		// Limit of search results
 		'search_limit' => 100,
+		// Maximum weigth of the search query.
+		// Body search filters are discarded if they make the query heavier than this.
+		'max_weight' => 80
 	];
 
 	// Enable search in the board index.
