@@ -38,6 +38,7 @@ class SearchService {
 	private float $max_weight;
 	private int $max_query_length;
 	private int $post_limit;
+	private array $searchable_board_uris;
 
 
 	private static function truncateQuery(string $text, int $byteLimit): ?string {
@@ -243,16 +244,30 @@ class SearchService {
 	}
 
 	/**
+	 * @param LogDriver $log Log river.
 	 * @param UserPostQueries $user_queries User posts queries.
-	 * @param ?flag_map $max_flag_length The key-value map of user flags, or null to disable flag search.
+	 * @param ?array $flag_map The key-value map of user flags, or null to disable flag search.
+	 * @param float $max_weight The maximum weight of the parsed user query. Body filters that go beyond this limit are discarded.
+	 * @param int $max_query_length Maximum length of the raw input query before it's truncated.
+	 * @param int $post_limit Maximum number of results.
+	 * @param ?array $searchable_board_uris The uris of the board that can be searched. Null to search all the boards.
 	 */
-	public function __construct(LogDriver $log, UserPostQueries $user_queries, ?array $flag_map, float $max_weight, int $max_query_length, int $post_limit) {
+	public function __construct(
+		LogDriver $log,
+		UserPostQueries $user_queries,
+		?array $flag_map,
+		float $max_weight,
+		int $max_query_length,
+		int $post_limit,
+		?array $searchable_board_uris
+	) {
 		$this->log = $log;
 		$this->user_queries = $user_queries;
 		$this->flag_map = $flag_map;
 		$this->max_weight = $max_weight;
 		$this->max_query_length = $max_query_length;
 		$this->post_limit = $post_limit;
+		$this->searchable_board_uris = $searchable_board_uris ?? listBoards(true);
 	}
 
 	/**
@@ -285,7 +300,7 @@ class SearchService {
 		if ($filters->flag !== null) {
 			$weighted->flag = [];
 
-			if ($this->flag_map !== null && !empty($this->flag_map)) {
+			if (!empty($this->flag_map)) {
 				$max_flag_length = \array_reduce($this->flag_map, fn($max, $str) => \max($max, \strlen($str)), 0);
 
 				list($fragments, $total_len, $wildcard_weight) = self::filterAndWeight($filters->flag);
@@ -323,13 +338,12 @@ class SearchService {
 	 * @return array Data array straight from the PDO, with all the fields in posts.sql
 	 */
 	public function search(string $ip, string $raw_query, SearchFilters $filters, ?string $fallback_board): array {
-		$board = $filters->board ?? $fallback_board;
+		$board = !empty($filters->board) ? $filters->board : $fallback_board;
 		if ($board === null) {
 			return [];
 		}
 
-		$valid_uris = listBoards(true);
-		if (!\in_array($board, $valid_uris)) {
+		if (!\in_array($board, $this->searchable_board_uris)) {
 			return [];
 		}
 
@@ -342,7 +356,7 @@ class SearchService {
 		}
 
 		$flags = [];
-		if ($filters->flag !== null && $this->flag_map !== null) {
+		if ($filters->flag !== null && !empty($this->flag_map)) {
 			$flags = $this->matchStrings($this->flag_map, $filters->flag);
 			if (empty($flags)) {
 				// The query doesn't match any flags so it will always fail anyway.
@@ -360,5 +374,12 @@ class SearchService {
 			$filters->body,
 			$this->post_limit
 		);
+	}
+
+	/**
+	 * Returns the uris of the boards that may be searched.
+	 */
+	public function getSearchableBoards(): array {
+		return $this->searchable_board_uris;
 	}
 }
