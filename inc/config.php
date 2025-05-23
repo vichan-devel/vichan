@@ -1889,7 +1889,7 @@
 	// Enable search in the board index.
 	$config['board_search'] = false;
 
-	// Boards for searching
+	// Boards for searching, uncomment to limit the search feature to the given boards by uri.
 	//$config['search']['boards'] = array('a', 'b', 'c', 'd', 'e');
 
 	// Blacklist boards for searching, basically the opposite of the one above
