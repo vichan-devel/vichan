@@ -1884,6 +1884,9 @@
 		// Maximum weigth of the search query.
 		// Body search filters are discarded if they make the query heavier than this.
 		'max_weight' => 100,
+		// Maximum length of the user sent search query.
+		// Characters beyond the limit are truncated and ignored.
+		'max_length' => 768
 	];
 
 	// Enable search in the board index.
