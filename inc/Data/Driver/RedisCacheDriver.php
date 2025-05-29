@@ -7,14 +7,24 @@ defined('TINYBOARD') or exit;
 
 // Handles caching using Redis, a fast in-memory data store
 class RedisCacheDriver implements CacheDriver {
+	use CacheDriverTrait;
+
 	private string $prefix;
 	private \Redis $inner;
 
 	// Sets up the Redis connection
 	public function __construct(string $prefix, string $host, int $port, ?string $password, int $database) {
 		$this->inner = new \Redis();
-		$this->inner->connect($host, $port);
+		$maybe_unix = self::asUnixSocketPath($host);
 
+		if ($maybe_unix !== null) {
+			$this->inner->connect($maybe_unix);
+		} elseif ($port === null) {
+			$this->inner->connect($host);
+		} else {
+			// IP + port.
+			$this->inner->connect($host, $port);
+		}
 		if ($password) {
 			$this->inner->auth($password);
 		}
@@ -28,7 +38,6 @@ class RedisCacheDriver implements CacheDriver {
 
 	// Retrieves a value from the cache by key
 	public function get(string $key): mixed {
-
 		$ret = $this->inner->get($this->prefix . $key);
 		if ($ret === false) {
 			// Return null if the key doesn't exist
