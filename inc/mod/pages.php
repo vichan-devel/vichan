@@ -3,7 +3,7 @@
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  */
 use Vichan\Context;
-use Vichan\Data\{IpNoteQueries, UserPostQueries, ReportQueries};
+use Vichan\Data\Queries\{IpNoteQueries, UserPostQueries, ReportQueries};
 use Vichan\Functions\{Format, Net};
 use Vichan\Data\Driver\{CacheDriver, LogDriver};
 use Vichan\Data\Driver\Dns\DnsDriver;
