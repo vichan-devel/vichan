@@ -1,5 +1,5 @@
 <?php
-namespace Vichan\Data;
+namespace Vichan\Data\Queries;
 
 use Vichan\Data\Driver\CacheDriver;
 

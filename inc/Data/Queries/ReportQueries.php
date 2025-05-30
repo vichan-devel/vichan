@@ -1,5 +1,5 @@
 <?php
-namespace Vichan\Data;
+namespace Vichan\Data\Queries;
 
 
 class ReportQueries {

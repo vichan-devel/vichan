@@ -3,7 +3,7 @@
  * Performs maintenance tasks. Invoke this periodically if the auto_maintenance configuration option is turned off.
  */
 
-use Vichan\Data\ReportQueries;
+use Vichan\Data\Queries\ReportQueries;
 
 require dirname(__FILE__) . '/inc/cli.php';
 
