@@ -2611,13 +2611,17 @@ function mod_reports(Context $ctx) {
 			'token_post' => make_secure_link_token('reports/'. $report['id'] . '/dismiss&post')
 		]);
 
-		// Bug fix for https://github.com/savetheinternet/Tinyboard/issues/21
-		$po->body = truncate($po->body, $po->link(), $config['body_truncate'] - substr_count($append_html, '<br>'));
+		$visible_append_length = mb_strlen(strip_tags((string) $append_html));
 
-		if (mb_strlen($po->body) + mb_strlen($append_html) > $config['body_truncate_char']) {
+		$adjusted_max_chars = $config['body_truncate_char'] - $visible_append_length * 6; // very hacky
+
+		// Bug fix for https://github.com/savetheinternet/Tinyboard/issues/21
+		$po->body = truncate($po->body, $po->link(), $config['body_truncate'], $adjusted_max_chars);
+
+		if (mb_strlen(strip_tags($po->body)) + $visible_append_length > $config['body_truncate_char']) {
 			// still too long; temporarily increase limit in the config
 			$__old_body_truncate_char = $config['body_truncate_char'];
-			$config['body_truncate_char'] = mb_strlen($po->body) + mb_strlen($append_html);
+			$config['body_truncate_char'] = mb_strlen(strip_tags($po->body)) + $visible_append_length;
 		}
 
 		$po->body .= $append_html;
@@ -2626,6 +2630,7 @@ function mod_reports(Context $ctx) {
 
 		if (isset($__old_body_truncate_char)) {
 			$config['body_truncate_char'] = $__old_body_truncate_char;
+			unset($__old_body_truncate_char);
 		}
 	}
 

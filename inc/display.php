@@ -338,6 +338,7 @@ function embed_html($link) {
 	return 'Embedding error.';
 }
 
+#[AllowDynamicProperties]
 class Post {
 	public function __construct($post, $root=null, $mod=false) {
 		global $config;
@@ -416,6 +417,7 @@ class Post {
 	}
 };
 
+#[AllowDynamicProperties]
 class Thread {
 	public function __construct($post, $root = null, $mod = false, $hr = true) {
 		global $config;

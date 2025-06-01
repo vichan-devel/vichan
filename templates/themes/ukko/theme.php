@@ -46,7 +46,7 @@
 
 			$count = 0;
 			$threads = array();
-			while($post = $query->fetch()) {
+			while($post = $query->fetch(PDO::FETCH_ASSOC)) {
 
 				if(!isset($threads[$post['board']])) {
 					$threads[$post['board']] = 1;
@@ -64,7 +64,7 @@
 					$posts->execute() or error(db_error($posts));
 					
 					$num_images = 0;
-					while ($po = $posts->fetch()) {
+					while ($po = $posts->fetch(PDO::FETCH_ASSOC)) {
 						if ($po['files'])
 							$num_images++;
 						
