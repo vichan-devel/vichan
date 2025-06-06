@@ -26,7 +26,6 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
 	$filters = $search_service->reduceAndWeight($parse_res);
 	$search_res = $search_service->search($ip, $raw_search, $filters, $fallback_board);
 
-
 	// Needed to set a global variable further down the stack, plus the template.
 	$actual_board = $filters->board ?? $fallback_board;
 
@@ -36,7 +35,9 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
 		'search' => \str_replace('"', '&quot;', utf8tohtml($_GET['search']))
 	]);
 
-	if (empty($search_res)) {
+	if ($search_res === null) {
+		$body .= '<hr/><p style="text-align:center" class="unimportant">(' . _('Query too broad.') . ')</p>';
+	} elseif (empty($search_res)) {
 		$body .= '<hr/><p style="text-align:center" class="unimportant">(' . _('No results.') . ')</p>';
 	} else {
 		$body .= '<hr/>';
@@ -70,5 +71,5 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
 echo Element('page.html', Array(
 	'config'=>$config,
 	'title'=> _('Search'),
-	'body'=>'' . $body
+	'body'=> $body
 ));
