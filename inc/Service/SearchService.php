@@ -339,12 +339,23 @@ class SearchService {
 	 *
 	 * @param SearchFilters $filters An array of filters made by {@see self::parse()}.
 	 * @param ?string $fallback_board Fallback board if there isn't a board filter.
-	 * @return array Data array straight from the PDO, with all the fields in posts.sql
+	 * @return ?array Data array straight from the PDO, with all the fields in posts.sql, or null if the query was too broad.
 	 */
-	public function search(string $ip, string $raw_query, SearchFilters $filters, ?string $fallback_board): array {
+	public function search(string $ip, string $raw_query, SearchFilters $filters, ?string $fallback_board): ?array {
 		$board = !empty($filters->board) ? $filters->board : $fallback_board;
 		if ($board === null) {
 			return [];
+		}
+
+		// Only board is specified.
+		if (empty($filters->subject) &&
+			empty($filters->name) &&
+			empty($filters->flag) &&
+			$filters->id === null &&
+			$filters->thread === null &&
+			empty($filters->body)
+		) {
+			return null;
 		}
 
 		if (!\in_array($board, $this->searchable_board_uris)) {
