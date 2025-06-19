@@ -23,6 +23,9 @@
 				{% if mod|hasPermission(config.mod.edit_pages) %}
 					 <a href="?/edit_pages/{{ board.uri }}"><small>[{% trans 'pages' %}]</small></a>
 				{% endif %}
+				{% if mod|hasPermission(config.mod.edit_banners) %}
+					 <a href="?/banners/{{ board.uri }}"><small>[{% trans %}banners{% endtrans %}]</small></a>
+				{% endif %}
 			</li>
 		{% endfor %}
 
@@ -80,6 +83,9 @@
 	<legend>{% trans 'Administration' %}</legend>
 
 	<ul>
+		{% if mod|hasPermission(config.mod.edit_banners) %}
+			<li><a href="?/banners/banners_priority">{% trans %}Banners General{% endtrans %}</a></li>
+		{% endif %}
 		{% if mod|hasPermission(config.mod.reports) %}
 			<li>
 				{% if reports > 0 %}<strong>{% endif %}
