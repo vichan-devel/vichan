@@ -107,6 +107,7 @@
 				'no_post_form' => true,
 				'body' => $body,
 				'mod' => $mod,
+				'isukko' => true,
 				'boardlist' => createBoardlist($mod),
 			));
 		}
