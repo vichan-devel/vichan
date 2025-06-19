@@ -135,6 +135,8 @@ class Router {
 			'/themes/(\w+)/rebuild'	=> 'secure theme_rebuild',	// rebuild theme
 			'/themes/(\w+)/uninstall'	=> 'secure theme_uninstall',	// uninstall theme
 
+			'/banners/(\%b)' => 'secure_POST banners', // view/upload banners
+
 			'/config'	=> 'secure_POST config',	// config editor
 			'/config/(\%b)'	=> 'secure_POST config',	// config editor
 
