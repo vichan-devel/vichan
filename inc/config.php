@@ -1102,6 +1102,8 @@
 	$config['banner_width'] = 300;
 	$config['banner_height'] = 100;
 	$config['banner_size'] = 3 * 1024 * 1024;
+	// Which board should we serve for ukko
+	$config['banner_ukko'] = 'ukko';
 
 	// Custom stylesheets available for the user to choose. See the "stylesheets/" folder for a list of
 	// available stylesheets (or create your own).
