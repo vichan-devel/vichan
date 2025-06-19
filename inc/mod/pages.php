@@ -3364,3 +3364,72 @@ function mod_debug_sql(Context $ctx) {
 
 	mod_page(_('Debug: SQL'), $config['file_mod_debug_sql'], $args, $mod);
 }
+
+function mod_banners(Context $ctx, $b) {
+	global $board, $mod;
+	$config = $ctx->get('config');
+
+	if (!hasPermission($config['mod']['edit_banners'], $b)) {
+		error($config['error']['noaccess']);
+	}
+
+	if ($b !== "banners_priority" && !openBoard($b)) {
+		error("Could not open board!");
+	}
+
+	$dir = ($b === "banners_priority") ? 'static/' . $b : 'static/banners/' . $b;
+
+	if (!is_dir($dir)) {
+		mkdir($dir, 0755, true);
+	}
+
+	if (isset($_FILES['files'])){
+		foreach ($_FILES['files']['tmp_name'] as $index => $upload) {
+			if (!is_readable($upload)) {
+				error($config['error']['nomove']);
+			}
+
+			$id = time() . substr(microtime(), 2, 3);
+			$originalName = $_FILES['files']['name'][$index];
+			$extension = strtolower(pathinfo((string) $originalName, PATHINFO_EXTENSION));
+			$allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+			if (!in_array($extension, $allowedExtensions)) {
+				error(sprintf($config['error']['fileext'], $extension));
+			}
+
+			if (filesize($upload) > $config['banner_size']) {
+				error($config['error']['maxsize']);
+			}
+
+			$size = @getimagesize($upload);
+
+			if (!$size || $size[0] !== $config['banner_width'] || $size[1] !== $config['banner_height']) {
+				error(_('Wrong image size!'));
+			}
+
+			if (!move_uploaded_file($upload, "$dir/$id.$extension")) {
+				error('Failed to save uploaded file ' . $_FILES['files']['name'][$index]);
+			}
+		}
+	}
+
+	if (isset($_POST['delete'])) {
+		foreach ($_POST['delete'] as $fileName) {
+			if (!preg_match('/^\d+\.(png|jpeg|jpg|gif|webp)$/', (string) $fileName)) {
+				error(_('Nice try.'));
+			}
+			$filePath = "$dir/$fileName";
+			if (file_exists($filePath)) {
+				unlink($filePath);
+			}
+		}
+	}
+
+	$banners = array_diff(scandir($dir), ['..', '.']);
+	mod_page(_('Edit banners'), $config['file_mod_banners'], [
+		'board' => $board,
+		'banners' => $banners,
+		'token' => make_secure_link_token('banners/' . $b)
+	], $mod);
+}
