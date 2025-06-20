@@ -7,11 +7,12 @@ use Vichan\Data\Driver\CacheDriver;
 class BannersService {
 	private const BANNERS_DIR = 'static/banners/%s/';
 	private const PRIORITY_DIR = 'static/banners_priority/';
-	private const ALLOWED_EXT = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 	private const UKKO = 'ukko';
+	private array $allowed_exts;
 	private CacheDriver $cache;
 
-	public function __construct(CacheDriver $cache) {
+	public function __construct(array $exts, CacheDriver $cache) {
+		$this->allowed_exts = $exts;
 		$this->cache = $cache;
 	}
 
@@ -34,7 +35,7 @@ class BannersService {
 
 	private function isImage(string $fileName): bool {
 		$extension = \strtolower(\pathinfo($fileName, PATHINFO_EXTENSION));
-		return \in_array($extension, self::ALLOWED_EXT, true);
+		return \in_array($extension, $this->allowed_exts, true);
 	}
 
 	private function serveRandomBanner(string $dir, array $files): void {
