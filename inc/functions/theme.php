@@ -14,7 +14,7 @@ function rebuild_themes(string $action, $boardname = false): void {
 		// OK, we already have themes loaded
 	} else {
 		$query = query("SELECT `theme` FROM ``theme_settings`` WHERE `name` IS NULL AND `value` IS NULL") or error(db_error());
-		$themes = $query->fetchAll(\PDO::FETCH_NUM);
+		$themes = $query->fetchAll(\PDO::FETCH_ASSOC);
 
 		\Cache::set("themes", $themes);
 	}

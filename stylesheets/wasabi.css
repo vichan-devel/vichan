@@ -212,6 +212,10 @@ div.post.reply {
 	border-style: none solid solid none;
 	border-color: lightgreen;
 	display: inline-block;
+
+	@media (max-width: 48em) {
+		border-right-style: none;
+	}
 }
 span.trip {
 	color: #228854;
@@ -393,7 +397,7 @@ div.blotter {
 }
 
 .desktop-style div.boardlist:nth-child(1) {
- 
+
 }
 
 

@@ -18,7 +18,7 @@ $(window).ready(function() {
 
 	// Enable submit button if disabled (cache problem)
 	$('input[type="submit"]').removeAttr('disabled');
-	
+
 	var setup_form = function($form) {
 		$form.submit(function() {
 			if (do_not_ajax)
@@ -27,7 +27,7 @@ $(window).ready(function() {
 			var submit_txt = $(this).find('input[type="submit"]').val();
 			if (window.FormData === undefined)
 				return true;
-			
+
 			var formData = new FormData(this);
 			formData.append('json_response', '1');
 			formData.append('post', submit_txt);
@@ -91,15 +91,15 @@ $(window).ready(function() {
 											setTimeout(function() { $(window).trigger("scroll"); }, 100);
 										}
 									});
-									
+
 									highlightReply(post_response.id);
 									window.location.hash = post_response.id;
 									$(window).scrollTop($('div.post#reply_' + post_response.id).offset().top);
-									
+
 									$(form).find('input[type="submit"]').val(submit_txt);
 									$(form).find('input[type="submit"]').removeAttr('disabled');
 									$(form).find('input[name="subject"],input[name="file_url"],\
-										textarea[name="body"],input[type="file"]').val('').change();
+										textarea[name="body"],input[type="file"],input[name="embed"]').val('').change();
 								},
 								cache: false,
 								contentType: false,
@@ -125,10 +125,10 @@ $(window).ready(function() {
 				contentType: false,
 				processData: false
 			}, 'json');
-			
+
 			$(form).find('input[type="submit"]').val(_('Posting...'));
 			$(form).find('input[type="submit"]').attr('disabled', true);
-			
+
 			return false;
 		});
 	};

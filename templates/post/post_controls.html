@@ -1,6 +1,6 @@
 {% if mod %}
 
-<span class="controls {% if not post.thread %}op{% endif %}">
+ <div class="controls {% if not post.thread %}op{% endif %}">
 {% if mod|hasPermission(config.mod.delete, board.uri) %}
 	{{ secure_link_confirm(config.mod.link_delete, 'Delete'|trans, 'Are you sure you want to delete this?'|trans, board.dir ~ 'delete/' ~ post.id) }}&nbsp;
 {% endif %}
@@ -58,6 +58,6 @@
 {% if mod|hasPermission(config.mod.editpost, board.uri) %}
 	<a title="{% trans %}Edit post{% endtrans %}" href="?/{{ board.dir }}edit{% if config.mod.raw_html_default %}_raw{% endif %}/{{ post.id }}">{{ config.mod.link_editpost }}</a>&nbsp;
 {% endif %}
-</span>
+ </div>
 
 {% endif %}

@@ -16,7 +16,7 @@
 
 $(document).ready(function(){
 	$('<style type="text/css"> img.hidden{ opacity: 0.1; background: grey; border: 1px solid #000; } </style>').appendTo($('head'));
-	
+
 	if (!localStorage.hiddenimages)
 		localStorage.hiddenimages = '{}';
 
@@ -47,9 +47,9 @@ $(document).ready(function(){
 		if (!hidden_data[board]) {
 			hidden_data[board] = {}; // id : timestamp
 		}
-		
-		var replacement = $('<span>'+_('File')+' <small>(<a class="hide-image-link" href="javascript:void(0)">'+_('hide')+'</a>)</small>: </span>');
-				
+
+		var replacement = $('<span><a class="hide-image-link"><i class="fa fa-eye-slash"></i></a></span>');
+
 		replacement.find('a').click(function() {
 			if (hidden_data[board][id]) {
 				hidden_data[board][id]['ts'] = Math.round(Date.now() / 1000);
@@ -59,36 +59,36 @@ $(document).ready(function(){
 				hidden_data[board][id] = {ts: Math.round(Date.now() / 1000), index: [index]};
 			}
 			store_data();
-			
-			var show_link = $('<a class="show-image-link" href="javascript:void(0)">'+_('show')+'</a>').click(function() {
+
+			var show_link = $('<a class="show-image-link"><i class="fa fa-eye" title="'+_('show')+'"</i></a>').click(function() {
 				var i = hidden_data[board][id]['index'].indexOf(index);
 				if (i > -1) hidden_data[board][id]['index'].splice(i,1);
-				
+
 				if (hidden_data[board][id]['index'].length === 0)
 					delete hidden_data[board][id];
 				store_data();
-				
+
 				$(img)
 					.removeClass('hidden')
 					.attr('src', $(img).data('orig'));
 				$(this).prev().show();
 				$(this).remove();
 			});
-			
+
 			$(this).hide().after(show_link);
-			
+
 			if ($(img).parent().data('expanded') == 'true') {
 				$(img).parent().click();
 			}
-		
+
 			$(img)
 				.data('orig', img.src)
 				.attr('src', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==')
 				.addClass('hidden');
 		});
-		
+
 		$(this).parent().prev().contents().first().replaceWith(replacement);
-		
+
 		if (hidden_data[board][id] && hidden_data[board][id]['index'].indexOf(index) !== -1)
 			$(this).parent().prev().find('.hide-image-link').click();
 	};

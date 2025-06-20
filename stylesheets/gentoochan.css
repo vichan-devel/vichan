@@ -22,7 +22,20 @@ div.post.reply, input, textarea {
 	background: rgba(0, 0, 0, 0.1);
 	border: 1px solid rgba(0, 0, 0, 0.2);
 	border-radius: 2px;
+
+	@media (max-width: 48em) {
+		border-left-style: none;
+		border-right-style: none;
+	}
 }
+
+@media (max-width: 48em) {
+	div.post.reply {
+		border-left-style: none;
+		border-right-style: none;
+	}
+}
+
 div.post.reply.post-hover {
 	background: rgba(200, 200, 200, 0.85);
 }

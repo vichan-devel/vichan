@@ -29,6 +29,11 @@ border-bottom: 1px solid #e9af32;
 div.post.reply, div.pages {
 border-radius: 20px 20px;
 border: 1px solid #e9af32;
+
+  @media (max-width: 48em) {
+    border-left-style: none;
+    border-right-style: none;
+  }
 }
 
 form table tr th {

@@ -1,3 +1,10 @@
+/**
+ * Usage:
+ *   $config['additional_javascript'][] = 'js/jquery.min.js';
+ *   $config['additional_javascript'][] = 'js/jquery.mixitup.min.js';
+ *   $config['additional_javascript'][] = 'js/catalog.js';
+ *
+ */
 if (active_page == 'catalog') $(function(){
 	if (localStorage.catalog !== undefined) {
 		var catalog = JSON.parse(localStorage.catalog);

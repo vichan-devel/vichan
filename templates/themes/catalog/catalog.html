@@ -19,20 +19,24 @@
 		</div>
 	</header>
 
-	<span>{% trans 'Sort by' %}: </span>
-	<select id="sort_by" style="display: inline-block">
-		<option selected value="bump:desc">{% trans 'Bump order' %}</option>
-		<option value="time:desc">{% trans 'Creation date' %}</option>
-		<option value="reply:desc">{% trans 'Reply count' %}</option>
-		<option value="random:desc">{% trans 'Random' %}</option>
-	</select>
+	<span>
+		<span>{% trans 'Sort by' %}: </span>
+		<select id="sort_by" style="display: inline-block">
+			<option selected value="bump:desc">{% trans 'Bump order' %}</option>
+			<option value="time:desc">{% trans 'Creation date' %}</option>
+			<option value="reply:desc">{% trans 'Reply count' %}</option>
+			<option value="random:desc">{% trans 'Random' %}</option>
+		</select>
+	</span>
 
-	<span>{% trans 'Image size' %}: </span>
-	<select id="image_size" style="display: inline-block">
-		<option value="vsmall">{% trans 'Very small' %}</option>
-		<option selected value="small">{% trans 'Small' %}</option>
-		<option value="large">{% trans 'Large' %}</option>
-	</select>
+	<span>
+		<span>{% trans 'Image size' %}: </span>
+		<select id="image_size" style="display: inline-block">
+			<option value="vsmall">{% trans 'Very small' %}</option>
+			<option selected value="small">{% trans 'Small' %}</option>
+			<option value="large">{% trans 'Large' %}</option>
+		</select>
+	</span>
 	<div class="threads">
 		<div id="Grid">
 		{% for post in recent_posts %}

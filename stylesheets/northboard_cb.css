@@ -28,14 +28,22 @@ div.post.reply {
     background: #343439;
     border-color: #3070A9;
     border-top: 1px solid #3070A9;
-    border-left: 1px solid #3070A9;
     border-radius: 3px;
     padding: 0px;
+
+    @media (min-width: 48em) {
+        border-left: 1px solid #3070A9;
+    }
 }
 
 div.post.reply.highlighted {
     background: #44444f;
     border: 3px dashed #3070a9;
+
+    @media (max-width: 48em) {
+        border-left-style: none;
+        border-right-style: none;
+    }
 }
 
 div.post.reply div.body a, .mentioned {
@@ -220,30 +228,30 @@ span.heading {
   right: 1em !important;
   position: absolute !important;
 }
- 
+
 #expand-all-images{
   margin-top: 4em !important;
 }
- 
+
 #treeview{
   margin-top: 5em !important;
 }
- 
+
 #shrink-all-images{
   margin-top: 6em !important;
 }
- 
+
 #expand-all-images + hr,
 #shrink-all-images + hr{
   opacity: 0 !important;
   margin: 0 !important;
 }
- 
+
 #treeview + hr{
   opacity: 0 !important;
   clear: both !important;
 }
- 
+
 #options_handler{
   margin-top: 3em !important;
 }

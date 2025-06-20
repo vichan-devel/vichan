@@ -5,10 +5,10 @@
 
 require_once 'inc/bootstrap.php';
 
-use Vichan\{Context, WebDependencyFactory};
 use Vichan\Data\Driver\{LogDriver, HttpDriver};
-use Vichan\Service\{RemoteCaptchaQuery, NativeCaptchaQuery};
-use Vichan\Functions\Format;
+use Vichan\Data\Queries\ReportQueries;
+use Vichan\Service\{IpBlacklistService, RemoteCaptchaQuery, SecureImageCaptchaQuery};
+use Vichan\Functions\{Format, IP};
 
 /**
  * Utility functions
@@ -123,29 +123,6 @@ function download_file_from_url(HttpDriver $http, $file_url, $request_timeout, $
 		'size' => filesize($tmp_file)
 	);
 }
-
-/**
- * Try extract text from the given image.
- *
- * @param array $config Instance configuration.
- * @param string $img_path The file path to the image.
- * @return string|false Returns a string with the extracted text on success (if any).
- * @throws RuntimeException Throws if executing tesseract fails.
- */
-function ocr_image(array $config, string $img_path): string {
-	// The default preprocess command is an ImageMagick b/w quantization.
-	$ret = shell_exec_error(
-		sprintf($config['tesseract_preprocess_command'], escapeshellarg($img_path))
-		 . ' | tesseract stdin stdout 2>/dev/null'
-		 . $config['tesseract_params']
-	);
-	if ($ret === false) {
-		throw new RuntimeException('Unable to run tesseract');
-	}
-
-	return trim($ret);
-}
-
 
 /**
  * Trim an image's EXIF metadata
@@ -395,7 +372,10 @@ if (isset($_POST['delete'])) {
 		}
 	}
 
-	checkDNSBL();
+	$blacklist = $context->get(IpBlacklistService::class)->isIpBlacklisted($_SERVER['REMOTE_ADDR']);
+	if ($blacklist !== null) {
+		error(\sprintf($config['error']['dnsbl'], $blacklist));
+	}
 
 	// Check if board exists
 	if (!openBoard($_POST['board']))
@@ -490,7 +470,10 @@ if (isset($_POST['delete'])) {
 		}
 	}
 
-	checkDNSBL();
+	$blacklist = $context->get(IpBlacklistService::class)->isIpBlacklisted($_SERVER['REMOTE_ADDR']);
+	if ($blacklist !== null) {
+		error(\sprintf($config['error']['dnsbl'], $blacklist));
+	}
 
 	// Check if board exists
 	if (!openBoard($_POST['board']))
@@ -516,12 +499,7 @@ if (isset($_POST['delete'])) {
 		}
 
 		try {
-			$query = new NativeCaptchaQuery(
-				$context->get(HttpDriver::class),
-				$config['domain'],
-				$config['captcha']['provider_check'],
-				$config['captcha']['extra']
-			);
+			$query = $context->get(SecureImageCaptchaQuery::class);
 			$success = $query->verify(
 				$_POST['captcha_text'],
 				$_POST['captcha_cookie']
@@ -542,6 +520,8 @@ if (isset($_POST['delete'])) {
 	if (mb_strlen($reason) > $config['report_max_length']) {
 		error($config['error']['toolongreport']);
 	}
+
+	$report_queries = $context->get(ReportQueries::class);
 
 	foreach ($report as &$id) {
 		$query = prepare(sprintf("SELECT `id`, `thread` FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
@@ -565,13 +545,8 @@ if (isset($_POST['delete'])) {
 				 . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '')
 				 . " for \"$reason\""
 		);
-		$query = prepare("INSERT INTO ``reports`` VALUES (NULL, :time, :ip, :board, :post, :reason)");
-		$query->bindValue(':time', time(), PDO::PARAM_INT);
-		$query->bindValue(':ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
-		$query->bindValue(':board', $board['uri'], PDO::PARAM_STR);
-		$query->bindValue(':post', $id, PDO::PARAM_INT);
-		$query->bindValue(':reason', $reason, PDO::PARAM_STR);
-		$query->execute() or error(db_error($query));
+
+		$report_queries->add($_SERVER['REMOTE_ADDR'], $board['uri'], $id, $reason);
 	}
 
 	$is_mod = isset($_POST['mod']) && $_POST['mod'];
@@ -627,6 +602,7 @@ if (isset($_POST['delete'])) {
 		// Check if banned
 		checkBan($board['uri']);
 
+		$post['ip'] = $_SERVER['REMOTE_ADDR'];
 		// Check for CAPTCHA right after opening the board so the "return" link is in there.
 		try {
 			$provider = $config['captcha']['provider'];
@@ -634,27 +610,27 @@ if (isset($_POST['delete'])) {
 			$dynamic = $config['captcha']['dynamic'];
 
 			// With our custom captcha provider
-			if (($provider === 'native' && !$new_thread_capt)
-				|| ($provider === 'native' && $new_thread_capt && $post['op'])) {
-				$query = $context->get(NativeCaptchaQuery::class);
-				$success = $query->verify($_POST['captcha_text'], $_POST['captcha_cookie']);
+			if ($provider === 'native') {
+				if ((!$new_thread_capt && !$post['op']) || ($new_thread_capt && $post['op'])) {
+					$query = $context->get(SecureImageCaptchaQuery::class);
+					$success = $query->verify($_POST['captcha_text'], $_POST['captcha_cookie']);
 
-				if (!$success) {
-					error(
-						"{$config['error']['captcha']}
-						<script>
-							if (actually_load_captcha !== undefined)
-								actually_load_captcha(
-									\"{$config['captcha']['provider_get']}\",
-									\"{$config['captcha']['extra']}\"
-								);
-						</script>"
-					);
+					if (!$success) {
+						error(
+							"{$config['error']['captcha']}
+							<script>
+								if (actually_load_captcha !== undefined)
+									actually_load_captcha(
+										\"{$config['captcha']['provider_get']}\"
+									);
+							</script>"
+						);
+					}
 				}
 			}
 			// Remote 3rd party captchas.
 			elseif ($provider && (!$dynamic || $dynamic === $_SERVER['REMOTE_ADDR'])) {
-				$query = $content->get(RemoteCaptchaQuery::class);
+				$query = $context->get(RemoteCaptchaQuery::class);
 				$field = $query->responseField();
 
 				if (!isset($_POST[$field])) {
@@ -690,7 +666,10 @@ if (isset($_POST['delete'])) {
 			(!isset($_SERVER['HTTP_REFERER']) || !preg_match($config['referer_match'], rawurldecode($_SERVER['HTTP_REFERER']))))
 			error($config['error']['referer']);
 
-		checkDNSBL();
+		$blacklist = $context->get(IpBlacklistService::class)->isIpBlacklisted($_SERVER['REMOTE_ADDR']);
+		if ($blacklist !== null) {
+			error(\sprintf($config['error']['dnsbl'], $blacklist));
+		}
 
 
 		if ($post['mod'] = isset($_POST['mod']) && $_POST['mod']) {
@@ -949,16 +928,36 @@ if (isset($_POST['delete'])) {
 
 	if (!$dropped_post) {
 		// Check string lengths
-		if (mb_strlen($post['name']) > 35)
+		if (mb_strlen($post['name']) > 35) {
 			error(sprintf($config['error']['toolong'], 'name'));
-		if (mb_strlen($post['email']) > 40)
+		}
+		if (mb_strlen($post['email']) > 40) {
 			error(sprintf($config['error']['toolong'], 'email'));
-		if (mb_strlen($post['subject']) > 100)
+		}
+		if (mb_strlen($post['subject']) > 100) {
 			error(sprintf($config['error']['toolong'], 'subject'));
-		if (!$mod && mb_strlen($post['body']) > $config['max_body'])
-			error($config['error']['toolong_body']);
-		if (!$mod && substr_count($post['body'], "\n") >= $config['maximum_lines'])
-			error($config['error']['toomanylines']);
+		}
+		if (!$mod) {
+			$body_mb_len = mb_strlen($post['body']);
+			$is_op = $post['op'];
+
+			if (($is_op && $config['force_body_op']) || (!$is_op && $config['force_body'])) {
+				$min_body = $is_op ? $config['min_body_op'] : $config['min_body'];
+
+				if ($body_mb_len < $min_body) {
+					error($config['error']['tooshort_body']);
+				}
+			}
+
+			$max_body = $is_op ? $config['max_body_op'] : $config['max_body'];
+			if ($body_mb_len > $max_body) {
+				error($config['error']['toolong_body']);
+			}
+
+			if (substr_count($post['body'], '\n') >= $config['maximum_lines']) {
+				error($config['error']['toomanylines']);
+			}
+		}
 	}
 	wordfilters($post['body']);
 
@@ -970,25 +969,11 @@ if (isset($_POST['delete'])) {
 
 	if (!$dropped_post)
 	if (($config['country_flags'] && !$config['allow_no_country']) || ($config['country_flags'] && $config['allow_no_country'] && !isset($_POST['no_country']))) {
-		$gi=geoip_open('inc/lib/geoip/GeoIPv6.dat', GEOIP_STANDARD);
 
-		function ipv4to6($ip) {
-			if (strpos($ip, ':') !== false) {
-				if (strpos($ip, '.') > 0)
-					$ip = substr($ip, strrpos($ip, ':')+1);
-				else return $ip;  //native ipv6
-			}
-			$iparr = array_pad(explode('.', $ip), 4, 0);
-			$part7 = base_convert(($iparr[0] * 256) + $iparr[1], 10, 16);
-			$part8 = base_convert(($iparr[2] * 256) + $iparr[3], 10, 16);
-			return '::ffff:'.$part7.':'.$part8;
-		}
+		list($flagCode, $flagName) = IP\fetch_maxmind($_SERVER['REMOTE_ADDR']);
 
-		if ($country_code = geoip_country_code_by_addr_v6($gi, ipv4to6($_SERVER['REMOTE_ADDR']))) {
-			if (!in_array(strtolower($country_code), array('eu', 'ap', 'o1', 'a1', 'a2')))
-				$post['body'] .= "\n<tinyboard flag>".strtolower($country_code)."</tinyboard>".
-				"\n<tinyboard flag alt>".geoip_country_name_by_addr_v6($gi, ipv4to6($_SERVER['REMOTE_ADDR']))."</tinyboard>";
-		}
+		$post['body'] .= "\n<tinyboard flag>".strtolower($flagCode)."</tinyboard>".
+				"\n<tinyboard flag alt>".$flagName."</tinyboard>";
 	}
 
 	if ($config['user_flag'] && isset($_POST['user_flag']) && !empty($_POST['user_flag'])) {
@@ -1057,7 +1042,7 @@ if (isset($_POST['delete'])) {
 	if (!hasPermission($config['mod']['bypass_filters'], $board['uri']) && !$dropped_post) {
 		require_once 'inc/filters.php';
 
-		do_filters($post);
+		do_filters($context, $post);
 	}
 
 	if ($post['has_file']) {
@@ -1178,27 +1163,6 @@ if (isset($_POST['delete'])) {
 			$dont_copy_file = false;
 		}
 
-		if ($config['tesseract_ocr'] && $file['thumb'] != 'file') { // Let's OCR it!
-			$fname = $file['tmp_name'];
-
-			if ($file['height'] > 500 || $file['width'] > 500) {
-				$fname = $file['thumb'];
-			}
-
-			if ($fname !== 'spoiler') { // We don't have that much CPU time, do we?
-				try {
-					$txt = ocr_image($config, $fname);
-					if ($txt !== '') {
-						// This one has an effect, that the body is appended to a post body. So you can write a correct
-						// spamfilter.
-						$post['body_nomarkup'] .= "<tinyboard ocr image $key>" . htmlspecialchars($txt) . "</tinyboard>";
-					}
-				} catch (RuntimeException $e) {
-					$context->get(LogDriver::class)->log(LogDriver::ERROR, "Could not OCR image: {$e->getMessage()}");
-				}
-			}
-		}
-
 		if (!$dont_copy_file) {
 			if (isset($file['file_tmp'])) {
 				if (!@rename($file['tmp_name'], $file['file']))
@@ -1237,11 +1201,6 @@ if (isset($_POST['delete'])) {
 			}
 		}
 		}
-
-	// Do filters again if OCRing
-	if ($config['tesseract_ocr'] && !hasPermission($config['mod']['bypass_filters'], $board['uri']) && !$dropped_post) {
-		do_filters($post);
-	}
 
 	if (!hasPermission($config['mod']['postunoriginal'], $board['uri']) && $config['robot_enable'] && checkRobot($post['body_nomarkup']) && !$dropped_post) {
 		undoImage($post);
@@ -1315,8 +1274,6 @@ if (isset($_POST['delete'])) {
 		// Let's broadcast it!
 		nntp_publish($message, $msgid);
 	}
-
-	insertFloodPost($post);
 
 	// Handle cyclical threads
 	if (!$post['op'] && isset($thread['cycle']) && $thread['cycle']) {

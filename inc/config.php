@@ -288,7 +288,7 @@
 	$config['simple_spam'] = false;
 
 	$config['captcha'] = [
-		// Can be false, 'recaptcha', 'hcaptcha' or 'native'.
+		// Can be false, 'recaptcha', 'hcaptcha', 'yandexcaptcha' or 'native'.
 		'provider' => false,
 		/*
 		 * If not false, the captcha is dynamically injected on the client if the web server set the `captcha-required`
@@ -308,16 +308,25 @@
 			'sitekey' => '10000000-ffff-ffff-ffff-000000000001',
 			'secret' => '0x0000000000000000000000000000000000000000',
 		],
+		'yandexcaptcha' => [
+			'sitekey' => 'ysc1_rfl88NyaKGOwimTqVEShW23JdWHlRwXg6jyPhkW2sj1voM9Y',
+			'secret' => 'ysc2_M48FXzexqG5mTESVJfS4nVWhq8lytaMGObxEVqym35Kbz0r7',
+		],
 		// To enable the native captcha you need to change a couple of settings. Read more at: /inc/captcha/readme.md
 		'native' => [
 			// Custom captcha get provider path (if not working get the absolute path aka your url).
-			'provider_get' => '/inc/captcha/entrypoint.php',
+			'provider_get' => 'securimage.php',
 			// Custom captcha check provider path
-			'provider_check' => '/inc/captcha/entrypoint.php',
+			'provider_check' => 'securimage.php',
 			// Custom captcha extra field (eg. charset)
 			'extra' => 'abcdefghijklmnopqrstuvwxyz',
 			// New thread captcha. Require solving a captcha to post a thread.
-			'new_thread_capt' => false
+			'new_thread_capt' => false,
+			// Securimage customization options
+			// https://github.com/dapphp/securimage/blob/nextgen/examples/securimage_show_example.php#L49
+			'securimage_options' => ['send_headers' => false, 'no_exit' => true],
+			// Captcha expires (in seconds)
+			'expires_in' => 320
 		]
 	];
 
@@ -503,8 +512,14 @@
 
 	// Maximum numbers of threads that can be created every hour on a board.
 	$config['max_threads_per_hour'] = 30;
+	// Maximum OP body length.
+	$config['max_body_op'] = 1800;
+	// Minimum OP body length. Ignored if force_body_op is set to false.
+	$config['min_body_op'] = 0;
 	// Maximum post body length.
 	$config['max_body'] = 1800;
+	// Minimum post body length.
+	$config['min_body'] = 0;
 	// Maximum number of lines allowed in a post.
 	$config['maximum_lines'] = 100;
 	// Maximum number of post body lines to show on the index page.
@@ -625,6 +640,19 @@
 
 	// Attach country flags to posts.
 	$config['country_flags'] = false;
+
+	// Maxmind configuration for country_flags
+	$config['maxmind'] = [
+		// Path to the MaxMind GeoLite2 City database file used for IP geolocation.
+		'db_path' => '/usr/share/GeoIP/GeoLite2-City.mmdb',
+		// Array of preferred locales to use when fetching location data.
+		// The first locale in the array will be prioritized.
+		'locale' => ['en'],
+		// Default country name to use if no geolocation data is found for the IP address.
+		'country_fallback' => 'Unknown',
+		// Default country code to use if no geolocation data is found.
+		'code_fallback' => 'xx',
+	];
 
 	// Allow the user to decide whether or not he wants to display his country
 	$config['allow_no_country'] = false;
@@ -921,15 +949,6 @@
 	// Set this to true if you're using Linux and you can execute `md5sum` binary.
 	$config['gnu_md5'] = false;
 
-	// Use Tesseract OCR to retrieve text from images, so you can use it as a spamfilter.
-	$config['tesseract_ocr'] = false;
-
-	// Tesseract parameters
-	$config['tesseract_params'] = '';
-
-	// Tesseract preprocess command
-	$config['tesseract_preprocess_command'] = 'convert -monochrome %s -';
-
 	// Number of posts in a "View Last X Posts" page
 	$config['noko50_count'] = 50;
 	// Number of posts a thread needs before it gets a "View Last X Posts" page.
@@ -1058,8 +1077,10 @@
 	// Show page navigation links at the top as well.
 	$config['page_nav_top'] = false;
 
-	// Show "Catalog" link in page navigation. Use with the Catalog theme. Set to false to disable.
-	$config['catalog_link'] = 'catalog.html';
+	// Link to the catalog page in page navigation, relative to the board. Use with the Catalog theme.
+	// Set to false to disable.
+	// Usually you will set this to 'catalog.html' to link to /<board>/catalog.html
+	$config['catalog_link'] = false;
 
 	// Board categories. Only used in the "Categories" theme.
 	// $config['categories'] = array(
@@ -1176,13 +1197,13 @@
 			'<iframe allowfullscreen="true" width="%%tb_width%%" height="%%tb_height%%" scrolling="no" frameborder="0" style="border: none;" src="https://www.bitchute.com/embed/$2"></iframe>'
 		),
 		array(
-        		'/^https?:\/\/(?:www\.)?odysee\.com\/(?:@[^\/]+\/)?([-a-zA-Z0-9_]+:[a-zA-Z0-9]+)(\/)?(\?[^\'"<>]*)?$/i',
-        		'<iframe width="%%tb_width%%" height="%%tb_height%%" src="https://odysee.com/$/embed/$1" allowfullscreen></iframe>'
+      '/^https?:\/\/(?:www\.)?odysee\.com\/(?:@[^\/]+\/)?([-a-zA-Z0-9_]+:[a-zA-Z0-9]+)(\/)?(\?[^\'"<>]*)?$/i',
+      '<iframe width="%%tb_width%%" height="%%tb_height%%" src="https://odysee.com/$/embed/$1" allowfullscreen></iframe>'
 		),
 		array(
-                        '/^https?:\/\/(www\.)?kick\.com\/([a-zA-Z0-9_]+)(\?[^\'"<>]*)?$/i',
-                        '<iframe src="https://player.kick.com/$2" height="%%tb_height%%" width="%%tb_width%%" frameborder="0" scrolling="no" allowfullscreen="true"></iframe>'
-                ),
+      '/^https?:\/\/(www\.)?kick\.com\/([a-zA-Z0-9_]+)(\?[^\'"<>]*)?$/i',
+      '<iframe src="https://player.kick.com/$2" height="%%tb_height%%" width="%%tb_width%%" frameborder="0" scrolling="no" allowfullscreen="true"></iframe>'
+    ),
 		/*
   		//Both TikTok and Instagram are commented out since they contain some extra scripting you might not want natively on your website.
 		array(
@@ -1528,8 +1549,8 @@
 		'default' => '/',
 		// Do DNS lookups on IP addresses to get their hostname for the moderator IP pages (?/IP/x.x.x.x).
 		'dns_lookup' => true,
-		// How many recent posts, per board, to show in ?/IP/x.x.x.x.
-		'ip_recentposts' => 5,
+		// How many recent posts to show in ?/user_posts/ip/x.x.x.x. and ?/user_posts/passwd/xxxxxxxx
+		'recent_user_posts' => 5,
 		// Number of posts to display on the reports page.
 		'recent_reports' => 10,
 		// Number of actions to show per page in the moderation log.
@@ -2033,7 +2054,7 @@
 	// Password hashing method version
 	// If set to 0, it won't upgrade hashes using old password encryption schema, only create new.
 	// You can set it to a higher value, to further migrate to other password hashing function.
-	$config['password_crypt_version'] = 1;
+	$config['password_crypt_version'] = 2;
 
 	// Use CAPTCHA for reports?
 	$config['report_captcha'] = false;

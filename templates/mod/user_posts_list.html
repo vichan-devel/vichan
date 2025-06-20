@@ -1,0 +1,16 @@
+{% if posts|length == 0 %}
+	<p style="text-align:center">{% trans %}There are no posts.{% endtrans %}</p>
+{% else %}
+	{% for board_posts in posts %}
+		<fieldset>
+			<legend>
+				<a href="?/{{ config.board_path|sprintf(board_posts.board.uri) }}{{ config.file_index }}">
+					{{ config.board_abbreviation|sprintf(board_posts.board.uri) }}
+					-
+					{{ board_posts.board.title|e }}
+				</a>
+			</legend>
+			{{ board_posts.posts|join('<hr>') }}
+		</fieldset>
+	{% endfor %}
+{% endif %}

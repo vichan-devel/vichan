@@ -94,7 +94,7 @@ textarea#body{
 
 
 html, body {
-        background:#261712 url('img/caffe_bg.png') repeat fixed center; 
+        background:#261712 url('img/caffe_bg.png') repeat fixed center;
         color: #8e6152;
         font-family: "Trebuchet MS",Trebuchet,serif;
         font-size: 12pt;
@@ -112,7 +112,7 @@ a:hover, a:visited:hover {
         font-size: .8em;
 }
 .desktop-style div.boardlist:nth-child(1) .boardlist {
-background-color: #261712;   
+background-color: #261712;
 }
 .desktop-style div.boardlist:nth-child(1):hover {
 background-color: #261712;
@@ -131,7 +131,7 @@ background-color: #261712;
         /*width:100%;*/
 }
 .theader, .passvalid {
-       
+
         text-align:center;
         padding:2px;
         color:#39241d;
@@ -219,8 +219,8 @@ background-color: #261712;
         color:#a47a6b;
 }
 .reply {
-          
-        background:#a47a6b url('img/caffe_reply.png') repeat center; 
+
+        background:#a47a6b url('img/caffe_reply.png') repeat center;
         border: solid 1px #a47a6b;
         padding: 0;
         margin: 0;
@@ -294,10 +294,15 @@ form table tr th {
 }
 
 div.post.reply {
-    background:#922a01 url('img/caffe_reply2.png') repeat fixed center; 
+    background:#922a01 url('img/caffe_reply2.png') repeat fixed center;
         color: #8e6152;
     border: 1px solid rgba(88, 53, 41, 0.6);
     border-radius: 5px 5px 5px 5px;
+
+    @media (max-width: 48em) {
+        border-left-style: none;
+        border-right-style: none;
+    }
 }
 div.title,h1 {
     color: #8e6152;
@@ -343,7 +348,7 @@ background: rgba(88, 53, 41, 0.3);
 }
 #quick-reply table {
 border-collapse: collapse;
-background:#000 url('img/caffe_reply2.png') repeat fixed center; 
+background:#000 url('img/caffe_reply2.png') repeat fixed center;
 border-style: solid;
 border-width: 1px;
 border-color: rgba(88, 53, 41, 0.6);
@@ -364,7 +369,7 @@ color: #755144;
 }
 #quick-reply table {
 border-collapse: collapse;
-background:#000 url('img/caffe_reply2.png') repeat fixed center; 
+background:#000 url('img/caffe_reply2.png') repeat fixed center;
 }
 a, a:visited {
 text-decoration: underline;

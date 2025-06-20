@@ -3,9 +3,10 @@
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  */
 use Vichan\Context;
-use Vichan\Functions\Format;
-use Vichan\Functions\Net;
-use Vichan\Data\Driver\CacheDriver;
+use Vichan\Data\Queries\{IpNoteQueries, UserPostQueries, ReportQueries};
+use Vichan\Functions\{Format, Net};
+use Vichan\Data\Driver\{CacheDriver, LogDriver};
+use Vichan\Data\Driver\Dns\DnsDriver;
 
 defined('TINYBOARD') or exit;
 
@@ -106,6 +107,7 @@ function mod_logout(Context $ctx) {
 function mod_dashboard(Context $ctx) {
 	global $mod;
 	$config = $ctx->get('config');
+	$report_queries = $ctx->get(ReportQueries::class);
 
 	$args = [];
 
@@ -131,8 +133,7 @@ function mod_dashboard(Context $ctx) {
 		$ctx->get(CacheDriver::class)->set('pm_unreadcount_' . $mod['id'], $args['unread_pms']);
 	}
 
-	$query = query('SELECT COUNT(*) FROM ``reports``') or error(db_error($query));
-	$args['reports'] = $query->fetchColumn();
+	$args['reports'] = $report_queries->getCount();
 
 	$query = query('SELECT COUNT(*) FROM ``ban_appeals``') or error(db_error($query));
 	$args['appeals'] = $query->fetchColumn();
@@ -877,23 +878,29 @@ function mod_ip_remove_note(Context $ctx, $cloaked_ip, $id) {
 	$ip = uncloak_ip($cloaked_ip);
 	$config = $ctx->get('config');
 
-	if (!hasPermission($config['mod']['remove_notes']))
+	if (!hasPermission($config['mod']['remove_notes'])) {
 		error($config['error']['noaccess']);
+	}
 
-	if (filter_var($ip, FILTER_VALIDATE_IP) === false)
+	if (\filter_var($ip, \FILTER_VALIDATE_IP) === false) {
 		error("Invalid IP address.");
+	}
 
-	$query = prepare('DELETE FROM ``ip_notes`` WHERE `ip` = :ip AND `id` = :id');
-	$query->bindValue(':ip', $ip);
-	$query->bindValue(':id', $id);
-	$query->execute() or error(db_error($query));
+	if (!\is_numeric($id)) {
+		error('Invalid note ID');
+	}
 
-	modLog("Removed a note for <a href=\"?/IP/{$cloaked_ip}\">{$cloaked_ip}</a>");
+	$queries = $ctx->get(IpNoteQueries::class);
+	$deleted = $queries->deleteWhereIp((int)$id, $ip);
 
-	header('Location: ?/IP/' . $cloaked_ip . '#notes', true, $config['redirect_http']);
+	if (!$deleted) {
+		error("Note $id does not exist for $cloaked_ip");
+	}
+
+	modLog("Removed a note for <a href=\"?/user_posts/ip/{$cloaked_ip}\">{$cloaked_ip}</a>");
+
+	header('Location: ?/user_posts/ip/' . $cloaked_ip . '#notes', true, $config['redirect_http']);
 }
-
-
 
 function mod_ip(Context $ctx, $cip) {
 	$ip = uncloak_ip($cip);
@@ -901,7 +908,7 @@ function mod_ip(Context $ctx, $cip) {
 	$config = $ctx->get('config');
 
 	if (filter_var($ip, FILTER_VALIDATE_IP) === false)
-		error("Invalid IP address.");
+		error('Invalid IP address.');
 
 	if (isset($_POST['ban_id'], $_POST['unban'])) {
 		if (!hasPermission($config['mod']['unban']))
@@ -909,7 +916,7 @@ function mod_ip(Context $ctx, $cip) {
 
 		Bans::delete($_POST['ban_id'], true, $mod['boards']);
 
-		header('Location: ?/IP/' . $cip . '#bans', true, $config['redirect_http']);
+		header("Location: ?/user_posts/ip/$cip#bans", true, $config['redirect_http']);
 		return;
 	}
 
@@ -927,76 +934,201 @@ function mod_ip(Context $ctx, $cip) {
 
 		$_POST['note'] = escape_markup_modifiers($_POST['note']);
 		markup($_POST['note']);
-		$query = prepare('INSERT INTO ``ip_notes`` VALUES (NULL, :ip, :mod, :time, :body)');
-		$query->bindValue(':ip', $ip);
-		$query->bindValue(':mod', $mod['id']);
-		$query->bindValue(':time', time());
-		$query->bindValue(':body', $_POST['note']);
-		$query->execute() or error(db_error($query));
 
-		modLog("Added a note for <a href=\"?/IP/{$cip}\">{$cip}</a>");
+		$note_queries = $ctx->get(IpNoteQueries::class);
+		$note_queries->add($ip, $mod['id'], $_POST['note']);
 
-		header('Location: ?/IP/' . $cip . '#notes', true, $config['redirect_http']);
+		modLog("Added a note for <a href=\"?/user_posts/ip/{$cip}\">{$cip}</a>");
+
+		header("Location: ?/user_posts/ip/$cip#notes", true, $config['redirect_http']);
 		return;
 	}
 
+	\header("Location: ?/user_posts/ip/$cip", true, $config['redirect_http']);
+}
 
-	$args = [];
-	$args['ip'] = $ip;
-	$args['posts'] = [];
+function mod_user_posts_by_ip(Context $ctx, string $cip, ?string $encoded_cursor = null) {
+	global $mod;
 
-	if ($config['mod']['dns_lookup'] && empty($config['ipcrypt_key']))
-		$args['hostname'] = rDNS($ip);
+	$ip = uncloak_ip($cip);
 
-	$boards = listBoards();
-	foreach ($boards as $board) {
-		openBoard($board['uri']);
-		if (!hasPermission($config['mod']['show_ip'], $board['uri']))
-			continue;
-		$query = prepare(sprintf('SELECT * FROM ``posts_%s`` WHERE `ip` = :ip ORDER BY `sticky` DESC, `id` DESC LIMIT :limit', $board['uri']));
-		$query->bindValue(':ip', $ip);
-		$query->bindValue(':limit', $config['mod']['ip_recentposts'], PDO::PARAM_INT);
-		$query->execute() or error(db_error($query));
-
-		while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
-			if (!$post['thread']) {
-				$po = new Thread($post, '?/', $mod, false);
-			} else {
-				$po = new Post($post, '?/', $mod);
-			}
-
-			if (!isset($args['posts'][$board['uri']]))
-				$args['posts'][$board['uri']] = array('board' => $board, 'posts' => []);
-			$args['posts'][$board['uri']]['posts'][] = $po->build(true);
-		}
+	if (\filter_var($ip, \FILTER_VALIDATE_IP) === false){
+		error('Invalid IP address.');
 	}
 
-	$args['boards'] = $boards;
-	$args['token'] = make_secure_link_token('ban');
+	$config = $ctx->get('config');
+
+	$args = [
+		'ip' => $ip,
+		'posts' => []
+	];
+
+	if (isset($config['mod']['ip_recentposts'])) {
+		$log = $ctx->get(LogDriver::class);
+		$log->log(LogDriver::NOTICE, "'ip_recentposts' has been deprecated. Please use 'recent_user_posts' instead");
+		$recent_user_posts = $config['mod']['ip_recentposts'];
+	} else {
+		$recent_user_posts = $config['mod']['recent_user_posts'];
+	}
+
+	if ($config['mod']['dns_lookup'] && empty($config['ipcrypt_key'])) {
+		$resolver = $ctx->get(DnsDriver::class);
+		$names = $resolver->IPToNames($ip);
+
+		if (!empty($names)) {
+			if (count($names) === 1) {
+				$args['hostname'] = $names[0];
+			} else {
+				$args['hostname'] = $names;
+			}
+		}
+	}
 
 	if (hasPermission($config['mod']['view_ban'])) {
 		$args['bans'] = Bans::find($ip, false, true, null, $config['auto_maintenance']);
 	}
 
 	if (hasPermission($config['mod']['view_notes'])) {
-		$query = prepare("SELECT ``ip_notes``.*, `username` FROM ``ip_notes`` LEFT JOIN ``mods`` ON `mod` = ``mods``.`id` WHERE `ip` = :ip ORDER BY `time` DESC");
-		$query->bindValue(':ip', $ip);
-		$query->execute() or error(db_error($query));
-		$args['notes'] = $query->fetchAll(PDO::FETCH_ASSOC);
+		$note_queries = $ctx->get(IpNoteQueries::class);
+		$args['notes'] = $note_queries->getByIp($ip);
 	}
 
 	if (hasPermission($config['mod']['modlog_ip'])) {
-		$query = prepare("SELECT `username`, `mod`, `ip`, `board`, `time`, `text` FROM ``modlogs`` LEFT JOIN ``mods`` ON `mod` = ``mods``.`id` WHERE `text` LIKE :search ORDER BY `time` DESC LIMIT 50");
-		$query->bindValue(':search', '%' . $cip . '%');
-		$query->execute() or error(db_error($query));
-		$args['logs'] = $query->fetchAll(PDO::FETCH_ASSOC);
+		$ret = Cache::get("mod_page_ip_modlog_ip_$ip");
+		if (!$ret) {
+			$query = prepare("SELECT `username`, `mod`, `ip`, `board`, `time`, `text` FROM ``modlogs`` LEFT JOIN ``mods`` ON `mod` = ``mods``.`id` WHERE `text` LIKE :search ORDER BY `time` DESC LIMIT 50");
+			$query->bindValue(':search', '%' . $ip . '%');
+			$query->execute() or error(db_error($query));
+			$ret = $query->fetchAll(PDO::FETCH_ASSOC);
+			Cache::set("mod_page_ip_modlog_ip_$ip", $ret, 900);
+		}
+		$args['logs'] = $ret;
 	} else {
 		$args['logs'] = [];
 	}
 
-	$args['security_token'] = make_secure_link_token('IP/' . $cip);
+	$boards = listBoards();
+
+	$queryable_uris = [];
+	$queryable_boards = [];
+	foreach ($boards as $board) {
+		$uri = $board['uri'];
+		if (hasPermission($config['mod']['show_ip'], $uri)) {
+			$queryable_uris[] = $uri;
+			$queryable_boards[] = $board;
+		}
+	}
+
+	if (\count($queryable_boards) > 0) {
+		$page_size = \max(\intdiv($recent_user_posts, \count($queryable_boards)), 1);
+
+		$queries = $ctx->get(UserPostQueries::class);
+		$result = $queries->fetchPaginatedByIp($queryable_uris, $ip, $page_size, $encoded_cursor);
+
+		$args['cursor_prev'] = $result->cursor_prev;
+		$args['cursor_next'] = $result->cursor_next;
+
+		foreach($boards as $board) {
+			$uri = $board['uri'];
+			// The Thread and Post classes rely on some implicit board parameter set by openBoard.
+			openBoard($uri);
+
+			// Finally load the post contents and build them.
+			foreach ($result->by_uri[$uri] as $post) {
+				if (!$post['thread']) {
+					$po = new Thread($post, '?/', $mod, false);
+				} else {
+					$po = new Post($post, '?/', $mod);
+				}
+
+				if (!isset($args['posts'][$uri])) {
+					$args['posts'][$uri] = [ 'board' => $board, 'posts' => [] ];
+				}
+				$args['posts'][$uri]['posts'][] = $po->build(true);
+			}
+		}
+	}
+
+	$args['boards'] = $queryable_boards;
+	// Needed to create new bans.
+	$args['token'] = make_secure_link_token('ban');
+
+	// Since the security token is only used to send requests to create notes and remove bans, use "?/IP/" as the url.
+	$args['security_token'] = make_secure_link_token("IP/$cip");
 
 	mod_page(sprintf('%s: %s', _('IP'), htmlspecialchars($cip)), $config['file_mod_view_ip'], $args, $mod, $args['hostname']);
+}
+
+function mod_user_posts_by_passwd(Context $ctx, string $passwd, ?string $encoded_cursor = null) {
+	global $mod;
+
+	// The current hashPassword implementation uses sha3-256, which has a 64 character output in non-binary mode.
+	if (\strlen($passwd) != 64) {
+		error('Invalid password');
+	}
+
+	$config = $ctx->get('config');
+
+	$args = [
+		'passwd' => $passwd,
+		'posts' => []
+	];
+
+	if (isset($config['mod']['ip_recentposts'])) {
+		$log = $ctx->get(LogDriver::class);
+		$log->log(LogDriver::NOTICE, "'ip_recentposts' has been deprecated. Please use 'recent_user_posts' instead");
+		$recent_user_posts = $config['mod']['ip_recentposts'];
+	} else {
+		$recent_user_posts = $config['mod']['recent_user_posts'];
+	}
+
+	$boards = listBoards();
+
+	$queryable_uris = [];
+	$queryable_boards = [];
+	foreach ($boards as $board) {
+		$uri = $board['uri'];
+		if (hasPermission($config['mod']['show_ip'], $uri)) {
+			$queryable_uris[] = $uri;
+			$queryable_boards[] = $board;
+		}
+	}
+
+	if (\count($queryable_boards) > 0) {
+		$page_size = \max(\intdiv($recent_user_posts, \count($queryable_boards)), 1);
+
+		$queries = $ctx->get(UserPostQueries::class);
+		$result = $queries->fetchPaginateByPassword($queryable_uris, $passwd, $page_size, $encoded_cursor);
+
+		$args['cursor_prev'] = $result->cursor_prev;
+		$args['cursor_next'] = $result->cursor_next;
+
+		foreach($boards as $board) {
+			$uri = $board['uri'];
+			// The Thread and Post classes rely on some implicit board parameter set by openBoard.
+			openBoard($uri);
+
+			// Finally load the post contents and build them.
+			foreach ($result->by_uri[$uri] as $post) {
+				if (!$post['thread']) {
+					$po = new Thread($post, '?/', $mod, false);
+				} else {
+					$po = new Post($post, '?/', $mod);
+				}
+
+				if (!isset($args['posts'][$uri])) {
+					$args['posts'][$uri] = [ 'board' => $board, 'posts' => [] ];
+				}
+				$args['posts'][$uri]['posts'][] = $po->build(true);
+			}
+		}
+	}
+
+	$args['boards'] = $queryable_boards;
+	// Needed to create new bans.
+	$args['token'] = make_secure_link_token('ban');
+
+	mod_page(\sprintf('%s: %s', _('Password'), \htmlspecialchars(substr($passwd, 0, 15))), 'mod/view_passwd.html', $args, $mod);
 }
 
 function mod_edit_ban(Context $ctx, $ban_id) {
@@ -1951,7 +2083,7 @@ function mod_deletebyip(Context $ctx, $boardName, $post, $global = false) {
 
 	// Record the action
 	$cip = cloak_ip($ip);
-	modLog("Deleted all posts by IP address: <a href=\"?/IP/$cip\">$cip</a>");
+	modLog("Deleted all posts by IP address: <a href=\"?/user_posts/ip/$cip\">$cip</a>");
 
 	// Redirect
 	header('Location: ?/' . sprintf($config['board_path'], $boardName) . $config['file_index'], true, $config['redirect_http']);
@@ -2444,43 +2576,22 @@ function mod_reports(Context $ctx) {
 	if (!hasPermission($config['mod']['reports']))
 		error($config['error']['noaccess']);
 
-	$query = prepare("SELECT * FROM ``reports`` ORDER BY `time` DESC LIMIT :limit");
-	$query->bindValue(':limit', $config['mod']['recent_reports'], PDO::PARAM_INT);
-	$query->execute() or error(db_error($query));
-	$reports = $query->fetchAll(PDO::FETCH_ASSOC);
+	$reports_limit = $config['mod']['recent_reports'];
+	$report_queries = $ctx->get(ReportQueries::class);
+	$report_rows = $report_queries->getReportsWithPosts($reports_limit);
 
-	$report_queries = [];
-	foreach ($reports as $report) {
-		if (!isset($report_queries[$report['board']]))
-			$report_queries[$report['board']] = [];
-		$report_queries[$report['board']][] = $report['post'];
+	if (\count($report_rows) > $reports_limit) {
+		\array_pop($report_rows);
+		$has_extra = true;
+	} else {
+		$has_extra = false;
 	}
 
-	$report_posts = [];
-	foreach ($report_queries as $board => $posts) {
-		$report_posts[$board] = [];
-
-		$query = query(sprintf('SELECT * FROM ``posts_%s`` WHERE `id` = ' . implode(' OR `id` = ', $posts), $board)) or error(db_error());
-		while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
-			$report_posts[$board][$post['id']] = $post;
-		}
-	}
-
-	$count = 0;
 	$body = '';
-	foreach ($reports as $report) {
-		if (!isset($report_posts[$report['board']][$report['post']])) {
-			// // Invalid report (post has since been deleted)
-			$query = prepare("DELETE FROM ``reports`` WHERE `post` = :id AND `board` = :board");
-			$query->bindValue(':id', $report['post'], PDO::PARAM_INT);
-			$query->bindValue(':board', $report['board']);
-			$query->execute() or error(db_error($query));
-			continue;
-		}
-
+	foreach ($report_rows as $report) {
 		openBoard($report['board']);
 
-		$post = &$report_posts[$report['board']][$report['post']];
+		$post = $report['post_data'];
 
 		if (!$post['thread']) {
 			// Still need to fix this:
@@ -2489,16 +2600,16 @@ function mod_reports(Context $ctx) {
 			$po = new Post($post, '?/', $mod);
 		}
 
-		// a little messy and inefficient
-		$append_html = Element($config['file_mod_report'], array(
+		// A little messy and inefficient.
+		$append_html = Element($config['file_mod_report'], [
 			'report' => $report,
 			'config' => $config,
 			'mod' => $mod,
 			'pm' => create_pm_header(),
 			'token' => make_secure_link_token('reports/' . $report['id'] . '/dismiss'),
 			'token_all' => make_secure_link_token('reports/' . $report['id'] . '/dismiss&all'),
-			'token_post' => make_secure_link_token('reports/'. $report['id'] . '/dismiss&post'),
-		));
+			'token_post' => make_secure_link_token('reports/'. $report['id'] . '/dismiss&post')
+		]);
 
 		// Bug fix for https://github.com/savetheinternet/Tinyboard/issues/21
 		$po->body = truncate($po->body, $po->link(), $config['body_truncate'] - substr_count($append_html, '<br>'));
@@ -2513,14 +2624,16 @@ function mod_reports(Context $ctx) {
 
 		$body .= $po->build(true) . '<hr>';
 
-		if (isset($__old_body_truncate_char))
+		if (isset($__old_body_truncate_char)) {
 			$config['body_truncate_char'] = $__old_body_truncate_char;
-
-		$count++;
+		}
 	}
 
+	$count = \count($report_rows);
+	$header_count = $has_extra ? "{$count}+" : (string)$count;
+
 	mod_page(
-		sprintf('%s (%d)', _('Report queue'), $count),
+		sprintf('%s (%s)', _('Report queue'), $header_count),
 		$config['file_mod_reports'],
 		[
 			'reports' => $body,
@@ -2533,45 +2646,41 @@ function mod_reports(Context $ctx) {
 function mod_report_dismiss(Context $ctx, $id, $action) {
 	$config = $ctx->get('config');
 
-	$query = prepare("SELECT `post`, `board`, `ip` FROM ``reports`` WHERE `id` = :id");
-	$query->bindValue(':id', $id);
-	$query->execute() or error(db_error($query));
-	if ($report = $query->fetch(PDO::FETCH_ASSOC)) {
-		$ip = $report['ip'];
-		$board = $report['board'];
-		$post = $report['post'];
-	} else
+	$report_queries = $ctx->get(ReportQueries::class);
+	$report = $report_queries->getReportById($id);
+
+	if ($report === null) {
 		error($config['error']['404']);
+	}
+	$ip = $report['ip'];
+	$board = $report['board'];
+	$post = $report['post'];
 
 	switch($action){
 		case '&post':
 			if (!hasPermission($config['mod']['report_dismiss_post'], $board))
 				error($config['error']['noaccess']);
 
-			$query = prepare("DELETE FROM ``reports`` WHERE `post` = :post");
-			$query->bindValue(':post', $post);
+			$report_queries->deleteByPost($post);
 			modLog("Dismissed all reports for post #{$id}", $board);
 			break;
 		case '&all':
 			if (!hasPermission($config['mod']['report_dismiss_ip'], $board))
 				error($config['error']['noaccess']);
 
-			$query = prepare("DELETE FROM ``reports`` WHERE `ip` = :ip");
-			$query->bindValue(':ip', $ip);
+			$report_queries->deleteByIp($ip);
 			$cip = cloak_ip($ip);
-			modLog("Dismissed all reports by <a href=\"?/IP/$cip\">$cip</a>");
+			modLog("Dismissed all reports by <a href=\"?/user_posts/ip/$cip\">$cip</a>");
 			break;
 		case '':
 		default:
 			if (!hasPermission($config['mod']['report_dismiss'], $board))
 				error($config['error']['noaccess']);
 
-			$query = prepare("DELETE FROM ``reports`` WHERE `id` = :id");
-			$query->bindValue(':id', $id);
+			$report_queries->deleteById($id);
 			modLog("Dismissed a report for post #{$id}", $board);
 			break;
 	}
-	$query->execute() or error(db_error($query));
 
 	header('Location: ?/reports', true, $config['redirect_http']);
 }
@@ -2583,8 +2692,20 @@ function mod_recent_posts(Context $ctx, $lim) {
 	if (!hasPermission($config['mod']['recent']))
 		error($config['error']['noaccess']);
 
-	$limit = (is_numeric($lim))? $lim : 25;
-	$last_time = (isset($_GET['last']) && is_numeric($_GET['last'])) ? $_GET['last'] : 0;
+	$limit = 25;
+	if (\is_numeric($lim)) {
+		$lim = \intval($lim);
+		if ($lim > 0 && $lim < 1000) {
+			$limit = $lim;
+		}
+	}
+	$last_time = 0;
+	if (isset($_GET['last']) && \is_numeric($_GET['last'])) {
+		$last = \intval($_GET['last']);
+		if ($last > 0) {
+			$last_time = $last;
+		}
+	}
 
 	$mod_boards = [];
 	$boards = listBoards();

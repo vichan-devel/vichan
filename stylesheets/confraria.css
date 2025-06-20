@@ -71,6 +71,11 @@ p.fileinfo span.unimportant, p.fileinfo a {
 div.post.reply {
 	background: #282A2E;
 	border: 1px solid #282A2E;
+
+	@media (max-width: 48em) {
+		border-left-style: none;
+		border-right-style: none;
+	}
 }
 
 

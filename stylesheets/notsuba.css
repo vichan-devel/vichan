@@ -61,6 +61,11 @@ background: #dcae9b;
 div.post.reply {
 background: #e9d1be;
 border-color: #dcae9b;
+
+	@media (max-width: 48em) {
+		border-left-style: none;
+		border-right-style: none;
+	}
 }
 
 div.ban {

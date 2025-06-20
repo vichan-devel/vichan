@@ -220,26 +220,6 @@ var resourceVersion = document.currentScript.getAttribute('data-resource-version
 {% endif %}
 {% verbatim %}
 
-function initStyleChooser() {
-	let newElement = document.createElement('div');
-	newElement.className = 'styles';
-
-	for (styleName in styles) {
-		let style = document.createElement('a');
-		style.innerHTML = '[' + styleName + ']';
-		style.onclick = function() {
-			changeStyle(this.innerHTML.substring(1, this.innerHTML.length - 1), this);
-		};
-		if (styleName == selectedstyle) {
-			style.className = 'selected';
-		}
-		style.href = 'javascript:void(0);';
-		newElement.appendChild(style);
-	}
-
-	document.getElementsByTagName('body')[0].insertBefore(newElement, document.getElementsByTagName('body')[0].lastChild.nextSibling);
-}
-
 function getCookie(cookie_name) {
 	let results = document.cookie.match('(^|;) ?' + cookie_name + '=([^;]*)(;|$)');
 	if (results) {
@@ -418,8 +398,6 @@ var script_settings = function(script_name) {
 };
 
 function init() {
-	initStyleChooser();
-
 	{% endverbatim %}
 	{% if config.allow_delete %}
 	if (document.forms.postcontrols) {

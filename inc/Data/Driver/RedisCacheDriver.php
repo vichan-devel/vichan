@@ -34,7 +34,6 @@ class RedisCacheDriver implements CacheDriver {
 			// Return null if the key doesn't exist
 			return null;
 		}
-
 		return \json_decode($ret, true);
 	}
 
@@ -61,6 +60,10 @@ class RedisCacheDriver implements CacheDriver {
 
 	// Clears all data in the current Redis database
 	public function flush(): void {
-		$this->inner->flushDB();
+		if (empty($this->prefix)) {
+			$this->inner->flushDB();
+		} else {
+			$this->inner->unlink($this->inner->keys("{$this->prefix}*"));
+		}
 	}
 }

@@ -34,6 +34,11 @@ div.post.reply {
 	border: 0px;
 	background: #FAE8D4;
 	border: 1px solid #E2C5B1;
+
+	@media (max-width: 48em) {
+		border-left-style: none;
+		border-right-style: none;
+	}
 }
 div.post.reply.highlighted {
 	background: #f0c0b0;
@@ -62,7 +67,7 @@ div.pages {
 	padding: 7px 5px;
 	color: maroon;
 	font-size: 12pt;
-	
+
 	background: none;
 	border-width: 1px;
 	border-style: inset;

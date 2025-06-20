@@ -20,4 +20,4 @@ if (!isset($_GET['page'])) {
 	$page = (int)$_GET['page'];
 };
 
-mod_board_log($board['uri'], $page, $hide_names, true);
+mod_board_log(Vichan\build_context($config), $board['uri'], $page, $hide_names, true);
