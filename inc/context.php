@@ -131,7 +131,6 @@ function build_context(array $config): Context {
 		},
 		BannersService::class => fn(Context $c): BannersService => new BannersService(
 			$c->get('config')['banner_ext'],
-			$c->get(CacheDriver::class),
 			$c->get(LogDriver::class)
 		),
 	]);
