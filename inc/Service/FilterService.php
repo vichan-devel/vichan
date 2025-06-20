@@ -3,8 +3,8 @@
 namespace Vichan\Service;
 
 use Throwable;
-use Vichan\Controller\Data\Driver\Dns\DnsDriver;
-use Vichan\Controller\Data\Driver\LogDriver;
+use Vichan\Controller\Driver\Dns\DnsDriver;
+use Vichan\Controller\Driver\Log\LogDriver;
 
 /**
  * Applies filters to posts based on configured conditions.
