@@ -3380,7 +3380,10 @@ function mod_banners(Context $ctx, $b) {
 	$dir = ($b === "banners_priority") ? 'static/' . $b : 'static/banners/' . $b;
 
 	if (!is_dir($dir)) {
-		mkdir($dir, 0755, true);
+		$ret = mkdir($dir, 0755, true);
+		if (!$ret) {
+			error(_('Failed to create folder ' . $b));
+		}
 	}
 
 	if (isset($_FILES['files'])){
