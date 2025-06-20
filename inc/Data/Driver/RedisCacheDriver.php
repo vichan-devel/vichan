@@ -1,65 +1,64 @@
 <?php
 namespace Vichan\Data\Driver;
 
+// Prevent direct access to this file for security
 defined('TINYBOARD') or exit;
 
 
+// Handles caching using Redis, a fast in-memory data store
 class RedisCacheDriver implements CacheDriver {
 	private string $prefix;
 	private \Redis $inner;
 
-	public function __construct(string $prefix, string $host, ?int $port, ?string $password, int $database) {
+	// Sets up the Redis connection
+	public function __construct(string $prefix, string $host, int $port, ?string $password, int $database) {
 		$this->inner = new \Redis();
-		if (str_starts_with($host, 'unix:') || str_starts_with($host, ':')) {
-			$ret = \explode(':', $host);
-			if (count($ret) < 2) {
-				throw new \RuntimeException("Invalid unix socket path $host");
-			}
-			// Unix socket.
-			$this->inner->connect($ret[1]);
-		} elseif ($port === null) {
-			$this->inner->connect($host);
-		} else {
-			// IP + port.
-			$this->inner->connect($host, $port);
-		}
+		$this->inner->connect($host, $port);
+
 		if ($password) {
 			$this->inner->auth($password);
 		}
-		if (!$this->inner->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_JSON)) {
-			throw new \RuntimeException('Unable to configure Redis serializer');
-		}
+
 		if (!$this->inner->select($database)) {
-			throw new \RuntimeException('Unable to connect to Redis database!');
+			throw new \RuntimeException('Unable to select Redis database ' . $database);
 		}
 
 		$this->prefix = $prefix;
 	}
 
+	// Retrieves a value from the cache by key
 	public function get(string $key): mixed {
+
 		$ret = $this->inner->get($this->prefix . $key);
 		if ($ret === false) {
+			// Return null if the key doesn't exist
 			return null;
 		}
-		if ($ret === null) {
-			return false;
-		}
-		return $ret;
+		return \json_decode($ret, true);
 	}
 
+	// Stores a value in the cache with an optional expiration time
 	public function set(string $key, mixed $value, mixed $expires = false): void {
-		$value = $value === false ? null : $value;
-		if ($expires === false) {
-			$this->inner->set($this->prefix . $key, $value);
+		// Convert the value to JSON for storage
+		$encodedValue = \json_encode($value);
+
+		if ($expires === false || !is_numeric($expires) || $expires <= 0) {
+			// Store the value without an expiration
+			$this->inner->set($this->prefix . $key, $encodedValue);
 		} else {
-			$this->inner->setEx($this->prefix . $key, $expires, $value);
+			// Store the value with an expiration time (in seconds)
+			$ttl_seconds = (int)$expires;
+			$this->inner->setex($this->prefix . $key, $ttl_seconds, $encodedValue);
 		}
 	}
 
+	// Deletes a specific key from the cache
 	public function delete(string $key): void {
+		// Remove the key from Redis
 		$this->inner->del($this->prefix . $key);
 	}
 
+	// Clears all data in the current Redis database
 	public function flush(): void {
 		if (empty($this->prefix)) {
 			$this->inner->flushDB();

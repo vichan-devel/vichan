@@ -10,7 +10,7 @@ use Vichan\Functions\{Hide, Net};
 defined('TINYBOARD') or exit;
 
 // create a hash/salt pair for validate logins
-function mkhash(string $username, ?string $password, mixed $salt = false): array|string {
+function mkhash(string $username, $password = null, $salt = false) {
 	global $config;
 
 	if (!$salt) {
@@ -195,7 +195,7 @@ function modLog(string $action, ?string $_board = null): void {
 	}
 }
 
-function create_pm_header(): mixed {
+function create_pm_header() {
 	global $mod, $config;
 
 	if ($config['cache']['enabled'] && ($header = cache::get('pm_unread_' . $mod['id'])) != false) {

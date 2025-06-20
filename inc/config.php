@@ -146,6 +146,7 @@
 	 */
 
 	// Uses a PHP array. MUST NOT be used in multiprocess environments.
+	// This will be ignored if a environment variable ( VICHAN_CACHE_ENGINE ) is set.
 	$config['cache']['enabled'] = 'php';
 	// The recommended in-memory method of caching. Requires the extension. Due to how APCu works, this should be
 	// disabled when you run tools from the cli.
@@ -161,20 +162,23 @@
 	// $config['cache']['enabled'] = 'none';
 
 	// Timeout for cached objects such as posts and HTML.
-	$config['cache']['timeout'] = 60 * 60 * 48; // 48 hours
-
-	// Optional prefix if you're running multiple vichan instances on the same machine.
-	$config['cache']['prefix'] = '';
-
-	// Memcached servers to use. Read more: http://www.php.net/manual/en/memcached.addservers.php
-	$config['cache']['memcached'] = array(
-		array('localhost', 11211)
+	$config['cache']['redis'] = array(
+		'host' => 'localhost',
+		'port' => 6379,
+		'password' => '',
+		'database' => 1
 	);
 
-	// Redis server to use. Location, port, password, database id.
-	// Note that vichan may clear the database at times, so you may want to pick a database id just for
-	// vichan to use.
-	$config['cache']['redis'] = [ 'localhost', 6379, null, 1 ];
+	// Cache timeout for cached objects
+	$config['cache']['timeout'] = 60 * 60 * 48; // 48 hours
+
+	// Optional prefix for multiple vichan instances
+	$config['cache']['prefix'] = '';
+
+	// Memcached servers (not used)
+	$config['cache']['memcached'] = [
+		['localhost', 11211]
+	];
 
 	// EXPERIMENTAL: Should we cache configs? Warning: this changes board behaviour, i'd say, a lot.
 	// If you have any lambdas/includes present in your config, you should move them to instance-functions.php
@@ -274,83 +278,6 @@
 
 	// To prevent bump attacks; returns the thread to last position after the last post is deleted.
 	$config['anti_bump_flood'] = false;
-
-	/*
-	 * Introduction to vichan's spam filter:
-	 *
-	 * In simple terms, whenever a posting form on a page is generated (which happens whenever a
-	 * post is made), vichan will add a random amount of hidden, obscure fields to it to
-	 * confuse bots and upset hackers. These fields and their respective obscure values are
-	 * validated upon posting with a 160-bit "hash". That hash can only be used as many times
-	 * as you specify; otherwise, flooding bots could just keep reusing the same hash.
-	 * Once a new set of inputs (and the hash) are generated, old hashes for the same thread
-	 * and board are set to expire. Because you have to reload the page to get the new set
-	 * of inputs and hash, if they expire too quickly and more than one person is viewing the
-	 * page at a given time, vichan would return false positives (depending on how long the
-	 * user sits on the page before posting). If your imageboard is quite fast/popular, set
-	 * $config['spam']['hidden_inputs_max_pass'] and $config['spam']['hidden_inputs_expire'] to
-	 * something higher to avoid false positives.
-	 *
-	 * See also: https://github.com/vichan-devel/vichan/wiki/your_request_looks_automated
-	 *
-	 */
-
-	// Number of hidden fields to generate.
-	$config['spam']['hidden_inputs_min'] = 4;
-	$config['spam']['hidden_inputs_max'] = 12;
-
-	// How many times can a "hash" be used to post?
-	$config['spam']['hidden_inputs_max_pass'] = 12;
-
-	// How soon after regeneration do hashes expire (in seconds)?
-	$config['spam']['hidden_inputs_expire'] = 60 * 60 * 3; // three hours
-
-	// Whether to use Unicode characters in hidden input names and values.
-	$config['spam']['unicode'] = true;
-
-	// These are fields used to confuse the bots. Make sure they aren't actually used by vichan, or it won't work.
-	$config['spam']['hidden_input_names'] = array(
-		'user',
-		'username',
-		'login',
-		'search',
-		'q',
-		'url',
-		'firstname',
-		'lastname',
-		'text',
-		'message'
-	);
-
-	// Always update this when adding new valid fields to the post form, or EVERYTHING WILL BE DETECTED AS SPAM!
-	$config['spam']['valid_inputs'] = array(
-		'hash',
-		'board',
-		'thread',
-		'mod',
-		'name',
-		'email',
-		'subject',
-		'post',
-		'body',
-		'password',
-		'sticky',
-		'lock',
-		'raw',
-		'embed',
-		'g-recaptcha-response',
-		'h-captcha-response',
-		'captcha_cookie',
-		'captcha_text',
-		'spoiler',
-		'page',
-		'file_url',
-		'json_response',
-		'user_flag',
-		'no_country',
-		'tag',
-		'simple_spam'
-	);
 
 	// Enable simple anti-spam measure. Requires the end-user to answer a question before making a post.
 	// Works very well against uncustomized spam. Answers are case-insensitive.
@@ -1248,28 +1175,52 @@
 	// Custom embedding (YouTube, vimeo, etc.)
 	// It's very important that you match the entire input (with ^ and $) or things will not work correctly.
 	// Be careful when creating a new embed, because depending on the URL you end up exposing yourself to an XSS.
-	$config['embedding'] = [
-		[
-			'/^https?:\/\/(\w+\.)?youtube\.com\/watch\?v=([a-zA-Z0-9\-_]{10,11})?$/i',
-			'<iframe style="float: left; padding: 0.6em 0.2em 0.2em 0.2em;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" id="ytplayer" src="https://www.youtube.com/embed/$2"></iframe>'
-		],
-		[
+		$config['embedding'] = array(
+		array(
+			'/^https?:\/\/(\w+\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9\-_]{10,11})?$/i',
+			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" id="ytplayer" src="https://www.youtube.com/embed/$3"></iframe>'
+		),		
+		array(
 			'/^https?:\/\/(\w+\.)?vimeo\.com\/(\d{2,10})(\?.+)?$/i',
 			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" src="https://player.vimeo.com/video/$2"></iframe>'
-		],
-		[
+		),
+		array(
 			'/^https?:\/\/(\w+\.)?dailymotion\.com\/video\/([a-zA-Z0-9]{2,10})(_.+)?$/i',
 			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" src="https://www.dailymotion.com/embed/video/$2" allowfullscreen></iframe>'
-		],
-		[
-			'/^https?:\/\/(\w+\.)?metacafe\.com\/watch\/(\d+)\/([a-zA-Z0-9_\-.]+)\/(\?[^\'"<>]+)?$/i',
-			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0"  src="https://www.metacafe.com/embed/$2/$3/" allowfullscreen></iframe>'
-		],
-		[
-			'/^https?:\/\/(\w+\.)?vocaroo\.com\/([a-zA-Z0-9]{2,12})$/i',
-			'<iframe style="float: left; margin: 10px 20px;" width="300" height="60" frameborder="0" src="https://vocaroo.com/embed/$2"></iframe>'
-		]
-	];
+		),
+		array(
+			'/^https?:\/\/(www\.)?rumble\.com\/embed\/([a-zA-Z0-9]+)(\/\?[^\'"<>]*)?$/i',
+			'<iframe class="rumble" width="%%tb_width%%" height="%%tb_height%%" src="https://rumble.com/embed/$2/" frameborder="0" allowfullscreen></iframe>'
+		),
+		array(
+			'/^https?:\/\/(www\.)?bitchute\.com\/(?:video|embed)\/([a-zA-Z0-9]+)(\/)?(\?[^\'"<>]*)?$/i',
+			'<iframe allowfullscreen="true" width="%%tb_width%%" height="%%tb_height%%" scrolling="no" frameborder="0" style="border: none;" src="https://www.bitchute.com/embed/$2"></iframe>'
+		),
+		array(
+      '/^https?:\/\/(?:www\.)?odysee\.com\/(?:@[^\/]+\/)?([-a-zA-Z0-9_]+:[a-zA-Z0-9]+)(\/)?(\?[^\'"<>]*)?$/i',
+      '<iframe width="%%tb_width%%" height="%%tb_height%%" src="https://odysee.com/$/embed/$1" allowfullscreen></iframe>'
+		),
+		array(
+      '/^https?:\/\/(www\.)?kick\.com\/([a-zA-Z0-9_]+)(\?[^\'"<>]*)?$/i',
+      '<iframe src="https://player.kick.com/$2" height="%%tb_height%%" width="%%tb_width%%" frameborder="0" scrolling="no" allowfullscreen="true"></iframe>'
+    ),
+		/*
+  		//Both TikTok and Instagram are commented out since they contain some extra scripting you might not want natively on your website.
+		array(
+			'/^https?:\/\/(www\.)?tiktok\.com\/@([a-zA-Z0-9_.]+)\/video\/([0-9]+)(\?[^\'"<>]*)?$/i',
+			'<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@$2/video/$3" data-video-id="$3" style="max-width: %%tb_width%%px;min-width: 325px;"><section></section></blockquote><script async src="https://www.tiktok.com/embed.js"></script>'
+		),
+		array(
+			'/^https?:\/\/(www\.)?instagram\.com\/(p|reel|tv)\/([a-zA-Z0-9_-]+)(\/)?(\?[^\'"<>]*)?$/i',
+			'<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/$2/$3/" data-instgrm-version="14" style="max-width: %%tb_width%%px; min-width: 326px; width: 100%;"></blockquote><script async src="//www.instagram.com/embed.js"></script>'
+		),
+  		*/
+		array(
+			'/^https?:\/\/(\w+\.)?(vocaroo\.com\/|voca\.ro\/)([a-zA-Z0-9]{2,12})$/i',
+			'<iframe style="float: left; margin: 10px 20px;" width="300" height="60" frameborder="0" src="https://vocaroo.com/embed/$3"></iframe>'
+		),
+				
+	);
 
 	// Embedding width and height.
 	$config['embed_width'] = 300;
@@ -1650,7 +1601,7 @@
 
 		'link_delete' => '[D]',
 		'link_ban' => '[B]',
-		'link_bandelete' => '[&amp;D]',
+		'link_bandelete' => '[B&amp;D]',
 		'link_deletefile' => '[F]',
 		'link_spoilerimage' => '[S]',
 		'link_deletebyip' => '[D+]',

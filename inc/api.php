@@ -119,8 +119,9 @@ class Api {
 		$fields = $threadsPage ? self::THREADS_PAGE_FIELDS : $this->postFields;
 		$this->translateFields($fields, $post, $apiPost);
 
+
 		if (isset($config['poster_ids']) && $config['poster_ids']) {
-			$apiPost['id'] = poster_id($post->ip, $post->thread, $board['uri']);
+			$apiPost['id'] = poster_id($post->ip, $post->thread ?? $post->id);
 		}
 		if ($threadsPage) {
 			return $apiPost;

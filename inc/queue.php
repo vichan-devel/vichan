@@ -73,7 +73,7 @@ class Queues {
 		};
 	}
 
-	public static function get_queue(array $config, string $name): Queue|false {
+	public static function get_queue(array $config, string $name) {
 		if (!isset(self::$queues[$name])) {
 			if ($config['queue']['enabled'] == 'fs') {
 				$lock = Locks::get_lock($config, $name);

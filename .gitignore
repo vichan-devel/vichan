@@ -29,6 +29,7 @@
 thumbs.db
 Icon?
 Thumbs.db
+.env
 *.patch
 *.diff
 *.rej

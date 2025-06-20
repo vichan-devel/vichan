@@ -60,8 +60,8 @@ var banlist_init = function(token, my_boards, inMod) {
       // duration?
       expires: {name: _("Expires"), width: "235px", fmt: function(f) {
 	if (!f.expires || f.expires == 0) return "<em>"+_("never")+"</em>";
-        return strftime(window.post_date, new Date((f.expires|0)*1000), datelocale) + 
-          ((f.expires < time()) ? "" : " <small>"+_("in ")+until(f.expires|0)+"</small>");
+  var formattedDate = strftime("%m/%d/%Y (%a) %H:%M:%S", new Date((f.expires|0)*1000), datelocale);
+  return formattedDate + ((f.expires < time()) ? "" : " <small>"+_("in ")+until(f.expires|0)+"</small>");
       } },
       username: {name: _("Staff"), width: "100px", fmt: function(f) {
 	var pre='',suf='',un=f.username;
