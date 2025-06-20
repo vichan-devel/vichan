@@ -1,0 +1,34 @@
+<div style="text-align:center">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="token" value="{{ token }}">
+        <h2>{% trans %}Upload banner{% endtrans %}</h2>
+        <p><input type="file" name="files[]" multiple></p>
+
+        {% set banner_size = config.banner_size|filesize %}
+        {% set banner_dimensions = config.banner_width ~ 'px x ' ~ config.banner_height ~ 'px' %}
+        
+        <p>
+            <small>{% trans %}Banners must be &lt; {{ banner_size }} and have image dimensions {{ banner_dimensions }}{% endtrans %}<br/></small>
+        </p>
+
+        <p><input type="submit" value="{% trans 'Upload' %}"></p>
+    </form>
+    <hr>
+    <h2>{{ banners|length }}&nbsp;{% trans %}Banners already in use{% endtrans %}</h2>
+    <form action="{{ action }}" method="post">
+        <input type="hidden" name="token" value="{{ token }}">
+        <table>
+            <tbody>
+                {% for banner in banners %}
+                    <tr>
+                        <td><input name="delete[]" type="checkbox" value="{{ banner }}"></td>
+                        <td>
+                            <img src="static/{{ board.uri != '' ? 'banners/' ~ board.uri : 'banners_priority' }}/{{ banner }}" alt="{{ board.uri != '' ? 'Banner' : 'Priority Banner' }}">
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p><input type="submit" value="{% trans %}Delete selected{% endtrans %}"></p>
+    </form>
+</div>

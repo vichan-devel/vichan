@@ -1,8 +1,11 @@
 <?php
 
-$files = scandir('static/banners/', SCANDIR_SORT_NONE);
-$files = array_diff($files, ['.', '..']);
+use Vichan\Service\BannersService;
 
-$name = $files[array_rand($files)];
-header("Location: /static/banners/$name", true, 307);
-header('Cache-Control: no-cache');
+require_once 'inc/bootstrap.php';
+use function Vichan\build_context;
+
+$board = htmlspecialchars($_GET['board'] ?? $config['banner_ukko'], ENT_QUOTES, 'UTF-8');
+$ctx = build_context($config);
+$banners = $ctx->get(BannersService::class);
+$banners->serve($board);

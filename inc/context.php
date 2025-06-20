@@ -5,6 +5,7 @@ use Vichan\Controller\FloodManager;
 use Vichan\Data\Driver\{CacheDriver, HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
 use Vichan\Data\Driver\Dns\{DnsDriver, HostDnsDriver, LibcDnsDriver};
 use Vichan\Data\Queries\{FloodQueries, IpNoteQueries, UserPostQueries, ReportQueries};
+use Vichan\Service\BannersService;
 use Vichan\Service\FilterService;
 use Vichan\Service\FloodService;
 use Vichan\Service\HCaptchaQuery;
@@ -127,7 +128,11 @@ function build_context(array $config): Context {
 				$config['dnsbl_exceptions'],
 				$config['fcrdns']
 			);
-		}
+		},
+		BannersService::class => fn(Context $c): BannersService => new BannersService(
+			$c->get('config')['banner_ext'],
+			$c->get(LogDriver::class)
+		),
 	]);
 }
 

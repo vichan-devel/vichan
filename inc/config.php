@@ -1101,6 +1101,11 @@
 	// Setting the banner dimensions stops the page shifting as it loads. If you have banners of various different sizes, unset these.
 	$config['banner_width'] = 300;
 	$config['banner_height'] = 100;
+	$config['banner_size'] = 3 * 1024 * 1024;
+	// Which board should we serve for ukko
+	$config['banner_ukko'] = 'ukko';
+	// Allowed banner extensions
+	$config['banner_ext'] = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
 	// Custom stylesheets available for the user to choose. See the "stylesheets/" folder for a list of
 	// available stylesheets (or create your own).
@@ -1459,6 +1464,8 @@
 	$config['file_mod_debug_antispam'] = 'mod/debug/antispam.html';
 	$config['file_mod_debug_recent_posts'] = 'mod/debug/recent_posts.html';
 	$config['file_mod_debug_sql'] = 'mod/debug/sql.html';
+
+	$config['file_mod_banners'] = 'mod/banners.html';
 
 	// Board directory, followed by a forward-slash (/).
 	$config['board_path'] = '%s/';
@@ -1869,6 +1876,8 @@
 	$config['mod']['recent'] = MOD;
 	// Create pages
 	$config['mod']['edit_pages'] = MOD;
+
+	$config['mod']['edit_banners'] = MOD;
 	$config['pages_max'] = 10;
 
 	// Config editor permissions
