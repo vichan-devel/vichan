@@ -36,11 +36,11 @@ function is_valid_webm($ffprobe_out) {
 
     $audio_codec = $ffprobe_out['streams'][1]['codec_name'] ?? null;
 
-    if ($video_codec !== 'h264' || ($audio_codec && $audio_codec !== 'aac')) {
-      return array('code' => 2, 'msg' => $config['error']['invalidwebm']);
+    if ($video_codec !== 'h264' || $video_codec != 'h265' || ($audio_codec && $audio_codec !== 'aac')) {
+      return array('code' => 2, 'msg' => $config['error']['invalidwebm'] . ' Codec: ' . $ffprobe_out['streams'][0]['codec_name'] . '-' . $ffprobe_out['streams'][1]['codec_name']);
     }
   } else {
-    return array('code' => 1, 'msg' => $config['error']['genwebmerror']);  
+    return array('code' => 1, 'msg' => $config['error']['genwebmerror']);
   }
   if ((count($ffprobe_out['streams']) > 1) && (!$config['webm']['allow_audio']))
     return array('code' => 3, 'msg' => $config['error']['webmhasaudio']);
