@@ -3,10 +3,10 @@
  *  Copyright (c) 2010-2013 Tinyboard Development Group
  */
 use Vichan\Context;
-use Vichan\Controller\Data\{IpNoteQueries, UserPostQueries, ReportQueries};
+use Vichan\Data\{IpNoteQueries, UserPostQueries, ReportQueries};
 use Vichan\Functions\{Format, Net};
-use Vichan\Controller\Data\Driver\{CacheDriver, LogDriver};
-use Vichan\Controller\Data\Driver\Dns\DnsDriver;
+use Vichan\Controller\Driver\{CacheDriver, LogDriver};
+use Vichan\Controller\Driver\Dns\DnsDriver;
 
 defined('TINYBOARD') or exit;
 
