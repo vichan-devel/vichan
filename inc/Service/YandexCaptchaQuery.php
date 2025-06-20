@@ -1,7 +1,7 @@
 <?php
 namespace Vichan\Service;
 
-use Vichan\Controller\Data\Driver\HttpDriver;
+use Vichan\Controller\Driver\HttpDriver;
 
 defined('TINYBOARD') or exit;
 
