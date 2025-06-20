@@ -1,13 +1,13 @@
 <?php
-namespace Vichan\Data\Driver;
+namespace Vichan\Controller\Data\Driver;
 
 defined('TINYBOARD') or exit;
 
 
 /**
- * Log to php's standard error file stream.
+ * Log via the php function error_log.
  */
-class StderrLogDriver implements LogDriver {
+class ErrorLogLogDriver implements LogDriver {
 	use LogTrait;
 
 	private string $name;
@@ -21,7 +21,8 @@ class StderrLogDriver implements LogDriver {
 	public function log(int $level, string $message): void {
 		if ($level <= $this->level) {
 			$lv = $this->levelToString($level);
-			\fwrite(\STDERR, "{$this->name} $lv: $message\n");
+			$line = "{$this->name} $lv: $message";
+			\error_log($line, 0, null, null);
 		}
 	}
 }

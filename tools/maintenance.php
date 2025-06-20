@@ -3,7 +3,7 @@
  * Performs maintenance tasks. Invoke this periodically if the auto_maintenance configuration option is turned off.
  */
 
-use Vichan\Data\ReportQueries;
+use Vichan\Controller\Data\ReportQueries;
 
 require dirname(__FILE__) . '/inc/cli.php';
 
@@ -35,7 +35,7 @@ $time_tot += $delta;
 $deleted_tot += $deleted_count;
 
 if ($config['cache']['enabled'] === 'fs') {
-	$fs_cache = new Vichan\Data\Driver\FsCacheDriver(
+	$fs_cache = new Vichan\Controller\Data\Driver\FsCacheDriver(
 		$config['cache']['prefix'],
 		"tmp/cache/{$config['cache']['prefix']}",
 		'.lock',

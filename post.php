@@ -5,8 +5,8 @@
 
 require_once 'inc/bootstrap.php';
 
-use Vichan\Data\Driver\{LogDriver, HttpDriver};
-use Vichan\Data\ReportQueries;
+use Vichan\Controller\Data\Driver\{LogDriver, HttpDriver};
+use Vichan\Controller\Data\ReportQueries;
 use Vichan\Service\{IpBlacklistService, RemoteCaptchaQuery, SecureImageCaptchaQuery};
 use Vichan\Functions\{Format, IP};
 

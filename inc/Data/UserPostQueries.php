@@ -1,5 +1,5 @@
 <?php
-namespace Vichan\Data;
+namespace Vichan\Controller\Data;
 
 use Vichan\Functions\Net;
 

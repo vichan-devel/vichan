@@ -1,7 +1,7 @@
 <?php
-namespace Vichan\Data;
+namespace Vichan\Controller\Data;
 
-use Vichan\Data\Driver\CacheDriver;
+use Vichan\Controller\Data\Driver\CacheDriver;
 
 
 class IpNoteQueries {

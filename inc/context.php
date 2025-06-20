@@ -2,9 +2,9 @@
 namespace Vichan;
 
 use Vichan\Controller\FloodManager;
-use Vichan\Data\Driver\{CacheDriver, HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
-use Vichan\Data\Driver\Dns\{DnsDriver, HostDnsDriver, LibcDnsDriver};
-use Vichan\Data\{FloodQueries, IpNoteQueries, UserPostQueries, ReportQueries};
+use Vichan\Controller\Data\Driver\{CacheDriver, HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
+use Vichan\Controller\Data\Driver\Dns\{DnsDriver, HostDnsDriver, LibcDnsDriver};
+use Vichan\Controller\Data\{FloodQueries, IpNoteQueries, UserPostQueries, ReportQueries};
 use Vichan\Service\FilterService;
 use Vichan\Service\FloodService;
 use Vichan\Service\HCaptchaQuery;

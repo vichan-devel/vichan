@@ -2,8 +2,8 @@
 
 namespace Vichan\Controller;
 
-use Vichan\Data\Driver\LogDriver;
-use Vichan\Data\IpNoteQueries;
+use Vichan\Controller\Data\Driver\LogDriver;
+use Vichan\Controller\Data\IpNoteQueries;
 use Vichan\Service\FilterService;
 use Vichan\Service\FloodService;
 
