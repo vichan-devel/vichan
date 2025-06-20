@@ -892,7 +892,7 @@ if (isset($_POST['delete'])) {
 				if (isset($config['filename_func']))
 					$file['file_id'] = $config['filename_func']($file);
 				else
-					$file['file_id'] = time() . substr(microtime(), 2, 3);
+					$file['file_id'] = time() . substr(microtime(), 2, 3) . substr('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', random_int(0, 51), 1);
 
 				if (sizeof($_FILES) > 1)
 					$file['file_id'] .= "-$i";
@@ -963,6 +963,46 @@ if (isset($_POST['delete'])) {
 
 	$post['body'] = escape_markup_modifiers($post['body']);
 
+	//Post pending approval stuff
+	if (($config['require_post_approval'] !== 0) && !$mod) {
+		if ($config['post_approval_logic'] == 1) {
+			$ip = $_SERVER['REMOTE_ADDR'];
+			$boards = listBoards(TRUE);
+		
+			if (empty($boards)) {
+				error("No boards found.");
+			}
+		
+			$queryParts = [];
+			foreach ($boards as $boardsearch) {
+				$queryParts[] = "SELECT COUNT(*) as count FROM `posts_{$boardsearch}` WHERE `ip` = :ip AND `post_approved` = 1";
+			}
+		
+			$queryStr = implode(" UNION ALL ", $queryParts);
+		
+			$query = prepare($queryStr);
+			$query->bindValue(":ip", $ip, PDO::PARAM_STR);
+		
+			if (!$query->execute()) {
+				error(db_error($query));
+			}
+		
+			$approved = false;
+			while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+				if ($row['count'] > 0) {
+					$approved = true;
+					break; // No need to check further
+				}
+			}
+			if (!$approved) {
+				$post['post_approval_needed'] = 1;
+			}
+		}
+	else {
+		$post['post_approval_needed'] = 1;
+	}
+	}
+
 	if ($mod && isset($post['raw']) && $post['raw']) {
 		$post['body'] .= "\n<tinyboard raw html>1</tinyboard>";
 	}
@@ -1005,6 +1045,50 @@ if (isset($_POST['delete'])) {
 
 
 	if ($post['has_file']) {
+//Are we doing file approval?
+		if (isset($config['require_file_approval']) && !$mod) {
+			if ($config['file_approval_logic'] == 1) {
+				error("Set to 1");
+			}
+			elseif ($config['file_approval_logic'] == 2) {
+				$ip = $_SERVER['REMOTE_ADDR'];
+				$boards = listBoards(TRUE);
+			
+				if (empty($boards)) {
+					error("No boards found.");
+				}
+			
+				$queryParts = [];
+				foreach ($boards as $boardsearch) {
+					$queryParts[] = "SELECT COUNT(*) as count FROM `posts_{$boardsearch}` WHERE `ip` = :ip AND `media_approved` = 1";
+				}
+			
+				$queryStr = implode(" UNION ALL ", $queryParts);
+			
+				$query = prepare($queryStr);
+				$query->bindValue(":ip", $ip, PDO::PARAM_STR);
+			
+				if (!$query->execute()) {
+					error(db_error($query));
+				}
+			
+				// Check if any row has count > 0
+				$approved = false;
+				while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+					if ($row['count'] > 0) {
+						$approved = true;
+						break; // No need to check further
+					}
+				}
+			
+				if (!$approved) {
+					$post['file_approval_needed'] = 1;
+				}
+			}			
+		else {
+			$post['file_approval_needed'] = 1;
+		}
+		}
 		$allhashes = '';
 
 		foreach ($post['files'] as $key => &$file) {
