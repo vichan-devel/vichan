@@ -2,7 +2,6 @@
 
 namespace Vichan\Service;
 
-use Vichan\Data\Driver\CacheDriver;
 use Vichan\Data\Driver\LogDriver;
 
 class BannersService {
