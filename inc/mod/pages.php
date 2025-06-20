@@ -3392,9 +3392,8 @@ function mod_banners(Context $ctx, $b) {
 			$id = time() . substr(microtime(), 2, 3);
 			$originalName = $_FILES['files']['name'][$index];
 			$extension = strtolower(pathinfo((string) $originalName, PATHINFO_EXTENSION));
-			$allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
-			if (!in_array($extension, $allowedExtensions)) {
+			if (!in_array($extension, $config['banner_ext'])) {
 				error(sprintf($config['error']['fileext'], $extension));
 			}
 
