@@ -2,7 +2,7 @@
 
 namespace Vichan\Service;
 
-use Vichan\Controller\Data\FloodQueries;
+use Vichan\Data\FloodQueries;
 
 /**
  * Manages post flood detection logic based on recent post history.
