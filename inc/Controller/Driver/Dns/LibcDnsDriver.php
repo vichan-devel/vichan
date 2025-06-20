@@ -1,5 +1,5 @@
 <?php
-namespace Vichan\Controller\Data\Driver\Dns;
+namespace Vichan\Controller\Driver\Dns;
 
 
 /**
