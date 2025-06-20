@@ -3,6 +3,7 @@
 namespace Vichan\Service;
 
 use Vichan\Data\Driver\CacheDriver;
+use Vichan\Data\Driver\LogDriver;
 
 class BannersService {
 	private const BANNERS_DIR = 'static/banners/%s/';
@@ -10,14 +11,20 @@ class BannersService {
 	private const UKKO = 'ukko';
 	private array $allowed_exts;
 	private CacheDriver $cache;
+	private LogDriver $logger;
 
-	public function __construct(array $exts, CacheDriver $cache) {
+	public function __construct(array $exts, CacheDriver $cache, LogDriver $logger) {
 		$this->allowed_exts = $exts;
 		$this->cache = $cache;
+		$this->logger = $logger;
 	}
 
 	private function getFilesInDirectory(string $dir): array {
 		if (!\is_dir($dir)) {
+			$this->logger->log(
+				LogDriver::WARNING,
+				'Trying to fetch images from a non existent directory, falling back to priority dir'
+			);
 			$dir = self::PRIORITY_DIR;
 		}
 
@@ -80,6 +87,10 @@ class BannersService {
 
 	public function serve(string $board): void {
 		if (!\getBoardInfo($board)) {
+			$this->logger->log(
+				LogDriver::WARNING,
+				'Trying to fetch images from a non existent board, falling back to ukko'
+			);
 			$board = self::UKKO;
 		}
 
