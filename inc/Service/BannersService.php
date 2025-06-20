@@ -10,12 +10,10 @@ class BannersService {
 	private const PRIORITY_DIR = 'static/banners_priority/';
 	private const UKKO = 'ukko';
 	private array $allowed_exts;
-	private CacheDriver $cache;
 	private LogDriver $logger;
 
-	public function __construct(array $exts, CacheDriver $cache, LogDriver $logger) {
+	public function __construct(array $exts, LogDriver $logger) {
 		$this->allowed_exts = $exts;
-		$this->cache = $cache;
 		$this->logger = $logger;
 	}
 
@@ -28,14 +26,8 @@ class BannersService {
 			$dir = self::PRIORITY_DIR;
 		}
 
-		$cacheKey = "files_{$dir}";
-		$listFiles = $this->cache->get($cacheKey);
-
-		if (!$listFiles) {
-			$listFiles = \array_diff(\scandir($dir, SCANDIR_SORT_NONE), ['.', '..']);
-			$listFiles = \array_filter($listFiles, fn ($file) => \is_file($dir . $file) && $this->isImage($file));
-			$this->cache->set($cacheKey, $listFiles, 10800);
-		}
+		$listFiles = \array_diff(\scandir($dir, SCANDIR_SORT_NONE), ['.', '..']);
+		$listFiles = \array_filter($listFiles, fn ($file) => \is_file($dir . $file) && $this->isImage($file));
 
 		return $listFiles;
 	}
