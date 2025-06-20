@@ -1,6 +1,6 @@
 <?php
 
-namespace Vichan\Controller\Data;
+namespace Vichan\Data;
 
 /**
  * Handles direct database interactions for the `flood` table.
