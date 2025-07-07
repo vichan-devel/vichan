@@ -32,7 +32,8 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
 	$body = Element('search_form.html', [
 		'boards' => $search_service->getSearchableBoards(),
 		'board' => $actual_board,
-		'search' => \str_replace('"', '&quot;', utf8tohtml($_GET['search']))
+		'search' => \str_replace('"', '&quot;', utf8tohtml($_GET['search'])),
+		'flags_enabled' => $search_service->isFlagFilterEnabled()
 	]);
 
 	if ($search_res === null) {
@@ -64,7 +65,8 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
 	$body = Element('search_form.html', [
 		'boards' => $search_service->getSearchableBoards(),
 		'board' => false,
-		'search' => false
+		'search' => false,
+		'flags_enabled' => $search_service->isFlagFilterEnabled()
 	]);
 }
 
