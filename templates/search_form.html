@@ -14,6 +14,10 @@
 		</p>
 	</form>
 	<p style="font-size:8pt;margin:5px">
-		{% trans %}Search is case-insensitive and based on keywords. To match exact phrases, use "quotes". Use an asterisk (*) for wildcard.</p><p style="font-size:8pt;margin:5px">You may apply the following filters to your searches: <strong>id</strong>, <strong>thread</strong>, <strong>subject</strong>, and <strong>name</strong>. To apply a filter, simply add to your query, for example, <em>name:Anonymous</em> or <em>subject:"Some Thread"</em>. Wildcards cannot be used in filters.{% endtrans %}
+		{% if flags_enabled %}
+			{% trans %}Search is case-insensitive and based on keywords. To match exact phrases, use "quotes". Use an asterisk (*) for wildcard.</p><p style="font-size:8pt;margin:5px">You may apply the following filters to your searches: <strong>id</strong>, <strong>thread</strong>, <strong>subject</strong>, <strong>name</strong>, <strong>flag</strong> and <strong>board</strong> (as an alternative syntax). To apply a filter, simply add to your query, for example, <em>name:Anonymous</em> or <em>subject:"Some Thread"</em>. The <strong>id</strong>, <strong>thread</strong> and <strong>board</strong> filters do not support wildcards.{% endtrans %}
+		{% else %}
+			{% trans %}Search is case-insensitive and based on keywords. To match exact phrases, use "quotes". Use an asterisk (*) for wildcard.</p><p style="font-size:8pt;margin:5px">You may apply the following filters to your searches: <strong>id</strong>, <strong>thread</strong>, <strong>subject</strong>, <strong>name</strong> and <strong>board</strong> (as an alternative syntax). To apply a filter, simply add to your query, for example, <em>name:Anonymous</em> or <em>subject:"Some Thread"</em>. The <strong>id</strong>, <strong>thread</strong> and <strong>board</strong> filters do not support wildcards.{% endtrans %}
+		{% endif %}
 	</p>
 </div>
