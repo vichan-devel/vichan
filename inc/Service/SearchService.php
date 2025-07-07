@@ -408,4 +408,11 @@ class SearchService {
 	public function getSearchableBoards(): array {
 		return $this->searchable_board_uris;
 	}
+
+	/**
+	 * @return bool True if the flag filter is enabled.
+	 */
+	public function isFlagFilterEnabled(): bool {
+		return !empty($this->flag_map);
+	}
 }
