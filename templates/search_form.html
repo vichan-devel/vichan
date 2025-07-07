@@ -1,9 +1,14 @@
 <div class="ban">
+	<style>
+		form > p {
+			align-content: center;
+		}
+	</style>
 	<h2>{% trans %}Search{% endtrans %}</h2>
-	<form style="display:inline" action="" method="get">
+	<form style="width:100%;display:flex;flex-wrap:wrap;justify-content:space-between;text-align:start" action="" method="get">
+		<p style="padding-right:0"><label for="search">{% trans %}Phrase:{% endtrans %}</label></p>
+		<p style="flex-grow:1"><input style="width:100%" id="search" name="search" type="text" size="40" value="{{ search }}"></p>
 		<p>
-			<label style="display:inline" for="search">{% trans %}Phrase:{% endtrans %}</label>
-			<input id="search" name="search" type="text" size="40" value="{{ search }}">
 			<select name="board">
 				<option value="none">{% trans %}Select board{% endtrans %}&hellip;</option>
 				{% for b in boards %}
