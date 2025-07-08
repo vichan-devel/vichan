@@ -371,7 +371,7 @@ class SearchService {
 		}
 
 		$flags = [];
-		if ($filters->flag !== null && !empty($this->flag_map)) {
+		if (!empty($filters->flag) && !empty($this->flag_map)) {
 			$flags = $this->matchStrings($this->flag_map, $filters->flag);
 			if (empty($flags)) {
 				// The query doesn't match any flags so it will always fail anyway.
