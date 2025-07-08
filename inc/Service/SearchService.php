@@ -117,11 +117,14 @@ class SearchService {
 			}
 		}
 
-		// Interword wildcards
-		$interword = \min(\count($fragments) - 1, 0);
-		// Wildcards over the total length of the word. Ergo the number of fragments minus 1.
-		$perc = $interword / $total_len * 100;
-		$wildcard_weight = $perc + \count($fragments) * 2;
+		$wildcard_weight = 0;
+		if (!empty($acc) && $total_len >= 0) {
+			// Interword wildcards
+			$interword = \min(\count($fragments) - 1, 0);
+			// Wildcards over the total length of the word. Ergo the number of fragments minus 1.
+			$perc = $interword / $total_len * 100;
+			$wildcard_weight = $perc + \count($fragments) * 2;
+		}
 
 		return [ $acc, $total_len, $wildcard_weight ];
 	}
