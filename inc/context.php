@@ -146,12 +146,14 @@ function build_context(array $config): Context {
 		},
 		SearchService::class => function($c): SearchService {
 			$config = $c->get('config');
-			if ($config['user_flag']) {
-				$flags = $config['user_flags'];
-			} elseif ($config['country_flags']) {
-				$flags = Flags::EMBEDDED_FLAGS;
-			} else {
-				$flags = null;
+
+			$flags = null;
+			if ($config['search']['flag_filter']) {
+				if ($config['user_flag']) {
+					$flags = $config['user_flags'];
+				} elseif ($config['country_flags']) {
+					$flags = Flags::EMBEDDED_FLAGS;
+				}
 			}
 
 			$board_uris = $config['search']['boards'] ?? null;
