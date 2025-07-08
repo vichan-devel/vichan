@@ -241,7 +241,7 @@ class UserPostQueries {
 			return [];
 		}
 
-		$sql = "SELECT * FROM `posts_$board` WHERE " . \implode(' AND ', $where_acc) . ' LIMIT :limit';
+		$sql = "SELECT * FROM `posts_$board` WHERE " . \implode(' AND ', $where_acc) . ' ORDER BY `time` DESC LIMIT :limit';
 		$query = $this->pdo->prepare($sql);
 
 		for ($i = 0; $i < \count($subject); $i++) {
