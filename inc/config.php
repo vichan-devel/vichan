@@ -1883,7 +1883,7 @@
 		'search_limit' => 100,
 		// Maximum weigth of the search query.
 		// Body search filters are discarded if they make the query heavier than this.
-		'max_weight' => 80
+		'max_weight' => 100,
 	];
 
 	// Enable search in the board index.
