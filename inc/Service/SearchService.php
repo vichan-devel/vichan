@@ -368,9 +368,9 @@ class SearchService {
 		$weight_perc = ($filters->weight / $this->max_weight) * 100;
 		if ($weight_perc > 85) {
 			/// Over 85 of the weight.
-			$this->log->log(LogDriver::NOTICE, "$ip search: weight $weight_perc ({$filters->weight}) query '$raw_query'");
+			$this->log->log(LogDriver::NOTICE, "$ip search: weight {$weight_perc}% ({$filters->weight}) query '$raw_query'");
 		} else {
-			$this->log->log(LogDriver::INFO, "$ip search: weight $weight_perc ({$filters->weight}) query '$raw_query'");
+			$this->log->log(LogDriver::INFO, "$ip search: weight {$weight_perc}% ({$filters->weight}) query '$raw_query'");
 		}
 
 		$flags = [];
