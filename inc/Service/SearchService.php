@@ -289,17 +289,21 @@ class SearchService {
 		if ($filters->subject !== null) {
 			list($fragments, $total_len, $wildcard_weight) = self::filterAndWeight($filters->subject);
 
-			if ($total_len <= self::MAX_LENGTH_SUBJECT) {
-				$weighted->subject = $fragments;
-				$weighted->weight = $wildcard_weight;
+			if (!empty($fragments) && $total_len >= 0) {
+				if ($total_len <= self::MAX_LENGTH_SUBJECT) {
+					$weighted->subject = $fragments;
+					$weighted->weight += $wildcard_weight;
+				}
 			}
 		}
 		if ($filters->name !== null) {
 			list($fragments, $total_len, $wildcard_weight) = self::filterAndWeight($filters->name);
 
-			if ($total_len <= self::MAX_LENGTH_NAME) {
-				$weighted->name = $fragments;
-				$weighted->weight += $wildcard_weight;
+			if (!empty($fragments) && $total_len >= 0) {
+				if ($total_len <= self::MAX_LENGTH_NAME) {
+					$weighted->name = $fragments;
+					$weighted->weight += $wildcard_weight;
+				}
 			}
 		}
 		// No wildcard support, and obligatory anyway so it weights 0.
@@ -312,10 +316,12 @@ class SearchService {
 
 				list($fragments, $total_len, $wildcard_weight) = self::filterAndWeight($filters->flag);
 
-				// Add 2 to account for possible wildcards on the ends.
-				if ($total_len <= $max_flag_length + 2) {
-					$weighted->flag = $fragments;
-					$weighted->weight += $wildcard_weight;
+				if (!empty($fragments) && $total_len >= 0) {
+					// Add 2 to account for possible wildcards on the ends.
+					if ($total_len <= $max_flag_length + 2) {
+						$weighted->flag = $fragments;
+						$weighted->weight += $wildcard_weight;
+					}
 				}
 			}
 		}
@@ -324,12 +330,15 @@ class SearchService {
 		if (!empty($filters->body)) {
 			foreach ($filters->body as $keyword) {
 				list($fragments, $total_len, $wildcard_weight) = self::filterAndWeight($keyword);
-				$content_weight = self::weightByContent($fragments);
-				$str_weight = $content_weight + $wildcard_weight;
 
-				if ($str_weight + $weighted->weight <= $this->max_weight) {
-					$weighted->weight += $str_weight;
-					$weighted->body[] = $fragments;
+				if (!empty($fragments) && $total_len >= 0) {
+					$content_weight = self::weightByContent($fragments);
+					$str_weight = $content_weight + $wildcard_weight;
+
+					if ($str_weight + $weighted->weight <= $this->max_weight) {
+						$weighted->weight += $str_weight;
+						$weighted->body[] = $fragments;
+					}
 				}
 			}
 		}
