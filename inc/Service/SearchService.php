@@ -1,8 +1,9 @@
 <?php
 namespace Vichan\Service;
 
+use Vichan\Data\{FiltersParseResult, SearchFilters};
 use Vichan\Data\Driver\LogDriver;
-use Vichan\Data\{FiltersParseResult, UserPostQueries, SearchFilters};
+use Vichan\Data\Queries\UserPostQueries;
 
 
 class SearchService {
