@@ -103,7 +103,11 @@ function config_vars() {
 				continue; // This is just an alias.
 			if (!preg_match('/^array|\[\]|function/', $var['default']) && !preg_match('/^Example: /', trim(implode(' ', $var['comment'])))) {
 				$syntax_error = true;
-				$temp = eval('$syntax_error = false;return @' . $var['default'] . ';');
+                try {
+                    $temp = eval('$syntax_error = false;return @' . $var['default'] . ';');
+                } catch (Throwable $e) {
+                    unset($temp);
+                }
 				if ($syntax_error && $temp === false) {
 					error('Error parsing config.php (line ' . $line_no . ')!', null, $var);
 				} elseif (!isset($temp)) {

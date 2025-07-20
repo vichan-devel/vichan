@@ -12,7 +12,7 @@ services:
       - ./docker/nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf
 #      - ./docker/nginx/ssl:/etc/nginx/ssl # optional For SSL
     ports:
-      - "9080:80"
+      - "80:80"
 #      - "9081:443" # optional for SSL
     depends_on:
       - db
@@ -75,8 +75,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./local-instances/${INSTANCE:-0}/db:/var/lib/mysql
-    # ports:
-    #   - "9082:3306" # optional for external access
+    ports:
+       - "9082:3306" # optional for external access
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
