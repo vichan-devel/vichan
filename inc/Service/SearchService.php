@@ -384,7 +384,9 @@ class SearchService {
 
 		$flags = [];
 		if (!empty($filters->flag) && !empty($this->flag_map)) {
-			$flags = $this->matchStrings($this->flag_map, $filters->flag);
+			// A double array_values is necessary in order to re-index the array, otherwise it's left with random indexes.
+			$reverse_flags = \array_values($this->flag_map);
+			$flags = \array_values($this->matchStrings($reverse_flags, $filters->flag));
 			if (empty($flags)) {
 				// The query doesn't match any flags so it will always fail anyway.
 				return [];
