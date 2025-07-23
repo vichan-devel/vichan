@@ -139,7 +139,7 @@ class SearchService {
 	private static function matchStrings(array $strings, array $fragments): array {
 		return \array_filter($strings, function ($str) use ($fragments) {
 			// Saves the last position. We use this to ensure the fragments are one after the other.
-			$last_ret = 0;
+			$last_ret = -1;
 			foreach ($fragments as $fragment) {
 				if ($last_ret + 1 > \strlen($fragment)) {
 					// Cannot possibly match.
@@ -148,7 +148,7 @@ class SearchService {
 
 				$last_ret = \stripos($str, $fragment, $last_ret + 1);
 				if ($last_ret === false) {
-					// Exclude flags that don't much even a single fragment.
+					// Exclude flags that don't match even a single fragment.
 					return false;
 				}
 			}
