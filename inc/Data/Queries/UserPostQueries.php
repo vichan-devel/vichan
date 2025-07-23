@@ -221,7 +221,7 @@ class UserPostQueries {
 			for ($i = 0; $i < \count($flags); $i++) {
 				// Yes, vichan stores the flag inside the generated HTML. Now you know why it's slow as shit.
 				// English lacks the words to express my feelings about it in a satisfying manner.
-				$flag_acc[] = "CONCAT('%<tinyboard>', :flag$i, '</tinyboard>%')";
+				$flag_acc[] = "CONCAT('%<tinyboard flag alt>', :flag$i, '</tinyboard>%')";
 			}
 			$where_acc[] = 'body_nomarkup LIKE (' . \implode(' OR ', $flag_acc) . ')';
 		}
