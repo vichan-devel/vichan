@@ -27,7 +27,7 @@ class PBanlist {
 
 	public static function gen_json($settings) {
 		\ob_start();
-		Bans::stream_json(false, true, true, []);
+		Bans::stream_json(true, true, []);
 		$out = \ob_get_contents();
 		\ob_end_clean();
 		return $out;
