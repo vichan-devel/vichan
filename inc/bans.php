@@ -286,59 +286,68 @@ class Bans {
 		}
 	}
 
-	static public function stream_json($out = false, $filter_ips = false, $filter_staff = false, $board_access = false) {
+	static public function stream_json($filter_ips = false, $filter_staff = false, $board_access = false) {
+		if ($board_access && $board_access[0] == '*') {
+			$board_access = false;
+		}
+
 		$query = query("SELECT ``bans``.*, `username` FROM ``bans``
 			LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`
  			ORDER BY `created` DESC") or error(db_error());
-                $bans = $query->fetchAll(PDO::FETCH_ASSOC);
 
-		if ($board_access && $board_access[0] == '*') $board_access = false;
+		print('[');
 
-		$out ? fputs($out, "[") : print("[");
+		$has_previous = false;
 
-		$end = end($bans);
+		while (true) {
+			$ban = $query->fetch(PDO::FETCH_ASSOC);
 
-		foreach ($bans as &$ban) {
-			$ban['mask'] = self::range_to_string([$ban['ipstart'], $ban['ipend']]);
+			if (\is_array($ban)) {
+				$ban['mask'] = self::range_to_string([$ban['ipstart'], $ban['ipend']]);
 
-			if ($ban['post']) {
-				$post = json_decode($ban['post']);
-				$ban['message'] = isset($post->body) ? $post->body : 0;
-			}
-			unset($ban['ipstart'], $ban['ipend'], $ban['post'], $ban['creator']);
-
-			if ($board_access === false || in_array ($ban['board'], $board_access)) {
-				$ban['access'] = true;
-			}
-
-			if (filter_var($uncloaked_mask, FILTER_VALIDATE_IP) !== false) {
-				$ban['single_addr'] = true;
-			}
-			if ($filter_staff || ($board_access !== false && !in_array($ban['board'], $board_access))) {
-				$ban['username'] = '?';
-			}
-			if ($filter_ips || ($board_access !== false && !in_array($ban['board'], $board_access))) {
-				@list($ban['mask'], $subnet) = explode("/", $ban['mask']);
-				$ban['mask'] = preg_split("/[\.:]/", $ban['mask']);
-				$ban['mask'] = array_slice($ban['mask'], 0, 2);
-				$ban['mask'] = implode(".", $ban['mask']);
-				$ban['mask'] .= ".x.x";
-				if (isset ($subnet)) {
-					$ban['mask'] .= "/$subnet";
+				if ($ban['post']) {
+					$post = \json_decode($ban['post']);
+					$ban['message'] = isset($post->body) ? $post->body : 0;
 				}
-				$ban['masked'] = true;
-			}
+				unset($ban['ipstart'], $ban['ipend'], $ban['post'], $ban['creator']);
 
-			$json = json_encode($ban);
-			$out ? fputs($out, $json) : print($json);
+				if ($board_access === false || in_array($ban['board'], $board_access)) {
+					$ban['access'] = true;
+				}
 
-			if ($ban['id'] != $end['id']) {
-				$out ? fputs($out, ",") : print(",");
+				if (filter_var($ban['mask'], FILTER_VALIDATE_IP) !== false) {
+					$ban['single_addr'] = true;
+				}
+				if ($filter_staff || ($board_access !== false && !\in_array($ban['board'], $board_access))) {
+					$ban['username'] = '?';
+				}
+				if ($filter_ips || ($board_access !== false && !\in_array($ban['board'], $board_access))) {
+					@list($ban['mask'], $subnet) = explode("/", $ban['mask']);
+					$ban['mask'] = \preg_split("/[\.:]/", $ban['mask']);
+					$ban['mask'] = \array_slice($ban['mask'], 0, 2);
+					$ban['mask'] = \implode(".", $ban['mask']);
+					$ban['mask'] .= ".x.x";
+					if (isset($subnet)) {
+						$ban['mask'] .= "/$subnet";
+					}
+					$ban['masked'] = true;
+				}
+
+				$json = \json_encode($ban);
+
+				// Add a comma if there's a previous row.
+				if ($has_previous) {
+					print(',');
+				}
+				$has_previous = true;
+
+				print($json);
+			} else {
+				break;
 			}
 		}
 
-		$out ? fputs($out, "]") : print("]");
-
+		print(']');
 	}
 
 	static public function seen($ban_id) {
