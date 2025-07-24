@@ -4,7 +4,8 @@ namespace Vichan;
 use Vichan\Controller\FloodManager;
 use Vichan\Data\Driver\{CacheDriver, HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
 use Vichan\Data\Driver\Dns\{DnsDriver, HostDnsDriver, LibcDnsDriver};
-use Vichan\Data\Queries\{FloodQueries, IpNoteQueries, UserPostQueries, ReportQueries};
+use Vichan\Data\Queries\{FloodQueries, IpNoteQueries, UserPostQueries, ReportQueries, SearchQueries};
+use Vichan\Data\Flags;
 use Vichan\Service\FilterService;
 use Vichan\Service\FloodService;
 use Vichan\Service\HCaptchaQuery;
@@ -13,6 +14,7 @@ use Vichan\Service\SecureImageCaptchaQuery;
 use Vichan\Service\ReCaptchaQuery;
 use Vichan\Service\YandexCaptchaQuery;
 use Vichan\Service\RemoteCaptchaQuery;
+use Vichan\Service\SearchService;
 
 defined('TINYBOARD') or exit;
 
@@ -101,6 +103,20 @@ function build_context(array $config): Context {
 		FloodQueries::class => fn(Context $c): FloodQueries => new FloodQueries(
 			$c->get(\PDO::class)
 		),
+		SearchQueries::class => function($c) {
+			$config = $c->get('config');
+			list($queries_for_single, $range_for_single_min) = $config['search']['queries_per_minutes'];
+			list($queries_for_all, $range_for_all_min) = $config['search']['queries_per_minutes_all'];
+
+			return new SearchQueries(
+				$c->get(\PDO::class),
+				$queries_for_single,
+				$range_for_single_min * 60,
+				$queries_for_all,
+				$range_for_all_min * 60,
+				(bool)$config['auto_maintenance']
+			);
+		},
 		FloodService::class => fn(Context $c): FloodService => new FloodService(
 			$c->get(FloodQueries::class),
 			$c->get('config')['filters'],
@@ -127,7 +143,32 @@ function build_context(array $config): Context {
 				$config['dnsbl_exceptions'],
 				$config['fcrdns']
 			);
-		}
+		},
+		SearchService::class => function($c): SearchService {
+			$config = $c->get('config');
+
+			$flags = null;
+			if ($config['search']['flag_filter']) {
+				if ($config['user_flag']) {
+					$flags = $config['user_flags'];
+				} elseif ($config['country_flags']) {
+					$flags = Flags::EMBEDDED_FLAGS;
+				}
+			}
+
+			$board_uris = $config['search']['boards'] ?? null;
+
+			return new SearchService(
+				$c->get(LogDriver::class),
+				$c->get(UserPostQueries::class),
+				$c->get(SearchQueries::class),
+				$flags,
+				$config['search']['max_weight'],
+				$config['search']['max_length'],
+				$config['search']['search_limit'],
+				$board_uris
+			);
+		},
 	]);
 }
 

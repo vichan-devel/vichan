@@ -1881,12 +1881,20 @@
 		'queries_per_minutes_all' => [ 50, 2 ],
 		// Limit of search results
 		'search_limit' => 100,
+		// Maximum weigth of the search query.
+		// Body search filters are discarded if they make the query heavier than this.
+		'max_weight' => 100,
+		// Maximum length of the user sent search query.
+		// Characters beyond the limit are truncated and ignored.
+		'max_length' => 768,
+		// Enable the flag search filter.
+		'flag_filter' => false
 	];
 
 	// Enable search in the board index.
 	$config['board_search'] = false;
 
-	// Boards for searching
+	// Boards for searching, uncomment to limit the search feature to the given boards by uri.
 	//$config['search']['boards'] = array('a', 'b', 'c', 'd', 'e');
 
 	// Blacklist boards for searching, basically the opposite of the one above
