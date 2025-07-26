@@ -1,5 +1,5 @@
 <?php
-namespace Vichan\Data\Driver;
+namespace Vichan\Data\Driver\Log;
 
 defined('TINYBOARD') or exit;
 
