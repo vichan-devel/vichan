@@ -7,7 +7,7 @@ use Vichan\Data\Driver\Log\{ErrorLogLogDriver, FileLogDriver, LogDriver, StderrL
 use Vichan\Data\Driver\Cache\CacheDriver;
 use Vichan\Data\Driver\Dns\{DnsDriver, HostDnsDriver, LibcDnsDriver};
 use Vichan\Data\Queries\{FloodQueries, IpNoteQueries, UserPostQueries, ReportQueries, SearchQueries};
-use Vichan\Data\Flags;
+use Vichan\Data\Model\Flags;
 use Vichan\Service\FilterService;
 use Vichan\Service\FloodService;
 use Vichan\Service\HCaptchaQuery;
