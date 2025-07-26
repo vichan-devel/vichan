@@ -1,7 +1,7 @@
 <?php
 namespace Vichan\Service;
 
-use Vichan\Data\Driver\CacheDriver;
+use Vichan\Data\Driver\Cache\CacheDriver;
 use Vichan\Data\Driver\Dns\DnsDriver;
 use Lifo\IP\IP;
 

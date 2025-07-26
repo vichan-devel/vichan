@@ -2,7 +2,8 @@
 namespace Vichan;
 
 use Vichan\Controller\FloodManager;
-use Vichan\Data\Driver\{CacheDriver, HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
+use Vichan\Data\Driver\{HttpDriver, ErrorLogLogDriver, FileLogDriver, LogDriver, StderrLogDriver, SyslogLogDriver};
+use Vichan\Data\Driver\Cache\CacheDriver;
 use Vichan\Data\Driver\Dns\{DnsDriver, HostDnsDriver, LibcDnsDriver};
 use Vichan\Data\Queries\{FloodQueries, IpNoteQueries, UserPostQueries, ReportQueries, SearchQueries};
 use Vichan\Data\Flags;
