@@ -602,7 +602,8 @@
 	// $config['wordfilters'][] = array('/ca[rt]/', 'dog', true); // 'true' means it's a regular expression
 
 	// Always act as if the user had typed "noko" into the email field.
-	$config['always_noko'] = false;
+	// If the noko is enabled, the user will stay on the thread instead of going back to the index upon posting.
+	$config['always_noko'] = true;
 
 	// Example: Custom tripcodes. The below example makes a tripcode of "#test123" evaluate to "!HelloWorld".
 	// $config['custom_tripcode']['#test123'] = '!HelloWorld';
@@ -1179,7 +1180,7 @@
 		array(
 			'/^https?:\/\/(\w+\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9\-_]{10,11})?$/i',
 			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" id="ytplayer" src="https://www.youtube.com/embed/$3"></iframe>'
-		),		
+		),
 		array(
 			'/^https?:\/\/(\w+\.)?vimeo\.com\/(\d{2,10})(\?.+)?$/i',
 			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" src="https://player.vimeo.com/video/$2"></iframe>'
@@ -1219,7 +1220,7 @@
 			'/^https?:\/\/(\w+\.)?(vocaroo\.com\/|voca\.ro\/)([a-zA-Z0-9]{2,12})$/i',
 			'<iframe style="float: left; margin: 10px 20px;" width="300" height="60" frameborder="0" src="https://vocaroo.com/embed/$3"></iframe>'
 		),
-				
+
 	);
 
 	// Embedding width and height.
