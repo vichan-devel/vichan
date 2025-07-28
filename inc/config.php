@@ -562,7 +562,7 @@
 
 	// Optional URL prefix for links (eg. "http://anonym.to/?").
 	$config['link_prefix'] = '';
-	$config['url_ads'] = &$config['link_prefix'];	 // leave alias
+	#$config['url_ads'] = &$config['link_prefix'];	 // leave alias
 
 	// Allow "uploading" images via URL as well. Users can enter the URL of the image and then vichan will
 	// download it. Not usually recommended.
@@ -1015,7 +1015,8 @@
 	$config['stylesheets'] = [
 		// Default; there is no additional/custom stylesheet for this.
 		'Yotsuba B' => '',
-		'Yotsuba' => 'yotsuba.css'
+		'Yotsuba' => 'yotsuba.css',
+        'futaba' => 'futaba+vichan.css'
 	];
 	// $config['stylesheets']['Futaba'] = 'futaba.css';
 	// $config['stylesheets']['Dark'] = 'dark.css';
@@ -1051,7 +1052,7 @@
 	// 	array('k', array('l', 'm')),
 	// 	array('status' => 'http://status.example.org/')
 	// );
-
+    $config['boards'] = [['t','a']];
 	// Whether or not to put brackets around the whole board list
 	$config['boardlist_wrap_bracket'] = false;
 
