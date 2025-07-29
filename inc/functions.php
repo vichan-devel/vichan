@@ -567,13 +567,14 @@ function file_write($path, $data, $simple = false, $skip_purge = false) {
 	if ($config['gzip_static']) {
 		$gzpath = "$path.gz";
 
-		if ($bytes & ~0x3ff) {  // if ($bytes >= 1024)
-			if (file_put_contents($gzpath, gzencode($data), $simple ? 0 : LOCK_EX) === false)
-				error("Unable to write to file: $gzpath");
-			//if (!touch($gzpath, filemtime($path), fileatime($path)))
-			//	error("Unable to touch file: $gzpath");
-		}
-		else {
+		// 12KBs (2 left for headers etc) to stay within the 14 KBs of the standard initial TCP packet.
+		if ($bytes >= 12288) {
+			if (\file_put_contents($gzpath, \gzencode($data), $simple ? 0 : LOCK_EX) === false) {
+				// Do not fail completely if the write fails.
+				\error_log("Unable to write to file: $gzpath");
+				@unlink($gzpath);
+			}
+		} else {
 			@unlink($gzpath);
 		}
 	}
