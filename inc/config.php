@@ -602,7 +602,8 @@
 	// $config['wordfilters'][] = array('/ca[rt]/', 'dog', true); // 'true' means it's a regular expression
 
 	// Always act as if the user had typed "noko" into the email field.
-	$config['always_noko'] = false;
+	// If the noko is enabled, the user will stay on the thread instead of going back to the index upon posting.
+	$config['always_noko'] = true;
 
 	// Example: Custom tripcodes. The below example makes a tripcode of "#test123" evaluate to "!HelloWorld".
 	// $config['custom_tripcode']['#test123'] = '!HelloWorld';
