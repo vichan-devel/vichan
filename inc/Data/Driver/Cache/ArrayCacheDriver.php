@@ -1,5 +1,5 @@
 <?php
-namespace Vichan\Data\Driver;
+namespace Vichan\Data\Driver\Cache;
 
 
 defined('TINYBOARD') or exit;

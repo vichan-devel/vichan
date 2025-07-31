@@ -1,5 +1,5 @@
 <?php
-namespace Vichan\Data\Driver;
+namespace Vichan\Data\Driver\Cache;
 
 // Prevent direct access to this file for security
 defined('TINYBOARD') or exit;

@@ -4,7 +4,7 @@ namespace Vichan\Service;
 
 use Throwable;
 use Vichan\Data\Driver\Dns\DnsDriver;
-use Vichan\Data\Driver\LogDriver;
+use Vichan\Data\Driver\Log\LogDriver;
 
 /**
  * Applies filters to posts based on configured conditions.

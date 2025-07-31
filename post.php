@@ -5,7 +5,8 @@
 
 require_once 'inc/bootstrap.php';
 
-use Vichan\Data\Driver\{LogDriver, HttpDriver};
+use Vichan\Data\Driver\HttpDriver;
+use Vichan\Data\Driver\Log\LogDriver;
 use Vichan\Data\Queries\ReportQueries;
 use Vichan\Service\{IpBlacklistService, RemoteCaptchaQuery, SecureImageCaptchaQuery};
 use Vichan\Functions\{Format, IP};

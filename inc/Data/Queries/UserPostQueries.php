@@ -1,7 +1,7 @@
 <?php
 namespace Vichan\Data\Queries;
 
-use Vichan\Data\PageFetchResult;
+use Vichan\Data\Model\PageFetchResult;
 use Vichan\Functions\Net;
 
 

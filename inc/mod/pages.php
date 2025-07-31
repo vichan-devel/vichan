@@ -5,7 +5,8 @@
 use Vichan\Context;
 use Vichan\Data\Queries\{IpNoteQueries, UserPostQueries, ReportQueries};
 use Vichan\Functions\{Format, Net};
-use Vichan\Data\Driver\{CacheDriver, LogDriver};
+use Vichan\Data\Driver\LogDriver;
+use Vichan\Data\Driver\Cache\CacheDriver;
 use Vichan\Data\Driver\Dns\DnsDriver;
 
 defined('TINYBOARD') or exit;
