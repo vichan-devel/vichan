@@ -611,22 +611,9 @@ if (file_exists($config['has_installed'])) {
 			  UNIQUE KEY `u_pages` (`name`,`board`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;') or error(db_error());
 		case '5.1.1':
-						foreach ($boards as &$board) {
-								query(sprintf("ALTER TABLE ``posts_%s`` ADD `cycle` int(1) NOT NULL AFTER `locked`", $board['uri'])) or error(db_error());
-						}
-		case '5.1.2':
-			query('CREATE TABLE IF NOT EXISTS ``nntp_references`` (
-				  `board` varchar(60) NOT NULL,
-				  `id` int(11) unsigned NOT NULL,
-				  `message_id` varchar(255) CHARACTER SET ascii NOT NULL,
-				  `message_id_digest` varchar(40) CHARACTER SET ascii NOT NULL,
-				  `own` tinyint(1) NOT NULL,
-				  `headers` text,
-				  PRIMARY KEY (`message_id_digest`),
-				  UNIQUE KEY `message_id` (`message_id`),
-				  UNIQUE KEY `u_board_id` (`board`, `id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-			') or error(db_error());
+			foreach ($boards as &$board) {
+				query(sprintf("ALTER TABLE ``posts_%s`` ADD `cycle` int(1) NOT NULL AFTER `locked`", $board['uri'])) or error(db_error());
+			}
 		case '5.1.3':
 			query('CREATE TABLE IF NOT EXISTS ``captchas`` (
 			  	`cookie` varchar(50),
@@ -929,22 +916,22 @@ if ($step == 0) {
 	$config['max_body'] = getenv('VICHAN_MAX_BODY') !== false ? (int)getenv('VICHAN_MAX_BODY') : 1800;
 	$config['reply_limit'] = getenv('VICHAN_REPLY_LIMIT') !== false ? (int)getenv('VICHAN_REPLY_LIMIT') : 250;
 	$config['max_links'] = getenv('VICHAN_MAX_LINKS') !== false ? (int)getenv('VICHAN_MAX_LINKS') : 20;
-	
+
 	$config['max_filesize'] = getenv('VICHAN_IMAGES_MAX_FILESIZE') !== false ? (int)getenv('VICHAN_IMAGES_MAX_FILESIZE') : 10485760; // This is 10MB
 	$config['thumb_width'] = getenv('VICHAN_IMAGES_THUMB_WIDTH') !== false ? (int)getenv('VICHAN_IMAGES_THUMB_WIDTH') : 250;
 	$config['thumb_height'] = getenv('VICHAN_IMAGES_THUMB_HEIGHT') !== false ? (int)getenv('VICHAN_IMAGES_THUMB_HEIGHT') : 250;
 	$config['max_width'] = getenv('VICHAN_IMAGES_MAX_WIDTH') !== false ? (int)getenv('VICHAN_IMAGES_MAX_WIDTH') : 10000;
 	$config['max_height'] = getenv('VICHAN_IMAGES_MAX_HEIGHT') !== false ? (int)getenv('VICHAN_IMAGES_MAX_HEIGHT') : 10000;
-	
+
 	$config['threads_per_page'] = getenv('VICHAN_DISPLAY_THREADS_PER_PAGE') !== false ? (int)getenv('VICHAN_DISPLAY_THREADS_PER_PAGE') : 10;
 	$config['max_pages'] = getenv('VICHAN_DISPLAY_MAX_PAGES') !== false ? (int)getenv('VICHAN_DISPLAY_MAX_PAGES') : 11;
 	$config['threads_preview'] = getenv('VICHAN_DISPLAY_THREADS_PREVIEW') !== false ? (int)getenv('VICHAN_DISPLAY_THREADS_PREVIEW') : 5;
-	
+
 	$config['root'] = getenv('VICHAN_DIRECTORIES_ROOT') !== false ? getenv('VICHAN_DIRECTORIES_ROOT') : '/';
-	
+
 	$config['secure_trip_salt'] = $sg->generate();
 	$config['secure_password_salt'] = $sg->generate();
-	
+
 	// Set database configuration from Docker environment variables, leave empty if not found
 	$config['db'] = array(
 		'type' => 'mysql', // Default, required for MySQL
@@ -953,7 +940,7 @@ if ($step == 0) {
 		'user' => getenv('VICHAN_MYSQL_USER') !== false ? getenv('VICHAN_MYSQL_USER') : '',
 		'password' => getenv('VICHAN_MYSQL_PASSWORD') !== false ? getenv('VICHAN_MYSQL_PASSWORD') : '',
 	);
-	
+
 	// Append secure_login_only to $_SESSION['more'] if VICHAN_SECURE_LOGIN_ONLY is set
 	if (getenv('VICHAN_SECURE_LOGIN_ONLY') !== false) {
 		$secure_login_only = (int)getenv('VICHAN_SECURE_LOGIN_ONLY');
