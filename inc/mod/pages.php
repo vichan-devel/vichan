@@ -19,6 +19,16 @@ function _link_or_copy(string $target, string $link): bool {
 	return true;
 }
 
+function _trim_str_param(array $arr, string $key): ?string {
+	if (isset($arr[$key])) {
+		$trimmed = \trim($arr[$key]);
+		if (!empty($trimmed)) {
+			return $trimmed;
+		}
+	}
+	return null;
+}
+
 function mod_page($title, $template, $args, $mod, $subtitle = false) {
 	global $config;
 
@@ -1187,7 +1197,13 @@ function mod_ban(Context $ctx) {
 	if (!hasPermission($config['mod']['ban']))
 		error($config['error']['noaccess']);
 
-	if (!isset($_POST['ip'], $_POST['reason'], $_POST['length'], $_POST['board'])) {
+
+	$ip = _trim_str_param($_POST, 'ip' );
+	$reason = _trim_str_param($_POST, 'reason');
+	$length = _trim_str_param($_POST, 'length');
+	$board = _trim_str_param($_POST, 'board');
+
+	if (!isset($ip, $reason, $length, $board)) {
 		mod_page(_('New ban'), $config['file_mod_ban_form'], [ 'token' => make_secure_link_token('ban') ], $mod);
 		return;
 	}
@@ -1784,25 +1800,42 @@ function mod_ban_post(Context $ctx, $board, $delete, $post, $token = false) {
 	$ip = $_post['ip'];
 
 	if (isset($_POST['new_ban'], $_POST['reason'], $_POST['length'], $_POST['board'])) {
-		if (isset($_POST['ip']))
-			$ip = $_POST['ip'];
+		if (isset($_POST['ip'])) {
+			$ip_trim = \trim($_POST['ip']);
+			if (!empty($ip_trim)) {
+				$ip = $ip_trim;
+			}
+		}
 
-		Bans::new_ban($ip, $_POST['reason'], $_POST['length'], $_POST['board'] == '*' ? false : $_POST['board'],
+		$target_ip = \trim($_POST['ip']);
+		$reason = \trim($_POST['reason']);
+		$length = \trim($_POST['length']);
+		$target_board = \trim($_POST['board']);
+
+
+		Bans::new_ban($target_ip, $reason, $length, $target_board == '*' ? false : $target_board,
 			false, $config['ban_show_post'] ? $_post : false);
 
-		if (isset($_POST['public_message'], $_POST['message'])) {
+		$message = _trim_str_param($_POST, 'message');
+		$public_message = _trim_str_param($_POST, 'public_message');
+
+		if (isset($public_message, $message)) {
+			$length_parsed = Bans::parse_time($length);
+			$length_english = $length_parsed ? 'for ' . Format\until($length_parsed) : 'permanently';
+
+			$message = \trim($_POST['message']);
+			$message = \preg_replace('/[\r\n]/', '', $message);
+			$message = \str_replace('%length%', $length_english, $message);
+			$message = \str_replace('%LENGTH%', \strtoupper($length_english), $message);
+
 			// public ban message
-			$length_english = Bans::parse_time($_POST['length']) ? 'for ' . Format\until(Bans::parse_time($_POST['length'])) : 'permanently';
-			$_POST['message'] = preg_replace('/[\r\n]/', '', $_POST['message']);
-			$_POST['message'] = str_replace('%length%', $length_english, $_POST['message']);
-			$_POST['message'] = str_replace('%LENGTH%', strtoupper($length_english), $_POST['message']);
 			$query = prepare(sprintf('UPDATE ``posts_%s`` SET `body_nomarkup` = CONCAT(`body_nomarkup`, :body_nomarkup) WHERE `id` = :id', $board));
 			$query->bindValue(':id', $post);
-			$query->bindValue(':body_nomarkup', sprintf("\n<tinyboard ban message>%s</tinyboard>", utf8tohtml($_POST['message'])));
+			$query->bindValue(':body_nomarkup', sprintf("\n<tinyboard ban message>%s</tinyboard>", utf8tohtml($message)));
 			$query->execute() or error(db_error($query));
 			rebuildPost($post);
 
-			modLog("Attached a public ban message to post #{$post}: " . utf8tohtml($_POST['message']));
+			modLog("Attached a public ban message to post #{$post}: " . utf8tohtml($message));
 			buildThread($thread ? $thread : $post);
 			buildIndex();
 		} elseif (isset($_POST['delete']) && (int) $_POST['delete']) {
