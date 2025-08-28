@@ -145,7 +145,7 @@ CREATE TABLE IF NOT EXISTS `mods` (
 --
 
 INSERT INTO `mods` VALUES
-(1, 'admin', 'cedad442efeef7112fed0f50b011b2b9bf83f6898082f995f69dd7865ca19fb7', '4a44c6c55df862ae901b413feecb0d49', 30, '*');
+(1, 'admin', '$2y$12$sopZFQE75kW932VAUqiKbOA0Yn2V4EQXwx4goh.A1P.gTOIFf4fgu', '2', 30, '*');
 
 -- --------------------------------------------------------
 
