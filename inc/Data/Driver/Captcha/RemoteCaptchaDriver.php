@@ -4,7 +4,7 @@ namespace Vichan\Data\Driver\Captcha;
 defined('TINYBOARD') or exit;
 
 
-interface RemoteCaptchaQuery {
+interface RemoteCaptchaDriver {
 	/**
 	 * Name of the response field in the form data expected by the implementation.
 	 *

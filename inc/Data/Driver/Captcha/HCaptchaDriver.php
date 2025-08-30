@@ -6,17 +6,17 @@ use Vichan\Data\Driver\HttpDriver;
 defined('TINYBOARD') or exit;
 
 
-class HCaptchaQuery implements RemoteCaptchaQuery {
+class HCaptchaDriver implements RemoteCaptchaDriver {
 	private HttpDriver $http;
 	private string $secret;
 	private string $sitekey;
 
 	/**
-	 * Creates a new HCaptchaQuery using the hCaptcha service.
+	 * Creates a new HCaptchaDriver using the hCaptcha service.
 	 *
 	 * @param HttpDriver $http The http client.
 	 * @param string $secret Server side secret.
-	 * @return HCaptchaQuery A new hCaptcha query instance.
+	 * @return HCaptchaDriver A new hCaptcha query instance.
 	 */
 	public function __construct(HttpDriver $http, string $secret, string $sitekey) {
 		$this->http = $http;
