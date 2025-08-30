@@ -46,7 +46,7 @@ if ($config['cache']['enabled'] === 'fs') {
 	$delta = microtime(true) - $start;
 	echo "Deleted $deleted_count expired filesystem cache items in $delta seconds!\n";
 	$time_tot += $delta;
-	$deleted_tot = $deleted_count;
+	$deleted_tot += $deleted_count;
 }
 
 echo "Clearing old search log...\n";
@@ -55,7 +55,7 @@ $start = microtime(true);
 $deleted_count = $search_queries->purgeExpired();
 $delta = microtime(true) - $start;
 $time_tot += $delta;
-$deleted_tot = $deleted_count;
+$deleted_tot += $deleted_count;
 
 $time_tot = number_format((float)$time_tot, 4, '.', '');
 modLog("Deleted $deleted_tot expired entries in {$time_tot}s with maintenance tool");
