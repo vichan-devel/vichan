@@ -1,5 +1,5 @@
 <?php
-namespace Vichan\Service;
+namespace Vichan\Data\Driver\Captcha;
 
 use Vichan\Data\Driver\HttpDriver;
 

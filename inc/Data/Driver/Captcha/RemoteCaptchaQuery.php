@@ -1,5 +1,5 @@
 <?php
-namespace Vichan\Service;
+namespace Vichan\Data\Driver\Captcha;
 
 defined('TINYBOARD') or exit;
 
