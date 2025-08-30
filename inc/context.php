@@ -10,12 +10,8 @@ use Vichan\Data\Queries\{FloodQueries, IpNoteQueries, UserPostQueries, ReportQue
 use Vichan\Data\Model\Flags;
 use Vichan\Service\FilterService;
 use Vichan\Service\FloodService;
-use Vichan\Service\HCaptchaQuery;
 use Vichan\Service\IpBlacklistService;
-use Vichan\Service\SecureImageCaptchaQuery;
-use Vichan\Service\ReCaptchaQuery;
-use Vichan\Service\YandexCaptchaQuery;
-use Vichan\Service\RemoteCaptchaQuery;
+use Vichan\Data\Driver\Captcha\{RemoteCaptchaDriver, HCaptchaDriver, ReCaptchaDriver, SecureImageCaptchaDriver, YandexCaptchaDriver};
 use Vichan\Service\SearchService;
 
 defined('TINYBOARD') or exit;
@@ -61,16 +57,16 @@ function build_context(array $config): Context {
 			$config = $c->get('config');
 			return new HttpDriver($config['upload_by_url_timeout'], $config['max_filesize']);
 		},
-		RemoteCaptchaQuery::class => fn(Context $c): RemoteCaptchaQuery => build_remote_captcha_query(
+		RemoteCaptchaDriver::class => fn(Context $c): RemoteCaptchaDriver => build_remote_captcha_query(
 			$c->get('config'),
 			$c->get(HttpDriver::class)
 		),
-		SecureImageCaptchaQuery::class => function(Context $c): SecureImageCaptchaQuery {
+		SecureImageCaptchaDriver::class => function(Context $c): SecureImageCaptchaDriver {
 			$config = $c->get('config');
 			if ($config['captcha']['provider'] !== 'native') {
 				throw new \RuntimeException('No native captcha service available');
 			}
-			return new SecureImageCaptchaQuery(
+			return new SecureImageCaptchaDriver(
 				$c->get(HttpDriver::class),
 				$config['domain'],
 				$config['captcha']['native']['provider_check']
@@ -208,21 +204,21 @@ function build_log_driver(array $config): LogDriver {
 	}
 }
 
-function build_remote_captcha_query(array $config, HttpDriver $http): RemoteCaptchaQuery {
+function build_remote_captcha_query(array $config, HttpDriver $http): RemoteCaptchaDriver {
 	switch ($config['captcha']['provider']) {
 		case 'recaptcha':
-			return new ReCaptchaQuery(
+			return new ReCaptchaDriver(
 				$http,
 				$config['captcha']['recaptcha']['secret']
 			);
 		case 'hcaptcha':
-			return new HCaptchaQuery(
+			return new HCaptchaDriver(
 				$http,
 				$config['captcha']['hcaptcha']['secret'],
 				$config['captcha']['hcaptcha']['sitekey']
 			);
 		case 'yandexcaptcha':
-			return new YandexCaptchaQuery(
+			return new YandexCaptchaDriver(
 				$http,
 				$config['captcha']['yandexcaptcha']['secret']
 			);
