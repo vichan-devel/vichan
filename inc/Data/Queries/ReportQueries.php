@@ -89,7 +89,7 @@ class ReportQueries {
 			// Get the reports without a post.
 			$invalid = [];
 			foreach ($raw_reports as $report) {
-				if (isset($report_posts[$report['board']][$report['post']])) {
+				if (!isset($report_posts[$report['board']][$report['post']])) {
 					$invalid[] = $report;
 				}
 			}
@@ -129,7 +129,7 @@ class ReportQueries {
 		$query = $this->pdo->prepare('SELECT `board`, `post`, `id` FROM `reports`');
 		$query->execute();
 		$raw_reports = $query->fetchAll(\PDO::FETCH_ASSOC);
-		$valid_reports = $this->filterReports($raw_reports, false, null);
+		$valid_reports = $this->filterReports($raw_reports, false);
 		$count = \count($valid_reports);
 		return $count;
 	}
@@ -175,7 +175,7 @@ class ReportQueries {
 		$query = $this->pdo->prepare('SELECT `board`, `post`, `id` FROM `reports`');
 		$query->execute();
 		$raw_reports = $query->fetchAll(\PDO::FETCH_ASSOC);
-		$invalid_reports = $this->filterReports($raw_reports, true, null);
+		$invalid_reports = $this->filterReports($raw_reports, true);
 
 		foreach ($invalid_reports as $report) {
 			$this->deleteReportImpl($report['board'], $report['post']);
