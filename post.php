@@ -814,7 +814,14 @@ if (isset($_POST['delete'])) {
 	if (!$dropped_post)
 	if (($config['country_flags'] && !$config['allow_no_country']) || ($config['country_flags'] && $config['allow_no_country'] && !isset($_POST['no_country']))) {
 
-		list($flagCode, $flagName) = IP\fetch_maxmind($_SERVER['REMOTE_ADDR']);
+		list($flagCode, $flagName) = IP\fetch_maxmind(
+			$context->get(LogDriver::class),
+			$_SERVER['REMOTE_ADDR'],
+			$config['maxmind']['db_path'],
+			$config['maxmind']['locale'],
+			$config['maxmind']['country_fallback'],
+			$config['maxmind']['code_fallback']
+		);
 
 		$post['body'] .= "\n<tinyboard flag>".strtolower($flagCode)."</tinyboard>".
 				"\n<tinyboard flag alt>".$flagName."</tinyboard>";

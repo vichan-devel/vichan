@@ -1,28 +1,25 @@
 <?php
 namespace Vichan\Functions\IP;
 
-use Exception;
+use Vichan\Data\Driver\Log\LogDriver;
+use GeoIp2\Database\Reader;
 
-function fetch_maxmind($ip) {
-    global $config;
 
-    try {
-        $reader = new \GeoIp2\Database\Reader($config['maxmind']['db_path'], $config['maxmind']['locale']);
-        $record = $reader->city($ip);
-        $countryCode = strtolower($record->country->isoCode);
-    } catch (Exception $e) {
-        return [
-            $config['maxmind']['code_fallback'],
-            $config['maxmind']['country_fallback'],
-        ];
-    }
+function fetch_maxmind(LogDriver $log, string $ip, string $db_path, string $locale, string $code_fallback, string $country_fallback) {
+	try {
+		$reader = new Reader($db_path, $locale);
+		$record = $reader->city($ip);
+		$countryCode = \strtolower($record->country->isoCode);
+	} catch (\Exception $e) {
+		$log->log(LogDriver::ERROR, "Could not fetch country: {$e->getMessage()}");
+		return [ $code_fallback, $country_fallback ];
+	}
 
-    $countryName = $record->country->name;
+	$countryName = $record->country->name;
 
-    if (empty($countryName)) {
-        $countryName = $config['maxmind']['country_fallback'];
-        $countryCode = $config['maxmind']['code_fallback'];
-    }
+	if (empty($countryName)) {
+		return [ $code_fallback, $country_fallback ];
+	}
 
-    return [$countryCode, $countryName];
+	return [ $countryCode, $countryName ];
 }
