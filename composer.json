@@ -41,7 +41,7 @@
             "inc/functions/num.php",
             "inc/functions/theme.php",
             "inc/functions/ip.php",
-            "inc/context.php"
+            "inc/init.php"
         ]
     },
     "license": "Tinyboard + vichan",
