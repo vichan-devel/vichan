@@ -1,8 +1,8 @@
 <?php
 /*
-* ffmpeg.php
-* A barebones ffmpeg based webm implementation for vichan.
-*/
+ * ffmpeg.php
+ * A barebones ffmpeg based webm implementation for vichan.
+ */
 
 function get_webm_info($filename) {
 	global $config;
@@ -18,7 +18,7 @@ function get_webm_info($filename) {
 	$webminfo['error'] = $validcheck['error'];
 	if (empty($webminfo['error'])) {
 		$trackmap = $validcheck['trackmap'];
-		$videoidx = $trackmap['videoat'][0];
+		$videoidx = $trackmap['videoat'][$validcheck['video_idx']];
 		$webminfo['width'] = $ffprobe_out['streams'][$videoidx]['width'];
 		$webminfo['height'] = $ffprobe_out['streams'][$videoidx]['height'];
 		$webminfo['duration'] = $ffprobe_out['format']['duration'];
@@ -46,50 +46,25 @@ function locate_webm_tracks($ffprobe_out) {
 	return [ 'videoat' => $video_at, 'audioat' => $audio_at ];
 }
 
-function is_valid_webm($ffprobe_out) {
+/**
+ * @param string $ffprobe_out
+ * @return array<array> An array with the following values:
+ *                      error: array with error code and message
+ *                      trackmap: decoded ffprobe output
+ *                      video_idx: int, index of the video track
+ *                      audio_idx: ?int, index of the audio track, if present
+ */
+function is_valid_webm(array $ffprobe_out) {
 	global $config;
 
 	if (empty($ffprobe_out)) {
 		return [ 'error' => [ 'code' => 1, 'msg' => $config['error']['genwebmerror'] ] ];
 	}
-	$trackmap = locate_webm_tracks($ffprobe_out);
-
-	// one video track
-	if (count($trackmap['videoat']) != 1) {
+	if ($ffprobe_out['format']['duration'] > $config['webm']['max_length']) {
 		return [
 			'error' => [
-				'code' => 2,
-				'msg' => $config['error']['invalidwebm'] . ' [video track count]'
-			]
-		];
-	}
-	$videoidx = $trackmap['videoat'][0];
-
-	$extension = pathinfo($ffprobe_out['format']['filename'], PATHINFO_EXTENSION);
-	if ($extension === 'webm' && !stristr($ffprobe_out['format']['format_name'], 'mp4')) {
-		if ($ffprobe_out['format']['format_name'] != 'matroska,webm') {
-			return [
-				'error' => [
-					'code' => 2,
-					'msg' => $config['error']['invalidwebm'] . 'error 1'
-				]
-			];
-		}
-	} elseif ($extension === 'mp4' || stristr($ffprobe_out['format']['format_name'], 'mp4')) {
-		// If the video is not h264 or (there is audio but it's not aac).
-		if (($ffprobe_out['streams'][$videoidx]['codec_name'] != 'h264') || ((count($trackmap['audioat']) > 0) && ($ffprobe_out['streams'][$trackmap['audioat'][0]]['codec_name'] != 'aac'))) {
-			return [
-				'error' => [
-					'code' => 2,
-					'msg' => $config['error']['invalidwebm'] . ' [h264/aac check]'
-				]
-			];
-		}
-	} else {
-		return [
-			'error' => [
-				'code' => 1,
-				'msg' => $config['error']['genwebmerror'] . 'error 3'
+				'code' => 4,
+				'msg' => sprintf($config['error']['webmtoolong'], $config['webm']['max_length'])
 			]
 		];
 	}
@@ -97,29 +72,90 @@ function is_valid_webm($ffprobe_out) {
 		return [
 			'error' => [
 				'code' => 3,
-				'msg' => $config['error']['webmhasaudio'] . 'error 4'
+				'msg' => $config['error']['webmhasaudio']
 			]
 		];
 	}
-	if ((count($trackmap['audioat']) > 0) && !$config['webm']['allow_audio']) {
+
+	$trackmap = locate_webm_tracks($ffprobe_out);
+
+	if (count($trackmap['videoat']) < 1) {
+		return [
+			'error' => [
+				'code' => 2,
+				'msg' => $config['error']['invalidwebm'] . ' [video track count]'
+			]
+		];
+	}
+	if (count($trackmap['audioat']) != 0 && !$config['webm']['allow_audio']) {
 		return [
 			'error' => [
 				'code' => 3,
-				'msg' => $config['error']['webmhasaudio'] . 'error 5'
+				'msg' => $config['error']['webmhasaudio']
 			]
 		];
 	}
-	if ($ffprobe_out['format']['duration'] > $config['webm']['max_length']) {
+
+	$audio_idx = count($trackmap['audioat']) > 0 ? 0 : null;
+	$video_idx = 0;
+
+	$extension = \pathinfo($ffprobe_out['format']['filename'], \PATHINFO_EXTENSION);
+
+	if ($extension === 'webm' && !stristr($ffprobe_out['format']['format_name'], 'mp4')) {
+		if ($ffprobe_out['format']['format_name'] != 'matroska,webm') {
+			return [
+				'error' => [
+					'code' => 2,
+					'msg' => $config['error']['invalidwebm']
+				]
+			];
+		}
+	} elseif ($extension === 'mp4' || stristr($ffprobe_out['format']['format_name'], 'mp4')) {
+		$any_h26x = false;
+		foreach ($trackmap['videoat'] as $track_idx) {
+			$video_codec = $ffprobe_out['streams'][$track_idx]['codec_name'];
+			if ($video_codec === 'h264' || $video_codec === 'h265') {
+				$video_idx = $track_idx;
+				$any_h26x = true;
+				break;
+			}
+		}
+
+		$any_aac = false;
+		if ($audio_idx !== null) {
+			foreach ($trackmap['audioat'] as $track_idx) {
+				$audio_codec = $ffprobe_out['streams'][$track_idx]['codec_name'];
+				if ($audio_codec === 'aac') {
+					$audio_idx = $track_idx;
+					$any_aac = true;
+					break;
+				}
+			}
+		}
+
+		// If the video is not h264, h265 or there is audio but it's not aac.
+		if (!$any_h26x || ($audio_idx !== null && !$any_aac)) {
+			return [
+				'error' => [
+					'code' => 2,
+					'msg' => $config['error']['invalidwebm'] . ' [h264/h265/aac check]'
+				]
+			];
+		}
+	} else {
 		return [
 			'error' => [
-				'code' => 4,
-				'msg' => sprintf($config['error']['webmtoolong'], $config['webm']['max_length']) . 'error 6'
+				'code' => 1,
+				'msg' => $config['error']['genwebmerror']
 			]
 		];
 	}
+
 	return [
 		'error' => [],
-		'trackmap' => $trackmap
+		'trackmap' => $trackmap,
+		'video_idx' => $video_idx,
+		'audio_idx' => $audio_idx
 	];
 }
 
