@@ -1,21 +1,21 @@
 <?php
-namespace Vichan\Service;
+namespace Vichan\Data\Driver\Captcha;
 
 use Vichan\Data\Driver\HttpDriver;
 
 defined('TINYBOARD') or exit;
 
 
-class ReCaptchaQuery implements RemoteCaptchaQuery {
+class YandexCaptchaDriver implements RemoteCaptchaDriver {
 	private HttpDriver $http;
 	private string $secret;
 
 	/**
-	 * Creates a new ReCaptchaQuery using the google recaptcha service.
+	 * Creates a new YandexCaptchaDriver using the Yandex SmartCaptcha service.
 	 *
 	 * @param HttpDriver $http The http client.
 	 * @param string $secret Server side secret.
-	 * @return ReCaptchaQuery A new ReCaptchaQuery query instance.
+	 * @return YandexCaptchaDriver A new YandexCaptchaDriver query instance.
 	 */
 	public function __construct(HttpDriver $http, string $secret) {
 		$this->http = $http;
@@ -23,22 +23,22 @@ class ReCaptchaQuery implements RemoteCaptchaQuery {
 	}
 
 	public function responseField(): string {
-		return 'g-recaptcha-response';
+		return 'smart-captcha';
 	}
 
 	public function verify(string $response, ?string $remote_ip): bool {
 		$data = [
 			'secret' => $this->secret,
-			'response' => $response
+			'token' => $response
 		];
 
 		if ($remote_ip !== null) {
-			$data['remoteip'] = $remote_ip;
+			$data['ip'] = $remote_ip;
 		}
 
-		$ret = $this->http->requestGet('https://www.google.com/recaptcha/api/siteverify', $data);
-		$resp = \json_decode($ret, true, 16, \JSON_THROW_ON_ERROR);
+		$ret = $this->http->requestGet('https://smartcaptcha.yandexcloud.net/validate', $data);
+		$resp = json_decode($ret, true, 16, JSON_THROW_ON_ERROR);
 
-		return isset($resp['success']) && $resp['success'];
+		return isset($resp['status']) && $resp['status'] === 'ok';
 	}
 }

@@ -1,12 +1,12 @@
 <?php
-namespace Vichan\Service;
+namespace Vichan\Data\Driver\Captcha;
 
 use Vichan\Data\Driver\HttpDriver;
 
 defined('TINYBOARD') or exit;
 
 
-class SecureImageCaptchaQuery {
+class SecureImageCaptchaDriver {
 	private HttpDriver $http;
 	private string $domain;
 	private string $provider_check;

@@ -8,7 +8,8 @@ require_once 'inc/bootstrap.php';
 use Vichan\Data\Driver\HttpDriver;
 use Vichan\Data\Driver\Log\LogDriver;
 use Vichan\Data\Queries\ReportQueries;
-use Vichan\Service\{IpBlacklistService, RemoteCaptchaQuery, SecureImageCaptchaQuery};
+use Vichan\Data\Driver\Captcha\{RemoteCaptchaDriver, SecureImageCaptchaDriver};
+use Vichan\Service\IpBlacklistService;
 use Vichan\Functions\{Format, IP};
 
 /**
@@ -343,7 +344,7 @@ if (isset($_POST['delete'])) {
 		}
 
 		try {
-			$query = $context->get(SecureImageCaptchaQuery::class);
+			$query = $context->get(SecureImageCaptchaDriver::class);
 			$success = $query->verify(
 				$_POST['captcha_text'],
 				$_POST['captcha_cookie']
@@ -456,7 +457,7 @@ if (isset($_POST['delete'])) {
 			// With our custom captcha provider
 			if ($provider === 'native') {
 				if ((!$new_thread_capt && !$post['op']) || ($new_thread_capt && $post['op'])) {
-					$query = $context->get(SecureImageCaptchaQuery::class);
+					$query = $context->get(SecureImageCaptchaDriver::class);
 					$success = $query->verify($_POST['captcha_text'], $_POST['captcha_cookie']);
 
 					if (!$success) {
@@ -474,7 +475,7 @@ if (isset($_POST['delete'])) {
 			}
 			// Remote 3rd party captchas.
 			elseif ($provider && (!$dynamic || $dynamic === $_SERVER['REMOTE_ADDR'])) {
-				$query = $context->get(RemoteCaptchaQuery::class);
+				$query = $context->get(RemoteCaptchaDriver::class);
 				$field = $query->responseField();
 
 				if (!isset($_POST[$field])) {
