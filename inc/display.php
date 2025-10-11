@@ -339,6 +339,44 @@ function embed_html($link) {
 }
 
 class Post {
+	public $id;
+	public $board_id;
+	public $board;
+	public $thread;
+	public $subject;
+	public $email;
+	public $name;
+	public $trip;
+	public $capcode;
+	public $body;
+	public $body_nomarkup;
+	public $time;
+	public $bump;
+	public $live_date_path;
+	public $files;
+	public $num_files;
+	public $filehash;
+	public $password;
+	public $ip;
+	public $sticky;
+	public $locked;
+	public $cycle;
+	public $sage;
+	public $embed;
+	public $slug;
+	public $modifiers;
+	public $mod;
+	public $root;
+	public $spoiler;
+	public $country;
+	public $country_name;
+	public $user_flag;
+	public $user_flag_alt;
+	public $has_file;
+	public $op;
+	public $raw;
+	public $tracked_cites;
+
 	public function __construct($post, $root=null, $mod=false) {
 		global $config;
 		if (!isset($root))
@@ -417,6 +455,50 @@ class Post {
 };
 
 class Thread {
+	public $id;
+	public $board_id;
+	public $board;
+	public $thread;
+	public $subject;
+	public $email;
+	public $name;
+	public $trip;
+	public $capcode;
+	public $body;
+	public $body_nomarkup;
+	public $time;
+	public $bump;
+	public $live_date_path;
+	public $files;
+	public $num_files;
+	public $filehash;
+	public $password;
+	public $ip;
+	public $sticky;
+	public $locked;
+	public $cycle;
+	public $sage;
+	public $embed;
+	public $slug;
+	public $modifiers;
+	public $mod;
+	public $root;
+	public $spoiler;
+	public $country;
+	public $country_name;
+	public $user_flag;
+	public $user_flag_alt;
+	public $has_file;
+	public $op;
+	public $raw;
+	public $tracked_cites;
+	public $hr;
+	public $posts;
+	public $omitted;
+	public $omitted_images;
+	public $images;
+	public $replies;
+
 	public function __construct($post, $root = null, $mod = false, $hr = true) {
 		global $config;
 		if (!isset($root))
