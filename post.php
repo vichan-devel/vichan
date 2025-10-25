@@ -185,18 +185,6 @@ function delete_cyclical_posts(string $boardUri, int $threadId, int $cycleLimit)
 /**
  * Method handling functions
  */
-$ctx = Vichan\build_context($config);
-
-// Is it a post coming from NNTP?
-if (isset($_GET['Newsgroups'])) {
-	error("NNTPChan support has been removed");
-}
-
-session_start();
-if (!isset($_POST['captcha_cookie']) && isset($_SESSION['captcha_cookie'])) {
-	$_POST['captcha_cookie'] = $_SESSION['captcha_cookie'];
-}
-
 function handle_delete(Context $ctx) {
 	global $board;
 
@@ -1242,6 +1230,18 @@ function handle_appeal(Context $ctx) {
 
 	displayBan($ban);
 }
+
+// Is it a post coming from NNTP?
+if (isset($_GET['Newsgroups'])) {
+	error('NNTPChan support has been removed');
+}
+
+session_start();
+if (!isset($_POST['captcha_cookie']) && isset($_SESSION['captcha_cookie'])) {
+	$_POST['captcha_cookie'] = $_SESSION['captcha_cookie'];
+}
+
+$ctx = Vichan\build_context($config);
 
 if (isset($_POST['delete'])) {
 	handle_delete($ctx);
