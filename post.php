@@ -156,30 +156,30 @@ function strip_image_metadata(string $img_path): int {
  */
 function delete_cyclical_posts(string $boardUri, int $threadId, int $cycleLimit): void
 {
-    $query = prepare(sprintf('
-        SELECT p.`id`
-        FROM ``posts_%s`` p
-        LEFT JOIN (
-            SELECT `id`
-            FROM ``posts_%s``
-            WHERE `thread` = :thread
-            ORDER BY `id` DESC
-            LIMIT :limit
-        ) recent_posts ON p.id = recent_posts.id
-        WHERE p.thread = :thread
-        AND recent_posts.id IS NULL',
-        $boardUri, $boardUri
-    ));
+	$query = prepare(sprintf('
+		SELECT p.`id`
+		FROM ``posts_%s`` p
+		LEFT JOIN (
+			SELECT `id`
+			FROM ``posts_%s``
+			WHERE `thread` = :thread
+			ORDER BY `id` DESC
+			LIMIT :limit
+		) recent_posts ON p.id = recent_posts.id
+		WHERE p.thread = :thread
+		AND recent_posts.id IS NULL',
+		$boardUri, $boardUri
+	));
 
-    $query->bindValue(':thread', $threadId, PDO::PARAM_INT);
-    $query->bindValue(':limit', $cycleLimit, PDO::PARAM_INT);
+	$query->bindValue(':thread', $threadId, PDO::PARAM_INT);
+	$query->bindValue(':limit', $cycleLimit, PDO::PARAM_INT);
 
-    $query->execute() or error(db_error($query));
-    $ids = $query->fetchAll(PDO::FETCH_COLUMN);
+	$query->execute() or error(db_error($query));
+	$ids = $query->fetchAll(PDO::FETCH_COLUMN);
 
-    foreach ($ids as $id) {
-        deletePost($id, false);
-    }
+	foreach ($ids as $id) {
+		deletePost($id, false);
+	}
 }
 
 /**
