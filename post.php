@@ -5,6 +5,7 @@
 
 require_once 'inc/bootstrap.php';
 
+use Vichan\Context;
 use Vichan\Data\Driver\HttpDriver;
 use Vichan\Data\Driver\Log\LogDriver;
 use Vichan\Data\Queries\ReportQueries;
@@ -186,7 +187,7 @@ function delete_cyclical_posts(string $boardUri, int $threadId, int $cycleLimit)
  */
 
 $dropped_post = false;
-$context = Vichan\build_context($config);
+$ctx = Vichan\build_context($config);
 
 // Is it a post coming from NNTP?
 if (isset($_GET['Newsgroups'])) {
@@ -198,8 +199,10 @@ if (!isset($_POST['captcha_cookie']) && isset($_SESSION['captcha_cookie'])) {
 	$_POST['captcha_cookie'] = $_SESSION['captcha_cookie'];
 }
 
-function handle_delete() {
-	global $config, $board;
+function handle_delete(Context $ctx) {
+	global $board;
+
+	$config = $ctx->get('config');
 
 	if (!isset($_POST['board'], $_POST['password'])) {
 		error($config['error']['bot']);
@@ -218,7 +221,7 @@ function handle_delete() {
 		}
 	}
 
-	$blacklist = $context->get(IpBlacklistService::class)->isIpBlacklisted($_SERVER['REMOTE_ADDR']);
+	$blacklist = $ctx->get(IpBlacklistService::class)->isIpBlacklisted($_SERVER['REMOTE_ADDR']);
 	if ($blacklist !== null) {
 		error(\sprintf($config['error']['dnsbl'], $blacklist));
 	}
@@ -280,7 +283,7 @@ function handle_delete() {
 				modLog("User at $ip deleted their own post #$id");
 			}
 
-			$context->get(LogDriver::class)->log(
+			$ctx->get(LogDriver::class)->log(
 				LogDriver::INFO,
 				'Deleted post: /' . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '')
 			);
@@ -306,8 +309,10 @@ function handle_delete() {
 	Vichan\Functions\Theme\rebuild_themes('post-delete', $board['uri']);
 }
 
-function handle_report() {
-	global $config, $board, $build_pages;
+function handle_report(Context $ctx) {
+	global $board, $build_pages;
+
+	$config = $ctx->get('config');
 
 	if (!isset($_POST['board'], $_POST['reason']))
 		error($config['error']['bot']);
@@ -319,7 +324,7 @@ function handle_report() {
 		}
 	}
 
-	$blacklist = $context->get(IpBlacklistService::class)->isIpBlacklisted($_SERVER['REMOTE_ADDR']);
+	$blacklist = $ctx->get(IpBlacklistService::class)->isIpBlacklisted($_SERVER['REMOTE_ADDR']);
 	if ($blacklist !== null) {
 		error(\sprintf($config['error']['dnsbl'], $blacklist));
 	}
@@ -348,7 +353,7 @@ function handle_report() {
 		}
 
 		try {
-			$query = $context->get(SecureImageCaptchaDriver::class);
+			$query = $ctx->get(SecureImageCaptchaDriver::class);
 			$success = $query->verify(
 				$_POST['captcha_text'],
 				$_POST['captcha_cookie']
@@ -358,7 +363,7 @@ function handle_report() {
 				error($config['error']['captcha']);
 			}
 		} catch (RuntimeException $e) {
-			$context->get(LogDriver::class)->log(LogDriver::ERROR, "Native captcha IO exception: {$e->getMessage()}");
+			$ctx->get(LogDriver::class)->log(LogDriver::ERROR, "Native captcha IO exception: {$e->getMessage()}");
 			error($config['error']['local_io_error']);
 		}
 	}
@@ -370,7 +375,7 @@ function handle_report() {
 		error($config['error']['toolongreport']);
 	}
 
-	$report_queries = $context->get(ReportQueries::class);
+	$report_queries = $ctx->get(ReportQueries::class);
 
 	foreach ($report as &$id) {
 		$query = prepare(sprintf("SELECT `id`, `thread` FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
@@ -379,7 +384,7 @@ function handle_report() {
 
 		$post = $query->fetch(PDO::FETCH_ASSOC);
 		if ($post === false) {
-			$context->get(LogDriver::class)->log(LogDriver::INFO, "Failed to report non-existing post #{$id} in {$board['dir']}");
+			$ctx->get(LogDriver::class)->log(LogDriver::INFO, "Failed to report non-existing post #{$id} in {$board['dir']}");
 			error($config['error']['nopost']);
 		}
 
@@ -388,7 +393,7 @@ function handle_report() {
 			error($error);
 		}
 
-		$context->get(LogDriver::class)->log(
+		$ctx->get(LogDriver::class)->log(
 			LogDriver::INFO,
 			'Reported post: /'
 				 . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '')
@@ -410,8 +415,11 @@ function handle_report() {
 	}
 }
 
-function handle_post() {
-	global $config, $dropped_post, $board, $mod, $pdo;
+function handle_post(Context $ctx) {
+	global $dropped_post, $board, $mod;
+
+	$config = $ctx->get('config');
+	$pdo = $ctx->get(\PDO::class);
 
 	if (!isset($_POST['body'], $_POST['board']) && !$dropped_post)
 		error($config['error']['bot']);
@@ -465,7 +473,7 @@ function handle_post() {
 			// With our custom captcha provider
 			if ($provider === 'native') {
 				if ((!$new_thread_capt && !$post['op']) || ($new_thread_capt && $post['op'])) {
-					$query = $context->get(SecureImageCaptchaDriver::class);
+					$query = $ctx->get(SecureImageCaptchaDriver::class);
 					$success = $query->verify($_POST['captcha_text'], $_POST['captcha_cookie']);
 
 					if (!$success) {
@@ -483,7 +491,7 @@ function handle_post() {
 			}
 			// Remote 3rd party captchas.
 			elseif ($provider && (!$dynamic || $dynamic === $_SERVER['REMOTE_ADDR'])) {
-				$query = $context->get(RemoteCaptchaDriver::class);
+				$query = $ctx->get(RemoteCaptchaDriver::class);
 				$field = $query->responseField();
 
 				if (!isset($_POST[$field])) {
@@ -502,10 +510,10 @@ function handle_post() {
 				}
 			}
 		} catch (RuntimeException $e) {
-			$context->get(LogDriver::class)->log(LogDriver::ERROR, "Captcha IO exception: {$e->getMessage()}");
+			$ctx->get(LogDriver::class)->log(LogDriver::ERROR, "Captcha IO exception: {$e->getMessage()}");
 			error($config['error']['remote_io_error']);
 		} catch (JsonException $e) {
-			$context->get(LogDriver::class)->log(LogDriver::ERROR, "Bad JSON reply to captcha: {$e->getMessage()}");
+			$ctx->get(LogDriver::class)->log(LogDriver::ERROR, "Bad JSON reply to captcha: {$e->getMessage()}");
 			error($config['error']['remote_io_error']);
 		}
 
@@ -519,14 +527,14 @@ function handle_post() {
 			(!isset($_SERVER['HTTP_REFERER']) || !preg_match($config['referer_match'], rawurldecode($_SERVER['HTTP_REFERER']))))
 			error($config['error']['referer']);
 
-		$blacklist = $context->get(IpBlacklistService::class)->isIpBlacklisted($_SERVER['REMOTE_ADDR']);
+		$blacklist = $ctx->get(IpBlacklistService::class)->isIpBlacklisted($_SERVER['REMOTE_ADDR']);
 		if ($blacklist !== null) {
 			error(\sprintf($config['error']['dnsbl'], $blacklist));
 		}
 
 
 		if ($post['mod'] = isset($_POST['mod']) && $_POST['mod']) {
-			check_login($context, false);
+			check_login($ctx, false);
 			if (!$mod) {
 				// Liar. You're not a mod.
 				error($config['error']['notamod']);
@@ -610,7 +618,7 @@ function handle_post() {
 
 		try {
 			$ret = download_file_from_url(
-				$context->get(HttpDriver::class),
+				$ctx->get(HttpDriver::class),
 				$_POST['file_url'],
 				$config['upload_by_url_timeout'],
 				$allowed_extensions,
@@ -824,7 +832,7 @@ function handle_post() {
 	if (($config['country_flags'] && !$config['allow_no_country']) || ($config['country_flags'] && $config['allow_no_country'] && !isset($_POST['no_country']))) {
 
 		list($flagCode, $flagName) = IP\fetch_maxmind(
-			$context->get(LogDriver::class),
+			$ctx->get(LogDriver::class),
 			$_SERVER['REMOTE_ADDR'],
 			$config['maxmind']['db_path'],
 			$config['maxmind']['locale'],
@@ -902,7 +910,7 @@ function handle_post() {
 	if (!hasPermission($config['mod']['bypass_filters'], $board['uri']) && !$dropped_post) {
 		require_once 'inc/filters.php';
 
-		do_filters($context, $post);
+		do_filters($ctx, $post);
 	}
 
 	if ($post['has_file']) {
@@ -1001,7 +1009,7 @@ function handle_post() {
 					try {
 						$file['size'] = strip_image_metadata($file['tmp_name']);
 					} catch (RuntimeException $e) {
-						$context->get(LogDriver::class)->log(LogDriver::ERROR, "Could not strip image metadata: {$e->getMessage()}");
+						$ctx->get(LogDriver::class)->log(LogDriver::ERROR, "Could not strip image metadata: {$e->getMessage()}");
 						// Since EXIF metadata can countain sensible info, fail the request.
 						error(_('Could not strip EXIF metadata!'), null, $error);
 					}
@@ -1169,7 +1177,7 @@ function handle_post() {
 
 	buildThread($post['op'] ? $id : $post['thread']);
 
-	$context->get(LogDriver::class)->log(
+	$ctx->get(LogDriver::class)->log(
 		LogDriver::INFO,
 		'New post: /' . $board['dir'] . $config['dir']['res'] . link_for($post) . (!$post['op'] ? '#' . $id : '')
 	);
@@ -1208,8 +1216,8 @@ function handle_post() {
 		Vichan\Functions\Theme\rebuild_themes('post', $board['uri']);
 }
 
-function handle_appeal() {
-	global $config;
+function handle_appeal(Context $ctx) {
+	$config = $ctx->get('config');
 
 	if (!isset($_POST['ban_id'])) {
 		error($config['error']['bot']);
@@ -1254,13 +1262,13 @@ function handle_appeal() {
 }
 
 if (isset($_POST['delete'])) {
-	handle_delete();
+	handle_delete($ctx);
 } elseif (isset($_POST['report'])) {
-	handle_report();
+	handle_report($ctx);
 } elseif (isset($_POST['post']) || $dropped_post) {
-	handle_post();
+	handle_post($ctx);
 } elseif (isset($_POST['appeal'])) {
-	handle_appeal();
+	handle_appeal($ctx);
 } else {
 	if (!file_exists($config['has_installed'])) {
 		header('Location: install.php', true, $config['redirect_http']);
