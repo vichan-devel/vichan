@@ -16,48 +16,48 @@
 {% if mod|hasPermission(config.mod.bandelete, board.uri) %}
 	<a title="{% trans %}Ban & Delete{% endtrans %}" href="?/{{ board.dir }}ban&amp;delete/{{ post.id }}">{{ config.mod.link_bandelete }}</a>&nbsp;
 {% endif %}
-
-{% if not post.thread %}
-{% if mod|hasPermission(config.mod.sticky, board.uri) %}
-	{% if post.sticky %}
-	<a title="{% trans %}Make thread not sticky{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'unsticky/' ~ post.id) }}">{{ config.mod.link_desticky }}</a>&nbsp;
-	{% else %}
-	<a title="{% trans %}Make thread sticky{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'sticky/' ~ post.id) }}">{{ config.mod.link_sticky }}</a>&nbsp;
-	{% endif %}
-{% endif %}
-{% if mod|hasPermission(config.mod.bumplock, board.uri) %}
-	{% if post.sage %}
-	<a title="{% trans %}Allow thread to be bumped{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'bumpunlock/' ~ post.id) }}">{{ config.mod.link_bumpunlock }}</a>&nbsp;
-	{% else %}
-	<a title="{% trans %}Prevent thread from being bumped{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'bumplock/' ~ post.id) }}">{{ config.mod.link_bumplock }}</a>&nbsp;
-	{% endif %}
-{% endif %}
-{% if mod|hasPermission(config.mod.lock, board.uri) %}
-	{% if post.locked %}
-	<a title="{% trans %}Unlock thread{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'unlock/' ~ post.id) }}">{{ config.mod.link_unlock }}</a>&nbsp;
-	{% else %}
-	<a title="{% trans %}Lock thread{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'lock/' ~ post.id) }}">{{ config.mod.link_lock }}</a>&nbsp;
-	{% endif %}
-{% endif %}
-
-{% endif %}
-{% if mod|hasPermission(config.mod.move, board.uri) %}
-	{% if not post.thread %}
-		<a title="{% trans %}Move thread to another board{% endtrans %}" href="?/{{ board.dir }}move/{{ post.id }}">{{ config.mod.link_move }}</a>&nbsp;
-	{% else %}
-		<a title="{% trans %}Move reply to another board{% endtrans %}" href="?/{{ board.dir }}move_reply/{{ post.id }}">{{ config.mod.link_move }}</a>&nbsp;
-	{% endif %}
-{% endif %}
-{% if mod|hasPermission(config.mod.cycle, board.uri) %}
-	{% if post.cycle %}
-	<a title="{% trans %}Make thread not cycle{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'uncycle/' ~ post.id) }}">{{ config.mod.link_uncycle }}</a>&nbsp;
-	{% else %}
-	<a title="{% trans %}Make thread cycle{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'cycle/' ~ post.id) }}">{{ config.mod.link_cycle }}</a>&nbsp;
-	{% endif %}
-{% endif %}
-{% if mod|hasPermission(config.mod.editpost, board.uri) %}
-	<a title="{% trans %}Edit post{% endtrans %}" href="?/{{ board.dir }}edit{% if config.mod.raw_html_default %}_raw{% endif %}/{{ post.id }}">{{ config.mod.link_editpost }}</a>&nbsp;
-{% endif %}
- </div>
-
+	<a title="{% trans %}Mod controls submenu{% endtrans %}" class="submenu-btn">{{ config.mod.toggle_submenu }}</a>&nbsp;
+	<div class="controls-submenu controls-submenu-hidden">
+		{% if not post.thread %}
+			{% if mod|hasPermission(config.mod.sticky, board.uri) %}
+				{% if post.sticky %}
+				<a title="{% trans %}Make thread not sticky{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'unsticky/' ~ post.id) }}">{{ config.mod.link_desticky }}</a>&nbsp;
+				{% else %}
+				<a title="{% trans %}Make thread sticky{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'sticky/' ~ post.id) }}">{{ config.mod.link_sticky }}</a>&nbsp;
+				{% endif %}
+			{% endif %}
+			{% if mod|hasPermission(config.mod.bumplock, board.uri) %}
+				{% if post.sage %}
+				<a title="{% trans %}Allow thread to be bumped{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'bumpunlock/' ~ post.id) }}">{{ config.mod.link_bumpunlock }}</a>&nbsp;
+				{% else %}
+				<a title="{% trans %}Prevent thread from being bumped{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'bumplock/' ~ post.id) }}">{{ config.mod.link_bumplock }}</a>&nbsp;
+				{% endif %}
+			{% endif %}
+			{% if mod|hasPermission(config.mod.lock, board.uri) %}
+				{% if post.locked %}
+				<a title="{% trans %}Unlock thread{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'unlock/' ~ post.id) }}">{{ config.mod.link_unlock }}</a>&nbsp;
+				{% else %}
+				<a title="{% trans %}Lock thread{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'lock/' ~ post.id) }}">{{ config.mod.link_lock }}</a>&nbsp;
+				{% endif %}
+			{% endif %}
+		{% endif %}
+		{% if mod|hasPermission(config.mod.move, board.uri) %}
+			{% if not post.thread %}
+				<a title="{% trans %}Move thread to another board{% endtrans %}" href="?/{{ board.dir }}move/{{ post.id }}">{{ config.mod.link_move }}</a>&nbsp;
+			{% else %}
+				<a title="{% trans %}Move reply to another board{% endtrans %}" href="?/{{ board.dir }}move_reply/{{ post.id }}">{{ config.mod.link_move }}</a>&nbsp;
+			{% endif %}
+		{% endif %}
+		{% if mod|hasPermission(config.mod.cycle, board.uri) %}
+			{% if post.cycle %}
+			<a title="{% trans %}Make thread not cycle{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'uncycle/' ~ post.id) }}">{{ config.mod.link_uncycle }}</a>&nbsp;
+			{% else %}
+			<a title="{% trans %}Make thread cycle{% endtrans %}" href="?/{{ secure_link(board.dir ~ 'cycle/' ~ post.id) }}">{{ config.mod.link_cycle }}</a>&nbsp;
+			{% endif %}
+		{% endif %}
+		{% if mod|hasPermission(config.mod.editpost, board.uri) %}
+			<a title="{% trans %}Edit post{% endtrans %}" href="?/{{ board.dir }}edit{% if config.mod.raw_html_default %}_raw{% endif %}/{{ post.id }}">{{ config.mod.link_editpost }}</a>&nbsp;
+		{% endif %}
+	</div>
+</div>
 {% endif %}
