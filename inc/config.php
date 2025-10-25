@@ -1616,7 +1616,8 @@
 		'link_editpost' => '[Edit]',
 		'link_move' => '[Move]',
 		'link_cycle' => '[Cycle]',
-		'link_uncycle' => '[-Cycle]'
+		'link_uncycle' => '[-Cycle]',
+		'toggle_submenu' => '▶︎'
 	];
 
 	// Moderator capcodes.
