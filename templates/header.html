@@ -18,6 +18,7 @@
 	{% endif %}
 	{% if mod %}
 	<script type="text/javascript" src="/js/mod/mod_snippets.js?v={{ config.resource_version }}"></script>
+	<script type="text/javascript" src="/js/mod/control-submenu.js?v={{ config.resource_version }}"></script>
 	{% endif %}
 {% endif %}
 {% if config.captcha.provider == 'recaptcha' %}<script src="//www.recaptcha.net/recaptcha/api.js"></script>

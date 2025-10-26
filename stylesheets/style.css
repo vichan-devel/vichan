@@ -401,6 +401,20 @@ span.controls a {
   display: inline-block;
 }
 
+.controls-submenu-hidden {
+  display: none;
+}
+
+.submenu-btn {
+  transition: transform 0.1s;
+  text-decoration: none;
+  opacity: 0.8;
+}
+
+.submenu-btn-open {
+  transform: rotate(90deg);
+}
+
 div#wrap {
   width: 900px;
   margin: 0 auto;
