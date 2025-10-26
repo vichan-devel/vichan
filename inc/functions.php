@@ -1795,9 +1795,9 @@ function extract_modifiers($body) {
 
 	if (preg_match_all('@<tinyboard ([\w\s]+)>(.*?)</tinyboard>@us', $body, $matches, PREG_SET_ORDER)) {
 		foreach ($matches as $match) {
-			if (preg_match('/^escape /', $match[1]))
-				continue;
-			$modifiers[$match[1]] = html_entity_decode($match[2]);
+			if (!str_starts_with($match[1], 'escape ')) {
+				$modifiers[$match[1]] = html_entity_decode($match[2]);
+			}
 		}
 	}
 

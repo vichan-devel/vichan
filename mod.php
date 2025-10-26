@@ -196,7 +196,7 @@ class Router {
 	private function prepareRoutes(): void {
 		$new_pages = [];
 		foreach ($this->pages as $key => $callback) {
-			if (is_string($callback) && preg_match('/^secure /', $callback)) {
+			if (is_string($callback) && \str_starts_with($callback, 'secure ')) {
 				$key .= '(/(?P<token>[a-f0-9]{8}))?';
 			}
 
