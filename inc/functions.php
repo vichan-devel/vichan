@@ -2747,6 +2747,7 @@ function trace_url($url) {
 		CURLOPT_RETURNTRANSFER => TRUE,
 		CURLOPT_SSL_VERIFYHOST => FALSE, // suppress certain SSL errors
 		CURLOPT_SSL_VERIFYPEER => FALSE,
+		CURLOPT_NOBODY => TRUE, // only scan the headers
 		CURLOPT_TIMEOUT => 30,
 	));
 	curl_exec($ch);
