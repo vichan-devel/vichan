@@ -3,16 +3,15 @@
 namespace Vichan\Service;
 
 use Vichan\Data\Driver\LogDriver;
+use Vichan\Data\Model\ImageType;
 
 class BannersService {
 	private const BANNERS_DIR = 'static/banners/%s/';
 	private const PRIORITY_DIR = 'static/banners_priority/';
 	private const UKKO = 'ukko';
-	private array $allowed_exts;
 	private LogDriver $logger;
 
-	public function __construct(array $exts, LogDriver $logger) {
-		$this->allowed_exts = $exts;
+	public function __construct(LogDriver $logger) {
 		$this->logger = $logger;
 	}
 
@@ -32,8 +31,9 @@ class BannersService {
 	}
 
 	private function isImage(string $fileName): bool {
+		// For speed reasons, we trust the extension.
 		$extension = \strtolower(\pathinfo($fileName, PATHINFO_EXTENSION));
-		return \in_array($extension, $this->allowed_exts, true);
+		return \in_array($extension, ImageType::KNOWN_WEB_IMAGE_EXT, true);
 	}
 
 	private function serveRandomBanner(string $dir, array $files): void {
