@@ -5,10 +5,10 @@ namespace Vichan\Service;
 use Vichan\Data\Driver\LogDriver;
 use Vichan\Data\Model\ImageType;
 
+
 class BannersService {
 	private const BANNERS_DIR = 'static/banners/';
 	private const PRIORITY_DIR = 'static/banners_priority/';
-	private const UKKO = 'ukko';
 	private LogDriver $logger;
 
 	private static function isImage(string $fileName): bool {
@@ -21,10 +21,22 @@ class BannersService {
 		return \array_diff(\scandir($dir, SCANDIR_SORT_NONE), ['.', '..']);
 	}
 
+	private static function serveBanner(string $filePath): void {
+		header("Location: $filePath", true, 307);
+		header('Cache-Control: no-cache');
+		exit;
+	}
+
 	public function __construct(LogDriver $logger) {
 		$this->logger = $logger;
 	}
 
+	/**
+	 * Select a banner file to serve
+	 * @param string $dir The directory the files belong to.
+	 * @param array $fileNames The file names
+	 * @return ?string Path to the selected file, if a suitable one is found.
+	 */
 	private function selectFile(string $dir, array $fileNames): ?string {
 		if (empty($fileNames)) {
 			return null;
@@ -47,38 +59,9 @@ class BannersService {
 				$this->logger->log(LogDriver::ERROR, "Banner '{$filePath}' is not an valid image");
 				continue;
 			}
-			return $name;
+			return $filePath;
 		}
 		return null;
-	}
-
-	private function serveBanner(string $dir, string $name): void {
-		$filePath = $dir . $name;
-
-		$ext = \pathinfo((string) $name, PATHINFO_EXTENSION);
-		$lastModified = \filemtime($filePath);
-		$etag = \md5_file($filePath);
-
-		\header("Content-Type: image/{$ext}");
-		\header("Content-Length: " . \filesize($filePath));
-		\header("Cache-Control: public, max-age=" . (60 * 60 * 24 * 30 * 6)); // 6 months
-		\header("ETag: \"$etag\"");
-		\header("Last-Modified: " . \gmdate('D, d M Y H:i:s', $lastModified) . ' GMT');
-		\header("X-Content-Type-Options: nosniff");
-
-		$ifModifiedSince = $_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? '';
-		$ifNoneMatch = $_SERVER['HTTP_IF_NONE_MATCH'] ?? '';
-
-		if (
-			(!empty($ifModifiedSince) && \strtotime((string) $ifModifiedSince) === $lastModified) ||
-			(!empty($ifNoneMatch) && \trim((string) $ifNoneMatch) === $etag)
-		) {
-			\header("HTTP/1.1 304 Not Modified");
-			exit;
-		}
-
-		\readfile($filePath);
-		exit;
 	}
 
 	public function serve(string $subdir): void {
@@ -89,17 +72,17 @@ class BannersService {
 
 			if (\is_dir($bannerDir)) {
 				$names = self::getFilesInDirectory($bannerDir);
-				$name = $this->selectFile($bannerDir, $names);
-				if ($name !== null) {
-					$this->serveBanner($bannerDir, $name);
+				$filePath = $this->selectFile($bannerDir, $names);
+				if ($filePath !== null) {
+					self::serveBanner($filePath);
 				}
 			}
 		}
 
 		$names = self::getFilesInDirectory(self::PRIORITY_DIR);
-		$name = $this->selectFile(self::PRIORITY_DIR, $names);
-		if ($name !== null) {
-			$this->serveBanner(self::PRIORITY_DIR, $name);
+		$filePath = $this->selectFile(self::PRIORITY_DIR, $names);
+		if ($filePath !== null) {
+			self::serveBanner( $filePath);
 		} else {
 			$this->logger->log(LogDriver::ERROR, "No suitable image for banner found!");
 			\http_response_code(404);
