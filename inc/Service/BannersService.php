@@ -6,49 +6,54 @@ use Vichan\Data\Driver\LogDriver;
 use Vichan\Data\Model\ImageType;
 
 class BannersService {
-	private const BANNERS_DIR = 'static/banners/%s/';
+	private const BANNERS_DIR = 'static/banners/';
 	private const PRIORITY_DIR = 'static/banners_priority/';
 	private const UKKO = 'ukko';
 	private LogDriver $logger;
 
-	public function __construct(LogDriver $logger) {
-		$this->logger = $logger;
-	}
-
-	private function getFilesInDirectory(string $dir): array {
-		if (!\is_dir($dir)) {
-			$this->logger->log(
-				LogDriver::WARNING,
-				'Trying to fetch images from a non existent directory, falling back to priority dir'
-			);
-			$dir = self::PRIORITY_DIR;
-		}
-
-		$listFiles = \array_diff(\scandir($dir, SCANDIR_SORT_NONE), ['.', '..']);
-		$listFiles = \array_filter($listFiles, fn ($file) => \is_file($dir . $file) && $this->isImage($file));
-
-		return $listFiles;
-	}
-
-	private function isImage(string $fileName): bool {
+	private static function isImage(string $fileName): bool {
 		// For speed reasons, we trust the extension.
 		$extension = \strtolower(\pathinfo($fileName, PATHINFO_EXTENSION));
 		return \in_array($extension, ImageType::KNOWN_WEB_IMAGE_EXT, true);
 	}
 
-	private function serveRandomBanner(string $dir, array $files): void {
-		if ($files === []) {
-			\http_response_code(404);
-			exit;
-		}
+	private static function getFilesInDirectory(string $dir): array {
+		return \array_diff(\scandir($dir, SCANDIR_SORT_NONE), ['.', '..']);
+	}
 
-		$name = $files[\array_rand($files)];
+	public function __construct(LogDriver $logger) {
+		$this->logger = $logger;
+	}
+
+	private function selectFile(string $dir, array $fileNames): ?string {
+		if (empty($fileNames)) {
+			return null;
+		}
+		$offset = \mt_rand(0, \count($fileNames));
+		for ($i = 0; $i < \count($fileNames); $i++) {
+			$j = ($offset + $i) % \count($fileNames);
+			$name = $fileNames[$j];
+			$filePath = $dir . $name;
+
+			if (!\is_file($filePath)) {
+				$this->logger->log(LogDriver::ERROR, "Banner '{$filePath}' is not file");
+				continue;
+			}
+			if (!\is_readable($filePath)) {
+				$this->logger->log(LogDriver::ERROR, "Banner '{$filePath}' is not readable");
+				continue;
+			}
+			if (!self::isImage($filePath)) {
+				$this->logger->log(LogDriver::ERROR, "Banner '{$filePath}' is not an valid image");
+				continue;
+			}
+			return $name;
+		}
+		return null;
+	}
+
+	private function serveBanner(string $dir, string $name): void {
 		$filePath = $dir . $name;
-
-		if (!\is_file($filePath) || !\is_readable($filePath)) {
-			\http_response_code(404);
-			exit;
-		}
 
 		$ext = \pathinfo((string) $name, PATHINFO_EXTENSION);
 		$lastModified = \filemtime($filePath);
@@ -76,25 +81,29 @@ class BannersService {
 		exit;
 	}
 
-	public function serve(string $board): void {
-		if (!\getBoardInfo($board)) {
-			$this->logger->log(
-				LogDriver::WARNING,
-				'Trying to fetch images from a non existent board, falling back to ukko'
-			);
-			$board = self::UKKO;
+	public function serve(string $subdir): void {
+		$usePriority = empty($subdir) || \mt_rand(0, 3) === 0;
+
+		if (!$usePriority) {
+			$bannerDir = self::BANNERS_DIR . $subdir . '/';
+
+			if (\is_dir($bannerDir)) {
+				$names = self::getFilesInDirectory($bannerDir);
+				$name = $this->selectFile($bannerDir, $names);
+				if ($name !== null) {
+					$this->serveBanner($bannerDir, $name);
+				}
+			}
 		}
 
-		$priorityFiles = $this->getFilesInDirectory(self::PRIORITY_DIR);
-		$bannerDir = \sprintf(self::BANNERS_DIR, $board);
-		$bannerFiles = $this->getFilesInDirectory($bannerDir);
-
-		$usePriority = $priorityFiles !== [] && (\mt_rand(0, 3) === 0 || $bannerFiles === [] || $board === self::UKKO);
-
-		if ($usePriority) {
-			$this->serveRandomBanner(self::PRIORITY_DIR, $priorityFiles);
+		$names = self::getFilesInDirectory(self::PRIORITY_DIR);
+		$name = $this->selectFile(self::PRIORITY_DIR, $names);
+		if ($name !== null) {
+			$this->serveBanner(self::PRIORITY_DIR, $name);
 		} else {
-			$this->serveRandomBanner($bannerDir, $bannerFiles);
+			$this->logger->log(LogDriver::ERROR, "No suitable image for banner found!");
+			\http_response_code(404);
+			exit;
 		}
 	}
 }
