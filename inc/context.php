@@ -129,9 +129,16 @@ function build_context(array $config): Context {
 				$config['fcrdns']
 			);
 		},
-		BannersService::class => fn(Context $c): BannersService => new BannersService(
-			$c->get(LogDriver::class)
-		),
+		BannersService::class => function(Context $c): BannersService {
+			$config = $c->get('config');
+			$den = $config['banner_priority_den'];
+			$den = \is_numeric($den) && ((int)$den) > 0 ? ((int)$den) : 0;
+
+			return new BannersService(
+				$c->get(LogDriver::class),
+				$den
+			);
+		},
 	]);
 }
 
