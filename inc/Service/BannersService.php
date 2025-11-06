@@ -3,98 +3,97 @@
 namespace Vichan\Service;
 
 use Vichan\Data\Driver\LogDriver;
+use Vichan\Data\Model\ImageType;
+
 
 class BannersService {
-	private const BANNERS_DIR = 'static/banners/%s/';
+	private const BANNERS_DIR = 'static/banners/';
 	private const PRIORITY_DIR = 'static/banners_priority/';
-	private const UKKO = 'ukko';
-	private array $allowed_exts;
 	private LogDriver $logger;
+	private int $priority_denominator;
 
-	public function __construct(array $exts, LogDriver $logger) {
-		$this->allowed_exts = $exts;
-		$this->logger = $logger;
-	}
-
-	private function getFilesInDirectory(string $dir): array {
-		if (!\is_dir($dir)) {
-			$this->logger->log(
-				LogDriver::WARNING,
-				'Trying to fetch images from a non existent directory, falling back to priority dir'
-			);
-			$dir = self::PRIORITY_DIR;
-		}
-
-		$listFiles = \array_diff(\scandir($dir, SCANDIR_SORT_NONE), ['.', '..']);
-		$listFiles = \array_filter($listFiles, fn ($file) => \is_file($dir . $file) && $this->isImage($file));
-
-		return $listFiles;
-	}
-
-	private function isImage(string $fileName): bool {
+	private static function isImage(string $fileName): bool {
+		// For speed reasons, we trust the extension.
 		$extension = \strtolower(\pathinfo($fileName, PATHINFO_EXTENSION));
-		return \in_array($extension, $this->allowed_exts, true);
+		return \in_array($extension, ImageType::KNOWN_WEB_IMAGE_EXT, true);
 	}
 
-	private function serveRandomBanner(string $dir, array $files): void {
-		if ($files === []) {
-			\http_response_code(404);
-			exit;
-		}
+	private static function getFilesInDirectory(string $dir): array {
+		return \array_diff(\scandir($dir, SCANDIR_SORT_NONE), ['.', '..']);
+	}
 
-		$name = $files[\array_rand($files)];
-		$filePath = $dir . $name;
-
-		if (!\is_file($filePath) || !\is_readable($filePath)) {
-			\http_response_code(404);
-			exit;
-		}
-
-		$ext = \pathinfo((string) $name, PATHINFO_EXTENSION);
-		$lastModified = \filemtime($filePath);
-		$etag = \md5_file($filePath);
-
-		\header("Content-Type: image/{$ext}");
-		\header("Content-Length: " . \filesize($filePath));
-		\header("Cache-Control: public, max-age=" . (60 * 60 * 24 * 30 * 6)); // 6 months
-		\header("ETag: \"$etag\"");
-		\header("Last-Modified: " . \gmdate('D, d M Y H:i:s', $lastModified) . ' GMT');
-		\header("X-Content-Type-Options: nosniff");
-
-		$ifModifiedSince = $_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? '';
-		$ifNoneMatch = $_SERVER['HTTP_IF_NONE_MATCH'] ?? '';
-
-		if (
-			(!empty($ifModifiedSince) && \strtotime((string) $ifModifiedSince) === $lastModified) ||
-			(!empty($ifNoneMatch) && \trim((string) $ifNoneMatch) === $etag)
-		) {
-			\header("HTTP/1.1 304 Not Modified");
-			exit;
-		}
-
-		\readfile($filePath);
+	private static function serveBanner(string $filePath): void {
+		header("Location: $filePath", true, 307);
+		header('Cache-Control: no-cache');
 		exit;
 	}
 
-	public function serve(string $board): void {
-		if (!\getBoardInfo($board)) {
-			$this->logger->log(
-				LogDriver::WARNING,
-				'Trying to fetch images from a non existent board, falling back to ukko'
-			);
-			$board = self::UKKO;
+	/**
+	 * @param LogDriver $logger Driver to write logs
+	 * @param int $priority_denominator The denominator over the likelihood of a priory banner being chosen.
+	 *                                  Must be >= 0. Use 0 to disable priority banners (except as a fallback).
+	 */
+	public function __construct(LogDriver $logger, int $priority_denominator) {
+		$this->logger = $logger;
+		$this->priority_denominator = $priority_denominator;
+	}
+
+	/**
+	 * Select a banner file to serve
+	 * @param string $dir The directory the files belong to.
+	 * @param array $fileNames The file names
+	 * @return ?string Path to the selected file, if a suitable one is found.
+	 */
+	private function selectFile(string $dir, array $fileNames): ?string {
+		if (empty($fileNames)) {
+			return null;
+		}
+		$offset = \mt_rand(0, \count($fileNames));
+		for ($i = 0; $i < \count($fileNames); $i++) {
+			$j = ($offset + $i) % \count($fileNames);
+			$name = $fileNames[$j];
+			$filePath = $dir . $name;
+
+			if (!\is_file($filePath)) {
+				$this->logger->log(LogDriver::ERROR, "Banner '{$filePath}' is not file");
+				continue;
+			}
+			if (!\is_readable($filePath)) {
+				$this->logger->log(LogDriver::ERROR, "Banner '{$filePath}' is not readable");
+				continue;
+			}
+			if (!self::isImage($filePath)) {
+				$this->logger->log(LogDriver::ERROR, "Banner '{$filePath}' is not an valid image");
+				continue;
+			}
+			return $filePath;
+		}
+		return null;
+	}
+
+	public function serve(string $subdir): void {
+		$usePriority = empty($subdir) || ($this->priority_denominator > 0 && \mt_rand(0, $this->priority_denominator) === 0);
+
+		if (!$usePriority) {
+			$bannerDir = self::BANNERS_DIR . $subdir . '/';
+
+			if (\is_dir($bannerDir)) {
+				$names = self::getFilesInDirectory($bannerDir);
+				$filePath = $this->selectFile($bannerDir, $names);
+				if ($filePath !== null) {
+					self::serveBanner($filePath);
+				}
+			}
 		}
 
-		$priorityFiles = $this->getFilesInDirectory(self::PRIORITY_DIR);
-		$bannerDir = \sprintf(self::BANNERS_DIR, $board);
-		$bannerFiles = $this->getFilesInDirectory($bannerDir);
-
-		$usePriority = $priorityFiles !== [] && (\mt_rand(0, 3) === 0 || $bannerFiles === [] || $board === self::UKKO);
-
-		if ($usePriority) {
-			$this->serveRandomBanner(self::PRIORITY_DIR, $priorityFiles);
+		$names = self::getFilesInDirectory(self::PRIORITY_DIR);
+		$filePath = $this->selectFile(self::PRIORITY_DIR, $names);
+		if ($filePath !== null) {
+			self::serveBanner( $filePath);
 		} else {
-			$this->serveRandomBanner($bannerDir, $bannerFiles);
+			$this->logger->log(LogDriver::ERROR, "No suitable image for banner found!");
+			\http_response_code(404);
+			exit;
 		}
 	}
 }
