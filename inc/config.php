@@ -1104,6 +1104,10 @@
 	$config['banner_size'] = 3 * 1024 * 1024;
 	// Which board should we serve for ukko
 	$config['banner_ukko'] = 'ukko';
+	// Control the likelihood of a priority banner being served through the denominator.
+	// The chance is 1 / <value>.
+	// Set to 0 to disable priority banners and use them only as a fallback option.
+	$config['banner_priority_den'] = 4;
 
 	// Custom stylesheets available for the user to choose. See the "stylesheets/" folder for a list of
 	// available stylesheets (or create your own).
