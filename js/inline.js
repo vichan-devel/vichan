@@ -1,154 +1,183 @@
-$(document).ready(function() {
-  var App = {
+onReady(() => {
+  const App = {
     cache: {},
-    get: function(url, cb) {
-      var $page = App.cache[url]
-      if ($page)
-        return cb($page)
+    
+    get(url, cb) {
+      const cached = App.cache[url];
+      if (cached) {
+        return cb(cached);
+      }
 
-      $.get(url, function(data) {
-        var $page = $(data)
-        App.cache[url] = $page
-        cb($page)
-      })
+      fetch(url)
+        .then(response => response.text())
+        .then(data => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(data, 'text/html');
+          App.cache[url] = doc;
+          cb(doc);
+        })
+        .catch(err => console.error('Failed to fetch:', err));
     },
+
     options: {
-      add: function(key, description, tab) {
-        tab || (tab = 'general')
+      add(key, description, tab = 'general') {
+        const checked = App.options.get(key);
+        const el = document.createElement('div');
+        el.innerHTML = `
+          <label>
+            <input type="checkbox" ${checked ? 'checked' : ''}>
+            ${description}
+          </label>
+        `;
 
-        var checked = App.options.get(key)
-        var $el = $(
-          '<div>' +
-            '<label>' +
-              '<input type="checkbox">' +
-              description +
-            '</label>' +
-          '</div>')
+        const checkbox = el.querySelector('input');
+        checkbox.addEventListener('change', App.options.check(key));
 
-        $el
-          .find('input')
-          .prop('checked', checked)
-          .on('change', App.options.check(key))
-
-        window.Options.extend_tab(tab, $el)
-      },
-      get: function(key) {
-        if (localStorage[key])
-          return JSON.parse(localStorage[key])
-      },
-      check: function(key) {
-        return function(e) {
-          var val = this.checked
-          localStorage[key] = JSON.stringify(val)
+        if (window.Options && window.Options.extend_tab) {
+          window.Options.extend_tab(tab, el);
         }
+      },
+
+      get(key) {
+        const val = localStorage[key];
+        return val ? JSON.parse(val) : null;
+      },
+
+      check(key) {
+        return (e) => {
+          localStorage[key] = JSON.stringify(e.target.checked);
+        };
       }
     }
-  }
+  };
 
-  var inline = function(e) {
-    e.preventDefault()
+  const inline = function(e) {
+    e.preventDefault();
 
-    var $root = $(this).closest('.post')
-    var targetNum = this.textContent.slice(2)
+    const root = this.closest('.post');
+    const targetNum = this.textContent.slice(2);
+    
+    const threadEl = root.closest('[id^=thread]');
+    const srcOP = threadEl ? threadEl.id.match(/\d+/)[0] : null;
 
-    var srcOP = $root.closest('[id^=thread]').attr('id').match(/\d+/)[0]
-
-    var node, targetOP
-    var isBacklink = !!this.className
+    let node, targetOP;
+    const isBacklink = !!this.className;
+    
     if (isBacklink) {
-      node = $root.find('> .intro')
-      targetOP = srcOP
+      node = root.querySelector('> .intro') || root.querySelector('.intro');
+      targetOP = srcOP;
     } else {
-      node = $(this)
-
-      var to_search = inMod ? this.search : this.pathname;
-      targetOP = to_search.match(/(\d+).html/)[1]
+      node = this;
+      const to_search = typeof inMod !== 'undefined' && inMod ? this.search : this.pathname;
+      const match = to_search.match(/(\d+)\.html/);
+      targetOP = match ? match[1] : null;
     }
 
-    var link = {
+    const link = {
       id: 'inline_' + targetNum,
       isBacklink: isBacklink,
       node: node
-    }
+    };
 
-    var selector = targetNum === targetOP
-      ? '#op_' + srcOP
-      : '#reply_' + targetNum
+    const selector = targetNum === targetOP
+      ? 'div#op_' + srcOP
+      : 'div#reply_' + targetNum;
 
-    var $clone = $root.find('#inline_' + targetNum)
-    if ($clone.length) {
-      $clone.remove()
-      $(selector)
-        .show()
-        .next()
-        .show()
-      return
+    const clone = root.querySelector('div#inline_' + targetNum);
+    if (clone) {
+      clone.remove();
+      const original = document.querySelector(selector);
+      if (original) {
+        original.style.display = '';
+        const next = original.nextElementSibling;
+        if (next) next.style.display = '';
+      }
+      return;
     }
 
     if (srcOP === targetOP) {
-      if (targetNum === targetOP)
-        link.node = link.node.next()// bypass `(OP)`
+      if (targetNum === targetOP) {
+        link.node = link.node.nextElementSibling; // bypass `(OP)`
+      }
 
-      var $target = $(selector)
-      if ($target.length)
-        return add(link, $target)
+      const target = document.querySelector(selector);
+      if (target) {
+        return add(link, target);
+      }
     }
 
-    var $loading = $('<div class="inline post">loading...</div>')
-      .attr('id', link.id)
-      .insertAfter(link.node)
+    const loading = document.createElement('div');
+    loading.className = 'inline post';
+    loading.id = link.id;
+    loading.textContent = 'loading...';
+    link.node.parentNode.insertBefore(loading, link.node.nextSibling);
 
-    App.get(this.pathname, function($page) {
-      $loading.remove()
-      var $target = $page.find(selector)
-      add(link, $target)
-    })
-  }
+    App.get(this.pathname, ($page) => {
+      loading.remove();
+      const target = $page.querySelector(selector);
+      if (target) {
+        add(link, target);
+      }
+    });
+  };
 
-  var add = function(link, $target) {
-    var $clone = $target.clone(true)
+  const add = (link, target) => {
+    const clone = target.cloneNode(true);
 
-    if (link.isBacklink && App.options.get('hidePost'))
-      $target
-        .hide()
-        .next()
-        .hide()
+    if (link.isBacklink && App.options.get('hidePost')) {
+      target.style.display = 'none';
+      const next = target.nextElementSibling;
+      if (next) next.style.display = 'none';
+    }
 
-    $clone.find('.inline').remove()
-    $clone.attr({
-      "class": 'inline post',
-      id: link.id,
-      style: null// XXX remove post hover styling
-    })
-    $clone.insertAfter(link.node)
-  }
+    clone.querySelectorAll('.inline').forEach(el => el.remove());
+    clone.className = 'inline post';
+    clone.id = link.id;
+    clone.style.cssText = ''; // Remove post hover styling
+    
+    link.node.parentNode.insertBefore(clone, link.node.nextSibling);
+  };
 
-  App.options.add('useInlining', _('Enable inlining'))
-  App.options.add('hidePost', _('Hide inlined backlinked posts'))
+  App.options.add('useInlining', _('Enable inlining'));
+  App.options.add('hidePost', _('Hide inlined backlinked posts'));
 
-  $('head').append(
-    '<style>' +
-      '.inline {' +
-        'border: 1px dashed black;' +
-        'white-space: normal;' +
-        'overflow: auto;' + // clearfix
-      '}' +
-    '</style>')
+  const style = document.createElement('style');
+  style.textContent = `
+    .inline {
+      border: 1px dashed black;
+      white-space: normal;
+      overflow: auto;
+    }
+  `;
+  document.head.appendChild(style);
 
-  // don't attach to outbound links
-
+  // Don't attach to outbound links
   if (App.options.get('useInlining')) {
-    var assign_inline = function() {
-        $('.body a[href*="'+location.pathname+'"]').not('[rel]').not('.toolong > a').add('.mentioned a')
-          .attr('onclick', null)// XXX disable highlightReply
-          .off('click')
-          .click(inline)
-    }
+    const assign_inline = () => {
+      // Select all links that point to current location
+      const links = document.querySelectorAll('.body a[href*="' + location.pathname + '"]');
+      links.forEach(link => {
+        if (!link.hasAttribute('rel') && !link.closest('.toolong')) {
+          link.removeAttribute('onclick');
+          // Clone without listeners to remove old click handlers
+          const newLink = link.cloneNode(true);
+          link.parentNode.replaceChild(newLink, link);
+          newLink.addEventListener('click', inline);
+        }
+      });
+      
+      // Also handle mentioned links
+      document.querySelectorAll('.mentioned a').forEach(link => {
+        link.addEventListener('click', inline);
+      });
+    };
 
     assign_inline();
 
-    $(document).on('new_post', function(e, post) {
+    document.addEventListener('new_post', (e) => {
       assign_inline();
     });
   }
 });
+
+

@@ -14,30 +14,30 @@
  *
  */
 
-if (active_page == 'ukko' || active_page == 'index' || (window.Options && Options.get_tab('general')))
-$(document).ready(function(){
-	var hide_locked_threads = localStorage['hidelockedthreads'] ? true : false;
+if (active_page === 'ukko' || active_page === 'index' || (window.Options && Options.get_tab('general')))
+onReady(() => {
+	const hide_locked_threads = localStorage['hidelockedthreads'] ? true : false;
 
-	$('<style type="text/css"> img.hidden{ opacity: 0.1; background: grey; border: 1px solid #000; } </style>').appendTo($('head'));
+	$('<style type="text/css"> img.hidden{ opacity: 0.1; background: grey; border: 1px solid #000; } </style>').appendTo(document.querySelector('head'));
 	
-	var hideLockedThread = function($thread) {
-		if (active_page == 'ukko' || active_page == 'index')
+	const hideLockedThread = function($thread) {
+		if (active_page === 'ukko' || active_page === 'index')
 		$thread
-			.hide()
-			.addClass('hidden');
+			.style.display = 'none'
+			.classList.add('hidden');
 	};
 	
-	var restoreLockedThread = function($thread) {
+	const restoreLockedThread = function($thread) {
 		$thread
-			.show()
-			.removeClass('hidden');
+			.style.display = ''
+			.classList.remove('hidden');
 	};
 	
-	var getThreadFromIcon = function($icon) {
+	const getThreadFromIcon = function($icon) {
 		return $icon.parent().parent().parent()
 	};
 
-	var selector, event;
+	const selector, event;
         if (window.Options && Options.get_tab('general')) {
                 selector = '#toggle-locked-threads>input';
                 event = 'change';
@@ -46,22 +46,22 @@ $(document).ready(function(){
         else {
                 selector = '#toggle-locked-threads a';
                 event = 'click';
-		$('hr:first').before('<div id="toggle-locked-threads" style="text-align:right"><a class="unimportant" href="javascript:void(0)">-</a></div>');
+		document.querySelector('hr:first').before('<div id="toggle-locked-threads" style="text-align:right"><a class="unimportant" href="javascript:void(0)">-</a></div>');
         }
 	
-	$('div#toggle-locked-threads a')
+	document.querySelector('div#toggle-locked-threads a')
 		.text(hide_locked_threads ? _('Show locked threads') : _('Hide locked threads'));
 
 	$(selector)
-		.on(event, function() {
+		.on(event, () => {
 			hide_locked_threads = !hide_locked_threads;
 			if (hide_locked_threads) {
-				$('img.icon[title="Locked"], i.fa-lock.fa').each(function() {
+				$('img.icon[title="Locked"], i.fa-lock.fa').each(() => {
 					hideLockedThread(getThreadFromIcon($(this)));
 				});
 				localStorage.hidelockedthreads = true;
 			} else {
-				$('img.icon[title="Locked"], i.fa-lock.fa').each(function() {
+				$('img.icon[title="Locked"], i.fa-lock.fa').each(() => {
 					restoreLockedThread(getThreadFromIcon($(this)));
 				});
 				delete localStorage.hidelockedthreads;
@@ -71,17 +71,17 @@ $(document).ready(function(){
 		});
 	
 	if (hide_locked_threads) {
-		$('img.icon[title="Locked"], i.fa-lock.fa').each(function() {
+		$('img.icon[title="Locked"], i.fa-lock.fa').each(() => {
 			hideLockedThread(getThreadFromIcon($(this)));
 		});
 
 		if (window.Options && Options.get_tab('general')) {
-			$('#toggle-locked-threads>input').prop('checked', true);
+			document.querySelector('#toggle-locked-threads>input').prop('checked', true);
 		}
 	}
-        $(document).on('new_post', function(e, post) {
+        $(document).addEventListener('new_post', function(e, post) {
 		if (hide_locked_threads) {
-			$(post).find('img.icon[title="Locked"], i.fa-lock.fa').each(function() {
+			$(post).find('img.icon[title="Locked"], i.fa-lock.fa').each(() => {
 	                        hideLockedThread(getThreadFromIcon($(this)));
        		        });
 		}

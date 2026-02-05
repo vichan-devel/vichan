@@ -15,62 +15,84 @@ if (!localStorage.favorites) {
 }
 
 function favorite(board) {
-	var favorites = JSON.parse(localStorage.favorites);
+	const favorites = JSON.parse(localStorage.favorites);
 	favorites.push(board);
 	localStorage.favorites = JSON.stringify(favorites);
-};
+}
 
 function unfavorite(board) {
-	var favorites = JSON.parse(localStorage.favorites);
-	var index = $.inArray(board, favorites);
-	if (~index) {
+	const favorites = JSON.parse(localStorage.favorites);
+	const index = favorites.indexOf(board);
+	if (index !== -1) {
 		favorites.splice(index, 1);
 	}
 	localStorage.favorites = JSON.stringify(favorites);
-};
+}
 
 function handle_boards(data) {
-	var boards = new Array();
-	data = JSON.parse(data);
+	const boards = [];
+	const parsed_data = JSON.parse(data);
 
-	$.each(data, function(k, v) {
+	Object.values(parsed_data).forEach((v) => {
 		boards.push('<a href="/'+v+'">'+v+'</a>');
-	})
+	});
 
 	if (boards[0]) {
-		return $('<span class="favorite-boards"></span>').append(' [ '+boards.slice(0,10).join(" / ")+' ] ');
-	}	
+		const span = document.createElement('span');
+		span.className = 'favorite-boards';
+		span.innerHTML = ' [ '+boards.slice(0,10).join(" / ")+' ] ';
+		return span;
+	}
+	return null;
 }
 
 function add_favorites() {
-	$('.favorite-boards').remove();
+	document.querySelectorAll('.favorite-boards').forEach(el => el.remove());
 	
-	var boards = handle_boards(localStorage.favorites);
+	const boards = handle_boards(localStorage.favorites);
+	
+	if (boards) {
+		document.querySelectorAll('.boardlist').forEach(el => {
+			el.appendChild(boards.cloneNode(true));
+		});
+	}
+}
 
-	$('.boardlist').append(boards);
-};
+if (active_page === 'thread' || active_page === 'index' || active_page === 'catalog' || active_page === 'ukko') {
+	onReady(() => {
+		const favorites = JSON.parse(localStorage.favorites);
+		const is_board_favorite = favorites.includes(board_name);
 
-if (active_page == 'thread' || active_page == 'index' || active_page == 'catalog' || active_page == 'ukko') {
-	$(document).ready(function(){
-		var favorites = JSON.parse(localStorage.favorites);
-		var is_board_favorite = ~$.inArray(board_name, favorites);
-
-		$('header>h1').append('<a id="favorite-star" href="#" data-active="'+(is_board_favorite ? 'true' : 'false')+'" style="color: '+(is_board_favorite ? 'yellow' : 'grey')+'; text-decoration:none">\u2605</span>');
+		const header = document.querySelector('header>h1');
+		if (header) {
+			const star = document.createElement('a');
+			star.id = 'favorite-star';
+			star.href = '#';
+			star.dataset.active = is_board_favorite ? 'true' : 'false';
+			star.style.color = is_board_favorite ? 'yellow' : 'grey';
+			star.style.textDecoration = 'none';
+			star.textContent = '★';
+			header.appendChild(star);
+		}
+		
 		add_favorites();
 
-		$('#favorite-star').on('click', function(e) {
-			e.preventDefault();
-			if (!$(this).data('active')) {
-				favorite(board_name);
-				add_favorites();
-				$(this).css('color', 'yellow');
-				$(this).data('active', true);
-			} else {
-				unfavorite(board_name);
-				add_favorites();
-				$(this).css('color', 'grey');
-				$(this).data('active', false);
-			}
-		});
+		const favoriteBtn = document.getElementById('favorite-star');
+		if (favoriteBtn) {
+			favoriteBtn.addEventListener('click', (e) => {
+				e.preventDefault();
+				if (favoriteBtn.dataset.active !== 'true') {
+					favorite(board_name);
+					add_favorites();
+					favoriteBtn.style.color = 'yellow';
+					favoriteBtn.dataset.active = 'true';
+				} else {
+					unfavorite(board_name);
+					add_favorites();
+					favoriteBtn.style.color = 'grey';
+					favoriteBtn.dataset.active = 'false';
+				}
+			});
+		}
 	});
 }

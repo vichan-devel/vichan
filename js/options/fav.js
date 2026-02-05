@@ -1,9 +1,9 @@
-$(document).ready(function(){
+onReady(() => {
 //Creating functions
-var generateList = function(){
-	var favStor = [];
+const generateList = () => {
+	const favStor = [];
   	for(var i=1; i<favorites.length+1; i++){
-  		favStor.push($("#sortable > div:nth-child("+i+")").html());
+  		favStor.push($("#sortable > div:nth-child("+i+")").innerHTML);
   	}
 	return favStor;
 } //This will generate a list of boards based off of the list on the screen
@@ -15,27 +15,27 @@ function removeBoard(boardNumber){
 	add_favorites();
 } //This removes a board from favorites, localStorage.favorites and the page
 function addBoard(){
-	$("#sortable").append("<div>"+($("#plusBox").val())+"</div>");
-	$("#minusList").append( $('<div data-board="'+favorites.length+'" style="cursor: pointer; margin-right: 5px">-</div>').on('click', function(e){removeBoard($(this).data('board'));}) );
-	favorites.push($("#plusBox").val());
+	document.getElementById('sortable').appendChild("<div>"+(document.getElementById('plusBox').value)+"</div>");
+	document.getElementById('minusList').appendChild( $('<div data-board="'+favorites.length+'" style="cursor: pointer; margin-right: 5px">-</div>').on('click', (e) => {removeBoard($(this).data('board'));}) );
+	favorites.push(document.getElementById('plusBox').value);
 	localStorage.favorites = JSON.stringify(favorites);
-	$("#plusBox").val(""); //Removing text from textbox
+	document.getElementById('plusBox').val(""); //Removing text from textbox
 	add_favorites();
 } //This adds the text inside the textbox to favorites, localStorage.favorites and the page
 
-var favorites = JSON.parse(localStorage.favorites);
+const favorites = JSON.parse(localStorage.favorites);
 Options.add_tab('fav-tab','star',_("Favorites"));
 
 //Pregenerating list of boards 
-var favList = $('<div id="sortable" style="cursor: pointer; display: inline-block">');
+const favList = $('<div id="sortable" style="cursor: pointer; display: inline-block">');
 for(var i=0; i<favorites.length; i++){
-    favList.append( $('<div>'+favorites[i]+'</div>') );
+    favList.appendChild( $('<div>'+favorites[i]+'</div>') );
 } 
 
 //Creating list of minus symbols to remove unwanted boards
-var minusList = $('<div id="minusList" style="color: #0000FF; display: inline-block">');
+const minusList = $('<div id="minusList" style="color: #0000FF; display: inline-block">');
 for(var i=0; i<favorites.length; i++){
-    minusList.append( $('<div data-board="'+i+'" style="cursor: pointer; margin-right: 5px">-</div>').on('click', function(e){removeBoard($(this).data('board'));}) );
+    minusList.appendChild( $('<div data-board="'+i+'" style="cursor: pointer; margin-right: 5px">-</div>').on('click', (e) => {removeBoard($(this).data('board'));}) );
 } 
 
 //Help message so people understand how sorting boards works
@@ -46,12 +46,12 @@ $(minusList).appendTo(Options.get_tab('fav-tab').content); //Adding the list of 
 $(favList).appendTo(Options.get_tab('fav-tab').content);  //Adding the list of favorite boards to the tab
 
 //Adding spacing and text box to right boards into
-var addDiv = $("<div id='favs-add-board'>");
+const addDiv = $("<div id='favs-add-board'>");
 
-var plusBox = $("<input id=\"plusBox\" type=\"text\">").appendTo(addDiv);
-plusBox.keydown(function( event ) {
-	if(event.keyCode == 13){
-		$("#plus").click();
+const plusBox = $("<input id=\"plusBox\" type=\"text\">").appendTo(addDiv);
+plusBox.keydown((event) => {
+	if(event.keyCode === 13){
+		document.getElementById('plus').click();
 	}
 });
 
@@ -59,12 +59,12 @@ plusBox.keydown(function( event ) {
 $("<div id=\"plus\">+</div>").css({
 	cursor: "pointer",
 	color: "#0000FF"
-}).on('click', function(e){addBoard()}).appendTo(addDiv);
+}).on('click', (e) => {addBoard()}).appendTo(addDiv);
 
 addDiv.appendTo(Options.get_tab('fav-tab').content); //Adding the plus button
 
 favList.sortable(); //Making boards with sortable id use the sortable jquery function
-favList.on('sortstop', function() {
+favList.on('sortstop', () => {
 	favorites = generateList();	
 	localStorage.favorites = JSON.stringify(favorites);
 	add_favorites();

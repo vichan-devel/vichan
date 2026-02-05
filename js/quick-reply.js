@@ -13,18 +13,18 @@
  *
  */
 
-(function() {
-	var settings = new script_settings('quick-reply');
+(() => {
+	const settings = new script_settings('quick-reply');
 	
-	var do_css = function() {
-		$('#quick-reply-css').remove();
+	const do_css = () => {
+		document.getElementById('quick-reply-css').remove();
 		
 		// Find background of reply posts
-		var dummy_reply = $('<div class="post reply"></div>').appendTo($('body'));
-		var reply_background = dummy_reply.css('backgroundColor');
-		var reply_border_style = dummy_reply.css('borderStyle');
-		var reply_border_color = dummy_reply.css('borderColor');
-		var reply_border_width = dummy_reply.css('borderWidth');
+		const dummy_reply = $('<div class="post reply"></div>').appendTo(document.querySelector('body'));
+		const reply_background = dummy_reply.style.backgroundColor;
+		const reply_border_style = dummy_reply.style.borderStyle;
+		const reply_border_color = dummy_reply.style.borderColor;
+		const reply_border_width = dummy_reply.style.borderWidth;
 		dummy_reply.remove();
 		
 		$('<style type="text/css" id="quick-reply-css">\
@@ -121,95 +121,95 @@
 				display: none !important;\
 			}\
 		}\
-		</style>').appendTo($('head'));
+		</style>').appendTo(document.querySelector('head'));
 	};
 	
-	var show_quick_reply = function(){
-		if($('div.banner').length == 0)
+	const show_quick_reply = () => {
+		if(document.querySelector('div.banner').length === 0)
 			return;
-		if($('#quick-reply').length != 0)
+		if(document.getElementById('quick-reply').length != 0)
 			return;
 		
 		do_css();
 		
-		var $postForm = $('form[name="post"]').clone();
+		const $postForm = $('form[name="post"]').clone();
 		
 		$postForm.clone();
 		
 		$dummyStuff = $('<div class="nonsense"></div>').appendTo($postForm);
 		
-		$postForm.find('table tr').each(function() {
-			var $th = $(this).children('th:first');
-			var $td = $(this).children('td:first');		
+		$postForm.querySelector('table tr').each(() => {
+			const $th = $(this).children('th:first');
+			const $td = $(this).children('td:first');		
 			if ($th.length && $td.length) {
-				$td.attr('colspan', 2);
+				$td.setAttribute('colspan', 2);
 	
 				if ($td.find('input[type="text"]').length) {
 					// Replace <th> with input placeholders
 					$td.find('input[type="text"]')
-						.removeAttr('size')
-						.attr('placeholder', $th.clone().children().remove().end().text());
+						.removeAttribute('size')
+						.setAttribute('placeholder', $th.clone().children().remove().end().textContent);
 				}
 	
 				// Move anti-spam nonsense and remove <th>
-				$th.contents().filter(function() {
-					return this.nodeType == 3; // Node.TEXT_NODE
+				$th.contents().filter(() => {
+					return this.nodeType === 3; // Node.TEXT_NODE
 				}).remove();
 				$th.contents().appendTo($dummyStuff);
 				$th.remove();
 	
 				if ($td.find('input[name="password"]').length) {
 					// Hide password field
-					$(this).hide();
+					$(this).style.display = 'none';
 				}
 	
 				// Fix submit button
 				if ($td.find('input[type="submit"]').length) {
-					$td.removeAttr('colspan');
-					$('<td class="submit"></td>').append($td.find('input[type="submit"]')).insertAfter($td);
+					$td.removeAttribute('colspan');
+					$('<td class="submit"></td>').appendChild($td.find('input[type="submit"]')).insertAfter($td);
 				}
 	
 				// reCAPTCHA
-				if ($td.find('#recaptcha_widget_div').length) {
+				if ($td.querySelector('#recaptcha_widget_div').length) {
 					// Just show the image, and have it interact with the real form.
-					var $captchaimg = $td.find('#recaptcha_image img');
+					const $captchaimg = $td.querySelector('#recaptcha_image img');
 					
 					$captchaimg
-						.removeAttr('id')
-						.removeAttr('style')
-						.addClass('recaptcha_image')
-						.click(function() {
-							$('#recaptcha_reload').click();
+						.removeAttribute('id')
+						.removeAttribute('style')
+						.classList.add('recaptcha_image')
+						.click(() => {
+							document.getElementById('recaptcha_reload').click();
 						});
 					
 					// When we get a new captcha...
-					$('#recaptcha_response_field').focus(function() {
-						if ($captchaimg.attr('src') != $('#recaptcha_image img').attr('src')) {
-							$captchaimg.attr('src', $('#recaptcha_image img').attr('src'));
-							$postForm.find('input[name="recaptcha_challenge_field"]').val($('#recaptcha_challenge_field').val());
+					document.getElementById('recaptcha_response_field').focus(() => {
+						if ($captchaimg.getAttribute('src') != document.querySelector('#recaptcha_image img').getAttribute('src')) {
+							$captchaimg.setAttribute('src', document.querySelector('#recaptcha_image img').getAttribute('src'));
+							$postForm.find('input[name="recaptcha_challenge_field"]').val(document.getElementById('recaptcha_challenge_field').value);
 							$postForm.find('input[name="recaptcha_response_field"]').val('').focus();
 						}
 					});
 					
-					$postForm.submit(function() {
-						setTimeout(function() {
-							$('#recaptcha_reload').click();
+					$postForm.submit(() => {
+						setTimeout(() => {
+							document.getElementById('recaptcha_reload').click();
 						}, 200);
 					});
 					
 					// Make a new row for the response text
-					var $newRow = $('<tr><td class="recaptcha-response" colspan="2"></td></tr>');
-					$newRow.children().first().append(
-						$td.find('input').removeAttr('style')
+					const $newRow = $('<tr><td class="recaptcha-response" colspan="2"></td></tr>');
+					$newRow.children().first().appendChild(
+						$td.querySelector('input').removeAttribute('style')
 					);
-					$newRow.find('#recaptcha_response_field')
-						.removeAttr('id')
-						.addClass('recaptcha_response_field')
-						.attr('placeholder', $('#recaptcha_response_field').attr('placeholder'));
+					$newRow.querySelector('#recaptcha_response_field')
+						.removeAttribute('id')
+						.classList.add('recaptcha_response_field')
+						.setAttribute('placeholder', document.getElementById('recaptcha_response_field').getAttribute('placeholder'));
 					
-					$('#recaptcha_response_field').addClass('recaptcha_response_field')
+					document.getElementById('recaptcha_response_field').classList.add('recaptcha_response_field')
 					
-					$td.replaceWith($('<td class="recaptcha" colspan="2"></td>').append($('<span></span>').append($captchaimg)));
+					$td.replaceWith($('<td class="recaptcha" colspan="2"></td>').appendChild(document.querySelector('<span></span>').appendChild($captchaimg)));
 					
 					$newRow.insertAfter(this);
 				}
@@ -221,24 +221,24 @@
 						
 						if (settings.get('show_remote', false)) {
 							// Make a new row for it
-							var $newRow = $('<tr><td colspan="2"></td></tr>');
+							const $newRow = $('<tr><td colspan="2"></td></tr>');
 						
-							$file_url.clone().attr('placeholder', _('Upload URL')).appendTo($newRow.find('td'));
+							$file_url.clone().setAttribute('placeholder', _('Upload URL')).appendTo($newRow.querySelector('td'));
 						
 							$newRow.insertBefore(this);
 						}
 						$file_url.parent().remove();
 
 						
-						$td.find('label').remove();
-						$td.contents().filter(function() {
-							return this.nodeType == 3; // Node.TEXT_NODE
+						$td.querySelector('label').remove();
+						$td.contents().filter(() => {
+							return this.nodeType === 3; // Node.TEXT_NODE
 						}).remove();
-						$td.find('input[name="file_url"]').removeAttr('id');
+						$td.find('input[name="file_url"]').removeAttribute('id');
 					}
 					
 					if ($(this).find('input[name="spoiler"]').length) {
-						$td.removeAttr('colspan');
+						$td.removeAttribute('colspan');
 					}
 				}
 
@@ -259,15 +259,15 @@
 				
 				// Remove mod controls, because it looks shit.
 				if ($td.find('input[type="checkbox"]').length) {
-					var tr = this;
-					$td.find('input[type="checkbox"]').each(function() {
-						if ($(this).attr('name') == 'spoiler') {
-							$td.find('label').remove();
-							$(this).attr('id', 'q-spoiler-image');
+					const tr = this;
+					$td.find('input[type="checkbox"]').each(() => {
+						if ($(this).getAttribute('name') === 'spoiler') {
+							$td.querySelector('label').remove();
+							$(this).setAttribute('id', 'q-spoiler-image');
 							$postForm.find('input[type="file"]').parent()
-								.removeAttr('colspan')
-								.after($('<td class="spoiler"></td>').append(this, ' ', $('<label for="q-spoiler-image">').text(_('Spoiler Image'))));
-						} else if ($(this).attr('name') == 'no_country') {
+								.removeAttribute('colspan')
+								.after($('<td class="spoiler"></td>').appendChild(this, ' ', $('<label for="q-spoiler-image">').text(_('Spoiler Image'))));
+						} else if ($(this).getAttribute('name') === 'no_country') {
 							$td.find('label,input[type="checkbox"]').remove();
 						} else {
 							$(tr).remove();
@@ -275,53 +275,53 @@
 					});
 				}
 				
-				$td.find('small').hide();
+				$td.querySelector('small').style.display = 'none';
 			}
 		});
 		
-		$postForm.find('textarea[name="body"]').removeAttr('id').removeAttr('cols').attr('placeholder', _('Comment'));
+		$postForm.find('textarea[name="body"]').removeAttribute('id').removeAttribute('cols').setAttribute('placeholder', _('Comment'));
 	
-		$postForm.find('textarea:not([name="body"]),input[type="hidden"]:not(.captcha_cookie)').removeAttr('id').appendTo($dummyStuff);
+		$postForm.find('textarea:not([name="body"]),input[type="hidden"]:not(.captcha_cookie)').removeAttribute('id').appendTo($dummyStuff);
 	
-		$postForm.find('br').remove();
-		$postForm.find('table').prepend('<tr><th colspan="2">\
+		$postForm.querySelector('br').remove();
+		$postForm.querySelector('table').insertBefore('<tr><th colspan="2">\
 			<span class="handle">\
 				<a class="close-btn" href="javascript:void(0)">×</a>\
 				' + _('Quick Reply') + '\
 			</span>\
 			</th></tr>');
 		
-		$postForm.attr('id', 'quick-reply');
+		$postForm.setAttribute('id', 'quick-reply');
 		
-		$postForm.appendTo($('body')).hide();
+		$postForm.appendTo(document.querySelector('body')).style.display = 'none';
 		$origPostForm = $('form[name="post"]:first');
 		
 		// Synchronise body text with original post form
-		$origPostForm.find('textarea[name="body"]').on('change input propertychange', function() {
-			$postForm.find('textarea[name="body"]').val($(this).val());
+		$origPostForm.find('textarea[name="body"]').on('change input propertychange', () => {
+			$postForm.find('textarea[name="body"]').val($(this).value);
 		});
-		$postForm.find('textarea[name="body"]').on('change input propertychange', function() {
-			$origPostForm.find('textarea[name="body"]').val($(this).val());
+		$postForm.find('textarea[name="body"]').on('change input propertychange', () => {
+			$origPostForm.find('textarea[name="body"]').val($(this).value);
 		});
-		$postForm.find('textarea[name="body"]').focus(function() {
-			$origPostForm.find('textarea[name="body"]').removeAttr('id');
-			$(this).attr('id', 'body');
+		$postForm.find('textarea[name="body"]').focus(() => {
+			$origPostForm.find('textarea[name="body"]').removeAttribute('id');
+			$(this).setAttribute('id', 'body');
 		});
-		$origPostForm.find('textarea[name="body"]').focus(function() {
-			$postForm.find('textarea[name="body"]').removeAttr('id');
-			$(this).attr('id', 'body');
+		$origPostForm.find('textarea[name="body"]').focus(() => {
+			$postForm.find('textarea[name="body"]').removeAttribute('id');
+			$(this).setAttribute('id', 'body');
 		});
 		// Synchronise other inputs
-		$origPostForm.find('input[type="text"],select').on('change input propertychange', function() {
-			$postForm.find('[name="' + $(this).attr('name') + '"]').val($(this).val());
+		$origPostForm.find('input[type="text"],select').on('change input propertychange', () => {
+			$postForm.find('[name="' + $(this).getAttribute('name') + '"]').val($(this).value);
 		});
-		$postForm.find('input[type="text"],select').on('change input propertychange', function() {
-			$origPostForm.find('[name="' + $(this).attr('name') + '"]').val($(this).val());
+		$postForm.find('input[type="text"],select').on('change input propertychange', () => {
+			$origPostForm.find('[name="' + $(this).getAttribute('name') + '"]').val($(this).value);
 		});
 
 		if (typeof $postForm.draggable != 'undefined') {	
 			if (localStorage.quickReplyPosition) {
-				var offset = JSON.parse(localStorage.quickReplyPosition);
+				const offset = JSON.parse(localStorage.quickReplyPosition);
 				if (offset.top < 0)
 					offset.top = 0;
 				if (offset.right > $(window).width() - $postForm.width())
@@ -335,8 +335,8 @@
 				containment: 'window',
 				distance: 10,
 				scroll: false,
-				stop: function() {
-					var offset = {
+				stop: () => {
+					const offset = {
 						top: $(this).offset().top - $(window).scrollTop(),
 						right: $(window).width() - $(this).offset().left - $(this).width(),
 					};
@@ -345,25 +345,25 @@
 					$postForm.css('right', offset.right).css('top', offset.top).css('left', 'auto');
 				}
 			});
-			$postForm.find('th .handle').css('cursor', 'move');
+			$postForm.querySelector('th .handle').css('cursor', 'move');
 		}
 		
-		$postForm.find('th .close-btn').click(function() {
-			$origPostForm.find('textarea[name="body"]').attr('id', 'body');
+		$postForm.querySelector('th .close-btn').click(() => {
+			$origPostForm.find('textarea[name="body"]').setAttribute('id', 'body');
 			$postForm.remove();
 			floating_link();
 		});
 		
 		// Fix bug when table gets too big for form. Shouldn't exist, but crappy CSS etc.
-		$postForm.show();
-		$postForm.width($postForm.find('table').width());
-		$postForm.hide();
+		$postForm.style.display = '';
+		$postForm.width($postForm.querySelector('table').width());
+		$postForm.style.display = 'none';
 		
 		$(window).trigger('quick-reply');
 	
-		$(window).ready(function() {
+		onReady(() => {
 			if (settings.get('hide_at_top', true)) {
-				$(window).scroll(function() {
+				$(window).scroll(() => {
 					if ($(this).width() <= 400)
 						return;
 					if ($(this).scrollTop() < $origPostForm.offset().top + $origPostForm.height() - 100)
@@ -372,24 +372,24 @@
 						$postForm.fadeIn(100);
 				}).scroll();
 			} else {
-				$postForm.show();
+				$postForm.style.display = '';
 			}
 			
-			$(window).on('stylesheet', function() {
+			$(window).on('stylesheet', () => {
 				do_css();
-				if ($('link#stylesheet').attr('href')) {
-					$('link#stylesheet')[0].onload = do_css;
+				if (document.querySelector('link#stylesheet').getAttribute('href')) {
+					document.querySelector('link#stylesheet')[0].onload = do_css;
 				}
 			});
 		});
 	};
 	
-	$(window).on('cite', function(e, id, with_link) {
+	$(window).addEventListener('cite', function(e, id, with_link) {
 		if ($(this).width() <= 400)
 			return;
 		show_quick_reply();
 		if (with_link) {
-			$(document).ready(function() {
+			onReady(() => {
 				if ($('#' + id).length) {
 					highlightReply(id);
 					$(document).scrollTop($('#' + id).offset().top);
@@ -397,31 +397,31 @@
 				
 				// Honestly, I'm not sure why we need setTimeout() here, but it seems to work.
 				// Same for the "tmp" variable stuff you see inside here:
-				setTimeout(function() {
-					var tmp = $('#quick-reply textarea[name="body"]').val();
+				setTimeout(() => {
+					const tmp = $('#quick-reply textarea[name="body"]').value;
 					$('#quick-reply textarea[name="body"]').val('').focus().val(tmp);
 				}, 1);
 			});
 		}
 	});
 	
-	var floating_link = function() {
+	const floating_link = () => {
 		if (!settings.get('floating_link', false))
 			return;
 		$('<a href="javascript:void(0)" class="quick-reply-btn">'+_('Quick Reply')+'</a>')
-			.click(function() {
+			.click(() => {
 				show_quick_reply();
 				$(this).remove();
-			}).appendTo($('body'));
+			}).appendTo(document.querySelector('body'));
 		
-		$(window).on('quick-reply', function() {
-			$('.quick-reply-btn').remove();
+		$(window).on('quick-reply', () => {
+			document.querySelector('.quick-reply-btn').remove();
 		});
 	};
 	
 	if (settings.get('floating_link', false)) {
-		$(window).ready(function() {
-			if($('div.banner').length == 0)
+		onReady(() => {
+			if(document.querySelector('div.banner').length === 0)
 				return;
 			$('<style type="text/css">\
 			a.quick-reply-btn {\
@@ -432,20 +432,20 @@
 				padding: 5px 13px;\
 				text-decoration: none;\
 			}\
-			</style>').appendTo($('head'));
+			</style>').appendTo(document.querySelector('head'));
 			
 			floating_link();
 			
 			if (settings.get('hide_at_top', true)) {
-				$('.quick-reply-btn').hide();
+				document.querySelector('.quick-reply-btn').style.display = 'none';
 				
-				$(window).scroll(function() {
+				$(window).scroll(() => {
 					if ($(this).width() <= 400)
 						return;
 					if ($(this).scrollTop() < $('form[name="post"]:first').offset().top + $('form[name="post"]:first').height() - 100)
-						$('.quick-reply-btn').fadeOut(100);
+						document.querySelector('.quick-reply-btn').fadeOut(100);
 					else
-						$('.quick-reply-btn').fadeIn(100);
+						document.querySelector('.quick-reply-btn').fadeIn(100);
 				}).scroll();
 			}
 		});

@@ -1,19 +1,11 @@
--- phpMyAdmin SQL Dump
--- version 4.0.4.1
--- http://www.phpmyadmin.net
+-- vichan modernized SQL schema for MySQL 8.x / PHP 8.3+
+-- Generated 2026-02-05
 --
--- Host: localhost
--- Generation Time: Jul 30, 2013 at 09:45 PM
--- Server version: 5.6.10
--- PHP Version: 5.3.15
+-- This schema includes best practices: utf8mb4, strict types, soft deletes, deduplication, and improved indexing.
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+SET NAMES utf8mb4;
+SET time_zone = '+00:00';
+SET sql_mode = 'STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- --------------------------------------------------------
 

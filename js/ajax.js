@@ -6,135 +6,194 @@
  * Copyright (c) 2013 Michael Save <savetheinternet@tinyboard.org>
  * Copyright (c) 2013-2014 Marcin Łabanowski <marcin@6irc.net>
  *
- * Usage:
- *   $config['additional_javascript'][] = 'js/jquery.min.js';
- *   $config['additional_javascript'][] = 'js/ajax.js';
- *
+ * Modernized to ES6 with Fetch API - No jQuery required
  */
 
-$(window).ready(function() {
-	var settings = new script_settings('ajax');
-	var do_not_ajax = false;
+onReady(() => {
+	const settings = new script_settings('ajax');
+	let do_not_ajax = false;
 
 	// Enable submit button if disabled (cache problem)
-	$('input[type="submit"]').removeAttr('disabled');
-	
-	var setup_form = function($form) {
-		$form.submit(function() {
-			if (do_not_ajax)
-				return true;
-			var form = this;
-			var submit_txt = $(this).find('input[type="submit"]').val();
-			if (window.FormData === undefined)
-				return true;
+	document.querySelectorAll('input[type="submit"]').forEach(btn => {
+		btn.removeAttribute('disabled');
+	});
+
+	const postWithProgress = async (url, formData, form) => {
+		return new Promise((resolve, reject) => {
+			const xhr = new XMLHttpRequest();
 			
-			var formData = new FormData(this);
+			xhr.addEventListener('loadstart', () => {
+				form.querySelector('input[type="submit"]')?.setAttribute('disabled', 'disabled');
+			});
+
+			xhr.upload.addEventListener('progress', (e) => {
+				if (e.lengthComputable) {
+					const percentage = Math.round(e.loaded * 100 / e.total);
+					const submitBtn = form.querySelector('input[type="submit"]');
+					if (submitBtn) {
+						const originalText = submitBtn.dataset.originalText || submitBtn.value;
+						submitBtn.dataset.originalText = originalText;
+						submitBtn.value = _('Posting... (#%)').replace('#', percentage);
+					}
+				}
+			});
+
+			xhr.addEventListener('load', () => {
+				try {
+					const response = JSON.parse(xhr.responseText);
+					resolve(response);
+				} catch (e) {
+					reject(new Error('Invalid JSON response'));
+				}
+			});
+
+			xhr.addEventListener('error', () => {
+				reject(new Error('Network error'));
+			});
+
+			xhr.addEventListener('abort', () => {
+				reject(new Error('Request aborted'));
+			});
+
+			xhr.open('POST', url);
+			xhr.setRequestHeader('Accept', 'application/json');
+			xhr.send(formData);
+		});
+	};
+
+	const setup_form = (form) => {
+		form.addEventListener('submit', async (e) => {
+			if (do_not_ajax) return true;
+
+			e.preventDefault();
+
+			const submit_txt = form.querySelector('input[type="submit"]')?.value || 'Post';
+			if (!window.FormData) return true;
+
+			const formData = new FormData(form);
 			formData.append('json_response', '1');
 			formData.append('post', submit_txt);
 
-			$(document).trigger("ajax_before_post", formData);
+			// Trigger before post event
+			document.dispatchEvent(new CustomEvent('ajax_before_post', { detail: formData }));
 
-			var updateProgress = function(e) {
-				var percentage;
-				if (e.position === undefined) { // Firefox
-					percentage = Math.round(e.loaded * 100 / e.total);
-				}
-				else { // Chrome?
-					percentage = Math.round(e.position * 100 / e.total);
-				}
-				$(form).find('input[type="submit"]').val(_('Posting... (#%)').replace('#', percentage));
-			};
+			try {
+				const response = await postWithProgress(form.action, formData, form);
 
-			$.ajax({
-				url: this.action,
-				type: 'POST',
-				xhr: function() {
-					var xhr = $.ajaxSettings.xhr();
-					if(xhr.upload) {
-						xhr.upload.addEventListener('progress', updateProgress, false);
-					}
-					return xhr;
-				},
-				success: function(post_response) {
-					if (post_response.error) {
-						if (post_response.banned) {
-							// You are banned. Must post the form normally so the user can see the ban message.
-							do_not_ajax = true;
-							$(form).find('input[type="submit"]').each(function() {
-								var $replacement = $('<input type="hidden">');
-								$replacement.attr('name', $(this).attr('name'));
-								$replacement.val(submit_txt);
-								$(this)
-									.after($replacement)
-									.replaceWith($('<input type="button">').val(submit_txt));
-							});
-							$(form).submit();
-						} else {
-							alert(post_response.error);
-							$(form).find('input[type="submit"]').val(submit_txt);
-							$(form).find('input[type="submit"]').removeAttr('disabled');
-						}
-					} else if (post_response.redirect && post_response.id) {
-						if (!$(form).find('input[name="thread"]').length
-							|| (!settings.get('always_noko_replies', true) && !post_response.noko)) {
-							document.location = post_response.redirect;
-						} else {
-							$.ajax({
-								url: document.location,
-								success: function(data) {
-									$(data).find('div.post.reply').each(function() {
-										var id = $(this).attr('id');
-										if($('#' + id).length == 0) {
-											$(this).insertAfter($('div.post:last').next()).after('<br class="clear">');
-											$(document).trigger('new_post', this);
-											// watch.js & auto-reload.js retrigger
-											setTimeout(function() { $(window).trigger("scroll"); }, 100);
-										}
-									});
-									
-									highlightReply(post_response.id);
-									window.location.hash = post_response.id;
-									$(window).scrollTop($('div.post#reply_' + post_response.id).offset().top);
-									
-									$(form).find('input[type="submit"]').val(submit_txt);
-									$(form).find('input[type="submit"]').removeAttr('disabled');
-									$(form).find('input[name="subject"],input[name="file_url"],\
-										textarea[name="body"],input[type="file"]').val('').change();
-								},
-								cache: false,
-								contentType: false,
-								processData: false
-							}, 'html');
-						}
-						$(form).find('input[type="submit"]').val(_('Posted...'));
-						$(document).trigger("ajax_after_post", post_response);
+				if (response.error) {
+					if (response.banned) {
+						// You are banned - post normally so user sees ban message
+						do_not_ajax = true;
+						form.querySelectorAll('input[type="submit"]').forEach((submitBtn) => {
+							const hidden = document.createElement('input');
+							hidden.type = 'hidden';
+							hidden.name = submitBtn.name;
+							hidden.value = submit_txt;
+							
+							const button = document.createElement('input');
+							button.type = 'button';
+							button.value = submit_txt;
+							
+							submitBtn.parentNode.insertBefore(hidden, submitBtn);
+							submitBtn.replaceWith(button);
+						});
+						form.submit();
 					} else {
-						alert(_('An unknown error occured when posting!'));
-						$(form).find('input[type="submit"]').val(submit_txt);
-						$(form).find('input[type="submit"]').removeAttr('disabled');
+						alert(response.error);
+						form.querySelectorAll('input[type="submit"]').forEach(btn => {
+							btn.value = submit_txt;
+							btn.removeAttribute('disabled');
+						});
 					}
-				},
-				error: function(xhr, status, er) {
-					console.log(xhr);
-					alert(_('The server took too long to submit your post. Your post was probably still submitted. If it wasn\'t, we might be experiencing issues right now -- please try your post again later. Error information: ') + "<div><textarea>" + JSON.stringify(xhr) + "</textarea></div>");
-					$(form).find('input[type="submit"]').val(submit_txt);
-					$(form).find('input[type="submit"]').removeAttr('disabled');
-				},
-				data: formData,
-				cache: false,
-				contentType: false,
-				processData: false
-			}, 'json');
-			
-			$(form).find('input[type="submit"]').val(_('Posting...'));
-			$(form).find('input[type="submit"]').attr('disabled', true);
-			
-			return false;
+				} else if (response.redirect && response.id) {
+					const hasThread = form.querySelector('input[name="thread"]');
+					const shouldNoko = settings.get('always_noko_replies', true) || response.noko;
+
+					if (!hasThread || !shouldNoko) {
+						document.location = response.redirect;
+					} else {
+						// Fetch updated page and insert new post
+						const pageResponse = await fetch(document.location);
+						const html = await pageResponse.text();
+						const parser = new DOMParser();
+						const doc = parser.parseFromString(html, 'text/html');
+
+						doc.querySelectorAll('div.post.reply').forEach((postEl) => {
+							const id = postEl.id;
+							if (id && !document.getElementById(id)) {
+								const lastPost = document.querySelector('div.post:last-of-type');
+								const insertPoint = lastPost?.nextElementSibling || lastPost;
+								if (insertPoint) {
+									insertPoint.parentNode.insertBefore(postEl, insertPoint);
+									const br = document.createElement('br');
+									br.className = 'clear';
+									insertPoint.parentNode.insertBefore(br, insertPoint);
+								}
+
+								// Trigger new post event
+								document.dispatchEvent(new CustomEvent('new_post', { detail: postEl }));
+
+								// Retrigger scroll for watch.js & auto-reload.js
+								setTimeout(() => window.dispatchEvent(new Event('scroll')), 100);
+							}
+						});
+
+						if (typeof highlightReply === 'function') {
+							highlightReply(response.id);
+						}
+						window.location.hash = response.id;
+						const replyEl = document.getElementById('reply_' + response.id);
+						if (replyEl) {
+							window.scrollTo(0, replyEl.getBoundingClientRect().top + window.scrollY);
+						}
+
+						form.querySelectorAll('input[type="submit"]').forEach(btn => {
+							btn.value = submit_txt;
+							btn.removeAttribute('disabled');
+						});
+
+						// Clear form fields
+						form.querySelectorAll('input[name="subject"], input[name="file_url"], textarea[name="body"], input[type="file"]').forEach(field => {
+							field.value = '';
+							field.dispatchEvent(new Event('change'));
+						});
+					}
+
+					form.querySelector('input[type="submit"]').value = _('Posted...');
+					document.dispatchEvent(new CustomEvent('ajax_after_post', { detail: response }));
+				} else {
+					alert(_('An unknown error occured when posting!'));
+					form.querySelectorAll('input[type="submit"]').forEach(btn => {
+						btn.value = submit_txt;
+						btn.removeAttribute('disabled');
+					});
+				}
+			} catch (error) {
+				console.error('AJAX Error:', error);
+				alert(_('The server took too long to submit your post. Your post was probably still submitted. If it wasn\'t, we might be experiencing issues right now -- please try your post again later. Error: ') + error.message);
+				form.querySelectorAll('input[type="submit"]').forEach(btn => {
+					btn.value = submit_txt;
+					btn.removeAttribute('disabled');
+				});
+			}
 		});
 	};
-	setup_form($('form[name="post"]'));
-	$(window).on('quick-reply', function() {
-		$('form#quick-reply').off('submit');
-		setup_form($('form#quick-reply'));
+
+	// Setup main post form
+	const postForm = document.querySelector('form[name="post"]');
+	if (postForm) {
+		setup_form(postForm);
+	}
+
+	// Setup quick reply form when it's created
+	document.addEventListener('quick-reply', () => {
+		const quickReplyForm = document.getElementById('quick-reply');
+		if (quickReplyForm) {
+			// Remove old listeners
+			const newForm = quickReplyForm.cloneNode(true);
+			quickReplyForm.replaceWith(newForm);
+			setup_form(newForm);
+		}
 	});
 });
+

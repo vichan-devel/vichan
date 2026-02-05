@@ -11,7 +11,7 @@
  *
  */
 
-$(document).ready(function(){
+onReady(() => {
 	
 	if (!localStorage.hiddenrecentposts)
 		localStorage.hiddenrecentposts = '{}';
@@ -20,9 +20,9 @@ $(document).ready(function(){
 		localStorage.recentpostscount = 25;
 
 	// Load data from HTML5 localStorage
-	var hidden_data = JSON.parse(localStorage.hiddenrecentposts);
+	const hidden_data = JSON.parse(localStorage.hiddenrecentposts);
 
-	var store_data_posts = function() {
+	const store_data_posts = () => {
 		localStorage.hiddenrecentposts = JSON.stringify(hidden_data);
 	}
 
@@ -36,34 +36,34 @@ $(document).ready(function(){
 		}
 	}
 
-	var do_hide_posts = function() {
-		var data = $(this).attr('id');
-		var splitted = data.split('-');
-		var id = splitted[2];
-		var post_container = $(this).parent();
+	const do_hide_posts = () => {
+		const data = $(this).getAttribute('id');
+		const splitted = data.split('-');
+		const id = splitted[2];
+		const post_container = $(this).parent();
 
-		var board = post_container.data("board");
+		const board = post_container.data("board");
 		
 		if (!hidden_data[board]) {
 			hidden_data[board] = {};
 		}
 
 		$('<a class="hide-post-link" href="javascript:void(0)"> Dismiss </a>')
-		.insertBefore(post_container.find('a.eita-link:first'))
-		.click(function(){
+		.insertBefore(post_container.querySelector('a.eita-link:first'))
+		.click(() => {
 			hidden_data[board][id] = Math.round(Date.now() / 1000);
 			store_data_posts();
 
-			post_container.closest('hr').hide();
-			post_container.children().hide();
+			post_container.closest('hr').style.display = 'none';
+			post_container.children().style.display = 'none';
 		});
 		if(hidden_data[board][id])
-			post_container.find('a.hide-post-link').click();
+			post_container.querySelector('a.hide-post-link').click();
 	}
 
-	$('a.eita-link').each(do_hide_posts);
+	document.querySelector('a.eita-link').each(do_hide_posts);
 
-	$('#erase-local-data').click(function(){
+	document.getElementById('erase-local-data').click(() => {
 		hidden_data = {};
 		store_data_posts();
 		$(this).html('Loading...');

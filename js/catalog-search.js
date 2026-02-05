@@ -3,80 +3,108 @@
  *   - Search and filters threads when on catalog view
  *   - Optional shortcuts 's' and 'esc' to open and close the search.
  *
- * Usage:
- *   $config['additional_javascript'][] = 'js/jquery.min.js';
- *   $config['additional_javascript'][] = 'js/comment-toolbar.js';
+ * Usage (no jQuery needed anymore):
+ *   $config['additional_javascript'][] = 'js/catalog-search.js';
  */
-if (active_page == 'catalog') {
-	onReady(function() {
+if (active_page === 'catalog') {
+	onReady(() => {
 		'use strict';
 
 		// 'true' = enable shortcuts
-		let useKeybinds = true;
-
-		// trigger the search 400ms after last keystroke
-		let delay = 400;
+		const useKeybinds = true;
 		let timeoutHandle;
 
 		// search and hide none matching threads
-		function filter(search_term) {
-			$('.replies').each(function () {
-				let subject = $(this).children('.intro').text().toLowerCase();
-				let comment = $(this).clone().children().remove(':lt(2)').end().text().trim().toLowerCase();
-				search_term = search_term.toLowerCase();
+		const filter = (search_term) => {
+			const replies = document.querySelectorAll('.replies');
+			search_term = search_term.toLowerCase();
 
-				if (subject.indexOf(search_term) == -1 && comment.indexOf(search_term) == -1) {
-					$(this).parents('div[id="Grid"]>.mix').css('display', 'none');
-				} else {
-					$(this).parents('div[id="Grid"]>.mix').css('display', 'inline-block');
+			replies.forEach(replyEl => {
+				const subject = replyEl.querySelector('.intro')?.textContent.toLowerCase() || '';
+				
+				// Clone and remove first 2 children to get comment
+				const commentEl = replyEl.cloneNode(true);
+				const children = commentEl.querySelectorAll(':nth-child(1), :nth-child(2)');
+				children.forEach(child => child.remove());
+				const comment = commentEl.textContent.trim().toLowerCase();
+
+				const matchesSearch = subject.includes(search_term) || comment.includes(search_term);
+				const mixElement = replyEl.closest('div[id="Grid"]')?.querySelector('.mix[id]') || 
+									replyEl.closest('.mix');
+				
+				if (mixElement) {
+					mixElement.style.display = matchesSearch ? 'inline-block' : 'none';
 				}
 			});
-		}
+		};
 
-		function searchToggle() {
-			let button = $('#catalog_search_button');
+		const searchToggle = () => {
+			const button = document.getElementById('catalog_search_button');
+			const catalogSearch = document.querySelector('.catalog_search');
 
-			if (!button.data('expanded')) {
-				button.data('expanded', '1');
-				button.text('Close');
-				$('.catalog_search').append(' <input id="search_field" style="border: inset 1px;">');
-				$('#search_field').focus();
+			if (!button.dataset.expanded) {
+				button.dataset.expanded = '1';
+				button.textContent = 'Close';
+				const input = document.createElement('input');
+				input.id = 'search_field';
+				input.style.border = 'inset 1px';
+				catalogSearch.appendChild(input);
+				input.focus();
 			} else {
-				button.removeData('expanded');
-				button.text('Search');
-				$('.catalog_search').children().last().remove();
-				$('div[id="Grid"]>.mix').each(function () { $(this).css('display', 'inline-block'); });
+				delete button.dataset.expanded;
+				button.textContent = 'Search';
+				const searchField = document.getElementById('search_field');
+				searchField?.remove();
+				
+				document.querySelectorAll('div[id="Grid"] .mix').forEach(el => {
+					el.style.display = 'inline-block';
+				});
 			}
-		}
+		};
 
-		$('.threads').before('<span class="catalog_search">[<a id="catalog_search_button" style="text-decoration:none; cursor:pointer;"></a>]</span>');
-		$('#catalog_search_button').text('Search');
+		// Initialize search button
+		const threads = document.querySelector('.threads');
+		if (threads) {
+			const searchSpan = document.createElement('span');
+			searchSpan.className = 'catalog_search';
+			searchSpan.innerHTML = '[<a id="catalog_search_button" style="text-decoration:none; cursor:pointer;">Search</a>]';
+			threads.parentNode.insertBefore(searchSpan, threads);
 
-		$('#catalog_search_button').on('click', searchToggle);
-		$('.catalog_search').on('keyup', 'input#search_field', function (e) {
-			window.clearTimeout(timeoutHandle);
-			timeoutHandle = window.setTimeout(filter, 400, e.target.value);
-		});
+			const button = document.getElementById('catalog_search_button');
+			button.addEventListener('click', searchToggle);
 
-		if (useKeybinds) {
-			// 's'
-			$('body').on('keydown', function (e) {
-				if (e.which === 83 && e.target.tagName === 'BODY' && !(e.ctrlKey || e.altKey || e.shiftKey)) {
-					e.preventDefault();
-					if ($('#search_field').length !== 0) {
-						$('#search_field').focus();
-					} else {
+			const catalogSearch = document.querySelector('.catalog_search');
+			catalogSearch.addEventListener('keyup', (e) => {
+				if (e.target.id === 'search_field') {
+					window.clearTimeout(timeoutHandle);
+					timeoutHandle = window.setTimeout(() => filter(e.target.value), 400);
+				}
+			});
+
+			if (useKeybinds) {
+				// 's' key binding
+				document.addEventListener('keydown', (e) => {
+					if (e.key === 's' && e.target === document.body && 
+						!(e.ctrlKey || e.altKey || e.shiftKey)) {
+						e.preventDefault();
+						const searchField = document.getElementById('search_field');
+						if (searchField) {
+							searchField.focus();
+						} else {
+							searchToggle();
+						}
+					}
+				});
+
+				// 'esc' key binding
+				catalogSearch.addEventListener('keydown', (e) => {
+					if (e.target.id === 'search_field' && e.key === 'Escape' && 
+						!(e.ctrlKey || e.altKey || e.shiftKey)) {
+						window.clearTimeout(timeoutHandle);
 						searchToggle();
 					}
-				}
-			});
-			// 'esc'
-			$('.catalog_search').on('keydown', 'input#search_field', function (e) {
-				if (e.which === 27 && !(e.ctrlKey || e.altKey || e.shiftKey)) {
-					window.clearTimeout(timeoutHandle);
-					searchToggle();
-				}
-			});
+				});
+			}
 		}
 	});
 }

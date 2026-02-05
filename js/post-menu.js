@@ -26,9 +26,9 @@
  *   $config['additional_javascript'][] = 'js/jquery.min.js';
  *   $config['additional_javascript'][] = 'js/post-menu.js';
  */
-$(document).ready(function () {
+onReady(() => {
 
-var List = function (menuId, text) {
+const List = function (menuId, text) {
 	this.id = menuId;
 	this.text = text;
 	this.items = [];
@@ -36,9 +36,9 @@ var List = function (menuId, text) {
 	this.add_item = function (itemId, text, title) {
 		this.items.push(new Item(itemId, text, title));
 	};
-	this.list_items = function () {
-		var array = [];
-		var i, length, obj, $ele;
+	this.list_items = () => {
+		const array = [];
+		const i, length, obj, $ele;
 
 		if ($.isEmptyObject(this.items))
 			return;
@@ -48,28 +48,28 @@ var List = function (menuId, text) {
 			obj = this.items[i];
 
 			$ele = $('<li>', {id: obj.id}).text(obj.text);
-			if ('title' in obj) $ele.attr('title', obj.title);
+			if ('title' in obj) $ele.setAttribute('title', obj.title);
 
 			if (obj instanceof Item) {
-				$ele.addClass('post-item');
+				$ele.classList.add('post-item');
 			} else {
-				$ele.addClass('post-submenu');
+				$ele.classList.add('post-submenu');
 
-				$ele.prepend(obj.list_items());
-				$ele.append($('<span>', {class: 'post-menu-arrow'}).text('»'));
+				$ele.insertBefore(obj.list_items());
+				$ele.appendChild($('<span>', {class: 'post-menu-arrow'}).text('»'));
 			}
 
 			array.push($ele);
 		}
 
-		return $('<ul>').append(array);
+		return document.querySelector('<ul>').appendChild(array);
 	};
 	this.add_submenu = function (menuId, text) {
-		var ele = new List(menuId, text);
+		const ele = new List(menuId, text);
 		this.items.push(ele);
 		return ele;
 	};
-	this.get_submenu = function (menuId) {
+	this.get_submenu = (menuId) => {
 		for (var i = 0; i < this.items.length; i++) {
 			if ((this.items[i] instanceof Item) || this.items[i].id != menuId) continue;
 			return this.items[i];
@@ -77,7 +77,7 @@ var List = function (menuId, text) {
 	};
 };
 
-var Item = function (itemId, text, title) {
+const Item = function (itemId, text, title) {
 	this.id = itemId;
 	this.text = text;
 
@@ -86,10 +86,10 @@ var Item = function (itemId, text, title) {
 };
 
 function buildMenu(e) {
-	var pos = $(e.target).offset();
-	var i, length;
+	const pos = $(e.target).offset();
+	const i, length;
 
-	var $menu = $('<div class="post-menu"></div>').append(mainMenu.list_items());
+	const $menu = $('<div class="post-menu"></div>').appendChild(mainMenu.list_items());
 
 	//  execute registered click handlers
 	length = onclick_callbacks.length;
@@ -99,12 +99,12 @@ function buildMenu(e) {
 
 	//  set menu position and append to page
 	 $menu.css({top: pos.top, left: pos.left + 20});
-	 $('body').append($menu);
+	 document.querySelector('body').appendChild($menu);
 }
 
 function addButton(post) {
-	var $ele = $(post);
-	$ele.find('input.delete').after(
+	const $ele = $(post);
+	$ele.querySelector('input.delete').after(
 		$('<a>', {href: '#', class: 'post-btn', title: 'Post menu'}).text('▶')
 	);
 }
@@ -113,11 +113,11 @@ function addButton(post) {
 /* * * * * * * * * *
     Public methods
  * * * * * * * * * */
-var Menu = {};
-var mainMenu = new List();
-var onclick_callbacks = [];
+const Menu = {};
+const mainMenu = new List();
+const onclick_callbacks = [];
 
-Menu.onclick = function (fnc) {
+Menu.onclick = (fnc) => {
 	onclick_callbacks.push(fnc);
 };
 
@@ -129,7 +129,7 @@ Menu.add_submenu = function (menuId, text) {
 	return mainMenu.add_submenu(menuId, text);
 };
 
-Menu.get_submenu = function (id) {
+Menu.get_submenu = (id) => {
 	return mainMenu.get_submenu(id);
 };
 
@@ -142,11 +142,11 @@ window.Menu = Menu;
 
 /*  Styling
  */
-var $ele, cssStyle, cssString;
+const $ele, cssStyle, cssString;
 
-$ele = $('<div>').addClass('post reply').hide().appendTo('body');
+$ele = document.querySelector('<div>').classList.add('post reply').style.display = 'none'.appendTo('body');
 cssStyle = $ele.css(['border-top-color']);
-cssStyle.hoverBg = $('body').css('background-color');
+cssStyle.hoverBg = document.querySelector('body').css('background-color');
 $ele.remove();
 
 cssString =
@@ -167,43 +167,43 @@ cssString =
 	'.post-btn:hover {opacity: 1;}\n' +
 	'.post-btn-open {transform: rotate(90deg);}\n';
 
-if (!$('style.generated-css').length) $('<style class="generated-css">').appendTo('head');
-$('style.generated-css').html($('style.generated-css').html() + cssString);
+if (!document.querySelector('style.generated-css').length) $('<style class="generated-css">').appendTo('head');
+document.querySelector('style.generated-css').html(document.querySelector('style.generated-css').innerHTML + cssString);
 
 /*  Add buttons
  */
-$('.reply:not(.hidden), .thread>.op').each(function () {
+document.querySelectorAll('.reply:not(.hidden), .thread>.op').each(() => {
 	addButton(this);
  });
 
  /*  event handlers
   */
-$('form[name=postcontrols]').on('click', '.post-btn', function (e) {
+document.querySelector('form[name=postcontrols]').on('click', '.post-btn', (e) => {
 	e.preventDefault();
-	var post = e.target.parentElement.parentElement;
-	$('.post-menu').remove();
+	const post = e.target.parentElement.parentElement;
+	document.querySelector('.post-menu').remove();
 
-	if ($(e.target).hasClass('post-btn-open')) {
-		$('.post-btn-open').removeClass('post-btn-open');
+	if ($(e.target).classList.contains('post-btn-open')) {
+		document.querySelector('.post-btn-open').classList.remove('post-btn-open');
 	} else {
 		//  close previous button
-		$('.post-btn-open').removeClass('post-btn-open');
-		$(post).find('.post-btn').addClass('post-btn-open');
+		document.querySelector('.post-btn-open').classList.remove('post-btn-open');
+		$(post).querySelector('.post-btn').classList.add('post-btn-open');
 
 		buildMenu(e);
 	}
 });
 
-$(document).on('click', function (e){
-	if ($(e.target).hasClass('post-btn') || $(e.target).hasClass('post-submenu'))
+$(document).on('click', (e) => {
+	if ($(e.target).classList.contains('post-btn') || $(e.target).classList.contains('post-submenu'))
 		return;
 
-	$('.post-menu').remove();
-	$('.post-btn-open').removeClass('post-btn-open');
+	document.querySelector('.post-menu').remove();
+	document.querySelector('.post-btn-open').classList.remove('post-btn-open');
 });
 
 // on new posts
-$(document).on('new_post', function (e, post) {
+$(document).addEventListener('new_post', function (e, post) {
 	addButton(post);
 });
 

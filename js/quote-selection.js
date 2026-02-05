@@ -12,13 +12,13 @@
  *   $config['additional_javascript'][] = 'js/quote-selection.js';
  */
 
-$(document).ready(function() {
+onReady(() => {
 	if (!window.getSelection) {
 		return;
 	}
 
 	$.fn.selectRange = function(start, end) {
-		return this.each(function() {
+		return this.each(() => {
 			if (this.setSelectionRange) {
 				this.focus();
 				this.setSelectionRange(start, end);
@@ -36,17 +36,17 @@ $(document).ready(function() {
 	let ctrlKey = false;
 	let metaKey = false;
 
-	$(document).keyup(function(e) {
-		if (e.keyCode == 18) {
+	$(document).keyup((e) => {
+		if (e.keyCode === 18) {
 			altKey = false;
-		} else if (e.keyCode == 17) {
+		} else if (e.keyCode === 17) {
 			ctrlKey = false;
-		} else if (e.keyCode == 91) {
+		} else if (e.keyCode === 91) {
 			metaKey = false;
 		}
 	});
 
-	$(document).keydown(function(e) {
+	$(document).keydown((e) => {
 		if (e.altKey) {
 			altKey = true;
 		} else if (e.ctrlKey) {
@@ -65,27 +65,27 @@ $(document).ready(function() {
 
 		let selection = window.getSelection();
 		let post = $(selection.anchorNode).parents('.post');
-		if (post.length == 0) {
+		if (post.length === 0) {
 			return;
 		}
 
-		let postID = post.find('.post_no:eq(1)').text();
+		let postID = post.querySelector('.post_no:eq(1)').textContent;
 
-		if (postID != $(selection.focusNode).parents('.post').find('.post_no:eq(1)').text()) {
+		if (postID != $(selection.focusNode).parents('.post').querySelector('.post_no:eq(1)').textContent) {
 			return;
 		}
 
 		let selectedText = selection.toString();
 
-		if ($('body').hasClass('debug')) {
+		if (document.querySelector('body').classList.contains('debug')) {
 			alert(selectedText);
 		}
 
-		if (selectedText.length == 0) {
+		if (selectedText.length === 0) {
 			return;
 		}
 
-		let body = $('textarea#body')[0];
+		let body = document.querySelector('textarea#body')[0];
 
 		let last_quote = body.value.match(/[\S.]*(^|[\S\s]*)>>(\d+)/);
 		if (last_quote) {
@@ -97,7 +97,7 @@ $(document).ready(function() {
 
 		selection.removeAllRanges();
 
-		if (body.selectionStart || body.selectionStart == '0') {
+		if (body.selectionStart || body.selectionStart === '0') {
 			let start = body.selectionStart;
 			let end = body.selectionEnd;
 

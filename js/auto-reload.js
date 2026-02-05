@@ -23,36 +23,42 @@
 
 auto_reload_enabled = true; // for watch.js to interop
 
-$(document).ready(function(){
-	if($('div.banner').length == 0)
+onReady(() => {
+	if(document.querySelectorAll('div.banner').length === 0)
 		return; // not index
 		
-	if($(".post.op").size() != 1)
+	if(document.querySelectorAll(".post.op").length !== 1)
 		return; //not thread page
 	
-	var countdown_interval;
+	let countdown_interval;
 
 	// Add an update link
-	$('.boardlist.bottom').prev().after("<span id='updater'><a href='#' id='update_thread' style='padding-left:10px'>["+_("Update")+"]</a> (<input type='checkbox' id='auto_update_status' checked> "+_("Auto")+") <span id='update_secs'></span></span>");
+	const boardlistBottom = document.querySelector('.boardlist.bottom');
+	if (boardlistBottom && boardlistBottom.previousElementSibling) {
+		const span = document.createElement('span');
+		span.id = 'updater';
+		span.innerHTML = "<a href='#' id='update_thread' style='padding-left:10px'>["+_("Update")+"]</a> (<input type='checkbox' id='auto_update_status' checked> "+_("Auto")+") <span id='update_secs'></span>";
+		boardlistBottom.previousElementSibling.insertAdjacentElement('afterend', span);
+	}
 
 	// Grab the settings
-	var settings = new script_settings('auto-reload');
-	var poll_interval_mindelay        = settings.get('min_delay_bottom', 5000);
-	var poll_interval_maxdelay        = settings.get('max_delay', 600000);
-	var poll_interval_errordelay      = settings.get('error_delay', 30000);
+	const settings = new script_settings('auto-reload');
+	const poll_interval_mindelay        = settings.get('min_delay_bottom', 5000);
+	const poll_interval_maxdelay        = settings.get('max_delay', 600000);
+	const poll_interval_errordelay      = settings.get('error_delay', 30000);
 
 	// number of ms to wait before reloading
-	var poll_interval_delay = poll_interval_mindelay;
-	var poll_current_time = poll_interval_delay;
+	let poll_interval_delay = poll_interval_mindelay;
+	let poll_current_time = poll_interval_delay;
 
-	var end_of_page = false;
+	let end_of_page = false;
 
-        var new_posts = 0;
-	var first_new_post = null;
+        let new_posts = 0;
+	let first_new_post = null;
 	
-	var title = document.title;
+	const title = document.title;
 
-	if (typeof update_title == "undefined") {
+	if (typeof update_title === "undefined") {
 	   var update_title = function() { 
 	   	if (new_posts) {
 	   		document.title = "("+new_posts+") "+title;
@@ -62,13 +68,13 @@ $(document).ready(function(){
 	   };
 	}
 
-	if (typeof add_title_collector != "undefined")
-	add_title_collector(function(){
+	if (typeof add_title_collector !== "undefined")
+	add_title_collector(() => {
 	  return new_posts;
 	});
 
-	var window_active = true;
-	$(window).focus(function() {
+	let window_active = true;
+	window.addEventListener('focus', () => {
 		window_active = true;
 		recheck_activated();
 
@@ -77,35 +83,39 @@ $(document).ready(function(){
 			poll_interval_delay = poll_interval_mindelay;
 		}
 	});
-	$(window).blur(function() {
+	window.addEventListener('blur', () => {
 		window_active = false;
 	});
 	
+	const autoUpdateStatus = document.getElementById('auto_update_status');
+	if (autoUpdateStatus) {
+		autoUpdateStatus.addEventListener('click', function() {
+			if(document.getElementById('auto_update_status').checked) {
+				auto_update(poll_interval_mindelay);
+			} else {
+				stop_auto_update();
+				document.getElementById('update_secs').textContent = "";
+			}
+		});
+	}
 
-	$('#auto_update_status').click(function() {
-		if($("#auto_update_status").is(':checked')) {
-			auto_update(poll_interval_mindelay);
-		} else {
-			stop_auto_update();
-			$('#update_secs').text("");
-		}
-
-	});
-	
-
-	var decrement_timer = function() {
+	const decrement_timer = () => {
 		poll_current_time = poll_current_time - 1000;
-		$('#update_secs').text(poll_current_time/1000);
+		const updateSecsEl = document.getElementById('update_secs');
+		if (updateSecsEl) {
+			updateSecsEl.textContent = poll_current_time/1000;
+		}
 		
 		if (poll_current_time <= 0) {
-			poll(manualUpdate = false);
+			poll(false);
 		}
 	}
 
-	var recheck_activated = function() {
-		if (new_posts && window_active &&
-			$(window).scrollTop() + $(window).height() >=
-			$('div.boardlist.bottom').position().top) {
+	const recheck_activated = function() {
+		const boardlistBottomEl = document.querySelector('div.boardlist.bottom');
+		if (new_posts && window_active && boardlistBottomEl &&
+			window.scrollY + window.innerHeight >=
+			boardlistBottomEl.getBoundingClientRect().top + window.scrollY) {
 
 			new_posts = 0;
 		}
@@ -114,133 +124,171 @@ $(document).ready(function(){
 	};
 	
 	// automatically updates the thread after a specified delay
-	var auto_update = function(delay) {
+	const auto_update = function(delay) {
 		clearInterval(countdown_interval);
 
 		poll_current_time = delay;		
 		countdown_interval = setInterval(decrement_timer, 1000);
-		$('#update_secs').text(poll_current_time/1000);		
-	}
-	
-	var stop_auto_update = function() {
-		clearInterval(countdown_interval);
-	}
-		
-    	var epoch = (new Date).getTime();
-    	var epochold = epoch;
-    	
-	var timeDiff = function (delay) {
-		if((epoch-epochold) > delay) {
-			epochold = epoch = (new Date).getTime();
-			return true;
-		}else{
-			epoch = (new Date).getTime();
-			return;
+		const updateSecsEl = document.getElementById('update_secs');
+		if (updateSecsEl) {
+			updateSecsEl.textContent = poll_current_time/1000;
 		}
 	}
 	
-	var poll = function(manualUpdate) {
-		stop_auto_update();
-		$('#update_secs').text(_("Updating..."));
+	const stop_auto_update = function() {
+		clearInterval(countdown_interval);
+	}
+		
+    	let epoch = new Date().getTime();
+    	let epochold = epoch;
+    	
+	const timeDiff = function (delay) {
+		if((epoch-epochold) > delay) {
+			epochold = epoch = new Date().getTime();
+			return true;
+		}else{
+			epoch = new Date().getTime();
+			return false;
+		}
+	}
 	
-		$.ajax({
-			url: document.location,
-			success: function(data) {
-				var loaded_posts = 0;	// the number of new posts loaded in this update
-				var elementsToAppend = [];
-				var elementsToTriggerNewpostEvent = [];
-				$(data).find('div.post.reply').each(function() {
-					var id = $(this).attr('id');
-					if($('#' + id).length == 0) {
-						if (!new_posts) {
-							first_new_post = this;
-						}
-						new_posts++;
-						loaded_posts++;
-						elementsToAppend.push($(this));
-						elementsToAppend.push($('<br class="clear">'));
-						elementsToTriggerNewpostEvent.push(this);
+	const poll = async (manualUpdate) => {
+		stop_auto_update();
+		const updateSecsEl = document.getElementById('update_secs');
+		if (updateSecsEl) {
+			updateSecsEl.textContent = _("Updating...");
+		}
+	
+		try {
+			const response = await fetch(document.location);
+			const data = await response.text();
+			
+			const loaded_posts = 0;	// the number of new posts loaded in this update
+			const elementsToAppend = [];
+			const elementsToTriggerNewpostEvent = [];
+			
+			// Parse the response HTML
+			const parser = new DOMParser();
+			const htmlDoc = parser.parseFromString(data, 'text/html');
+			const newPosts = htmlDoc.querySelectorAll('div.post.reply');
+			
+			newPosts.forEach((post) => {
+				const id = post.getAttribute('id');
+				if(!document.getElementById(id)) {
+					if (!new_posts) {
+						first_new_post = post;
 					}
-				});
-				$('div.post:last').next().after(elementsToAppend);
-				recheck_activated();
-				elementsToTriggerNewpostEvent.forEach(function(ele){
-					$(document).trigger('new_post', ele);
-				});
-				time_loaded = Date.now(); // interop with watch.js
-				
-				
-				if ($('#auto_update_status').is(':checked')) {
-					// If there are no new posts, double the delay. Otherwise set it to the min.
-					if(loaded_posts == 0) {
-						// if the update was manual, don't increase the delay
-						if (manualUpdate == false) {
-							poll_interval_delay *= 2;
-				
-							// Don't increase the delay beyond the maximum
-							if(poll_interval_delay > poll_interval_maxdelay) {
-								poll_interval_delay = poll_interval_maxdelay;
-							}
-						}
-					} else {
-						poll_interval_delay = poll_interval_mindelay;
-					}
-					
-					auto_update(poll_interval_delay);
-				} else {
-					// Decide the message to show if auto update is disabled
-					if (loaded_posts > 0)
-						$('#update_secs').text(fmt(_("Thread updated with {0} new post(s)"), [loaded_posts]));
-					else
-						$('#update_secs').text(_("No new posts found"));
+					new_posts++;
+					elementsToAppend.push(post.cloneNode(true));
+					const br = document.createElement('br');
+					br.className = 'clear';
+					elementsToAppend.push(br);
+					elementsToTriggerNewpostEvent.push(post);
 				}
-			},
-			error: function(xhr, status_text, error_text) {
-				if (status_text == "error") {
-					if (error_text == "Not Found") {
-						$('#update_secs').text(_("Thread deleted or pruned"));
-						$('#auto_update_status').prop('checked', false);
-						$('#auto_update_status').prop('disabled', true); // disable updates if thread is deleted
-						return;
-					} else {
-						$('#update_secs').text("Error: "+error_text);
-					}
-				} else if (status_text) {
-					$('#update_secs').text(_("Error: ")+status_text);
-				} else {
-					$('#update_secs').text(_("Unknown error"));
-				}
-				
-				// Keep trying to update
-				if ($('#auto_update_status').is(':checked')) {
-					poll_interval_delay = poll_interval_errordelay;
-					auto_update(poll_interval_delay);
+			});
+			
+			const lastPost = document.querySelector('div.post:last-of-type');
+			if (lastPost && elementsToAppend.length > 0) {
+				const container = lastPost.nextElementSibling;
+				if (container) {
+					elementsToAppend.forEach(el => {
+						container.insertAdjacentElement('afterend', el);
+					});
 				}
 			}
-		});
+			recheck_activated();
+			elementsToTriggerNewpostEvent.forEach((ele) => {
+				document.dispatchEvent(new CustomEvent('new_post', { detail: ele }));
+			});
+			window.time_loaded = Date.now(); // interop with watch.js
+			
+			const autoUpdateEl = document.getElementById('auto_update_status');
+			if (autoUpdateEl && autoUpdateEl.checked) {
+				// If there are no new posts, double the delay. Otherwise set it to the min.
+				if(elementsToAppend.length === 0) {
+					// if the update was manual, don't increase the delay
+					if (manualUpdate !== true) {
+						poll_interval_delay *= 2;
+			
+						// Don't increase the delay beyond the maximum
+						if(poll_interval_delay > poll_interval_maxdelay) {
+							poll_interval_delay = poll_interval_maxdelay;
+						}
+					}
+				} else {
+					poll_interval_delay = poll_interval_mindelay;
+				}
+				
+				auto_update(poll_interval_delay);
+			} else {
+				// Decide the message to show if auto update is disabled
+				if (elementsToAppend.length > 0) {
+					const updateSecsEl = document.getElementById('update_secs');
+					if (updateSecsEl) {
+						updateSecsEl.textContent = fmt(_("Thread updated with {0} new post(s)"), [elementsToAppend.length]);
+					}
+				} else {
+					const updateSecsEl = document.getElementById('update_secs');
+					if (updateSecsEl) {
+						updateSecsEl.textContent = _("No new posts found");
+					}
+				}
+			}
+		} catch (error) {
+			const updateSecsEl = document.getElementById('update_secs');
+			if (error.message === "Not Found" || error.status === 404) {
+				if (updateSecsEl) {
+					updateSecsEl.textContent = _("Thread deleted or pruned");
+				}
+				const autoUpdateEl = document.getElementById('auto_update_status');
+				if (autoUpdateEl) {
+					autoUpdateEl.checked = false;
+					autoUpdateEl.disabled = true; // disable updates if thread is deleted
+				}
+				return;
+			} else {
+				if (updateSecsEl) {
+					updateSecsEl.textContent = "Error: " + error.message;
+				}
+			}
+			
+			// Keep trying to update
+			const autoUpdateEl = document.getElementById('auto_update_status');
+			if (autoUpdateEl && autoUpdateEl.checked) {
+				poll_interval_delay = poll_interval_errordelay;
+				auto_update(poll_interval_delay);
+			}
+		}
 		
 		return false;
 	};
 	
-	$(window).scroll(function() {
+	window.addEventListener('scroll', () => {
 		recheck_activated();
 		
 		// if the newest post is not visible
-		if($(this).scrollTop() + $(this).height() <
-			$('div.post:last').position().top + $('div.post:last').height()) {
+		const lastPost = document.querySelector('div.post:last-of-type');
+		if (lastPost &&
+			window.scrollY + window.innerHeight <
+			lastPost.getBoundingClientRect().top + window.scrollY + lastPost.offsetHeight) {
 			end_of_page = false;
 			return;
 		} else {
-			if($("#auto_update_status").is(':checked') && timeDiff(poll_interval_mindelay)) {
-				poll(manualUpdate = true);
+			const autoUpdateEl = document.getElementById('auto_update_status');
+			if(autoUpdateEl && autoUpdateEl.checked && timeDiff(poll_interval_mindelay)) {
+				poll(true);
 			}
 			end_of_page = true;
 		}
 	});
 
-	$('#update_thread').on('click', function() { poll(manualUpdate = true); return false; });
+	const updateThreadBtn = document.getElementById('update_thread');
+	if (updateThreadBtn) {
+		updateThreadBtn.addEventListener('click', () => { poll(true); return false; });
+	}
 
-	if($("#auto_update_status").is(':checked')) {
+	const autoUpdateEl = document.getElementById('auto_update_status');
+	if(autoUpdateEl && autoUpdateEl.checked) {
 		auto_update(poll_interval_delay);
 	}
 });

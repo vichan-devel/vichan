@@ -15,32 +15,32 @@
  */
 
 
-+function(){
++() => {
 
 
-var update_own = function() {
+const update_own = () => {
   if ($(this).is('.you')) return;
 
-  var thread = $(this).parents('[id^="thread_"]').first();
+  const thread = $(this).parents('[id^="thread_"]').first();
   if (!thread.length) {
     thread = $(this);
   }
 
-  var board = thread.attr('data-board');
-  var posts = JSON.parse(localStorage.own_posts || '{}');
+  const board = thread.attr('data-board');
+  const posts = JSON.parse(localStorage.own_posts || '{}');
 
-  var id = $(this).attr('id').split('_')[1];
+  const id = $(this).getAttribute('id').split('_')[1];
 
   if (posts[board] && posts[board].indexOf(id) !== -1) { // Own post!
-    $(this).addClass('you');
-    $(this).find('span.name').first().append(' <span class="own_post">'+_('(You)')+'</span>');
+    $(this).classList.add('you');
+    $(this).querySelector('span.name').first().appendChild(' <span class="own_post">'+_('(You)')+'</span>');
   }
 
   // Update references
-  $(this).find('div.body:first a:not([rel="nofollow"])').each(function() {
-    var postID;
+  $(this).find('div.body:first a:not([rel="nofollow"])').each(() => {
+    const postID;
 
-    if(postID = $(this).text().match(/^>>(\d+)$/))
+    if(postID = $(this).textContent.match(/^>>(\d+)$/))
       postID = postID[1];
     else
       return;
@@ -51,33 +51,33 @@ var update_own = function() {
   });
 };
 
-var update_all = function() {
+const update_all = () => {
   $('div[id^="thread_"], div.post.reply').each(update_own);
 };
 
-var board = null;
+const board = null;
 
-$(function() {
-  board = $('input[name="board"]').first().val();
+$(() => {
+  board = $('input[name="board"]').first().value;
 
   update_all();
 });
 
-$(document).on('ajax_after_post', function(e, r) {
-  var posts = JSON.parse(localStorage.own_posts || '{}');
+$(document).addEventListener('ajax_after_post', function(e, r) {
+  const posts = JSON.parse(localStorage.own_posts || '{}');
   posts[board] = posts[board] || [];
   posts[board].push(r.id);
   localStorage.own_posts = JSON.stringify(posts);
 });
 
-$(document).on('new_post', function(e,post) {
-  var $post = $(post);
+$(document).addEventListener('new_post', function(e,post) {
+  const $post = $(post);
   if ($post.is('div.post.reply')) { // it's a reply
     $post.each(update_own);
   }
   else {
     $post.each(update_own); // first OP
-    $post.find('div.post.reply').each(update_own); // then replies
+    $post.querySelector('div.post.reply').each(update_own); // then replies
   }
 });
 

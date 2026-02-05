@@ -1,18 +1,18 @@
 /* This file is dedicated to the public domain; you may do as you wish with it. */
 
-if (typeof _ == 'undefined') {
-  var _ = function(a) { return a; };
+if (typeof _ === 'undefined') {
+  const _ = (a) => { return a; };
 }
 
 // Default settings
-var defaultSettings = {
+const defaultSettings = {
     "videoexpand": true,
     "videohover": false,
     "videovolume": 1.0
 };
 
 // Non-persistent settings for when localStorage is absent/disabled
-var tempSettings = {};
+const tempSettings = {};
 
 // Scripts obtain settings by calling this function
 function setting(name) {
@@ -35,10 +35,10 @@ function changeSetting(name, value) {
 }
 
 // Create settings menu
-var settingsMenu = document.createElement("div");
-var prefix = "", suffix = "", style = "";
+const settingsMenu = document.createElement("div");
+const prefix = "", suffix = "", style = "";
 if (window.Options) {
-  var tab = Options.add_tab("webm", "video-camera", _("WebM"));
+  const tab = Options.add_tab("webm", "video-camera", _("WebM"));
   $(settingsMenu).appendTo(tab.content);
 }
 else {
@@ -57,40 +57,40 @@ settingsMenu.innerHTML = prefix
     + suffix;
 
 function refreshSettings() {
-    var settingsItems = settingsMenu.getElementsByTagName("input");
+    const settingsItems = settingsMenu.getElementsByTagName("input");
     for (var i = 0; i < settingsItems.length; i++) {
-        var control = settingsItems[i];
-        if (control.type == "checkbox") {
+        const control = settingsItems[i];
+        if (control.type === "checkbox") {
             control.checked = setting(control.name);
-        } else if (control.type == "range") {
+        } else if (control.type === "range") {
             control.value = setting(control.name);
         }
     }
 }
 
 function setUpControl(control) {
-    if (control.addEventListener) control.addEventListener("change", function(e) {
-        if (control.type == "checkbox") {
+    if (control.addEventListener) control.addEventListener("change", (e) => {
+        if (control.type === "checkbox") {
             changeSetting(control.name, control.checked);
-        } else if (control.type == "range") {
+        } else if (control.type === "range") {
             changeSetting(control.name, control.value);
         }
     }, false);
 }
 
 refreshSettings();
-var settingsItems = settingsMenu.getElementsByTagName("input");
+const settingsItems = settingsMenu.getElementsByTagName("input");
 for (var i = 0; i < settingsItems.length; i++) {
     setUpControl(settingsItems[i]);
 }
 
 if (settingsMenu.addEventListener && !window.Options) {
-    settingsMenu.addEventListener("mouseover", function(e) {
+    settingsMenu.addEventListener("mouseover", (e) => {
         refreshSettings();
         settingsMenu.getElementsByTagName("a")[0].style.fontWeight = "bold";
         settingsMenu.getElementsByTagName("div")[0].style.display = "block";
     }, false);
-    settingsMenu.addEventListener("mouseout", function(e) {
+    settingsMenu.addEventListener("mouseout", (e) => {
         settingsMenu.getElementsByTagName("a")[0].style.fontWeight = "normal";
         settingsMenu.getElementsByTagName("div")[0].style.display = "none";
     }, false);

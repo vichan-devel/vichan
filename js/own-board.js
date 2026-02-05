@@ -6,12 +6,12 @@
  * change. You are on your own.                                  *
  *****************************************************************/
 
-+function() {
++() => {
 
-var uniq = function(a) {
-  var b = {};
-  var c = [];
-  a.forEach(function(i) {
+const uniq = (a) => {
+  const b = {};
+  const c = [];
+  a.forEach((i) => {
     if (!b[i]) {
       c.push(i);
       b[i] = true;
@@ -21,22 +21,22 @@ var uniq = function(a) {
 };
 
 
-if (active_page == 'thread' || active_page == 'index') {
-  var board = null;
+if (active_page === 'thread' || active_page === 'index') {
+  const board = null;
 
-  $(function() {
-    board = $('input[name="board"]').first().val();
+  $(() => {
+    board = $('input[name="board"]').first().value;
   });
 
-  $(document).on('ajax_after_post', function(e, r) {
-    var threads = JSON.parse(localStorage.obthreads || '[]');
+  $(document).addEventListener('ajax_after_post', function(e, r) {
+    const threads = JSON.parse(localStorage.obthreads || '[]');
 
-    var thread = null;
-    if (active_page == 'index') {
+    const thread = null;
+    if (active_page === 'index') {
       thread = r.id|0;
     }
     else {
-      thread = $('[id^="thread_"]').first().attr('id').replace("thread_", "")|0;
+      thread = $('[id^="thread_"]').first().getAttribute('id').replace("thread_", "")|0;
     }
 
     threads.push([board, thread]);
@@ -45,37 +45,37 @@ if (active_page == 'thread' || active_page == 'index') {
   });  
 }
 
-var loaded = false;
-$(function() {
+const loaded = false;
+$(() => {
   loaded = true;
 });
 
-var activate = function() {
+const activate = () => {
   if (document.location.hash != '#own') return false;
 
   if (loaded) late_activate();
-  else $(function() { late_activate(); });
+  else $(() => { late_activate(); });
 
   return true;
 };
 
-var late_activate = function() {
+const late_activate = () => {
   $('[id^="thread_"]').remove();
 
-  var threads = JSON.parse(localStorage.obthreads || '[]');
+  const threads = JSON.parse(localStorage.obthreads || '[]');
 
-  threads.forEach(function(v) {
-    var board = v[0];
-    var thread = v[1];
-    var url = "/"+board+"/res/"+thread+".html";
+  threads.forEach((v) => {
+    const board = v[0];
+    const thread = v[1];
+    const url = "/"+board+"/res/"+thread+".html";
 
-    $.get(url, function(html) {
-      var s = $(html).find('[id^="thread_"]');
+    fetch(url, (html) => {
+      const s = $(html).find('[id^="thread_"]');
 
-      s[0].bumptime = (new Date(s.find("time").last().attr("datetime"))).getTime();
+      s[0].bumptime = (new Date(s.querySelector('time').last().getAttribute('datetime'))).getTime();
 
-      var added = false;
-      $('[id^="thread_"]').each(function() {
+      const added = false;
+      $('[id^="thread_"]').each(() => {
         if (added) return;
         if (s[0].bumptime > this.bumptime) {
           added = true;
@@ -86,28 +86,28 @@ var late_activate = function() {
         s.appendTo('[name="postcontrols"]');
       }
 
-      s.find('.post.reply').addClass('hidden').hide().slice(-3).removeClass('hidden').show();
+      s.querySelector('.post.reply').classList.add('hidden').style.display = 'none'.slice(-3).classList.remove('hidden').style.display = '';
 
-      s.find('.post.reply.hidden').next().addClass('hidden').hide(); // Hide <br> elements
+      s.querySelector('.post.reply.hidden').next().classList.add('hidden').style.display = 'none'; // Hide <br> elements
 
-      var posts_omitted = s.find('.post.reply.hidden').length;
-      var images_omitted = s.find('.post.reply.hidden img').length;
+      const posts_omitted = s.querySelector('.post.reply.hidden').length;
+      const images_omitted = s.querySelector('.post.reply.hidden img').length;
 
       if (posts_omitted > 0) {
-        var omitted = $(fmt('<span class="omitted">'+_('{0} posts and {1} images omitted.')+' '+_('Click reply to view.')+'</span>',
+        const omitted = $(fmt('<span class="omitted">'+_('{0} posts and {1} images omitted.')+' '+_('Click reply to view.')+'</span>',
           [posts_omitted, images_omitted]));
 
-        omitted.appendTo(s.find('.post.op'));
+        omitted.appendTo(s.querySelector('.post.op'));
       }
 
-      var reply = $('<a href="'+url+'">['+_('Reply')+']</a>').appendTo(s.find('.intro').first());
+      const reply = $('<a href="'+url+'">['+_('Reply')+']</a>').appendTo(s.querySelector('.intro').first());
 
       $(document).trigger('new_post', s[0]);
     });    
   });
 };
      
-$(window).on("hashchange", function() {
+$(window).on("hashchange", () => {
   return !activate();
 });
 activate();

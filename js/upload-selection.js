@@ -12,22 +12,22 @@
  *                                                  
  */
 
-$(function(){
-  var enabled_file = true;
-  var enabled_url = $("#upload_url").length > 0;
-  var enabled_embed = $("#upload_embed").length > 0;
-  var enabled_oekaki = typeof window.oekaki != "undefined";
+$(() => {
+  const enabled_file = true;
+  const enabled_url = document.getElementById('upload_url').length > 0;
+  const enabled_embed = document.getElementById('upload_embed').length > 0;
+  const enabled_oekaki = typeof window.oekaki != "undefined";
 
-  var disable_all = function() {
-    $("#upload").hide();
-    $("[id^=upload_file]").hide();
-    $(".file_separator").hide();
-    $("#upload_url").hide();
-    $("#upload_embed").hide();
-    $(".add_image").hide();
-    $(".dropzone-wrap").hide();
+  const disable_all = () => {
+    document.getElementById('upload').style.display = 'none';
+    document.querySelector('[id^=upload_file]').style.display = 'none';
+    document.querySelector('.file_separator').style.display = 'none';
+    document.getElementById('upload_url').style.display = 'none';
+    document.getElementById('upload_embed').style.display = 'none';
+    document.querySelector('.add_image').style.display = 'none';
+    document.querySelector('.dropzone-wrap').style.display = 'none';
 
-    $('[id^=upload_file]').each(function(i, v) {
+    document.querySelector('[id^=upload_file]').each(function(i, v) {
         $(v).val('');
     });
 
@@ -38,29 +38,29 @@ $(function(){
     }
   };
 
-  enable_file = function() {
+  enable_file = () => {
     disable_all();
-    $("#upload").show();
-    $(".dropzone-wrap").show();
-    $(".file_separator").show();
-    $("[id^=upload_file]").show();
-    $(".add_image").show();
+    document.getElementById('upload').style.display = '';
+    document.querySelector('.dropzone-wrap').style.display = '';
+    document.querySelector('.file_separator').style.display = '';
+    document.querySelector('[id^=upload_file]').style.display = '';
+    document.querySelector('.add_image').style.display = '';
   };
 
-  enable_url = function() {
+  enable_url = () => {
     disable_all();
-    $("#upload").show();
-    $("#upload_url").show();
+    document.getElementById('upload').style.display = '';
+    document.getElementById('upload_url').style.display = '';
 
     $('label[for="file_url"]').html(_("URL"));
   };
 
-  enable_embed = function() {
+  enable_embed = () => {
     disable_all();
-    $("#upload_embed").show();
+    document.getElementById('upload_embed').style.display = '';
   };
 
-  enable_oekaki = function() {
+  enable_oekaki = () => {
     disable_all();
 
     window.oekaki.init();
@@ -68,7 +68,7 @@ $(function(){
 
   if (enabled_url || enabled_embed || enabled_oekaki) {
     $("<tr><th>"+_("Select")+"</th><td id='upload_selection'></td></tr>").insertBefore("#upload");
-    var my_html = "<a href='javascript:void(0)' onclick='enable_file(); return false;'>"+_("File")+"</a>";
+    const my_html = "<a href='javascript:void(0)' onclick='enable_file(); return false;'>"+_("File")+"</a>";
     if (enabled_url) {
       my_html += " / <a href='javascript:void(0)' onclick='enable_url(); return false;'>"+_("Remote")+"</a>";
     }
@@ -78,9 +78,9 @@ $(function(){
     if (enabled_oekaki) {
       my_html += " / <a href='javascript:void(0)' onclick='enable_oekaki(); return false;'>"+_("Oekaki")+"</a>";
 
-      $("#confirm_oekaki_label").hide();
+      document.getElementById('confirm_oekaki_label').style.display = 'none';
     }
-    $("#upload_selection").html(my_html);
+    document.getElementById('upload_selection').html(my_html);
 
     enable_file();
   }

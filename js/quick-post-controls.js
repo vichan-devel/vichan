@@ -13,14 +13,14 @@
  *
  */
 
-$(document).ready(function(){
-	var open_form = function() {
-		var thread = $(this).parent().parent().hasClass('op');
-		var id = $(this).attr('name').match(/^delete_(\d+)$/)[1];
-		var submitButton;
+onReady(() => {
+	const open_form = () => {
+		const thread = $(this).parent().parent().classList.contains('op');
+		const id = $(this).getAttribute('name').match(/^delete_(\d+)$/)[1];
+		const submitButton;
 		
 		if(this.checked) {
-			var post_form = $('<form class="post-actions" method="post" style="margin:10px 0 0 0">' +
+			const post_form = $('<form class="post-actions" method="post" style="margin:10px 0 0 0">' +
 				'<div style="text-align:right">' +
 					(!thread ? '<hr>' : '') +
 					
@@ -40,15 +40,15 @@ $(document).ready(function(){
 				'</div>' +
 			'</form>');
 			post_form
-				.attr('action', $('form[name="post"]:first').attr('action'))
-				.append($('input[name=board]:first').clone())
-				.find('input:not([type="checkbox"]):not([type="submit"]):not([type="hidden"])').keypress(function(e) {
-					if(e.which == 13) {
+				.setAttribute('action', $('form[name="post"]:first').getAttribute('action'))
+				.appendChild(document.querySelector('input[name=board]:first').clone())
+				.find('input:not([type="checkbox"]):not([type="submit"]):not([type="hidden"])').keypress((e) => {
+					if(e.which === 13) {
 						e.preventDefault();
-						if($(this).attr('name') == 'password')  {
-							post_form.find('input[name=delete]').click();
-						} else if($(this).attr('name') == 'reason')  {
-							post_form.find('input[name=report]').click();
+						if($(this).getAttribute('name') === 'password')  {
+							post_form.querySelector('input[name=delete]').click();
+						} else if($(this).getAttribute('name') === 'reason')  {
+							post_form.querySelector('input[name=report]').click();
 						}
 						
 						return false;
@@ -60,7 +60,7 @@ $(document).ready(function(){
 			post_form.find('input[type="password"]').val(localStorage.password);
 			
 			if(thread) {
-				post_form.prependTo($(this).parent().parent().find('div.body'));
+				post_form.prependTo($(this).parent().parent().querySelector('div.body'));
 			} else {
 				post_form.appendTo($(this).parent().parent());
 				//post_form.insertBefore($(this));
@@ -68,23 +68,23 @@ $(document).ready(function(){
 			
 			$(window).trigger('quick-post-controls', post_form);
 		} else {
-			var elm = $(this).parent().parent().find('form');
+			const elm = $(this).parent().parent().querySelector('form');
 			
-			if(elm.attr('class') == 'post-actions')
+			if(elm.getAttribute('class') === 'post-actions')
 				elm.remove();
 		}
 	};
 	
-	var init_qpc = function() {
+	const init_qpc = () => {
 		$(this).change(open_form);
 		if(this.checked)
 			$(this).trigger('change');
 	};
 
-	$('div.post input[type=checkbox].delete').each(init_qpc);
+	document.querySelector('div.post input[type=checkbox].delete').each(init_qpc);
 
-	$(document).on('new_post', function(e, post) {
-		$(post).find('input[type=checkbox].delete').each(init_qpc);
+	$(document).addEventListener('new_post', function(e, post) {
+		$(post).querySelector('input[type=checkbox].delete').each(init_qpc);
 	});
 });
 

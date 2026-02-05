@@ -10,25 +10,25 @@
  */
 
 function multi_image() {
-    $('input[type=file]').after('<a href="#" class="add_image">+</a>');
+    document.querySelector('input[type=file]').after('<a href="#" class="add_image">+</a>');
     
-    $(document).on('click', 'a.add_image', function(e) {
+    $(document).on('click', 'a.add_image', (e) => {
         e.preventDefault();
 
-        var images_len = $('form:not([id="quick-reply"]) [type=file]').length;
+        const images_len = $('form:not([id="quick-reply"]) [type=file]').length;
         
         if (!(images_len >= max_images)) {
-            var new_file = '<br class="file_separator"/><input type="file" name="file'+(images_len+1)+'" id="upload_file'+(images_len+1)+'">';
+            const new_file = '<br class="file_separator"/><input type="file" name="file'+(images_len+1)+'" id="upload_file'+(images_len+1)+'">';
 
-            $('[type=file]:last').after(new_file);
-            if ($("#quick-reply").length) {
-                $('form:not(#quick-reply) [type=file]:last').after(new_file);
+            document.querySelector('[type=file]:last').after(new_file);
+            if (document.getElementById('quick-reply').length) {
+                document.querySelector('form:not(#quick-reply) [type=file]:last').after(new_file);
             }
             if (typeof setup_form !== 'undefined') setup_form($('form[name="post"]'));
         }
     })
 }
 
-if (active_page == 'thread' || active_page == 'index' && max_images > 1) {
+if (active_page === 'thread' || active_page === 'index' && max_images > 1) {
 	$(document).ready(multi_image);
 }

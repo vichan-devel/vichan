@@ -14,49 +14,49 @@
  *
  */
 
-$(document).ready(function(){
-	var hide_images = localStorage['hideimages'] ? true : false;
+onReady(() => {
+	const hide_images = localStorage['hideimages'] ? true : false;
 
-	$('<style type="text/css"> img.hidden{ opacity: 0.1; background: grey; border: 1px solid #000; } </style>').appendTo($('head'));
+	$('<style type="text/css"> img.hidden{ opacity: 0.1; background: grey; border: 1px solid #000; } </style>').appendTo(document.querySelector('head'));
 
-	var hideImage = function() {
-		if ($(this).parent().data('expanded') == 'true') {
+	const hideImage = () => {
+		if ($(this).parent().data('expanded') === 'true') {
 			$(this).parent().click();
 		}
 		$(this)
 			.attr('data-orig', this.src)
-			.attr('src', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==')
-			.addClass('hidden');
+			.setAttribute('src', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw===')
+			.classList.add('hidden');
 	};
 
-	var restoreImage = function() {
+	const restoreImage = () => {
 		$(this)
-			.attr('src', $(this).attr('data-orig'))
-			.removeClass('hidden');
+			.setAttribute('src', $(this).attr('data-orig'))
+			.classList.remove('hidden');
 	};
 
 	// Fix for hide-images.js
-	var show_hide_hide_images_buttons = function() {
+	const show_hide_hide_images_buttons = () => {
 		if (hide_images) {
-			$('a.hide-image-link').each(function() {
-				if ($(this).next().hasClass('show-image-link')) {
-					$(this).next().hide();
+			document.querySelector('a.hide-image-link').each(() => {
+				if ($(this).next().classList.contains('show-image-link')) {
+					$(this).next().style.display = 'none';
 				}
-				$(this).hide().after('<span class="toggle-images-placeholder">'+_('hidden')+'</span>');
+				$(this).style.display = 'none'.after('<span class="toggle-images-placeholder">'+_('hidden')+'</span>');
 			});
 		} else {
-			$('span.toggle-images-placeholder').remove();
-			$('a.hide-image-link').each(function() {
-				if ($(this).next().hasClass('show-image-link')) {
-					$(this).next().show();
+			document.querySelector('span.toggle-images-placeholder').remove();
+			document.querySelector('a.hide-image-link').each(() => {
+				if ($(this).next().classList.contains('show-image-link')) {
+					$(this).next().style.display = '';
 				} else {
-					$(this).show();
+					$(this).style.display = '';
 				}
 			});
 		}
 	};
 
-        var selector, event;
+        const selector, event;
         if (window.Options && Options.get_tab('general')) {  
                 selector = '#toggle-images>input';
                 event = 'change';
@@ -65,19 +65,19 @@ $(document).ready(function(){
         else {
                 selector = '#toggle-images a';
                 event = 'click';
-		$('hr:first').before('<div id="toggle-images" style="text-align:right"><a class="unimportant" href="javascript:void(0)">-</a></div>');
-		$('div#toggle-images a')
+		document.querySelector('hr:first').before('<div id="toggle-images" style="text-align:right"><a class="unimportant" href="javascript:void(0)">-</a></div>');
+		document.querySelector('div#toggle-images a')
 			.text(hide_images ? _('Show images') : _('Hide images'));
         }
 
 	$(selector)
-		.on(event, function() {
+		.on(event, () => {
 			hide_images = !hide_images;
 			if (hide_images) {
-				$('img.post-image, .theme-catalog .thread>a>img').each(hideImage);
+				document.querySelector('img.post-image, .theme-catalog .thread>a>img').each(hideImage);
 				localStorage.hideimages = true;
 			} else {
-				$('img.post-image, .theme-catalog .thread>a>img').each(restoreImage);
+				document.querySelector('img.post-image, .theme-catalog .thread>a>img').each(restoreImage);
 				delete localStorage.hideimages;
 			}
 			
@@ -87,17 +87,17 @@ $(document).ready(function(){
 		});
 
 	if (hide_images) {
-		$('img.post-image, .theme-catalog .thread>a>img').each(hideImage);
+		document.querySelector('img.post-image, .theme-catalog .thread>a>img').each(hideImage);
 		show_hide_hide_images_buttons();
 
                 if (window.Options && Options.get_tab('general')) {
-                        $('#toggle-images>input').prop('checked', true);
+                        document.querySelector('#toggle-images>input').prop('checked', true);
                 }
 	}
 	
-	$(document).on('new_post', function(e, post) {
+	$(document).addEventListener('new_post', function(e, post) {
 		if (hide_images) {
-			$(post).find('img.post-image').each(hideImage);
+			$(post).querySelector('img.post-image').each(hideImage);
 		}
 	});
 });

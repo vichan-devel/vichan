@@ -13,37 +13,37 @@
  *              
  */
 
-if (active_page == 'index' && (""+document.location).match(/\/(index\.html)?(\?|$|#)/))
-+function() {
+if (active_page === 'index' && (""+document.location).match(/\/(index\.html)?(\?|$|#)/))
++() => {
   // Make jQuery respond to reverse()
   $.fn.reverse = [].reverse;
 
-  var board_name = (""+document.location).match(/\/([^\/]+)\/[^/]*$/)[1];
+  const board_name = (""+document.location).match(/\/([^\/]+)\/[^/]*$/)[1];
 
-  var handle_one_thread = function() {
-    if ($(this).find(".new-posts").length <= 0) {
-      $(this).find("br.clear").before("<div class='new-posts'>"+_("No new posts.")+"</div>");
+  const handle_one_thread = () => {
+    if ($(this).querySelector('.new-posts').length <= 0) {
+      $(this).querySelector('br.clear').before("<div class='new-posts'>"+_("No new posts.")+"</div>");
     }
   };
 
-  $(function() {
-    $("hr:first").before("<hr /><div class='new-threads'>"+_("No new threads.")+"</div>");
+  $(() => {
+    document.querySelector('hr:first').before("<hr /><div class='new-threads'>"+_("No new threads.")+"</div>");
 
     $('div[id^="thread_"]').each(handle_one_thread);
 
-    setInterval(function() {
-      $.getJSON(configRoot+board_name+"/0.json", function(j) {
-        var new_threads = 0;
+    setInterval(() => {
+      $.getJSON(configRoot+board_name+"/0.json", (j) => {
+        const new_threads = 0;
 
-        j.threads.forEach(function(t) {
-	  var s_thread = $("#thread_"+t.posts[0].no);
+        j.threads.forEach((t) => {
+	  const s_thread = $("#thread_"+t.posts[0].no);
 
 	  if (s_thread.length) {
-	    var my_posts = s_thread.find(".post.reply").length;
+	    const my_posts = s_thread.querySelector('.post.reply').length;
 
-	    var omitted_posts = s_thread.find(".omitted");
+	    const omitted_posts = s_thread.querySelector('.omitted');
 	    if (omitted_posts.length) {
-	      omitted_posts = omitted_posts.html().match("^[^0-9]*([0-9]+)")[1]|0;
+	      omitted_posts = omitted_posts.innerHTML.match("^[^0-9]*([0-9]+)")[1]|0;
 	      my_posts += omitted_posts;
             }
 
@@ -61,42 +61,42 @@ if (active_page == 'index' && (""+document.location).match(/\/(index\.html)?(\?|
     }, 20000);
   });
 
-  $(document).on("new_post", function(e, post) {
-    if (!$(post).hasClass("reply")) {
+  $(document).addEventListener('new_post', function(e, post) {
+    if (!$(post).classList.contains('reply')) {
       handle_one_thread.call(post);
     }
   });
 
-  var update_new_threads = function(i) {
-    var msg = i ?
+  const update_new_threads = (i) => {
+    const msg = i ?
       (fmt(_("There are {0} new threads."), [i]) + " <a href='javascript:void(0)'>"+_("Click to expand")+"</a>.") :
       _("No new threads.");
 
-    if ($(".new-threads").html() != msg) {
-      $(".new-threads").html(msg);
-      $(".new-threads a").click(fetch_new_threads);
+    if (document.querySelector('.new-threads').innerHTML != msg) {
+      document.querySelector('.new-threads').html(msg);
+      document.querySelectorAll('.new-threads a').click(fetch_new_threads);
     }
   };
 
-  var update_new_posts = function(i, th) {
-    var msg = (i>0) ?
+  const update_new_posts = function(i, th) {
+    const msg = (i>0) ?
       (fmt(_("There are {0} new posts in this thread."), [i])+" <a href='javascript:void(0)'>"+_("Click to expand")+"</a>.") :
       _("No new posts.");
 
-    if ($(th).find(".new-posts").html() != msg) {
-      $(th).find(".new-posts").html(msg);
-      $(th).find(".new-posts a").click(window.expand_fun);
+    if ($(th).querySelector('.new-posts').innerHTML != msg) {
+      $(th).querySelector('.new-posts').html(msg);
+      $(th).querySelector('.new-posts a').click(window.expand_fun);
     }
   };
 
-  var fetch_new_threads = function() {
-    $.get(""+document.location, function(data) {
-      $(data).find('div[id^="thread_"]').reverse().each(function() {
-        if ($("#"+$(this).attr("id")).length) {
+  const fetch_new_threads = () => {
+    fetch(""+document.location, (data) => {
+      $(data).find('div[id^="thread_"]').reverse().each(() => {
+        if ($("#"+$(this).getAttribute('id')).length) {
 	  // okay, the thread is there
 	}
 	else {
-	  var thread = $(this).insertBefore('div[id^="thread_"]:first');
+	  const thread = $(this).insertBefore('div[id^="thread_"]:first');
 	  $(document).trigger("new_post", this);
 	}
       });

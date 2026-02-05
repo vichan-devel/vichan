@@ -8,37 +8,37 @@
  *   $config['additional_javascript'][] = 'js/options.js';
  */
 
-+function(){
++() => {
 
-var options_button, options_handler, options_background, options_div
+const options_button, options_handler, options_background, options_div
   , options_close, options_tablist, options_tabs, options_current_tab;
 
-var Options = {};
+const Options = {};
 window.Options = Options;
 
-var first_tab = function() {
+const first_tab = () => {
   for (var i in options_tabs) {
     return i;
   }
   return false;
 };
 
-Options.show = function() {
+Options.show = () => {
   if (!options_current_tab) {
     Options.select_tab(first_tab(), true);
   }
   options_handler.fadeIn();
 };
-Options.hide = function() {
+Options.hide = () => {
   options_handler.fadeOut();
 };
 
 options_tabs = {};
 
 Options.add_tab = function(id, icon, name, content) {
-  var tab = {};
+  const tab = {};
 
-  if (typeof content == "string") {
+  if (typeof content === "string") {
     content = $("<div>"+content+"</div>");
   }
 
@@ -49,7 +49,7 @@ Options.add_tab = function(id, icon, name, content) {
 
   tab.content.appendTo(options_div);
 
-  tab.icon.on("click", function() {
+  tab.icon.on("click", () => {
     Options.select_tab(id);
   }).appendTo(options_tablist);
 
@@ -64,12 +64,12 @@ Options.add_tab = function(id, icon, name, content) {
   return tab;
 };
 
-Options.get_tab = function(id) {
+Options.get_tab = (id) => {
   return options_tabs[id];
 };
 
 Options.extend_tab = function(id, content) {
-  if (typeof content == "string") {
+  if (typeof content === "string") {
     content = $("<div>"+content+"</div>");
   }
 
@@ -80,15 +80,15 @@ Options.extend_tab = function(id, content) {
 
 Options.select_tab = function(id, quick) {
   if (options_current_tab) {
-    if (options_current_tab.id == id) {
+    if (options_current_tab.id === id) {
       return false;
     }
     options_current_tab.content.fadeOut();
-    options_current_tab.icon.removeClass("active");
+    options_current_tab.icon.classList.remove('active');
   }
-  var tab = options_tabs[id];
+  const tab = options_tabs[id];
   options_current_tab = tab;
-  options_current_tab.icon.addClass("active");
+  options_current_tab.icon.classList.add('active');
   tab.content[quick? "show" : "fadeIn"]();
 
   return tab;
@@ -102,15 +102,15 @@ options_close = $("<a id='options_close' href='javascript:void(0)'><i class='fa 
 options_tablist = $("<div id='options_tablist'></div>").appendTo(options_div);
 
 
-$(function(){
+$(() => {
   options_button = $("<a href='javascript:void(0)' title='"+_("Options")+"'>["+_("Options")+"]</a>").css("float", "right");
 
-  if ($(".boardlist.compact-boardlist").length) {
-    options_button.addClass("cb-item cb-fa").html("<i class='fa fa-gear'></i>");
+  if (document.querySelectorAll('.boardlist.compact-boardlist').length) {
+    options_button.classList.add('cb-item cb-fa').html("<i class='fa fa-gear'></i>");
   }
 
-  if ($(".boardlist:first").length) {
-    options_button.appendTo($(".boardlist:first"));
+  if (document.querySelectorAll('.boardlist:first').length) {
+    options_button.appendTo(document.querySelectorAll('.boardlist:first'));
   }
   else {
     options_button.prependTo($(document.body));

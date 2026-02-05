@@ -1,50 +1,51 @@
-if (active_page == 'thread' || active_page == 'index') {
-	$(document).ready(function(){
-		function arrayRemove(a, v) { a.splice(a.indexOf(v) == -1 ? a.length : a.indexOf(v), 1); }
+if (active_page === 'thread' || active_page === 'index') {
+	onReady(() => {
+		const idshighlighted = [];
 
-		var idshighlighted = [];
+		const getPostsById = (id) => {
+			return Array.from(document.querySelectorAll(".poster_id"))
+				.filter(el => el.textContent === id);
+		};
 
-		function getPostsById(id){
-			return $(".poster_id").filter(function(i){
-				return $(this).text() == id;
-			});
-		}
+		const getMasterPosts = (parents) => {
+			return parents
+				.map(parent => {
+					let curr = parent;
+					while (curr && !curr.classList.contains('post')) {
+						curr = curr.parentElement;
+					}
+					return curr;
+				})
+				.filter((el, idx, arr) => el && arr.indexOf(el) === idx);
+		};
 
-		function getMasterPosts(parents){
-			if(!parents.hasClass("post")) return;
-			
-			var toRet = [];
-			
-			$(parents).each(function(){
-				if($(this).hasClass("post"))
-					toRet.push($(this));
-			});
-			
-			return toRet;
-		}
+		const id_highlighter = function() {
+			const id = this.textContent;
+			const idx = idshighlighted.indexOf(id);
 
-		var id_highlighter = function(){
-			var id = $(this).text();
-			
-			if($.inArray(id, idshighlighted) !== -1){
-				arrayRemove(idshighlighted, id);
-				
-				$(getMasterPosts(getPostsById(id).parents())).each(function(i){
-					$(this).removeClass("highlighted");
-				});
-			}else{
+			if (idx !== -1) {
+				idshighlighted.splice(idx, 1);
+
+				const posts = getMasterPosts(getPostsById(id).map(el => el.closest('.post')));
+				posts.forEach(post => post?.classList.remove('highlighted'));
+			} else {
 				idshighlighted.push(id);
-				
-				$(getMasterPosts(getPostsById(id).parents())).each(function(i){
-					$(this).addClass("highlighted");
-				});
+
+				const posts = getMasterPosts(getPostsById(id).map(el => el.closest('.post')));
+				posts.forEach(post => post?.classList.add('highlighted'));
 			}
-		}
+		};
 
-		$(".poster_id").on('click', id_highlighter);
+		document.querySelectorAll(".poster_id").forEach(el => {
+			el.addEventListener('click', id_highlighter);
+		});
 
-		$(document).on('new_post', function(e, post) {
-			$(post).find('.poster_id').on('click', id_highlighter);
+		document.addEventListener('new_post', (e) => {
+			const post = e.detail;
+			const posterIds = post.querySelectorAll('.poster_id');
+			posterIds.forEach(el => {
+				el.addEventListener('click', id_highlighter);
+			});
 		});
 	});
 }

@@ -11,67 +11,86 @@
  *
  */
 
-$(window).ready(function() {
-	var do_not_ajax = false;
+onReady(() => {
+	let do_not_ajax = false;
 	
-	var setup_form = function($form) {
-		$form.find('input[type="submit"]').click(function() {
-			$form.data('submit-btn', this);
-		});;
-		$form.submit(function(e) {
-			if (!$(this).data('submit-btn'))
+	const setup_form = function(form) {
+		const submitButtons = form.querySelectorAll('input[type="submit"]');
+		submitButtons.forEach(btn => {
+			btn.addEventListener('click', function() {
+				form.dataset.submitBtn = this;
+			});
+		});
+
+		form.addEventListener('submit', (e) => {
+			if (!form.dataset.submitBtn)
 				return true;
 			if (do_not_ajax)
 				return true;
 			if (window.FormData === undefined)
 				return true;
 			
-			var form = this;
-						
-			var formData = new FormData(this);
-			formData.append('json_response', '1');
-			formData.append($($(form).data('submit-btn')).attr('name'), $($(form).data('submit-btn')).val());
+			e.preventDefault();
 			
-			$.ajax({
-				url: this.action,
-				type: 'POST',
-				success: function(post_response) {
-					if (post_response.error) {
-						alert(post_response.error);
-					} else if (post_response.success) {
-						if ($($(form).data('submit-btn')).attr('name') == 'report') {
-							alert(_('Reported post(s).'));
-							if ($(form).hasClass('post-actions')) {
-								$(form).parents('div.post').find('input[type="checkbox"].delete').click();
-							} else {
-								$(form).find('input[name="reason"]').val('');
-							}
+			const submitBtn = form.dataset.submitBtn;
+			const submitBtnName = submitBtn.getAttribute('name');
+			const submitBtnVal = submitBtn.value;
+			
+			const formData = new FormData(form);
+			formData.append('json_response', '1');
+			formData.append(submitBtnName, submitBtnVal);
+			
+			fetch(form.action, {
+				method: 'POST',
+				body: formData
+			})
+			.then(response => response.json())
+			.then(post_response => {
+				if (post_response.error) {
+					alert(post_response.error);
+				} else if (post_response.success) {
+					if (submitBtnName === 'report') {
+						alert(_('Reported post(s).'));
+						if (form.classList.contains('post-actions')) {
+							const checkbox = form.closest('div.post').querySelector('input[type="checkbox"].delete');
+							if (checkbox) checkbox.click();
 						} else {
-							window.location.reload();
+							const reasonInput = form.querySelector('input[name="reason"]');
+							if (reasonInput) reasonInput.value = '';
 						}
 					} else {
-						alert(_('An unknown error occured!'));
+						window.location.reload();
 					}
-					$($(form).data('submit-btn')).val($($(form).data('submit-btn')).data('orig-val')).removeAttr('disabled');
-				},
-				error: function(xhr, status, er) {
-					// An error occured
-					// TODO
-					alert(_('Something went wrong... An unknown error occured!'));
-				},
-				data: formData,
-				cache: false,
-				contentType: false,
-				processData: false
-			}, 'json');
+				} else {
+					alert(_('An unknown error occured!'));
+				}
+				submitBtn.value = submitBtn.dataset.origVal || submitBtnVal;
+				submitBtn.removeAttribute('disabled');
+			})
+			.catch(err => {
+				console.error('Error:', err);
+				alert(_('Something went wrong... An unknown error occured!'));
+				submitBtn.value = submitBtn.dataset.origVal || submitBtnVal;
+				submitBtn.removeAttribute('disabled');
+			});
 			
-			$($(form).data('submit-btn')).attr('disabled', true).data('orig-val', $($(form).data('submit-btn')).val()).val(_('Working...'));
+			submitBtn.dataset.origVal = submitBtn.value;
+			submitBtn.setAttribute('disabled', 'disabled');
+			submitBtn.value = _('Working...');
 			
 			return false;
 		});
 	};
-	setup_form($('form[name="postcontrols"]'));
-	$(window).on('quick-post-controls', function(e, form) {
-		setup_form($(form));
+
+	const postControlsForm = document.querySelector('form[name="postcontrols"]');
+	if (postControlsForm) {
+		setup_form(postControlsForm);
+	}
+
+	window.addEventListener('quick-post-controls', (e) => {
+		const form = e.detail;
+		if (form) {
+			setup_form(form);
+		}
 	});
 });

@@ -15,28 +15,31 @@
  *
  */
 
-onReady(function() {
-	let doOriginalFilename = function() {
+onReady(() => {
+	const doOriginalFilename = function(el) {
 		let filename, truncated;
-		if ($(this).attr('title')) {
-			filename = $(this).attr('title');
+		if (el.getAttribute('title')) {
+			filename = el.getAttribute('title');
 			truncated = true;
 		} else {
-			filename = $(this).text();
+			filename = el.textContent;
 		}
 
-		$(this).replaceWith(
-			$('<a></a>')
-				.attr('download', filename)
-				.append($(this).contents())
-				.attr('href', $(this).parent().parent().find('a').attr('href'))
-				.attr('title', _('Save as original filename') + (truncated ? ' (' + filename + ')' : ''))
-			);
+		const a = document.createElement('a');
+		a.setAttribute('download', filename);
+		a.href = el.parentElement?.parentElement?.querySelector('a')?.href || '';
+		a.textContent = el.textContent;
+		a.title = _('Save as original filename') + (truncated ? ' (' + filename + ')' : '');
+		
+		el.replaceWith(a);
 	};
 
-	$('.postfilename').each(doOriginalFilename);
+	document.querySelectorAll('.postfilename').forEach(doOriginalFilename);
 
-	$(document).on('new_post', function(e, post) {
-		$(post).find('.postfilename').each(doOriginalFilename);
+	document.addEventListener('new_post', (e) => {
+		const post = e.detail;
+		if (post) {
+			post.querySelectorAll('.postfilename').forEach(doOriginalFilename);
+		}
 	});
 });

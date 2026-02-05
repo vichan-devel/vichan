@@ -14,39 +14,39 @@
  *
  */
 
-$(document).ready(function(){
-	var showOPLinks = function() {
-		var OP;
+onReady(() => {
+	const showOPLinks = () => {
+		const OP;
 		
-		if ($('div.banner').length == 0) {
-			OP = parseInt($(this).parent().find('div.post.op a.post_no:eq(1)').text());
+		if (document.querySelector('div.banner').length === 0) {
+			OP = parseInt($(this).parent().querySelector('div.post.op a.post_no:eq(1)').textContent);
 		} else {
-			OP = parseInt($('div.post.op a.post_no:eq(1)').text());
+			OP = parseInt(document.querySelector('div.post.op a.post_no:eq(1)').textContent);
 		}
 		
-		$(this).find('div.body a:not([rel="nofollow"])').each(function() {
-			var postID;
+		$(this).find('div.body a:not([rel="nofollow"])').each(() => {
+			const postID;
 			
-			if(postID = $(this).text().match(/^>>(\d+)$/))
+			if(postID = $(this).textContent.match(/^>>(\d+)$/))
 				postID = postID[1];
 			else
 				return;
 			
-			if (postID == OP) {
+			if (postID === OP) {
 				$(this).after(' <small>(OP)</small>');
 			}
 		});
 	};
 	
-	$('div.post.reply').each(showOPLinks);
+	document.querySelector('div.post.reply').each(showOPLinks);
 	
 	// allow to work with auto-reload.js, etc.
-	$(document).on('new_post', function(e, post) {
+	$(document).addEventListener('new_post', function(e, post) {
 		if ($(post).is('div.post.reply')) {
 			$(post).each(showOPLinks);
 		}
 		else {
-			$(post).find('div.post.reply').each(showOPLinks);
+			$(post).querySelector('div.post.reply').each(showOPLinks);
 		}
 	});
 });

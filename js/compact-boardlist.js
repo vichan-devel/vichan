@@ -22,70 +22,95 @@
  *
  */
 
-if (device_type == 'desktop') {
+if (device_type === 'desktop') {
   compact_boardlist = true;
 
   do_boardlist = function() {
-    var categories = [];
-    var topbl = $('.boardlist:first');
+    const categories = [];
+    const topbl = document.querySelector('.boardlist:first-of-type') || document.querySelector('.boardlist');
 
-    topbl.find('>.sub').each(function() {
-      var cat = {name: $(this).data('description'), boards: []};
-      $(this).find('a').each(function() {
-        var board = {name: $(this).prop('title'), uri: $(this).html(), href: $(this).prop('href') }
+    if (!topbl) return;
+
+    topbl.querySelectorAll('>.sub').forEach((subEl) => {
+      const cat = {name: subEl.dataset.description, boards: []};
+      subEl.querySelectorAll('a').forEach((linkEl) => {
+        const board = {name: linkEl.getAttribute('title'), uri: linkEl.innerHTML, href: linkEl.getAttribute('href')};
         cat.boards.push(board);
       });
       categories.push(cat);
     });
 
-    topbl.addClass("compact-boardlist")
-       .html("");
+    topbl.classList.add("compact-boardlist");
+    topbl.innerHTML = "";
 
-    for (var i in categories) {
-      var item = categories[i];
+    for (const i in categories) {
+      const item = categories[i];
 
-      if (item.name.match(/^icon_/)) {
-        var icon = item.name.replace(/^icon_/, '')
-        $("<a class='cb-item cb-icon' href='"+categories[i].boards[0].href+"'><img src='/static/icons/"+icon+".png'></a>")
-  	  .appendTo(topbl)
+      if (item.name && item.name.match(/^icon_/)) {
+        const icon = item.name.replace(/^icon_/, '');
+        const a = document.createElement('a');
+        a.className = 'cb-item cb-icon';
+        a.href = categories[i].boards[0].href;
+        a.innerHTML = '<img src="/static/icons/' + icon + '.png">';
+        topbl.appendChild(a);
       }
-      else if (item.name.match(/^fa_/)) {
-        var icon = item.name.replace(/^fa_/, '')
-        $('<a class="cb-item cb-fa" href="'+categories[i].boards[0].href+'"><i class="fa-'+icon+' fa"></i></a>')
-          .appendTo(topbl)
+      else if (item.name && item.name.match(/^fa_/)) {
+        const icon = item.name.replace(/^fa_/, '');
+        const a = document.createElement('a');
+        a.className = 'cb-item cb-fa';
+        a.href = categories[i].boards[0].href;
+        a.innerHTML = '<i class="fa-' + icon + ' fa"></i>';
+        topbl.appendChild(a);
       }
-      else if (item.name.match(/^d_/)) {
-        var icon = item.name.replace(/^d_/, '')
-        $('<a class="cb-item cb-cat" href="'+categories[i].boards[0].href+'">'+icon+'</a>')
-          .appendTo(topbl)
+      else if (item.name && item.name.match(/^d_/)) {
+        const icon = item.name.replace(/^d_/, '');
+        const a = document.createElement('a');
+        a.className = 'cb-item cb-cat';
+        a.href = categories[i].boards[0].href;
+        a.textContent = icon;
+        topbl.appendChild(a);
       }
       else {
-        $("<a class='cb-item cb-cat' href='javascript:void(0)'>"+item.name+"</a>")
- 	  .appendTo(topbl)
-	  .mouseenter(function() {
-	    var list = $("<div class='boardlist top cb-menu'></div>")
-	      .css("top", $(this).position().top + 13 + $(this).height())
-	      .css("left", $(this).position().left)
-	      .css("right", "auto")
-	      .appendTo(this);
-	    for (var j in this.item.boards) {
-	      var board = this.item.boards[j];
+        const a = document.createElement('a');
+        a.className = 'cb-item cb-cat';
+        a.href = 'javascript:void(0)';
+        a.textContent = item.name;
+        
+        a.addEventListener('mouseenter', function() {
+          const list = document.createElement('div');
+          list.className = 'boardlist top cb-menu';
+          list.style.top = (this.offsetTop + 13 + this.offsetHeight) + 'px';
+          list.style.left = this.offsetLeft + 'px';
+          list.style.right = 'auto';
+          this.appendChild(list);
+          
+          for (const j in this.dataset.item_boards) {
+            const board = this.dataset.item_boards[j];
             
-	      var tag;
-              if (board.name) {
-	        tag = $("<a href='"+board.href+"'><span>"+board.name+"</span><span class='cb-uri'>/"+board.uri+"/</span></a>")
-	      }
-	      else {
-	        tag = $("<a href='"+board.href+"'><span>"+board.uri+"</span><span class='cb-uri'><i class='fa fa-globe'></i></span></a>")
-	      }
-	      tag
-		.addClass("cb-menuitem")
-                .appendTo(list)
-	    }
-	  })
-	  .mouseleave(function() {
-	    topbl.find(".cb-menu").remove();
-	  })[0].item = item;
+            let tag;
+            if (board.name) {
+              tag = document.createElement('a');
+              tag.href = board.href;
+              tag.innerHTML = '<span>' + board.name + '</span><span class="cb-uri">/' + board.uri + '/</span>';
+            }
+            else {
+              tag = document.createElement('a');
+              tag.href = board.href;
+              tag.innerHTML = '<span>' + board.uri + '</span><span class="cb-uri"><i class="fa fa-globe"></i></span>';
+            }
+            tag.classList.add("cb-menuitem");
+            list.appendChild(tag);
+          }
+        });
+        
+        a.addEventListener('mouseleave', function() {
+          topbl.querySelectorAll(".cb-menu").forEach(el => el.remove());
+        });
+        
+        // Store the boards data on the element
+        a.dataset.item_boards = JSON.stringify(item.boards);
+        
+        topbl.appendChild(a);
       }
     }
     do_boardlist = undefined;

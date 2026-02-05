@@ -16,42 +16,60 @@
  *
  */
 
-if (active_page == 'ukko' || active_page == 'thread' || active_page == 'index') {
-	onReady(function() {
-		$('hr:first').before('<div id="expand-all-images" style="text-align:right"><a class="unimportant" href="javascript:void(0)"></a></div>');
-		$('div#expand-all-images a')
-			.text(_('Expand all images'))
-			.click(function() {
-				$('a img.post-image').each(function() {
-					// Don't expand YouTube embeds
-					if ($(this).parent().parent().hasClass('video-container')) {
-						return;
-					}
+if (active_page === 'ukko' || active_page === 'thread' || active_page === 'index') {
+	onReady(() => {
+		const firstHr = document.querySelector('hr');
+		const expandDiv = document.createElement('div');
+		expandDiv.id = 'expand-all-images';
+		expandDiv.style.textAlign = 'right';
+		const expandLink = document.createElement('a');
+		expandLink.className = 'unimportant';
+		expandLink.href = 'javascript:void(0)';
+		expandLink.textContent = _('Expand all images');
+		expandDiv.appendChild(expandLink);
+		if (firstHr) {
+			firstHr.parentNode.insertBefore(expandDiv, firstHr);
+		}
 
-					// or WEBM
-					if (/^\/player\.php\?/.test($(this).parent().attr('href'))) {
-						return;
-					}
-
-					if (!$(this).parent().data('expanded')) {
-						$(this).parent().click();
-					}
-				});
-
-				if (!$('#shrink-all-images').length) {
-					$('hr:first').before('<div id="shrink-all-images" style="text-align:right"><a class="unimportant" href="javascript:void(0)"></a></div>');
+		expandLink.addEventListener('click', () => {
+			document.querySelectorAll('a img.post-image').forEach((img) => {
+				// Don't expand YouTube embeds
+				if (img.parentElement?.parentElement?.classList.contains('video-container')) {
+					return;
 				}
 
-				$('div#shrink-all-images a')
-					.text(_('Shrink all images'))
-					.click(function() {
-						$('a img.full-image').each(function() {
-							if ($(this).parent().data('expanded')) {
-								$(this).parent().click();
-							}
-						});
-						$(this).parent().remove();
-					});
+				// or WEBM
+				if (/^\/player\.php\?/.test(img.parentElement?.getAttribute('href'))) {
+					return;
+				}
+
+				if (!img.parentElement?.dataset.expanded) {
+					img.parentElement?.click();
+				}
 			});
+
+			if (!document.getElementById('shrink-all-images')) {
+				const shrinkDiv = document.createElement('div');
+				shrinkDiv.id = 'shrink-all-images';
+				shrinkDiv.style.textAlign = 'right';
+				const shrinkLink = document.createElement('a');
+				shrinkLink.className = 'unimportant';
+				shrinkLink.href = 'javascript:void(0)';
+				shrinkLink.textContent = _('Shrink all images');
+				shrinkDiv.appendChild(shrinkLink);
+				if (firstHr) {
+					firstHr.parentNode.insertBefore(shrinkDiv, firstHr);
+				}
+
+				shrinkLink.addEventListener('click', () => {
+					document.querySelectorAll('a img.full-image').forEach((img) => {
+						if (img.parentElement?.dataset.expanded) {
+							img.parentElement?.click();
+						}
+					});
+					shrinkDiv.remove();
+				});
+			}
+		});
 	});
 }

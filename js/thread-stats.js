@@ -7,40 +7,40 @@
  *   $config['additional_javascript'][] = 'js/jquery.min.js';
  *   $config['additional_javascript'][] = 'js/thread-stats.js';
  */
-if (active_page == 'thread') {
-$(document).ready(function(){
+if (active_page === 'thread') {
+onReady(() => {
 	//check if page uses unique ID
-	var IDsupport = ($('.poster_id').length > 0);
-	var thread_id = (document.location.pathname + document.location.search).split('/');
+	const IDsupport = (document.querySelector('.poster_id').length > 0);
+	const thread_id = (document.location.pathname + document.location.search).split('/');
 	thread_id = thread_id[thread_id.length -1].split('+')[0].split('-')[0].split('.')[0];
 	
-	$('.boardlist.bottom, footer')
+	document.querySelectorAll('.boardlist.bottom, footer')
 		.first()
 		.before('<div id="thread_stats"></div>');
-	var el = $('#thread_stats');
-	el.prepend(_('Page')+' <span id="thread_stats_page">?</span>');
+	const el = document.getElementById('thread_stats');
+	el.insertBefore(_('Page')+' <span id="thread_stats_page">?</span>');
 	if (IDsupport){
-		el.prepend('<span id="thread_stats_uids">0</span> UIDs |&nbsp;');
+		el.insertBefore('<span id="thread_stats_uids">0</span> UIDs |&nbsp;');
 	}
-	el.prepend('<span id="thread_stats_images">0</span> '+_('images')+' |&nbsp;');
-	el.prepend('<span id="thread_stats_posts">0</span> '+_('replies')+' |&nbsp;');
+	el.insertBefore('<span id="thread_stats_images">0</span> '+_('images')+' |&nbsp;');
+	el.insertBefore('<span id="thread_stats_posts">0</span> '+_('replies')+' |&nbsp;');
 	delete el;
 	function update_thread_stats(){
-		var op = $('#thread_'+ thread_id +' > div.post.op:not(.post-hover):not(.inline)').first();
-		var replies = $('#thread_'+ thread_id +' > div.post.reply:not(.post-hover):not(.inline)');
+		const op = $('#thread_'+ thread_id +' > div.post.op:not(.post-hover):not(.inline)').first();
+		const replies = $('#thread_'+ thread_id +' > div.post.reply:not(.post-hover):not(.inline)');
 		// post count
-		$('#thread_stats_posts').text(replies.length);
+		document.getElementById('thread_stats_posts').text(replies.length);
 		// image count
-		$('#thread_stats_images').text(replies.filter(function(){ 
-			return $(this).find('> .files').text().trim() != false; 
+		document.getElementById('thread_stats_images').text(replies.filter(() => { 
+			return $(this).querySelector('> .files').textContent.trim() != false; 
 		}).length);
 		// unique ID count
 		if (IDsupport) {
-			var opID = op.find('> .intro > .poster_id').text();
-			var ids = {};
-			replies.each(function(){
-				var cur = $(this).find('> .intro > .poster_id');
-				var curID = cur.text();
+			const opID = op.querySelector('> .intro > .poster_id').textContent;
+			const ids = {};
+			replies.each(() => {
+				const cur = $(this).querySelector('> .intro > .poster_id');
+				const curID = cur.textContent;
 				if (ids[curID] === undefined) {
 					ids[curID] = 0;
 				}
@@ -50,30 +50,30 @@ $(document).ready(function(){
 				ids[opID] = 0;
 			}
 			ids[opID]++;
-			var cur = op.find('>.intro >.poster_id');
-			cur.find('+.posts_by_id').remove();
-			cur.after('<span class="posts_by_id"> ('+ ids[cur.text()] +')</span>');
-			replies.each(function(){
-				cur = $(this).find('>.intro >.poster_id');
-				cur.find('+.posts_by_id').remove();
-				cur.after('<span class="posts_by_id"> ('+ ids[cur.text()] +')</span>');
+			const cur = op.querySelector('>.intro >.poster_id');
+			cur.querySelector('+.posts_by_id').remove();
+			cur.after('<span class="posts_by_id"> ('+ ids[cur.textContent] +')</span>');
+			replies.each(() => {
+				cur = $(this).querySelector('>.intro >.poster_id');
+				cur.querySelector('+.posts_by_id').remove();
+				cur.after('<span class="posts_by_id"> ('+ ids[cur.textContent] +')</span>');
 			});
-			var size = function(obj) {
-				var size = 0, key;
+			const size = (obj) => {
+				const size = 0, key;
 				for (key in obj) {
 					if (obj.hasOwnProperty(key)) size++;
 				}
 				return size;
 			};
-			$('#thread_stats_uids').text(size(ids));
+			document.getElementById('thread_stats_uids').text(size(ids));
 		}
-		var board_name = $('input[name="board"]').val();
-		$.getJSON('//'+ document.location.host +'/'+ board_name +'/threads.json').success(function(data){
-			var found, page = '???';
+		const board_name = $('input[name="board"]').value;
+		$.getJSON('//'+ document.location.host +'/'+ board_name +'/threads.json').success((data) => {
+			const found, page = '???';
 			for (var i=0;data[i];i++){
-				var threads = data[i].threads;
+				const threads = data[i].threads;
 				for (var j=0; threads[j]; j++){
-					if (parseInt(threads[j].no) == parseInt(thread_id)) {
+					if (parseInt(threads[j].no) === parseInt(thread_id)) {
 						page = data[i].page +1;
 						found = true;
 						break;
@@ -81,21 +81,21 @@ $(document).ready(function(){
 				}
 				if (found) break;
 			}
-			$('#thread_stats_page').text(page);
-			if (!found) $('#thread_stats_page').css('color','red');
-			else $('#thread_stats_page').css('color','');
+			document.getElementById('thread_stats_page').text(page);
+			if (!found) document.getElementById('thread_stats_page').css('color','red');
+			else document.getElementById('thread_stats_page').css('color','');
 		});
 	}
 	// load the current page the thread is on.
 	// uses ajax call so it gets loaded on a delay (depending on network resources available)
-	var thread_stats_page_timer = setInterval(function(){
-		var board_name = $('input[name="board"]').val();
-		$.getJSON('//'+ document.location.host +'/'+ board_name +'/threads.json').success(function(data){
-			var found, page = '???';
+	const thread_stats_page_timer = setInterval(() => {
+		const board_name = $('input[name="board"]').value;
+		$.getJSON('//'+ document.location.host +'/'+ board_name +'/threads.json').success((data) => {
+			const found, page = '???';
 			for (var i=0;data[i];i++){
-				var threads = data[i].threads;
+				const threads = data[i].threads;
 				for (var j=0; threads[j]; j++){
-					if (parseInt(threads[j].no) == parseInt(thread_id)) {
+					if (parseInt(threads[j].no) === parseInt(thread_id)) {
 						page = data[i].page +1;
 						found = true;
 						break;
@@ -103,14 +103,14 @@ $(document).ready(function(){
 				}
 				if (found) break;
 			}
-			$('#thread_stats_page').text(page);
-			if (!found) $('#thread_stats_page').css('color','red');
-			else $('#thread_stats_page').css('color','');
+			document.getElementById('thread_stats_page').text(page);
+			if (!found) document.getElementById('thread_stats_page').css('color','red');
+			else document.getElementById('thread_stats_page').css('color','');
 		});
 	},30000);
-		$('body').append('<style>.posts_by_id{display:none;}.poster_id:hover+.posts_by_id{display:initial}</style>');
+		document.querySelector('body').appendChild('<style>.posts_by_id{display:none;}.poster_id:hover+.posts_by_id{display:initial}</style>');
 		update_thread_stats();
-		$('#update_thread').click(update_thread_stats);
+		document.getElementById('update_thread').click(update_thread_stats);
 		$(document).on('new_post',update_thread_stats);
 });
 }

@@ -9,34 +9,34 @@
  *   $config['additional_javascript'][] = 'js/options/user-js.js';
  */
 
-+function(){
++() => {
 
-var tab = Options.add_tab("user-js", "code", _("User JS"));
+const tab = Options.add_tab("user-js", "code", _("User JS"));
 
-var textarea = $("<textarea></textarea>").css({
+const textarea = document.querySelector('<textarea></textarea>').css({
   "font-size": 12,
   position: "absolute",
   top: 35, bottom: 35,
   width: "calc(100% - 20px)", margin: 0, padding: "4px", border: "1px solid black",
   left: 5, right: 5
 }).appendTo(tab.content);
-var submit = $("<input type='button' value='"+_("Update custom Javascript")+"'>").css({
+const submit = $("<input type='button' value='"+_("Update custom Javascript")+"'>").css({
   position: "absolute",
   height: 25, bottom: 5,
   width: "calc(100% - 10px)",
   left: 5, right: 5
-}).click(function() {
-  localStorage.user_js = textarea.val();
+}).click(() => {
+  localStorage.user_js = textarea.value;
   document.location.reload();
 }).appendTo(tab.content);
 
-var apply_js = function() {
-  var proc = function() {
-    $('.user-js').remove();
-    $('script')
+const apply_js = () => {
+  const proc = () => {
+    document.querySelector('.user-js').remove();
+    document.querySelector('script')
       .last()
-      .after($("<script></script>")
-        .addClass("user-js")
+      .after(document.querySelector('<script></script>')
+        .classList.add('user-js')
         .text(localStorage.user_js)
       );
   }
@@ -49,7 +49,7 @@ var apply_js = function() {
   }
 };
 
-var update_textarea = function() {
+const update_textarea = () => {
   if (!localStorage.user_js) {
     textarea.text("/* "+_("Enter here your own Javascript code...")+" */\n" +
                   "/* "+_("Have a backup of your storage somewhere, as messing here\nmay render you this website unusable.")+" */\n" +
@@ -66,15 +66,15 @@ update_textarea();
 
 
 // User utility functions
-window.load_js = function(url) {
-  $('script')
+window.load_js = (url) => {
+  document.querySelector('script')
     .last()
-    .after($("<script></script>")
+    .after(document.querySelector('<script></script>')
       .prop("type", "text/javascript")
       .prop("src", url)
     );
 };
-window.immediate = function() { // A dummy function.
+window.immediate = () => { // A dummy function.
 }
 
 }();

@@ -13,15 +13,15 @@
  *
  */
 
-$(document).ready(function(){
+onReady(() => {
 	'use strict';
 
-	var iso8601 = function(s) {
-		var parts = s.split('T');
+	const iso8601 = (s) => {
+		const parts = s.split('T');
 		if (parts.length === 2) {
-			var timeParts = parts[1].split(':');
+			const timeParts = parts[1].split(':');
 			if (timeParts.length === 3) {
-				var seconds = timeParts[2];
+				const seconds = timeParts[2];
 				if (seconds.length > 2) {
 					seconds = seconds.substr(0, 2) + '.' + seconds.substr(2);
 				}
@@ -41,28 +41,28 @@ $(document).ready(function(){
 		return new Date(s);
 	};
 
-	var zeropad = function(num, count) {
+	const zeropad = function(num, count) {
 		return [Math.pow(10, count - num.toString().length), num].join('').substr(1);
 	};
 
-	var dateformat = (typeof strftime === 'undefined') ? function(t) {
+	const dateformat = (typeof strftime === 'undefined') ? (t) => {
 		return zeropad(t.getMonth() + 1, 2) + "/" + zeropad(t.getDate(), 2) + "/" + t.getFullYear().toString().substring(2) +
 				" (" + ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][t.getDay()] + ") " +
 				// time
 				zeropad(t.getHours(), 2) + ":" + zeropad(t.getMinutes(), 2) + ":" + zeropad(t.getSeconds(), 2);
-	} : function(t) {
+	} : (t) => {
 		// post_date is defined in templates/main.js
 		return strftime(window.post_date, t, datelocale);
 	};
 
 	function timeDifference(current, previous) {
-		var msPerMinute = 60 * 1000;
-		var msPerHour = msPerMinute * 60;
-		var msPerDay = msPerHour * 24;
-		var msPerMonth = msPerDay * 30;
-		var msPerYear = msPerDay * 365;
+		const msPerMinute = 60 * 1000;
+		const msPerHour = msPerMinute * 60;
+		const msPerDay = msPerHour * 24;
+		const msPerMonth = msPerDay * 30;
+		const msPerYear = msPerDay * 365;
 
-		var elapsed = current - previous;
+		const elapsed = current - previous;
 
 		if (elapsed < msPerMinute) {
 			return 'Just now';
@@ -79,13 +79,13 @@ $(document).ready(function(){
 		}
 	}
 
-	var do_localtime = function(elem) {
-		var times = elem.getElementsByTagName('time');
-		var currentTime = Date.now();
+	const do_localtime = (elem) => {
+		const times = elem.getElementsByTagName('time');
+		const currentTime = Date.now();
 
 		for (var i = 0; i < times.length; i++) {
-			var t = times[i].getAttribute('datetime');
-			var postTime = iso8601(t);
+			const t = times[i].getAttribute('datetime');
+			const postTime = iso8601(t);
 
 			times[i].setAttribute('data-local', 'true');
 
@@ -100,10 +100,10 @@ $(document).ready(function(){
 	};
 
 	if (window.Options && Options.get_tab('general') && window.jQuery) {
-		var interval_id;
+		const interval_id;
 		Options.extend_tab('general', '<label id="show-relative-time"><input type="checkbox">' + _('Show relative time') + '</label>');
 
-		$('#show-relative-time>input').on('change', function() {
+		document.querySelector('#show-relative-time>input').on('change', () => {
 			if (localStorage.show_relative_time !== 'false') {
 				localStorage.show_relative_time = 'false';
 				clearInterval(interval_id);
@@ -116,12 +116,12 @@ $(document).ready(function(){
 		});
 
 		if (localStorage.show_relative_time !== 'false') {
-			$('#show-relative-time>input').attr('checked', 'checked');
+			document.querySelector('#show-relative-time>input').setAttribute('checked', 'checked');
 			interval_id = setInterval(do_localtime, 30000, document);
 		}
 
 		// allow to work with auto-reload.js, etc.
-		$(document).on('new_post', function(e, post) {
+		$(document).addEventListener('new_post', function(e, post) {
 			do_localtime(post);
 		});
 	}

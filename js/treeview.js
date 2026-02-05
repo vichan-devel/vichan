@@ -11,12 +11,12 @@
  *
  */
 
-if (active_page == 'thread' || active_page == 'ukko' || active_page == 'index')
-$(function() {
+if (active_page === 'thread' || active_page === 'ukko' || active_page === 'index')
+$(() => {
 	if (window.Options && Options.get_tab('general')) {
-		var selector = '#treeview-global>input';
+		const selector = '#treeview-global>input';
 		Options.extend_tab("general", "<label id='treeview-global'><input type='checkbox' /> "+_('Use tree view by default')+"</label>");
-		$(selector).on('change', function() {
+		$(selector).on('change', () => {
 			if (localStorage.treeview === 'true') {
 				localStorage.treeview = 'false';
 			} else {
@@ -24,52 +24,52 @@ $(function() {
 			}
 		});
 		if (localStorage.treeview === 'true') {
-			$(selector).attr('checked', 'checked');
+			$(selector).setAttribute('checked', 'checked');
 		}
 	}
 });
 
-if (active_page == 'thread')
-$(function() {
-	var treeview = function(enable) {
+if (active_page === 'thread')
+$(() => {
+	const treeview = (enable) => {
 		if (enable === true) {
-			$('.post.reply').each(function(){
-				var references = [];
-				$(this).find('.body a').each(function(){
-					if ($(this).html().match('^&gt;&gt;[0-9]+$')) {
-						references.push(parseInt($(this).html().replace('&gt;&gt;', '')));
+			document.querySelectorAll('.post.reply').each(() => {
+				const references = [];
+				$(this).querySelector('.body a').each(() => {
+					if ($(this).innerHTML.match('^&gt;&gt;[0-9]+$')) {
+						references.push(parseInt($(this).innerHTML.replace('&gt;&gt;', '')));
 					}
 				});
-				var maxref = references.reduce(function(a,b) { return a > b ? a : b; }, 0);
+				const maxref = references.reduce(function(a,b) { return a > b ? a : b; }, 0);
 
-				var parent_post = $("#reply_"+maxref);
-				if (parent_post.length == 0) return;
+				const parent_post = $("#reply_"+maxref);
+				if (parent_post.length === 0) return;
 
-				var margin = parseInt(parent_post.css("margin-left"))+32;
+				const margin = parseInt(parent_post.css("margin-left"))+32;
 
-				var post = $(this);
-				var br = post.next();
+				const post = $(this);
+				const br = post.next();
 
 				post.detach().css("margin-left", margin).insertAfter(parent_post.next());
 				br.detach().insertAfter(post);
 			});
 		} else {
-			$('.post.reply').sort(function(a,b) {
+			document.querySelectorAll('.post.reply').sort(function(a,b) {
 				return parseInt(a.id.replace('reply_', '')) - parseInt(b.id.replace('reply_', ''));
-			}).each(function () {
-				var post = $(this);
-				var br = post.next();
+			}).each(() => {
+				const post = $(this);
+				const br = post.next();
 				post.detach().css('margin-left', '').appendTo('.thread');
 				br.detach().insertAfter(post);
 			});
 		}
 	}
 
-	$('hr:first').before('<div class="unimportant" style="text-align:right"><label for="treeview"><input type="checkbox" id="treeview"> '+_('Tree view')+'</label></div>');
-	$('input#treeview').on('change', function(e) { treeview($(this).is(':checked')); });
+	document.querySelector('hr:first').before('<div class="unimportant" style="text-align:right"><label for="treeview"><input type="checkbox" id="treeview"> '+_('Tree view')+'</label></div>');
+	document.querySelector('input#treeview').on('change', (e) => { treeview($(this).is(':checked')); });
 
 	if (localStorage.treeview === 'true') {
 		treeview(true);
-		$('input#treeview').attr('checked', true);
+		document.querySelector('input#treeview').setAttribute('checked', true);
 	}
 });

@@ -13,21 +13,21 @@
  */
 
 function catalog() {
-    var board = $("input[name='board']");
-    var boardValue = board.first().val();
+    const boardInputs = document.querySelectorAll("input[name='board']");
+    const boardValue = boardInputs.length > 0 ? boardInputs[0].value : null;
 
-    var catalog_url = '';
+    let catalog_url = '';
     if (window.location.href.includes('mod.php?/')) {
         catalog_url = configRoot + 'mod.php?/' + boardValue + '/catalog.html';
     } else {
         catalog_url = configRoot + boardValue + '/catalog.html';
     }
 
-    var pages = document.getElementsByClassName('pages')[0];
-    var bottom = document.getElementsByClassName('boardlist bottom')[0];
-    var subtitle = document.getElementsByClassName('subtitle')[0];
+    const pages = document.getElementsByClassName('pages')[0];
+    const bottom = document.getElementsByClassName('boardlist bottom')[0];
+    const subtitle = document.getElementsByClassName('subtitle')[0];
 
-    var link = document.createElement('a');
+    const link = document.createElement('a');
     link.href = catalog_url;
 
     if (!pages) {
@@ -38,16 +38,16 @@ function catalog() {
     }
 
     if (subtitle) { 
-        var link2 = document.createElement('a');
+        const link2 = document.createElement('a');
         link2.textContent = _('Catalog');
         link2.href = catalog_url;
 
-        var br = document.createElement('br');
+        const br = document.createElement('br');
         subtitle.appendChild(br);
         subtitle.appendChild(link2);    
     }
 }
 
-if (active_page == 'thread' || active_page == 'index') {
-    $(document).ready(catalog);
+if (active_page === 'thread' || active_page === 'index') {
+    onReady(catalog);
 }
