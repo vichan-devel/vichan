@@ -1853,8 +1853,8 @@ function markup(&$body, $track_cites = false) {
 				-1,
 				$num_links);
 
-		if ($num_links > $config['max_links'])
-			error($config['error']['toomanylinks']);
+	if (!hasPermission($config['mod']['bypass_max_links'], $board) && $num_links > $config['max_links']) {
+		error($config['error']['toomanylinks']);
 	}
 
 	if ($config['markup_repair_tidy'])
