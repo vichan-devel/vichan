@@ -766,6 +766,9 @@
 	// "/```([a-z0-9-]{0,20})\n(.*?)\n?```\n?/s"
 	$config['markup_code'] = false;
 
+	// List markup in the style of WakabaMark (https://wakaba.c3.cx/docs/docs.html#WakabaMark).
+	$config['list_markup'] = false;
+
 	// Repair markup with HTML Tidy. This may be slower, but it solves nesting mistakes. vichan, at the
 	// time of writing this, can not prevent out-of-order markup tags (eg. "**''test**'') without help from
 	// HTML Tidy.

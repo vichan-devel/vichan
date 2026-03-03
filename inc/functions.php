@@ -1857,6 +1857,10 @@ function markup(&$body, $track_cites = false) {
 			error($config['error']['toomanylinks']);
 	}
 
+	if ($config['list_markup']) {
+		list_markup($body);
+	}
+
 	if ($config['markup_repair_tidy'])
 		$body = str_replace('  ', ' &nbsp;', $body);
 
@@ -2073,6 +2077,98 @@ function markup(&$body, $track_cites = false) {
 	$body = str_replace("\t", '		', $body);
 
 	return $tracked_cites;
+}
+
+function list_markup(&$body) {
+	$new_body = '';
+	$end = -1;
+	// 1: unordered, 2 ordered.
+	$list = false;
+	$nested = false;
+
+	while (true) {
+		$start = $end + 1;
+		$end = \strpos($body, "\n", $start);
+
+		if ($end == false) {
+			if ($start == \strlen($body)) {
+				break;
+			}
+			$end = \strlen($body) - 1;
+		}
+		$line = \substr($body, $start, $end - $start + 1);
+
+		if ($list) {
+			if ($nested == 1 && \preg_match("/^\s+-\s/", $line)) {
+				$new_body .= '</li><li>' . \substr($line, \strpos($line, "-") + 1);
+				continue;
+			} elseif ($nested == 2 && preg_match("/^\s+\d+\./", $line)) {
+				$new_body .= '</li><li>' . \substr($line, \strpos($line, ".") + 1);
+				continue;
+			} elseif ($nested == 2 && \strcmp($line, "\n") == 0) {
+				continue;
+			} else {
+				if ($nested == 1) {
+					$new_body .= '</li></ul>';
+				} elseif ($nested == 2) {
+					$new_body .= '</li></ol>';
+				}
+
+				$nested = false;
+				if (\preg_match("/^\s+-\s/", $line)) {
+					$new_body .= '<ul class="list-block-nest"><li>' . \substr($line, \strpos($line, "-") + 1);
+					$nested = 1;
+					continue;
+				} elseif (\preg_match("/^\s+\d+\.\s/", $line)) {
+					$new_body .= '<ol class="list-block-nest"><li>' . \substr($line, \strpos($line, ".") + 1);
+					$nested = 2;
+					continue;
+				} elseif (\preg_match("/^\s/", $line)) {
+					$new_body .= $line;
+					continue;
+				}
+			}
+		}
+
+		if ($list == 1 && \preg_match("/^-\s/", $line)) {
+			$new_body .= '</li><li>' . \substr($line, 1);
+		} elseif ($list == 2 && \preg_match("/^\d+\./", $line)) {
+			$new_body .= '</li><li>' . \substr($line, \strpos($line, ".") + 1);
+		} elseif ($list == 2 && \strcmp($line, "\n") == 0) {
+			continue;
+		} else {
+			if ($list == 1) {
+				$new_body .= '</li></ul>';
+			} elseif ($list == 2) {
+				$new_body .= '</li></ol>';
+			}
+			$list = false;
+
+			if (\preg_match("/^-\s/", $line)) {
+				$new_body .= '<ul class="list-block"><li>' . \substr($line, 1);
+				$list = 1;
+			} elseif (\preg_match("/^\d+\.\s/", $line)) {
+				$new_body .= '<ol class="list-block"><li>' . \substr($line, \strpos($line, ".") + 1);
+				$list = 2;
+			} else {
+				$new_body .= $line;
+			}
+		}
+	}
+
+	if ($nested == 1) {
+		$new_body .= '</li></ul>';
+	} elseif ($nested == 2) {
+		$new_body .= '</li></ol>';
+	}
+
+	if ($list == 1) {
+		$new_body .= '</li></ul>';
+	} elseif ($list == 2) {
+		$new_body .= '</li></ol>';
+	}
+
+	$body = $new_body;
 }
 
 function escape_markup_modifiers($string) {

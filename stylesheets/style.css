@@ -340,6 +340,17 @@ div.post.op > p {
   padding-top: 1em;
 }
 
+.list-block {
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style-position: inside;
+  padding-left: 0;
+}
+
+.list-block-nest {
+  padding-left: 2ch;
+}
+
 div.post div.body {
   margin-left: 1.4em;
   padding-right: 3em;
