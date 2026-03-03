@@ -1732,6 +1732,8 @@
 	// Bypass flood check
 	$config['mod']['bypass_filters'] = ADMIN;
 	$config['mod']['flood'] = &$config['mod']['bypass_filters'];
+	// Bypass max_links option
+	$config['mod']['bypass_max_links'] = MOD;
 	// Raw HTML posting
 	$config['mod']['rawhtml'] = ADMIN;
 
