@@ -17,10 +17,9 @@ function get_webm_info($filename) {
 	$validcheck = is_valid_webm($ffprobe_out);
 	$webminfo['error'] = $validcheck['error'];
 	if (empty($webminfo['error'])) {
-		$trackmap = $validcheck['trackmap'];
-		$videoidx = $trackmap['videoat'][$validcheck['video_idx']];
-		$webminfo['width'] = $ffprobe_out['streams'][$videoidx]['width'];
-		$webminfo['height'] = $ffprobe_out['streams'][$videoidx]['height'];
+		$video_idx = $validcheck['video_idx'];
+		$webminfo['width'] = $ffprobe_out['streams'][$video_idx]['width'];
+		$webminfo['height'] = $ffprobe_out['streams'][$video_idx]['height'];
 		$webminfo['duration'] = $ffprobe_out['format']['duration'];
 	}
 	return $webminfo;
@@ -50,7 +49,6 @@ function locate_webm_tracks($ffprobe_out) {
  * @param string $ffprobe_out
  * @return array<array> An array with the following values:
  *                      error: array with error code and message
- *                      trackmap: decoded ffprobe output
  *                      video_idx: int, index of the video track
  *                      audio_idx: ?int, index of the audio track, if present
  */
@@ -153,7 +151,6 @@ function is_valid_webm(array $ffprobe_out) {
 
 	return [
 		'error' => [],
-		'trackmap' => $trackmap,
 		'video_idx' => $video_idx,
 		'audio_idx' => $audio_idx
 	];
