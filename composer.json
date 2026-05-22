@@ -12,7 +12,7 @@
         "ext-mbstring": ">=7.4",
         "ext-gd": ">=7.4",
         "ext-pdo": ">=7.4",
-        "twig/twig": "^2.9",
+        "twig/twig": "^3.26",
         "phpmyadmin/twig-i18n-extension": "^4.0",
         "lifo/ip": "^1.0",
         "gettext/gettext": "^5.5",
