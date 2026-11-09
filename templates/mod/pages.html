@@ -13,7 +13,7 @@
 <table style="margin:auto">
 <tr><th>{% trans %}URL{% endtrans %}</th><th>{% trans %}Title{% endtrans %}</th><th>{% trans %}Edit{% endtrans %}</th><th>{% trans %}Delete{% endtrans %}</tr>
 {% for page in pages %}
-<tr><td>{{ page.name }}</td><td>{{ page.title }}</td><td><a href="?/edit_page/{{ page.id }}">{% trans %}Edit{% endtrans %}</a></td><td><a href="?/edit_pages/delete/{{ page.name }}{% if board %}/{{ board }}{% endif %}/{{ page.delete_token }}">{% trans %}Delete{% endtrans %}</a></td>
+<tr><td>{{ page.name }}</td><td>{{ page.title|e('html') }}</td><td><a href="?/edit_page/{{ page.id }}">{% trans %}Edit{% endtrans %}</a></td><td><a href="?/edit_pages/delete/{{ page.name }}{% if board %}/{{ board }}{% endif %}/{{ page.delete_token }}">{% trans %}Delete{% endtrans %}</a></td>
 {% endfor %}
 {% else %}
 <em>No pages yet!</em>
