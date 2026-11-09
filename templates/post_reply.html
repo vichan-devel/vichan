@@ -24,7 +24,7 @@
 	<div class="body" {% if post.files|length > 1 %}style="clear:both"{% endif %}>
 		{% endapply %}{% if index %}{{ post.body|truncate_body(post.link) }}{% else %}{{ post.body }}{% endif %}{% apply spaceless %}
 		{% if post.modifiers['ban message'] %}
-			{{ config.mod.ban_message|sprintf(post.modifiers['ban message']) }}
+			{{ config.mod.ban_message|sprintf(post.modifiers['ban message']|e('html')) }}
 		{% endif %}
 	</div>
 </div>
