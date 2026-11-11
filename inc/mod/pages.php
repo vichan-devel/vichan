@@ -1324,8 +1324,12 @@ function mod_move_reply(Context $ctx, $originBoard, $postID) {
 	if (isset($_POST['board'])) {
 		$targetBoard = $_POST['board'];
 
+		// validate the target board before it reaches any SQL identifier
+		if (!preg_match("/{$config['board_regex']}/u", $targetBoard) || !in_array($targetBoard, listBoards(true)))
+			error($config['error']['noboard']);
+
 		if ($_POST['target_thread']) {
-			$query = prepare(sprintf('SELECT * FROM ``posts_%s`` WHERE `id` = :id', $targetBoard));
+            $query = prepare(sprintf('SELECT * FROM ``posts_%s`` WHERE `id` = :id', $targetBoard));
 			$query->bindValue(':id', $_POST['target_thread']);
 			$query->execute() or error(db_error($query)); // If it fails, thread probably does not exist
 			$post['op'] = false;
