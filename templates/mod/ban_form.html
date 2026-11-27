@@ -77,28 +77,16 @@ $(document).ready(function(){
 		<tr>
 			<th>{% trans 'Board' %}</th>
 			<td>
-				<ul style="list-style:none;padding:2px 5px">
-					<li>
-						<input type="radio" name="board" value="*" id="ban-allboards" {% if (edit_ban and not current_board) or not edit_ban %}checked{% endif %}>
-						<label style="display:inline" for="ban-allboards">
-							<em>{% trans 'all boards' %}</em>
-						</label>
-					</li>
-
+				<select name="board">
+					<option value="*" id="ban-allboards" {% if (edit_ban and not current_board) or not edit_ban %}selected{% endif %}>{% trans 'all boards' %}</option>
 					{% for board in boards %}
-						<li>
-							<input type="radio" name="board" value="{{ board.uri }}" id="ban-board-{{ board.uri }}" {% if edit_ban and current_board == board.uri %}checked{% endif %}>
-							<label style="display:inline" for="ban-board-{{ board.uri }}">
-								{{ config.board_abbreviation|sprintf(board.uri) }} - {{ board.title|e }}
-							</label>
-						</li>
-					{% endfor %}
-				</ul>
+						<option value="{{ board.uri }}" id="ban-board-{{ board.uri }}" {% if edit_ban and current_board == board.uri %}selected{% endif %}>
+							{{ config.board_abbreviation|sprintf(board.uri) }} - {{ board.title|e }}
+						</option>
+				{% endfor %}
+				</select>
+				<input name="new_ban" type="submit" value="{% if edit_ban %}{% trans 'Edit Ban' %}{% else %}{% trans 'New Ban' %}{% endif %}" style="float: right">
 			</td>
-		</tr>
-		<tr>
-			<td></td>
-			<td><input name="new_ban" type="submit" value="{% if edit_ban %}{% trans 'Edit Ban' %}{% else %}{% trans 'New Ban' %}{% endif %}"></td>
 		</tr>
 	</table>
 </form>
