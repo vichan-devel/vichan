@@ -16,4 +16,4 @@
 		</div>
 	{% endfor %}
 {% endif %}
-<a href="{{ config.root }}mod.php?/recent/{{ limit|e }}&amp;last={{ last_time|e }}">Next {{ limit }} posts</a>
+<a href="{{ config.root }}{{ config.file_mod }}?/recent/{{ limit|e }}&amp;last={{ last_time|e }}">Next {{ limit }} posts</a>
